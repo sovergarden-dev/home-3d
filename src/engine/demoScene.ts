@@ -4,6 +4,7 @@ import { bindCapture } from "./capture";
 import { createDemoAudio } from "./demoAudio";
 import { daylightAt } from "./demoLayout";
 import { buildWorldMeshes, type WorldMeshBundle } from "./world/buildWorldMeshes";
+import { createFrameMetrics } from "./quality/frameMetrics";
 import {
   configurePlanCamera,
   isPlanCameraZenith,
@@ -174,6 +175,7 @@ export function createDemoScene(
   let renderRevision = 0;
   let lastWorldRevision = -1;
   const audio = createDemoAudio();
+  const frameMetrics = createFrameMetrics();
   const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   function mountWorld() {
@@ -290,6 +292,8 @@ export function createDemoScene(
   function render() {
     if (disposed || !host.clientWidth || !host.clientHeight) return;
     renderer.render(scene, activeCamera);
+    frameMetrics.record(performance.now());
+    const frameSnapshot = frameMetrics.snapshot();
     const markerWorld = new THREE.Vector3(homeCentre.x, 0.35, homeCentre.z).project(activeCamera);
     marker.style.transform = `translate(-50%, -100%) translate(${(markerWorld.x * 0.5 + 0.5) * host.clientWidth}px, ${(-markerWorld.y * 0.5 + 0.5) * host.clientHeight - 10}px)`;
     marker.style.visibility =
@@ -298,6 +302,10 @@ export function createDemoScene(
         : "hidden";
     host.dataset["drawCalls"] = String(renderer.info.render.calls);
     host.dataset["triangles"] = String(renderer.info.render.triangles);
+    host.dataset["renderedFrames"] = String(frameSnapshot.renderedFrames);
+    host.dataset["frameP50Ms"] = String(frameSnapshot.p50Ms ?? "");
+    host.dataset["frameP95Ms"] = String(frameSnapshot.p95Ms ?? "");
+    host.dataset["frameLongestMs"] = String(frameSnapshot.longestMs ?? "");
     host.dataset["worldMode"] = currentWorld.mode;
     host.dataset["worldRevision"] = String(currentWorld.revision);
     host.dataset["activeWorlds"] = worldBundle ? "1" : "0";

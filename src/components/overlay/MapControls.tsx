@@ -58,9 +58,9 @@ export function MapControls() {
         </button>
         <button
           type="button"
-          disabled={!ready}
+          disabled={!ready || viewMode === "topdown"}
           aria-label={t.compass}
-          title={t.compass}
+          title={viewMode === "topdown" ? t.northUp : t.compass}
           onClick={() => setHeading(0)}
           className={btn}
         >
