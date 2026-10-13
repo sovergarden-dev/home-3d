@@ -146,12 +146,12 @@ test("Mặt bằng renders one orthographic world, measures from its camera and 
   const ruler = page.getByTestId("plan-scale-ruler");
   await expect(ruler).toHaveAttribute("style", /width: [1-9]/);
   const rulerBeforeZoom = await ruler.getAttribute("style");
+  await page.getByRole("button", { name: "Phóng to", exact: true }).click();
+  await expect(ruler).not.toHaveAttribute("style", rulerBeforeZoom ?? "");
   const canvas = page.locator("#scene-root canvas");
   const bounds = await canvas.boundingBox();
   expect(bounds).not.toBeNull();
-  await page.mouse.move(bounds!.x + 180, bounds!.y + 160);
-  await page.mouse.wheel(0, -180);
-  await expect(ruler).not.toHaveAttribute("style", rulerBeforeZoom ?? "");
+  await page.mouse.move(bounds!.x + 720, bounds!.y + 300);
   await page.mouse.down();
   await page.mouse.move(bounds!.x + 230, bounds!.y + 210, { steps: 4 });
   await page.mouse.up();
