@@ -1,4 +1,4 @@
-import { useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { Clock, CloudSun, Lamp, Heart } from "lucide-react";
 import { useT } from "@/i18n";
 import { FestivalPanel, MemoriesPanel, TimePanel, WeatherPanel } from "./DockPanels";
@@ -14,10 +14,19 @@ type TabId = (typeof tabs)[number]["id"];
 type Snap = "peek" | "half" | "full";
 const snapHeights: Record<Snap, string> = { peek: "96px", half: "48dvh", full: "86dvh" };
 
-export function Dock({ mobile }: { mobile: boolean }) {
+interface DockProps {
+  mobile: boolean;
+  /** Mobile only: true while the bottom sheet is above its peek height and would cover the map controls. */
+  onExpandedChange?: (expanded: boolean) => void;
+}
+
+export function Dock({ mobile, onExpandedChange }: DockProps) {
   const t = useT();
   const [active, setActive] = useState<TabId>("time");
   const [snap, setSnap] = useState<Snap>("peek");
+  useEffect(() => {
+    onExpandedChange?.(mobile && snap !== "peek");
+  }, [mobile, snap, onExpandedChange]);
   const drag = useRef<{ y: number; h: number } | null>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);

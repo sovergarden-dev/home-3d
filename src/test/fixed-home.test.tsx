@@ -1,5 +1,5 @@
-import { act, render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { act, fireEvent, render, screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Dock } from "@/components/overlay/Dock";
 import { TopInfo } from "@/components/overlay/TopInfo";
@@ -39,5 +39,17 @@ describe("map is always centred on the house", () => {
     state.setHeading(90);
     useAppStore.getState().resetView();
     expect(useAppStore.getState()).toMatchObject({ zoom: 1, heading: 0 });
+  });
+});
+
+describe("mobile bottom sheet", () => {
+  it("reports when it is expanded so the map controls can step aside", () => {
+    const onExpandedChange = vi.fn();
+    render(<Dock mobile onExpandedChange={onExpandedChange} />);
+    expect(onExpandedChange).toHaveBeenLastCalledWith(false);
+
+    fireEvent.click(screen.getByRole("tab", { name: "Thời tiết" }));
+    expect(onExpandedChange).toHaveBeenLastCalledWith(true);
+    expect(screen.getByRole("tabpanel")).toBeInTheDocument();
   });
 });
