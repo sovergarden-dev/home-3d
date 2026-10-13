@@ -11,6 +11,35 @@ async function openDemo(page: Page, options: { requireReady?: boolean } = {}) {
   if (requireReady) expect(state).toBe("ready");
   return state === "ready";
 }
+async function centralSceneTexture(page: Page) {
+  const screenshot = (await page.screenshot()).toString("base64");
+  return page.evaluate(async (encoded) => {
+    const image = new Image();
+    image.src = `data:image/png;base64,${encoded}`;
+    await image.decode();
+    const canvas = document.createElement("canvas");
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("SCREENSHOT_2D_CONTEXT_UNAVAILABLE");
+    context.drawImage(image, 0, 0);
+    const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+    const colors = new Map<string, number>();
+    for (let y = Math.floor(canvas.height * 0.1); y < Math.floor(canvas.height * 0.72); y += 4) {
+      for (let x = Math.floor(canvas.width * 0.18); x < Math.floor(canvas.width * 0.82); x += 4) {
+        const index = (y * canvas.width + x) * 4;
+        const color = `${pixels[index]},${pixels[index + 1]},${pixels[index + 2]}`;
+        colors.set(color, (colors.get(color) ?? 0) + 1);
+      }
+    }
+    let mutedGeometryPixels = 0;
+    for (const [color, count] of colors) {
+      const [red, green, blue] = color.split(",").map(Number);
+      if (red < 180 && green < 180 && blue < 180) mutedGeometryPixels += count;
+    }
+    return { mutedGeometryPixels };
+  }, screenshot);
+}
 test("demo labels, privacy, noindex and graceful 3D capability branch", async ({ page }) => {
   const privateCalls: string[] = [];
   page.on("request", (request) => {
@@ -25,6 +54,14 @@ test("demo labels, privacy, noindex and graceful 3D capability branch", async ({
   if (ready) await expect(page.locator("#scene-root canvas")).toBeVisible();
   else await expect(page.getByText("Thiết bị chưa mở được 3D")).toBeVisible();
   expect(privateCalls).toEqual([]);
+});
+test("diorama keeps the synthetic streets visually legible", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  const ready = await openDemo(page);
+  test.skip(!ready, "Fallback does not render the synthetic street fixture.");
+  await page.waitForTimeout(750);
+  const texture = await centralSceneTexture(page);
+  expect(texture.mutedGeometryPixels).toBeGreaterThan(900);
 });
 test("time, weather, festivals, camera, capture and clear work in a rendered scene", async ({
   page,

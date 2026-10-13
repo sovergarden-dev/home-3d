@@ -106,8 +106,6 @@ export function createDemoScene(
   const scene = new THREE.Scene();
   const sky = new THREE.Color("#ecdfca");
   scene.background = sky;
-  const fog = new THREE.Fog(sky, 110, 280);
-  scene.fog = fog;
   const perspectiveCamera = new THREE.PerspectiveCamera(42, 1, 0.1, 800);
   const planCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 800);
   let activeCamera: THREE.Camera = perspectiveCamera;
@@ -241,7 +239,7 @@ export function createDemoScene(
     perspectiveCamera.lookAt(controls.target);
     controls.update();
     activeCamera = perspectiveCamera;
-    scene.fog = fog;
+    scene.fog = null;
     delete host.dataset["planZenith"];
     useAppStore.getState().setPlanMeasurement(null);
   }
@@ -269,7 +267,6 @@ export function createDemoScene(
     const wet = state.weather === "rain" || state.weather === "storm";
     const cloudy = state.weather !== "sunny";
     sky.set(cloudy ? "#aebdc0" : "#eee0c9").multiplyScalar(0.8 + daylight * 0.7);
-    fog.color.copy(sky);
     hemisphere.intensity = 1 + daylight * (cloudy ? 1.5 : 2.2);
     sun.intensity = daylight * (cloudy ? 0.75 : 3.4);
     sun.position.set(-45 + (state.timeOfDayMinutes / 1440) * 90, 20 + daylight * 65, 28);
