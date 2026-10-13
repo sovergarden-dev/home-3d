@@ -45,12 +45,20 @@ export function Dock({ mobile, onExpandedChange }: DockProps) {
       {tabs.map(({ id, Icon }, i) => (
         <button
           key={id}
-          ref={(el) => { tabRefs.current[i] = el; }}
-          type="button" role="tab" id={`tab-${id}`}
-          aria-selected={active === id} aria-controls={`panel-${id}`}
+          ref={(el) => {
+            tabRefs.current[i] = el;
+          }}
+          type="button"
+          role="tab"
+          id={`tab-${id}`}
+          aria-selected={active === id}
+          aria-controls={`panel-${id}`}
           tabIndex={active === id ? 0 : -1}
           onKeyDown={(e) => onTabKey(e, i)}
-          onClick={() => { setActive(id); if (mobile && snap === "peek") setSnap("half"); }}
+          onClick={() => {
+            setActive(id);
+            if (mobile && snap === "peek") setSnap("half");
+          }}
           className="ctl flex-1 flex-col gap-0.5 px-3 py-1 text-xs text-muted-foreground hover:text-foreground aria-selected:bg-secondary aria-selected:text-primary sm:flex-row sm:gap-2 sm:text-sm"
         >
           <Icon className="h-4 w-4 shrink-0" />
@@ -61,7 +69,12 @@ export function Dock({ mobile, onExpandedChange }: DockProps) {
   );
 
   const panel = (
-    <div role="tabpanel" id={`panel-${active}`} aria-labelledby={`tab-${active}`} className="animate-in fade-in duration-200">
+    <div
+      role="tabpanel"
+      id={`panel-${active}`}
+      aria-labelledby={`tab-${active}`}
+      className="animate-in fade-in duration-200"
+    >
       <Panel />
     </div>
   );
@@ -83,7 +96,12 @@ export function Dock({ mobile, onExpandedChange }: DockProps) {
   };
   const onPointerMove = (e: React.PointerEvent) => {
     if (!drag.current) return;
-    sheetRef.current!.style.height = `${Math.max(80, drag.current.h + drag.current.y - e.clientY)}px`;
+    const height = Math.max(
+      80,
+      Math.min(window.innerHeight * 0.9, drag.current.h + drag.current.y - e.clientY),
+    );
+    sheetRef.current!.style.height = `${height}px`;
+    onExpandedChange?.(height > 100);
   };
   const onPointerUp = (e: React.PointerEvent) => {
     if (!drag.current) return;
@@ -94,8 +112,15 @@ export function Dock({ mobile, onExpandedChange }: DockProps) {
     el.style.transition = "";
     el.style.height = "";
     const vh = window.innerHeight;
-    if (Math.abs(dy) < 6) { setSnap(order[(order.indexOf(snap) + 1) % 3]!); return; }
-    setSnap(h > vh * 0.67 ? "full" : h > vh * 0.3 ? "half" : "peek");
+    if (Math.abs(dy) < 6) {
+      const next = order[(order.indexOf(snap) + 1) % 3]!;
+      setSnap(next);
+      onExpandedChange?.(next !== "peek");
+      return;
+    }
+    const next = h > vh * 0.67 ? "full" : h > vh * 0.3 ? "half" : "peek";
+    setSnap(next);
+    onExpandedChange?.(next !== "peek");
   };
 
   return (
@@ -111,6 +136,14 @@ export function Dock({ mobile, onExpandedChange }: DockProps) {
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
+        onPointerCancel={() => {
+          drag.current = null;
+          if (sheetRef.current) {
+            sheetRef.current.style.height = "";
+            sheetRef.current.style.transition = "";
+          }
+          onExpandedChange?.(snap !== "peek");
+        }}
         onKeyDown={(e) => {
           if (e.key === "ArrowUp") setSnap(order[Math.min(2, order.indexOf(snap) + 1)]!);
           if (e.key === "ArrowDown") setSnap(order[Math.max(0, order.indexOf(snap) - 1)]!);
@@ -120,7 +153,9 @@ export function Dock({ mobile, onExpandedChange }: DockProps) {
         <span className="h-1.5 w-10 rounded-full bg-border" />
       </button>
       <div className="px-3">{tabBar}</div>
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 pb-3 pt-3">{snap !== "peek" && panel}</div>
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 pb-3 pt-3">
+        {snap !== "peek" && panel}
+      </div>
     </div>
   );
 }

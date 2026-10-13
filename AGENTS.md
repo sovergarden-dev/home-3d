@@ -11,14 +11,14 @@
 
 ## Project rules
 - All map/scene state lives in the single zustand store `src/state/appStore.ts`; UI controls only read/write it so a future 3D engine can subscribe without touching UI.
-- `SceneViewport` is a client-only placeholder (`#scene-root`); no 3D/WebGL code in this repo yet.
+- `SceneViewport` mounts a client-only fictional Three.js demo in `#scene-root`; all geographic/private data is absent.
 - UI strings come from `src/i18n/{vi,en}.ts` via `useT()`; never hardcode copy in components.
 
 # Phố Nhà Mình — hướng dẫn cho agent
 
-Web app bản đồ 3D khu phố quanh nhà Syringa, nhà làm tâm. Kế hoạch gốc là trang Notion "Phố Nhà Mình — Siêu kế hoạch map 3D"; `docs/PLAN.md` là bản sao, lệch nhau thì theo Notion. Chỉ làm đúng pha hoặc việc được giao.
+Web app bản đồ 3D khu phố quanh nhà Syringa, nhà làm tâm. Kế hoạch gốc là trang Notion "Phố Nhà Mình — Siêu kế hoạch map 3D"; `docs/PLAN.md` là bản sao, lệch nhau thì theo Notion. Chỉ làm đúng pha hoặc việc được giao. Demo 1 là ngoại lệ lát cắt xuyên pha được chủ dự án cho phép: bản chạy thử hư cấu trước, chi tiết sau. Xem `docs/DECISIONS.md` và `docs/BACKLOG.md`; không tự thêm dữ liệu thật.
 
-Khối LOVABLE ở đầu file do Lovable quản lý: giữ nguyên. Mục "Project rules" do Lovable viết khi dựng vỏ, vẫn đúng, trừ câu "no 3D/WebGL code in this repo yet": P3 sửa câu này khi thêm engine.
+Khối LOVABLE ở đầu file do Lovable quản lý: giữ nguyên. Mục "Project rules" do Lovable viết khi dựng vỏ, vẫn đúng, Demo 1 đã thay câu placeholder bằng engine Three.js client-only; các pha 3D đầy đủ vẫn chưa hoàn tất.
 
 ## Sự thật cố định
 

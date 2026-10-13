@@ -14,7 +14,10 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Phố Nhà Mình — Bản đồ 3D khu phố" },
-      { name: "description", content: "Bản đồ 3D tương tác của khu phố quanh nhà: đổi giờ, thời tiết và ngày lễ." },
+      {
+        name: "description",
+        content: "Bản đồ 3D tương tác của khu phố quanh nhà: đổi giờ, thời tiết và ngày lễ.",
+      },
       { property: "og:title", content: "Phố Nhà Mình — Bản đồ 3D khu phố" },
       { property: "og:description", content: "Phố nhà mình, một chút thôi." },
       { property: "og:type", content: "website" },
@@ -30,11 +33,15 @@ function Home() {
   // The expanded bottom sheet sits on top of the map controls, so hide them until it is back to peek.
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const lang = useAppStore((s) => s.language);
-  useEffect(() => { document.documentElement.lang = lang; }, [lang]);
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = prev; };
+    return () => {
+      document.body.style.overflow = prev;
+    };
   }, []);
 
   return (
@@ -49,7 +56,9 @@ function Home() {
         }}
       >
         <div className="flex flex-col-reverse gap-2 sm:grid sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start sm:gap-3">
-          <div className="min-w-0 self-start sm:justify-self-start"><TopInfo /></div>
+          <div className="min-w-0 self-start sm:justify-self-start">
+            <TopInfo />
+          </div>
           <TopActions />
         </div>
 
@@ -62,8 +71,12 @@ function Home() {
           </div>
         ) : (
           <>
-            <div className="absolute right-[max(1rem,env(safe-area-inset-right))] top-1/2 -translate-y-1/2"><MapControls /></div>
-            <div className="absolute inset-x-0 bottom-[max(1rem,env(safe-area-inset-bottom))] flex justify-center"><Dock mobile={false} /></div>
+            <div className="absolute right-[max(1rem,env(safe-area-inset-right))] top-1/2 -translate-y-1/2">
+              <MapControls />
+            </div>
+            <div className="absolute inset-x-0 bottom-[max(1rem,env(safe-area-inset-bottom))] flex justify-center">
+              <Dock mobile={false} />
+            </div>
           </>
         )}
       </div>

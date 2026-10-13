@@ -3,9 +3,20 @@ import { Camera, Info, Volume2, VolumeX } from "lucide-react";
 import { toast } from "sonner";
 import { useAppStore, type Language } from "@/state/appStore";
 import { useT } from "@/i18n";
+import { captureDemoFrame } from "@/engine/capture";
 
 export function TopActions() {
   const t = useT();
+  const ready = useAppStore((s) => s.sceneStatus === "ready");
+  function capture() {
+    const image = captureDemoFrame();
+    if (!image) {
+      toast(t.captureUnavailable);
+      return;
+    }
+    useAppStore.getState().addMoment(image);
+    toast(t.captured);
+  }
   const soundOn = useAppStore((s) => s.soundOn);
   const toggleSound = useAppStore((s) => s.toggleSound);
   const lang = useAppStore((s) => s.language);
@@ -17,6 +28,8 @@ export function TopActions() {
         <button
           type="button"
           onClick={toggleSound}
+          disabled={!ready}
+          title={t.soundDemo}
           aria-pressed={soundOn}
           aria-label={t.sound}
           className="ctl px-3 text-foreground hover:bg-secondary"
@@ -24,7 +37,11 @@ export function TopActions() {
           {soundOn ? <Volume2 className="h-4 w-4 text-accent" /> : <VolumeX className="h-4 w-4" />}
           <span className="hidden sm:inline">{t.sound}</span>
         </button>
-        <div role="radiogroup" aria-label={t.language} className="flex rounded-xl bg-secondary p-0.5">
+        <div
+          role="radiogroup"
+          aria-label={t.language}
+          className="flex rounded-xl bg-secondary p-0.5"
+        >
           {(["vi", "en"] as Language[]).map((l) => (
             <button
               key={l}
@@ -38,13 +55,19 @@ export function TopActions() {
             </button>
           ))}
         </div>
-        <Link to="/gioi-thieu" aria-label={t.about} className="ctl text-foreground hover:bg-secondary">
+        <Link
+          to="/gioi-thieu"
+          aria-label={t.about}
+          className="ctl text-foreground hover:bg-secondary"
+        >
           <Info className="h-4 w-4" />
         </Link>
       </div>
       <button
         type="button"
-        onClick={() => toast(t.captured)}
+        onClick={capture}
+        disabled={!ready}
+        aria-label={t.capture}
         className="ctl bg-accent px-4 text-accent-foreground shadow-[var(--shadow-soft)] hover:brightness-105"
       >
         <Camera className="h-4 w-4" />

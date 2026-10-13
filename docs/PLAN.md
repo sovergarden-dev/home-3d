@@ -1,10 +1,12 @@
 # Phố Nhà Mình — Siêu kế hoạch web app map 3D
 
+> **Cập nhật Demo 1:** P1.1 đã merge và chủ dự án xác nhận Publish. Sau đó được cho phép làm một demo 3D hư cấu xuyên pha trước, tinh chỉnh sau. Xem DECISIONS.md/BACKLOG.md. Không coi P2–P13 đã hoàn tất. Yêu cầu repo private cũ trong snapshot dưới đây bị quyết định giữ public thay thế; bảo vệ dữ liệu thật vẫn giữ nguyên.
+
 > Notion AI lập 13/10/2026. Bản đồ 3D khu phố quanh nhà, nhà mình làm tâm. Không ghi secret, API key, token, toạ độ hay địa chỉ nhà vào tài liệu này, Notion hay repo.
 
 ## Cập nhật 13/10/2026 — sau khi có vỏ UI
 
-- **P1 xong**: Lovable đã dựng vỏ và sync GitHub (`sovergarden-dev/home-3d`: TanStack Start, bun, React 19, zustand, vitest); bản publish chạy được. Repo đang **public**: chuyển private trước khi áp patch P1.1.
+- **P1 xong**: Lovable đã dựng vỏ và sync GitHub (`sovergarden-dev/home-3d`: TanStack Start, bun, React 19, zustand, vitest); bản publish chạy được. Repo giữ **public** theo quyết định mới; chỉ mã nguồn/demo, không dữ liệu thật hoặc cấu hình riêng.
 - **Vùng phủ (P0)**: Google Earth không có toà nhà 3D ở khu nhà; Street View có, ảnh 06/2024 (còn nhà cũ). ⇒ Phố mình là lớp chính; Phố thật v1 chỉ mở Google Maps (Street View, vệ tinh) qua đường link (D3).
 - **D10 — một tâm cố định**: bản đồ luôn lấy nhà mình làm tâm; bỏ bộ chọn địa điểm "Góc phố".
 - **D11 — lô nhà để trống**: nhà cũ đã phá để xây lại. Dựng phố xung quanh trước, không dựng lại nhà cũ; nhà mới thêm sau (P6 khi có file kiến trúc sư, P11 khi xây xong).
@@ -183,7 +185,7 @@ Mỗi pha là một hoặc vài PR. Cỡ tương đối: S, M, L. **MVP đẹp =
   - `AGENTS.md`: giữ nguyên khối LOVABLE và "Project rules" do Lovable tạo, thêm hướng dẫn cho agent. `docs/PLAN.md`: bản sao trang này.
   - Test `src/test/fixed-home.test.tsx` khoá các hành vi trên.
 - **Xong khi**: `bunx tsc --noEmit`, `bun run test`, `bun run build` đạt; lint không tệ hơn main; Notion AI xác nhận; Syringa merge; Lovable nhận commit, bấm Publish.
-- **Ràng buộc**: repo private trước khi áp; không sửa gì ngoài patch; không sửa trên Lovable khi PR đang mở.
+- **Ràng buộc**: repo giữ public theo quyết định mới; không dữ liệu thật/cấu hình riêng; không sửa gì ngoài patch; không sửa trên Lovable khi PR đang mở.
 
 ### P2 — Nền repo và CI (Hermes, Cỡ M)
 
