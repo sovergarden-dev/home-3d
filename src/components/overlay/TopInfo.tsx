@@ -9,7 +9,7 @@ export function TopInfo() {
   const minutes = useAppStore((s) => s.timeOfDayMinutes);
   const weather = useAppStore((s) => s.weather);
   const placeId = useAppStore((s) => s.selectedPlaceId);
-  const place = places.find((p) => p.id === placeId) ?? places[0];
+  const place = places.find((p) => p.id === placeId) ?? places[0]!;
   const weekday = t.weekdays[new Date().getDay()];
 
   return (

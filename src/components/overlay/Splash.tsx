@@ -20,6 +20,7 @@ export function Splash() {
 
   useEffect(() => {
     if (progress >= 1) { const id = setTimeout(() => setGone(true), 450); return () => clearTimeout(id); }
+    return undefined;
   }, [progress]);
 
   if (gone) return null;

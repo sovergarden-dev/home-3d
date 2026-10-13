@@ -28,7 +28,7 @@ export function Dock({ mobile }: { mobile: boolean }) {
     const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
     if (!d) return;
     const n = (i + d + tabs.length) % tabs.length;
-    setActive(tabs[n].id);
+    setActive(tabs[n]!.id);
     tabRefs.current[n]?.focus();
   };
 
@@ -86,7 +86,7 @@ export function Dock({ mobile }: { mobile: boolean }) {
     el.style.transition = "";
     el.style.height = "";
     const vh = window.innerHeight;
-    if (Math.abs(dy) < 6) { setSnap(order[(order.indexOf(snap) + 1) % 3]); return; }
+    if (Math.abs(dy) < 6) { setSnap(order[(order.indexOf(snap) + 1) % 3]!); return; }
     setSnap(h > vh * 0.67 ? "full" : h > vh * 0.3 ? "half" : "peek");
   };
 
@@ -104,8 +104,8 @@ export function Dock({ mobile }: { mobile: boolean }) {
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onKeyDown={(e) => {
-          if (e.key === "ArrowUp") setSnap(order[Math.min(2, order.indexOf(snap) + 1)]);
-          if (e.key === "ArrowDown") setSnap(order[Math.max(0, order.indexOf(snap) - 1)]);
+          if (e.key === "ArrowUp") setSnap(order[Math.min(2, order.indexOf(snap) + 1)]!);
+          if (e.key === "ArrowDown") setSnap(order[Math.max(0, order.indexOf(snap) - 1)]!);
         }}
         className="flex h-6 w-full shrink-0 touch-none items-center justify-center"
       >
