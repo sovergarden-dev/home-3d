@@ -1,10 +1,9 @@
 import { useRef, useState, type KeyboardEvent } from "react";
-import { Clock, CloudSun, Lamp, MapPinned, Heart } from "lucide-react";
+import { Clock, CloudSun, Lamp, Heart } from "lucide-react";
 import { useT } from "@/i18n";
-import { FestivalPanel, MemoriesPanel, PlacesPanel, TimePanel, WeatherPanel } from "./DockPanels";
+import { FestivalPanel, MemoriesPanel, TimePanel, WeatherPanel } from "./DockPanels";
 
 const tabs = [
-  { id: "places", Icon: MapPinned, Panel: PlacesPanel },
   { id: "time", Icon: Clock, Panel: TimePanel },
   { id: "weather", Icon: CloudSun, Panel: WeatherPanel },
   { id: "festival", Icon: Lamp, Panel: FestivalPanel },
@@ -17,7 +16,7 @@ const snapHeights: Record<Snap, string> = { peek: "96px", half: "48dvh", full: "
 
 export function Dock({ mobile }: { mobile: boolean }) {
   const t = useT();
-  const [active, setActive] = useState<TabId>("places");
+  const [active, setActive] = useState<TabId>("time");
   const [snap, setSnap] = useState<Snap>("peek");
   const drag = useRef<{ y: number; h: number } | null>(null);
   const sheetRef = useRef<HTMLDivElement>(null);

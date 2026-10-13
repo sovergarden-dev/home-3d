@@ -6,6 +6,10 @@ export type Festival = "normal" | "tet" | "midautumn";
 export type ViewMode = "diorama" | "walk" | "real";
 export type Language = "vi" | "en";
 
+/**
+ * Single source of truth shared by the UI overlay and the future 3D engine.
+ * The map is always centred on the house (the ENU origin), so there is no place selection.
+ */
 export interface AppState {
   timeOfDayMinutes: number;
   timeSpeed: TimeSpeed;
@@ -14,7 +18,6 @@ export interface AppState {
   realWeatherEnabled: boolean;
   festival: Festival;
   viewMode: ViewMode;
-  selectedPlaceId: string | null;
   heading: number;
   zoom: number;
   soundOn: boolean;
@@ -27,10 +30,10 @@ export interface AppState {
   setRealWeatherEnabled: (v: boolean) => void;
   setFestival: (f: Festival) => void;
   setViewMode: (v: ViewMode) => void;
-  selectPlace: (id: string | null) => void;
   setHeading: (deg: number) => void;
   zoomIn: () => void;
   zoomOut: () => void;
+  /** Back to the house: default zoom, facing north. */
   resetView: () => void;
   toggleSound: () => void;
   setLanguage: (l: Language) => void;
@@ -47,7 +50,6 @@ export const useAppStore = create<AppState>((set) => ({
   realWeatherEnabled: false,
   festival: "normal",
   viewMode: "diorama",
-  selectedPlaceId: "home",
   heading: 0,
   zoom: 1,
   soundOn: false,
@@ -60,11 +62,10 @@ export const useAppStore = create<AppState>((set) => ({
   setRealWeatherEnabled: (realWeatherEnabled) => set({ realWeatherEnabled }),
   setFestival: (festival) => set({ festival }),
   setViewMode: (viewMode) => set({ viewMode }),
-  selectPlace: (selectedPlaceId) => set({ selectedPlaceId }),
   setHeading: (deg) => set({ heading: ((deg % 360) + 360) % 360 }),
   zoomIn: () => set((s) => ({ zoom: Math.min(4, +(s.zoom * 1.25).toFixed(3)) })),
   zoomOut: () => set((s) => ({ zoom: Math.max(0.25, +(s.zoom / 1.25).toFixed(3)) })),
-  resetView: () => set({ zoom: 1, heading: 0, selectedPlaceId: "home" }),
+  resetView: () => set({ zoom: 1, heading: 0 }),
   toggleSound: () => set((s) => ({ soundOn: !s.soundOn })),
   setLanguage: (language) => set({ language }),
   setLoadingProgress: (p) => set({ loadingProgress: Math.max(0, Math.min(1, p)) }),
