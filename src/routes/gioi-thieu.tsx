@@ -6,7 +6,10 @@ export const Route = createFileRoute("/gioi-thieu")({
   head: () => ({
     meta: [
       { title: "Giới thiệu — Phố Nhà Mình" },
-      { name: "description", content: "Câu chuyện đằng sau Phố Nhà Mình, tấm bản đồ 3D nhỏ của khu phố quanh nhà." },
+      {
+        name: "description",
+        content: "Câu chuyện đằng sau Phố Nhà Mình, tấm bản đồ 3D nhỏ của khu phố quanh nhà.",
+      },
       { property: "og:title", content: "Giới thiệu — Phố Nhà Mình" },
       { property: "og:description", content: "Câu chuyện đằng sau tấm bản đồ khu phố quanh nhà." },
       { property: "og:type", content: "article" },
@@ -26,7 +29,11 @@ function About() {
         </Link>
         <h1 className="mt-4 font-serif text-4xl italic text-primary">{t.aboutTitle}</h1>
         <p className="mt-2 font-serif italic text-accent">{t.tagline}</p>
-        {t.aboutBody.map((p) => <p key={p} className="mt-4 leading-relaxed text-foreground">{p}</p>)}
+        {t.aboutBody.map((p) => (
+          <p key={p} className="mt-4 leading-relaxed text-foreground">
+            {p}
+          </p>
+        ))}
       </article>
     </main>
   );

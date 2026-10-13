@@ -23,6 +23,11 @@ export interface AppState {
   soundOn: boolean;
   language: Language;
   loadingProgress: number;
+  sceneStatus: "loading" | "ready" | "fallback";
+  viewReset: number;
+  moments: { id: number; image: string; minutes: number }[];
+  addMoment: (image: string) => void;
+  clearMoments: () => void;
   setTimeOfDayMinutes: (m: number) => void;
   setTimeSpeed: (s: TimeSpeed) => void;
   setRealTimeEnabled: (v: boolean) => void;
@@ -44,17 +49,25 @@ const wrapMinutes = (m: number) => ((Math.round(m) % 1440) + 1440) % 1440;
 
 export const useAppStore = create<AppState>((set) => ({
   timeOfDayMinutes: 7 * 60,
-  timeSpeed: 1,
+  timeSpeed: 0,
   realTimeEnabled: false,
   weather: "sunny",
   realWeatherEnabled: false,
   festival: "normal",
   viewMode: "diorama",
-  heading: 0,
+  heading: 28,
   zoom: 1,
   soundOn: false,
   language: "vi",
   loadingProgress: 0,
+  sceneStatus: "loading",
+  viewReset: 0,
+  moments: [],
+  addMoment: (image) =>
+    set((s) => ({
+      moments: [{ id: Date.now(), image, minutes: s.timeOfDayMinutes }, ...s.moments].slice(0, 4),
+    })),
+  clearMoments: () => set({ moments: [] }),
   setTimeOfDayMinutes: (m) => set({ timeOfDayMinutes: wrapMinutes(m) }),
   setTimeSpeed: (timeSpeed) => set({ timeSpeed }),
   setRealTimeEnabled: (realTimeEnabled) => set({ realTimeEnabled }),
@@ -65,7 +78,8 @@ export const useAppStore = create<AppState>((set) => ({
   setHeading: (deg) => set({ heading: ((deg % 360) + 360) % 360 }),
   zoomIn: () => set((s) => ({ zoom: Math.min(4, +(s.zoom * 1.25).toFixed(3)) })),
   zoomOut: () => set((s) => ({ zoom: Math.max(0.25, +(s.zoom / 1.25).toFixed(3)) })),
-  resetView: () => set({ zoom: 1, heading: 0 }),
+  resetView: () =>
+    set((s) => ({ zoom: 1, heading: 0, viewMode: "diorama", viewReset: s.viewReset + 1 })),
   toggleSound: () => set((s) => ({ soundOn: !s.soundOn })),
   setLanguage: (language) => set({ language }),
   setLoadingProgress: (p) => set({ loadingProgress: Math.max(0, Math.min(1, p)) }),
