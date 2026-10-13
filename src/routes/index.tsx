@@ -46,8 +46,8 @@ function Home() {
           paddingRight: "max(1rem, env(safe-area-inset-right))",
         }}
       >
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
-          <div className="min-w-0 justify-self-start"><TopInfo /></div>
+        <div className="flex flex-col-reverse gap-2 sm:grid sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start sm:gap-3">
+          <div className="min-w-0 self-start sm:justify-self-start"><TopInfo /></div>
           <TopActions />
         </div>
 
