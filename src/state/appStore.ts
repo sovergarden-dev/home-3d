@@ -1,0 +1,71 @@
+import { create } from "zustand";
+
+export type TimeSpeed = 0 | 1 | 4;
+export type Weather = "sunny" | "cloudy" | "rain" | "storm";
+export type Festival = "normal" | "tet" | "midautumn";
+export type ViewMode = "diorama" | "walk" | "real";
+export type Language = "vi" | "en";
+
+export interface AppState {
+  timeOfDayMinutes: number;
+  timeSpeed: TimeSpeed;
+  realTimeEnabled: boolean;
+  weather: Weather;
+  realWeatherEnabled: boolean;
+  festival: Festival;
+  viewMode: ViewMode;
+  selectedPlaceId: string | null;
+  heading: number;
+  zoom: number;
+  soundOn: boolean;
+  language: Language;
+  loadingProgress: number;
+  setTimeOfDayMinutes: (m: number) => void;
+  setTimeSpeed: (s: TimeSpeed) => void;
+  setRealTimeEnabled: (v: boolean) => void;
+  setWeather: (w: Weather) => void;
+  setRealWeatherEnabled: (v: boolean) => void;
+  setFestival: (f: Festival) => void;
+  setViewMode: (v: ViewMode) => void;
+  selectPlace: (id: string | null) => void;
+  setHeading: (deg: number) => void;
+  zoomIn: () => void;
+  zoomOut: () => void;
+  resetView: () => void;
+  toggleSound: () => void;
+  setLanguage: (l: Language) => void;
+  setLoadingProgress: (p: number) => void;
+}
+
+const wrapMinutes = (m: number) => ((Math.round(m) % 1440) + 1440) % 1440;
+
+export const useAppStore = create<AppState>((set) => ({
+  timeOfDayMinutes: 7 * 60,
+  timeSpeed: 1,
+  realTimeEnabled: false,
+  weather: "sunny",
+  realWeatherEnabled: false,
+  festival: "normal",
+  viewMode: "diorama",
+  selectedPlaceId: "home",
+  heading: 0,
+  zoom: 1,
+  soundOn: false,
+  language: "vi",
+  loadingProgress: 0,
+  setTimeOfDayMinutes: (m) => set({ timeOfDayMinutes: wrapMinutes(m) }),
+  setTimeSpeed: (timeSpeed) => set({ timeSpeed }),
+  setRealTimeEnabled: (realTimeEnabled) => set({ realTimeEnabled }),
+  setWeather: (weather) => set({ weather }),
+  setRealWeatherEnabled: (realWeatherEnabled) => set({ realWeatherEnabled }),
+  setFestival: (festival) => set({ festival }),
+  setViewMode: (viewMode) => set({ viewMode }),
+  selectPlace: (selectedPlaceId) => set({ selectedPlaceId }),
+  setHeading: (deg) => set({ heading: ((deg % 360) + 360) % 360 }),
+  zoomIn: () => set((s) => ({ zoom: Math.min(4, +(s.zoom * 1.25).toFixed(3)) })),
+  zoomOut: () => set((s) => ({ zoom: Math.max(0.25, +(s.zoom / 1.25).toFixed(3)) })),
+  resetView: () => set({ zoom: 1, heading: 0, selectedPlaceId: "home" }),
+  toggleSound: () => set((s) => ({ soundOn: !s.soundOn })),
+  setLanguage: (language) => set({ language }),
+  setLoadingProgress: (p) => set({ loadingProgress: Math.max(0, Math.min(1, p)) }),
+}));
