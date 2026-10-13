@@ -165,6 +165,9 @@ test("explicit local preview refuses malformed package instead of silently retur
   page,
 }) => {
   await page.goto("/?local-preview=1");
+  await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", /ready|fallback/, {
+    timeout: 30000,
+  });
   await expect(page.getByText("Xem trước gói cục bộ")).toBeVisible();
   await page.getByLabel("Mở gói world").setInputFiles({
     name: "invalid-world.json",
@@ -220,6 +223,9 @@ test("explicit local preview opens a valid synthetic package as one in-memory wo
     lots: [],
   };
   await page.goto("/?local-preview=1");
+  await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", /ready|fallback/, {
+    timeout: 30000,
+  });
   await page.getByLabel("Mở gói world").setInputFiles({
     name: "synthetic-world.json",
     mimeType: "application/json",
