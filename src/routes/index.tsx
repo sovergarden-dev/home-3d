@@ -4,6 +4,7 @@ import { SceneViewport } from "@/components/overlay/SceneViewport";
 import { TopInfo } from "@/components/overlay/TopInfo";
 import { TopActions } from "@/components/overlay/TopActions";
 import { MapControls } from "@/components/overlay/MapControls";
+import { ScaleBar } from "@/components/overlay/ScaleBar";
 import { Dock, SHEET_PEEK } from "@/components/overlay/Dock";
 import { Splash } from "@/components/overlay/Splash";
 import { useClock } from "@/components/overlay/useClock";
@@ -61,6 +62,8 @@ function Home() {
           </div>
           <TopActions />
         </div>
+
+        <ScaleBar />
 
         {mobile ? (
           <div

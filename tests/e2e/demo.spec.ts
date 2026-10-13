@@ -52,6 +52,21 @@ test("time, weather, festivals, camera, capture and clear work in a rendered sce
   expect(href).toMatch(/^data:image\/png;base64,/);
   await page.getByRole("button", { name: "Xoá ảnh trong phiên" }).click();
   await expect(page.getByText("Chưa có kỷ niệm nào")).toBeVisible();
+
+  // Test Top-down / Plan view mode (Bước 4: Camera nhìn thẳng từ trên xuống, thước mét, lớp dữ liệu)
+  await page.getByRole("radio", { name: "Mặt bằng", exact: true }).click();
+  await expect(page.getByTestId("plan-scale-bar")).toBeVisible();
+  await expect(page.getByText("Bắc ↑")).toBeVisible();
+  await expect(page.getByText(/Thước mét/)).toBeVisible();
+
+  // Test Layer Toggles (Cây xanh, Nhãn)
+  await page.getByRole("button", { name: /Cây xanh/ }).click();
+  await page.getByRole("button", { name: /Nhãn/ }).click();
+
+  // Return to Diorama
+  await page.getByRole("radio", { name: "Diorama", exact: true }).click();
+  await expect(page.getByTestId("plan-scale-bar")).toBeHidden();
+
   expect(errors).toEqual([]);
 });
 test("mobile controls hide immediately during drag and return at peek", async ({ page }) => {

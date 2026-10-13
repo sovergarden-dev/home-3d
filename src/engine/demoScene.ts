@@ -5,6 +5,8 @@ import { DEMO_CONFIG } from "@/config/demo";
 import { bindCapture } from "./capture";
 import { createDemoAudio } from "./demoAudio";
 import { createDemoLayout, daylightAt, seededRandom } from "./demoLayout";
+import { REALISTIC_DISTRICT_FIXTURE } from "./fixtures/realisticDistrict";
+import { buildBuildingMeshes, buildRoadMeshes, buildEnvironmentProps } from "./polygonMeshBuilder";
 
 type Shape = "box" | "cylinder" | "sphere";
 interface Part {
@@ -294,6 +296,54 @@ export function createDemoScene(host: HTMLDivElement, marker: HTMLDivElement, on
     mesh.computeBoundingSphere();
     scene.add(mesh);
   }
+
+  // Realistic Polygon District Layer (H6: đúng mặt bằng, polygon khối nhà, đường cong và hẻm)
+  const districtBuildings = buildBuildingMeshes(REALISTIC_DISTRICT_FIXTURE.buildings, (c, r, m) => {
+    let mat = materials.get(c);
+    if (!mat) {
+      mat = new THREE.MeshStandardMaterial({
+        color: c,
+        roughness: r ?? 0.85,
+        metalness: m ?? 0.05,
+      });
+      materials.set(c, mat);
+    }
+    return mat;
+  });
+  scene.add(districtBuildings.group);
+
+  const districtRoads = buildRoadMeshes(REALISTIC_DISTRICT_FIXTURE.roads, (c, r, m) => {
+    let mat = materials.get(c);
+    if (!mat) {
+      mat = new THREE.MeshStandardMaterial({
+        color: c,
+        roughness: r ?? 0.88,
+        metalness: m ?? 0.05,
+      });
+      materials.set(c, mat);
+    }
+    return mat;
+  });
+  scene.add(districtRoads.group);
+
+  const districtProps = buildEnvironmentProps(
+    REALISTIC_DISTRICT_FIXTURE.trees,
+    REALISTIC_DISTRICT_FIXTURE.props,
+    (c, r, m) => {
+      let mat = materials.get(c);
+      if (!mat) {
+        mat = new THREE.MeshStandardMaterial({
+          color: c,
+          roughness: r ?? 0.8,
+          metalness: m ?? 0.05,
+        });
+        materials.set(c, mat);
+      }
+      return mat;
+    },
+  );
+  scene.add(districtProps.group);
+  const treeLayer = districtProps.group.getObjectByName("tree-layer");
   const scooters: THREE.Group[] = [];
   const scooterMats = [material("#a6573e"), material("#3e6c68"), material("#d2ae66")];
   for (let i = 0; i < 8; i++) {
@@ -357,12 +407,21 @@ export function createDemoScene(host: HTMLDivElement, marker: HTMLDivElement, on
     const state = useAppStore.getState();
     const theta = THREE.MathUtils.degToRad(state.heading);
     const walk = state.viewMode === "walk";
-    controls.minDistance = walk ? 4 : 18;
-    controls.maxDistance = walk ? 50 : 344;
+    const topdown = state.viewMode === "topdown";
+    controls.minDistance = walk ? 4 : topdown ? 25 : 18;
+    controls.maxDistance = walk ? 50 : topdown ? 360 : 344;
+    applying = true;
+    if (topdown) {
+      const distance = 135 / state.zoom;
+      controls.target.set(0, 0, 0);
+      camera.position.set(0.001, distance, 0.001);
+      controls.update();
+      applying = false;
+      return;
+    }
     const distance = walk ? 15 / Math.sqrt(state.zoom) : 112 / state.zoom;
     const height = walk ? 2.5 : distance * 0.64;
     const radius = walk ? distance : distance * 0.77;
-    applying = true;
     controls.target.set(0, walk ? 1.6 : 1, 0);
     camera.position.set(Math.sin(theta) * radius, height, Math.cos(theta) * radius);
     controls.update();
@@ -485,6 +544,10 @@ export function createDemoScene(host: HTMLDivElement, marker: HTMLDivElement, on
       applyCamera();
       dirty = true;
     }
+    if (state.showTrees !== previous.showTrees && treeLayer) {
+      treeLayer.visible = state.showTrees;
+      dirty = true;
+    }
     if (
       state.weather !== previous.weather ||
       state.timeOfDayMinutes !== previous.timeOfDayMinutes ||
@@ -578,6 +641,9 @@ export function createDemoScene(host: HTMLDivElement, marker: HTMLDivElement, on
       });
       for (const geometry of Object.values(geometries)) geometry.dispose();
       for (const m of materials.values()) m.dispose();
+      for (const d of districtBuildings.disposables) d.dispose();
+      for (const d of districtRoads.disposables) d.dispose();
+      for (const d of districtProps.disposables) d.dispose();
       nightMaterials.forEach((m) => m.dispose());
       ring.geometry.dispose();
       (ring.material as THREE.Material).dispose();

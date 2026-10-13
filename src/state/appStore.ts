@@ -3,7 +3,7 @@ import { create } from "zustand";
 export type TimeSpeed = 0 | 1 | 4;
 export type Weather = "sunny" | "cloudy" | "rain" | "storm";
 export type Festival = "normal" | "tet" | "midautumn";
-export type ViewMode = "diorama" | "walk" | "real";
+export type ViewMode = "diorama" | "walk" | "topdown" | "real";
 export type Language = "vi" | "en";
 
 /**
@@ -25,6 +25,8 @@ export interface AppState {
   loadingProgress: number;
   sceneStatus: "loading" | "ready" | "fallback";
   viewReset: number;
+  showTrees: boolean;
+  showLabels: boolean;
   moments: { id: number; image: string; minutes: number }[];
   addMoment: (image: string) => void;
   clearMoments: () => void;
@@ -41,6 +43,8 @@ export interface AppState {
   /** Back to the house: default zoom, facing north. */
   resetView: () => void;
   toggleSound: () => void;
+  toggleTrees: () => void;
+  toggleLabels: () => void;
   setLanguage: (l: Language) => void;
   setLoadingProgress: (p: number) => void;
 }
@@ -62,6 +66,8 @@ export const useAppStore = create<AppState>((set) => ({
   loadingProgress: 0,
   sceneStatus: "loading",
   viewReset: 0,
+  showTrees: true,
+  showLabels: true,
   moments: [],
   addMoment: (image) =>
     set((s) => ({
@@ -81,6 +87,8 @@ export const useAppStore = create<AppState>((set) => ({
   resetView: () =>
     set((s) => ({ zoom: 1, heading: 0, viewMode: "diorama", viewReset: s.viewReset + 1 })),
   toggleSound: () => set((s) => ({ soundOn: !s.soundOn })),
+  toggleTrees: () => set((s) => ({ showTrees: !s.showTrees })),
+  toggleLabels: () => set((s) => ({ showLabels: !s.showLabels })),
   setLanguage: (language) => set({ language }),
   setLoadingProgress: (p) => set({ loadingProgress: Math.max(0, Math.min(1, p)) }),
 }));

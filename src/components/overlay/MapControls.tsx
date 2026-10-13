@@ -1,9 +1,19 @@
-import { Compass, Footprints, Box, Building2, Minus, Plus, LocateFixed } from "lucide-react";
+import {
+  Compass,
+  Footprints,
+  Box,
+  Building2,
+  Minus,
+  Plus,
+  LocateFixed,
+  Map as MapIcon,
+} from "lucide-react";
 import { useAppStore, type ViewMode } from "@/state/appStore";
 import { useT } from "@/i18n";
 
 const modes: { id: ViewMode; Icon: typeof Box }[] = [
   { id: "diorama", Icon: Box },
+  { id: "topdown", Icon: MapIcon },
   { id: "walk", Icon: Footprints },
 ];
 
