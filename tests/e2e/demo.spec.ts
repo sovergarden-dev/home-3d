@@ -1,12 +1,15 @@
 import { test, expect, type Page } from "@playwright/test";
-async function openDemo(page: Page) {
+async function openDemo(page: Page, options: { requireReady?: boolean } = {}) {
+  const requireReady = options.requireReady ?? process.env["REQUIRE_WEBGL2"] === "1";
   await page.route("https://fonts.googleapis.com/**", (route) => route.abort());
   await page.route("https://fonts.gstatic.com/**", (route) => route.abort());
   await page.goto("/");
   await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", /ready|fallback/, {
     timeout: 30000,
   });
-  return (await page.locator("#scene-root").getAttribute("data-scene-state")) === "ready";
+  const state = await page.locator("#scene-root").getAttribute("data-scene-state");
+  if (requireReady) expect(state).toBe("ready");
+  return state === "ready";
 }
 test("demo labels, privacy, noindex and graceful 3D capability branch", async ({ page }) => {
   const privateCalls: string[] = [];
@@ -102,7 +105,7 @@ test("WebGL unavailable cannot trap the user behind loading or claim capture suc
       return Reflect.apply(original, this, [type, ...args]);
     } as typeof original;
   });
-  await openDemo(page);
+  await openDemo(page, { requireReady: false });
   await expect(page.getByText("Thiết bị chưa mở được 3D")).toBeVisible();
   await expect(page.getByRole("button", { name: "Giữ khoảnh khắc" })).toBeDisabled();
   await expect(page.getByRole("button", { name: "Thử lại 3D" })).toBeVisible();
@@ -125,4 +128,92 @@ test("route roundtrip recreates exactly one canvas and context loss has a recove
   await page.getByRole("button", { name: "Thử lại 3D" }).click();
   await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "ready");
   await expect(page.locator("#scene-root canvas")).toHaveCount(1);
+});
+test("Mặt bằng renders one orthographic world, measures from its camera and applies layer toggles", async ({
+  page,
+}) => {
+  const ready = await openDemo(page);
+  test.skip(!ready, "Fallback does not have a rendered world.");
+  const scene = page.getByTestId("demo-scene");
+  await page.getByRole("radio", { name: "Mặt bằng", exact: true }).click();
+  await expect(scene).toHaveAttribute("data-active-worlds", "1");
+  await expect(scene).toHaveAttribute("data-camera-type", "OrthographicCamera");
+  await expect(scene).toHaveAttribute("data-plan-zenith", "true");
+  const ruler = page.getByTestId("plan-scale-ruler");
+  await expect(ruler).toHaveAttribute("style", /width: [1-9]/);
+  const rulerBeforeZoom = await ruler.getAttribute("style");
+  const canvas = page.locator("#scene-root canvas");
+  await canvas.hover({ position: { x: 180, y: 160 } });
+  await page.mouse.wheel(0, -180);
+  await expect(ruler).not.toHaveAttribute("style", rulerBeforeZoom ?? "");
+  const bounds = await canvas.boundingBox();
+  expect(bounds).not.toBeNull();
+  await page.mouse.move(bounds!.x + 180, bounds!.y + 160);
+  await page.mouse.down();
+  await page.mouse.move(bounds!.x + 230, bounds!.y + 210, { steps: 4 });
+  await page.mouse.up();
+  await expect(scene).toHaveAttribute("data-plan-pan-revision", /[1-9]/);
+  await page.getByRole("button", { name: /Cây xanh/ }).click();
+  await expect(scene).toHaveAttribute("data-trees-visible", "false");
+  await page.getByRole("button", { name: /Nhãn/ }).click();
+  await expect(scene).toHaveAttribute("data-labels-visible", "false");
+});
+test("explicit local preview refuses malformed package instead of silently returning to fixture", async ({
+  page,
+}) => {
+  await page.goto("/?local-preview=1");
+  await expect(page.getByText("Xem trước gói cục bộ")).toBeVisible();
+  await page.getByLabel("Mở gói world").setInputFiles({
+    name: "invalid-world.json",
+    mimeType: "application/json",
+    buffer: Buffer.from("{ invalid"),
+  });
+  await expect(page.getByRole("alert")).toBeVisible();
+  await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-world-mode", "private-error");
+  await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-active-worlds", "0");
+});
+
+test("explicit local preview opens a valid synthetic package as one in-memory world", async ({
+  page,
+}) => {
+  const manifest = {
+    schemaVersion: "1.0",
+    datasetRevision: "synthetic-private-e2e",
+    units: "metres",
+    frameConvention: "ENU_X_EAST_Y_UP_NEG_Z_NORTH",
+    isSynthetic: true,
+    chunks: [],
+    assetHashes: {},
+    licences: ["Synthetic fixture"],
+    coverage: { quality: "synthetic", sourceCount: 1 },
+  };
+  const world = {
+    manifest,
+    roads: [
+      {
+        localId: "road-e2e",
+        polylineENU: [
+          [-6, 0],
+          [6, 0],
+        ],
+        connectorIds: [],
+        roadClass: "residential",
+        carriagewayWidth: 5,
+        elevationLayer: 0,
+        direction: "both",
+        provenance: { source: "synthetic", quality: "synthetic" },
+      },
+    ],
+    buildings: [],
+    lots: [],
+  };
+  await page.goto("/?local-preview=1");
+  await page.getByLabel("Mở gói world").setInputFiles({
+    name: "synthetic-world.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify({ manifest, world })),
+  });
+  await expect(page.getByText("Đã mở gói cục bộ")).toBeVisible();
+  await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-world-mode", "private");
+  await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-active-worlds", "1");
 });

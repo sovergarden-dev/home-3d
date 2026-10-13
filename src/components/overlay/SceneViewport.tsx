@@ -1,11 +1,13 @@
 import { ClientOnly } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { PrivateWorldPanel } from "@/components/overlay/PrivateWorldPanel";
 import { useT } from "@/i18n";
 import { useAppStore } from "@/state/appStore";
 
 function ViewportInner() {
   const t = useT();
   const sceneStatus = useAppStore((s) => s.sceneStatus);
+  const viewMode = useAppStore((s) => s.viewMode);
   const host = useRef<HTMLDivElement>(null);
   const marker = useRef<HTMLDivElement>(null);
   const runtime = useRef<ReturnType<typeof import("@/engine/demoScene").createDemoScene> | null>(
@@ -13,6 +15,10 @@ function ViewportInner() {
   );
   const [attempt, setAttempt] = useState(0);
   const [failed, setFailed] = useState(false);
+  const [localPreview, setLocalPreview] = useState(false);
+  useEffect(() => {
+    setLocalPreview(new URLSearchParams(window.location.search).get("local-preview") === "1");
+  }, []);
   useEffect(() => {
     let cancelled = false;
     const store = useAppStore.getState();
@@ -71,6 +77,7 @@ function ViewportInner() {
         </div>
         <div className="mx-auto h-3 w-px bg-primary" />
       </div>
+      <PrivateWorldPanel enabled={localPreview} />
       {failed ? (
         <div className="absolute inset-0 grid place-items-center px-6">
           <div className="glass max-w-sm p-6 text-center" role="status">
@@ -88,11 +95,11 @@ function ViewportInner() {
             </button>
           </div>
         </div>
-      ) : (
+      ) : viewMode !== "topdown" ? (
         <p className="pointer-events-none absolute bottom-[112px] left-4 max-w-[200px] rounded-lg bg-background/80 px-3 py-2 text-xs text-foreground sm:bottom-5 sm:max-w-[230px]">
           {t.sceneHint}
         </p>
-      )}
+      ) : null}
     </div>
   );
 }

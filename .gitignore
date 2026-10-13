@@ -35,3 +35,9 @@ dist-ssr
 playwright-report/
 test-results/
 pipeline/out/
+pipeline/dist/
+pipeline/cache/
+pipeline/private/
+private-world/
+*.private.json
+*.private.geojson
