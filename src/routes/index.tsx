@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { SceneViewport } from "@/components/overlay/SceneViewport";
 import { TopInfo } from "@/components/overlay/TopInfo";
 import { TopActions } from "@/components/overlay/TopActions";
@@ -27,6 +27,8 @@ export const Route = createFileRoute("/")({
 function Home() {
   useClock();
   const mobile = useIsMobile();
+  // The expanded bottom sheet sits on top of the map controls, so hide them until it is back to peek.
+  const [sheetExpanded, setSheetExpanded] = useState(false);
   const lang = useAppStore((s) => s.language);
   useEffect(() => { document.documentElement.lang = lang; }, [lang]);
   useEffect(() => {
@@ -52,7 +54,10 @@ function Home() {
         </div>
 
         {mobile ? (
-          <div className="absolute right-[max(1rem,env(safe-area-inset-right))]" style={{ bottom: `calc(${SHEET_PEEK} + env(safe-area-inset-bottom) + 0.75rem)` }}>
+          <div
+            className={`absolute right-[max(1rem,env(safe-area-inset-right))] transition-[opacity,visibility] duration-200 motion-reduce:transition-none ${sheetExpanded ? "invisible opacity-0" : "visible opacity-100"}`}
+            style={{ bottom: `calc(${SHEET_PEEK} + env(safe-area-inset-bottom) + 0.75rem)` }}
+          >
             <MapControls />
           </div>
         ) : (
@@ -62,7 +67,7 @@ function Home() {
           </>
         )}
       </div>
-      {mobile && <Dock mobile />}
+      {mobile && <Dock mobile onExpandedChange={setSheetExpanded} />}
       <Splash />
     </main>
   );

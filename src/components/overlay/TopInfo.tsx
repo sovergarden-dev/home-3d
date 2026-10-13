@@ -1,15 +1,11 @@
 import { useAppStore } from "@/state/appStore";
-import { places } from "@/data/places";
 import { formatMinutes, useT } from "@/i18n";
 import { MapPin } from "lucide-react";
 
 export function TopInfo() {
   const t = useT();
-  const lang = useAppStore((s) => s.language);
   const minutes = useAppStore((s) => s.timeOfDayMinutes);
   const weather = useAppStore((s) => s.weather);
-  const placeId = useAppStore((s) => s.selectedPlaceId);
-  const place = places.find((p) => p.id === placeId) ?? places[0]!;
   const weekday = t.weekdays[new Date().getDay()];
 
   return (
@@ -22,7 +18,7 @@ export function TopInfo() {
       </div>
       <div className="mt-1 flex items-center gap-1.5 text-sm font-medium text-foreground">
         <MapPin className="h-3.5 w-3.5 shrink-0 text-accent" aria-hidden />
-        <span className="truncate">{place.name[lang]}</span>
+        <span className="truncate">{t.home}</span>
       </div>
     </div>
   );

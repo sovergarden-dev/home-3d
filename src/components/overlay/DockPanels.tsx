@@ -1,5 +1,4 @@
 import { useAppStore, type Festival, type TimeSpeed, type Weather } from "@/state/appStore";
-import { places } from "@/data/places";
 import { formatMinutes, useT } from "@/i18n";
 import { Cloud, CloudRain, CloudLightning, Sun, Sparkles } from "lucide-react";
 
@@ -11,33 +10,6 @@ function Toggle({ label, checked, onChange }: { label: string; checked: boolean;
       </span>
       {label}
     </button>
-  );
-}
-
-export function PlacesPanel() {
-  const lang = useAppStore((s) => s.language);
-  const selected = useAppStore((s) => s.selectedPlaceId);
-  const select = useAppStore((s) => s.selectPlace);
-  return (
-    <ul className="no-scrollbar -mx-1 flex snap-x gap-3 overflow-x-auto px-1 pb-1">
-      {places.map((p, i) => (
-        <li key={p.id} className="snap-start">
-          <button
-            type="button"
-            aria-pressed={selected === p.id}
-            onClick={() => select(p.id)}
-            className="group w-32 rounded-xl p-1.5 text-left transition-colors duration-200 hover:bg-secondary aria-pressed:bg-secondary"
-          >
-            <div className="relative h-20 w-full rounded-lg ring-2 ring-transparent transition group-aria-pressed:ring-accent" style={{ background: p.thumb }}>
-              <span className="absolute left-1.5 top-1.5 rounded-md bg-glass px-1.5 text-xs font-semibold tabular-nums text-primary">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-            </div>
-            <div className="mt-1.5 truncate text-sm font-medium">{p.name[lang]}</div>
-          </button>
-        </li>
-      ))}
-    </ul>
   );
 }
 
