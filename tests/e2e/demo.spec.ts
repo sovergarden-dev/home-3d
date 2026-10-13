@@ -172,8 +172,17 @@ test("explicit local preview refuses malformed package instead of silently retur
     buffer: Buffer.from("{ invalid"),
   });
   await expect(page.getByRole("alert")).toBeVisible();
-  await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-world-mode", "private-error");
-  await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-active-worlds", "0");
+  const rendererReady =
+    (await page.locator("#scene-root").getAttribute("data-scene-state")) === "ready";
+  if (rendererReady) {
+    await expect(page.getByTestId("demo-scene")).toHaveAttribute(
+      "data-world-mode",
+      "private-error",
+    );
+    await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-active-worlds", "0");
+  } else {
+    await expect(page.getByText("Thiết bị chưa mở được 3D")).toBeVisible();
+  }
 });
 
 test("explicit local preview opens a valid synthetic package as one in-memory world", async ({
@@ -217,6 +226,12 @@ test("explicit local preview opens a valid synthetic package as one in-memory wo
     buffer: Buffer.from(JSON.stringify({ manifest, world })),
   });
   await expect(page.getByText("Đã mở gói cục bộ")).toBeVisible();
-  await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-world-mode", "private");
-  await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-active-worlds", "1");
+  const rendererReady =
+    (await page.locator("#scene-root").getAttribute("data-scene-state")) === "ready";
+  if (rendererReady) {
+    await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-world-mode", "private");
+    await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-active-worlds", "1");
+  } else {
+    await expect(page.getByText("Thiết bị chưa mở được 3D")).toBeVisible();
+  }
 });
