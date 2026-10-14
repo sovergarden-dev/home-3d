@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { WorldData } from "@/world/schema";
+import { surfaceAreaIntersects, validateSurfaceGeometry } from "@/world/geometry";
+import type { LinearRing, PolygonGeometry, WorldData } from "@/world/schema";
 import { validateWorld } from "@/world/validate";
 
 function syntheticWorld(): WorldData {
@@ -112,5 +113,60 @@ describe("world geometry gate", () => {
         featureIds: ["building-crosses-lot", "lot-empty"],
       }),
     );
+  });
+
+  it("rejects polygon where hole extends outside outer ring", () => {
+    const outer: LinearRing = [
+      [0, 0],
+      [10, 0],
+      [10, 10],
+      [0, 10],
+      [0, 0],
+    ];
+    // Hole starts inside at (2,2) but extends to x=12 outside outer boundary
+    const holeExtendingOut: LinearRing = [
+      [2, 2],
+      [12, 2],
+      [12, 8],
+      [2, 8],
+      [2, 2],
+    ];
+    const geometry: PolygonGeometry = {
+      type: "Polygon",
+      coordinates: [outer, holeExtendingOut],
+    };
+
+    const issues = validateSurfaceGeometry(geometry);
+    expect(issues).toContain("POLYGON_0_HOLE_0_OUTSIDE_OUTER_RING");
+  });
+
+  it("adjacent building parts sharing an edge have zero area overlap and are valid", () => {
+    const partA: PolygonGeometry = {
+      type: "Polygon",
+      coordinates: [
+        [
+          [0, 0],
+          [5, 0],
+          [5, 10],
+          [0, 10],
+          [0, 0],
+        ],
+      ],
+    };
+    // Part B shares edge from (5,0) to (5,10)
+    const partB: PolygonGeometry = {
+      type: "Polygon",
+      coordinates: [
+        [
+          [5, 0],
+          [10, 0],
+          [10, 10],
+          [5, 10],
+          [5, 0],
+        ],
+      ],
+    };
+
+    expect(surfaceAreaIntersects(partA, partB)).toBe(false);
   });
 });

@@ -53,7 +53,7 @@ describe("orthographic Mặt bằng camera", () => {
     { width: 390, height: 844, zoom: 1.5 },
     { width: 844, height: 390, zoom: 0.5 },
   ])(
-    "keeps rendered ruler length within one CSS pixel at $width×$height zoom $zoom",
+    "independently projects two world ground points separated by scale.metres with near-zero error at $width×$height zoom $zoom",
     ({ width, height, zoom }) => {
       const camera = new THREE.OrthographicCamera();
       configurePlanCamera(camera, {
@@ -66,9 +66,14 @@ describe("orthographic Mặt bằng camera", () => {
 
       const metresPerPixel = metresPerCssPixel(camera, height);
       const scale = calculatePlanScaleBar(metresPerPixel, 120);
-      const projectedPixels = scale.metres / metresPerPixel;
 
-      expect(Math.abs(projectedPixels - scale.cssPixels)).toBeLessThanOrEqual(1);
+      // Independent projection through camera matrix:
+      // Project origin (0, 0, 0) and (scale.metres, 0, 0) to screen coordinates
+      const v1 = new THREE.Vector3(0, 0, 0).project(camera);
+      const v2 = new THREE.Vector3(scale.metres, 0, 0).project(camera);
+      const screenDx = Math.abs((v2.x - v1.x) * 0.5 * width);
+
+      expect(Math.abs(screenDx - scale.cssPixels)).toBeLessThan(1e-9);
       expect(scale.cssPixels).toBeGreaterThan(0);
     },
   );

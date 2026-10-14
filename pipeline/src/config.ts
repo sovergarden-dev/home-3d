@@ -9,6 +9,15 @@ export interface PipelineConfig {
   input:
     | { kind: "file"; path: string; format: PipelineInputFormat }
     | { kind: "url"; url: string; allowedHost: string; format: PipelineInputFormat };
+  secondaryInputs?: {
+    kind: "file";
+    path: string;
+    format: PipelineInputFormat;
+    source: PipelineConfig["source"];
+  }[];
+  conflationRulesPath?: string | undefined;
+  overridesPath?: string | undefined;
+  confirmedEmptyLotsPath?: string | undefined;
   source: {
     kind: "osm" | "overture" | "survey" | "synthetic";
     revision: string;
@@ -107,11 +116,22 @@ function parseOutput(value: unknown): PipelineConfig["output"] {
   };
 }
 
+function parseOptionalPath(value: unknown): string | undefined {
+  if (value === undefined || value === null) return undefined;
+  if (typeof value !== "string" || !value.trim()) throw new Error("PIPELINE_CONFIG_PATH_INVALID");
+  return value;
+}
+
 export function parsePipelineConfig(value: unknown): PipelineConfig {
   if (!isRecord(value)) throw new Error("PIPELINE_CONFIG_OBJECT_REQUIRED");
   if (value["schemaVersion"] !== "1.0")
     throw new Error("PIPELINE_CONFIG_SCHEMA_VERSION_UNSUPPORTED");
-  return {
+
+  const conflationRulesPath = parseOptionalPath(value["conflationRulesPath"]);
+  const overridesPath = parseOptionalPath(value["overridesPath"]);
+  const confirmedEmptyLotsPath = parseOptionalPath(value["confirmedEmptyLotsPath"]);
+
+  const result: PipelineConfig = {
     schemaVersion: "1.0",
     datasetRevision: nonEmptyString(
       value["datasetRevision"],
@@ -121,5 +141,9 @@ export function parsePipelineConfig(value: unknown): PipelineConfig {
     input: parseInput(value["input"]),
     source: parseSource(value["source"]),
     output: parseOutput(value["output"]),
+    ...(conflationRulesPath !== undefined ? { conflationRulesPath } : {}),
+    ...(overridesPath !== undefined ? { overridesPath } : {}),
+    ...(confirmedEmptyLotsPath !== undefined ? { confirmedEmptyLotsPath } : {}),
   };
+  return result;
 }

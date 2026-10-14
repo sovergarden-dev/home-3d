@@ -242,15 +242,9 @@ function addRoad(
   const halfCarriageway = road.carriagewayWidth / 2;
   const left = offsetPolyline(road.polylineENU, halfCarriageway);
   const right = offsetPolyline(road.polylineENU, -halfCarriageway);
-  roadGroup.add(
-    createStrip(
-      left,
-      right,
-      0.02 + road.elevationLayer * 0.01,
-      materialFactory("#4c5551", 0.92, 0),
-      disposables,
-    ),
-  );
+  // Realistic road elevation: 0.02 base for z-fighting, plus 4.5m per structural bridge layer
+  const y = road.elevationLayer !== 0 ? 0.02 + road.elevationLayer * 4.5 : 0.02;
+  roadGroup.add(createStrip(left, right, y, materialFactory("#4c5551", 0.92, 0), disposables));
 
   const [leftSidewalk = 0, rightSidewalk = 0] = road.sidewalkWidths ?? [];
   if (leftSidewalk > 0) {
@@ -258,7 +252,7 @@ function addRoad(
       createStrip(
         offsetPolyline(road.polylineENU, halfCarriageway + leftSidewalk),
         left,
-        0.12 + road.elevationLayer * 0.01,
+        y + 0.1,
         materialFactory("#aaa393", 0.95, 0),
         disposables,
       ),
@@ -269,7 +263,7 @@ function addRoad(
       createStrip(
         right,
         offsetPolyline(road.polylineENU, -(halfCarriageway + rightSidewalk)),
-        0.12 + road.elevationLayer * 0.01,
+        y + 0.1,
         materialFactory("#aaa393", 0.95, 0),
         disposables,
       ),

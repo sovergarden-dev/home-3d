@@ -1,4 +1,9 @@
-import { segmentsIntersect, surfaceIntersects, validateSurfaceGeometry } from "./geometry";
+import {
+  segmentsIntersect,
+  surfaceAreaIntersects,
+  surfaceIntersects,
+  validateSurfaceGeometry,
+} from "./geometry";
 import {
   WORLD_SCHEMA_VERSION,
   type Building,
@@ -69,7 +74,12 @@ function validateBuilding(issues: WorldIssue[], building: Building) {
       for (let second = first + 1; second < building.parts.length; second += 1) {
         const a = building.parts[first]!;
         const b = building.parts[second]!;
-        if (surfaceIntersects(a.geometry, b.geometry)) {
+        const aBase = a.baseElevation ?? building.baseElevation ?? 0;
+        const aTop = aBase + a.wallHeight;
+        const bBase = b.baseElevation ?? building.baseElevation ?? 0;
+        const bTop = bBase + b.wallHeight;
+        const verticalOverlap = Math.min(aTop, bTop) - Math.max(aBase, bBase) > 1e-4;
+        if (verticalOverlap && surfaceAreaIntersects(a.geometry, b.geometry)) {
           issues.push({
             severity: "error",
             code: "BUILDING_PARTS_OVERLAP",
@@ -210,7 +220,7 @@ export function validateWorld(world: WorldData): WorldValidationReport {
       : [{ localId: building.localId, geometry: building.geometry }];
     for (const lot of confirmedEmptyLots) {
       for (const part of renderGeometries) {
-        if (surfaceIntersects(part.geometry, lot.geometry)) {
+        if (surfaceAreaIntersects(part.geometry, lot.geometry)) {
           issues.push({
             severity: "error",
             code: "BUILDING_INTERSECTS_CONFIRMED_EMPTY_LOT",

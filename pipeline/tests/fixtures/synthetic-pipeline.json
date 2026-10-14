@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "1.0",
+  "datasetRevision": "synthetic-e2e-pipeline-v1",
+  "origin": { "longitude": 105.85, "latitude": 21.02, "altitude": 5 },
+  "input": { "kind": "file", "path": "synthetic-source.geojson", "format": "geojson" },
+  "source": { "kind": "synthetic", "revision": "fixture-v1", "licence": "CC0-1.0" },
+  "output": { "packagePath": "out/world-package.json", "reportPath": "out/world-report.json" }
+}

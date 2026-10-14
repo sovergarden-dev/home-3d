@@ -36,6 +36,22 @@ function pointOnSegment(point: Position2, start: Position2, end: Position2) {
   );
 }
 
+export function segmentsCrossProper(
+  a: Position2,
+  b: Position2,
+  c: Position2,
+  d: Position2,
+): boolean {
+  const o1 = orientation(a, b, c);
+  const o2 = orientation(a, b, d);
+  const o3 = orientation(c, d, a);
+  const o4 = orientation(c, d, b);
+  return (
+    ((o1 > EPSILON && o2 < -EPSILON) || (o1 < -EPSILON && o2 > EPSILON)) &&
+    ((o3 > EPSILON && o4 < -EPSILON) || (o3 < -EPSILON && o4 > EPSILON))
+  );
+}
+
 export function segmentsIntersect(a: Position2, b: Position2, c: Position2, d: Position2) {
   const o1 = orientation(a, b, c);
   const o2 = orientation(a, b, d);
@@ -125,6 +141,92 @@ function polygonsIntersect(a: PolygonGeometry, b: PolygonGeometry) {
   return Boolean((aProbe && pointInPolygon(aProbe, b)) || (bProbe && pointInPolygon(bProbe, a)));
 }
 
+export function isPointStrictlyInsidePolygon(point: Position2, polygon: PolygonGeometry): boolean {
+  const [outer, ...holes] = polygon.coordinates;
+  if (!outer || !pointInRing(point, outer)) return false;
+  // If point lies directly on any outer segment, it is NOT strictly inside
+  const outerPoints = ringWithoutClosure(outer);
+  for (let i = 0, prev = outerPoints.length - 1; i < outerPoints.length; prev = i++) {
+    if (pointOnSegment(point, outerPoints[prev]!, outerPoints[i]!)) return false;
+  }
+  // Check holes
+  for (const hole of holes) {
+    if (pointInRing(point, hole)) return false;
+  }
+  return true;
+}
+
+export function polygonsHaveAreaOverlap(a: PolygonGeometry, b: PolygonGeometry): boolean {
+  // 1. Any edge of A properly crosses an edge of B (interior intersection)
+  for (const ringA of a.coordinates) {
+    for (const ringB of b.coordinates) {
+      for (const [a1, a2] of ringEdges(ringA)) {
+        for (const [b1, b2] of ringEdges(ringB)) {
+          if (segmentsCrossProper(a1, a2, b1, b2)) return true;
+        }
+      }
+    }
+  }
+
+  // 2. An interior point of A is strictly inside B
+  const pointsA = ringWithoutClosure(a.coordinates[0] ?? []);
+  if (pointsA.length >= 3) {
+    // Try centroid of first triangle or interior midpoint
+    const midA: Position2 = [
+      (pointsA[0]![0] + pointsA[1]![0] + pointsA[2]![0]) / 3,
+      (pointsA[0]![1] + pointsA[1]![1] + pointsA[2]![1]) / 3,
+    ];
+    if (isPointStrictlyInsidePolygon(midA, a) && isPointStrictlyInsidePolygon(midA, b)) {
+      return true;
+    }
+    // Also test a few interior candidate points
+    for (let i = 0; i < pointsA.length; i++) {
+      const p1 = pointsA[i]!;
+      const p2 = pointsA[(i + 1) % pointsA.length]!;
+      const midEdge: Position2 = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
+      const inward: Position2 = [
+        midEdge[0] + (midA[0] - midEdge[0]) * 0.1,
+        midEdge[1] + (midA[1] - midEdge[1]) * 0.1,
+      ];
+      if (isPointStrictlyInsidePolygon(inward, a) && isPointStrictlyInsidePolygon(inward, b)) {
+        return true;
+      }
+    }
+  }
+
+  // 3. An interior point of B is strictly inside A
+  const pointsB = ringWithoutClosure(b.coordinates[0] ?? []);
+  if (pointsB.length >= 3) {
+    const midB: Position2 = [
+      (pointsB[0]![0] + pointsB[1]![0] + pointsB[2]![0]) / 3,
+      (pointsB[0]![1] + pointsB[1]![1] + pointsB[2]![1]) / 3,
+    ];
+    if (isPointStrictlyInsidePolygon(midB, b) && isPointStrictlyInsidePolygon(midB, a)) {
+      return true;
+    }
+    for (let i = 0; i < pointsB.length; i++) {
+      const p1 = pointsB[i]!;
+      const p2 = pointsB[(i + 1) % pointsB.length]!;
+      const midEdge: Position2 = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
+      const inward: Position2 = [
+        midEdge[0] + (midB[0] - midEdge[0]) * 0.1,
+        midEdge[1] + (midB[1] - midEdge[1]) * 0.1,
+      ];
+      if (isPointStrictlyInsidePolygon(inward, b) && isPointStrictlyInsidePolygon(inward, a)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+export function surfaceAreaIntersects(a: SurfaceGeometry, b: SurfaceGeometry): boolean {
+  return polygonsOf(a).some((polygonA) =>
+    polygonsOf(b).some((polygonB) => polygonsHaveAreaOverlap(polygonA, polygonB)),
+  );
+}
+
 export function surfaceIntersects(a: SurfaceGeometry, b: SurfaceGeometry) {
   return polygonsOf(a).some((polygonA) =>
     polygonsOf(b).some((polygonB) => polygonsIntersect(polygonA, polygonB)),
@@ -153,12 +255,55 @@ export function validateSurfaceGeometry(geometry: SurfaceGeometry) {
       }
       if (!isSimpleRing(hole))
         issues.push(`POLYGON_${polygonIndex}_HOLE_${holeIndex}_SELF_INTERSECTS`);
-      const probe = ringWithoutClosure(hole)[0];
-      if (!probe || !pointInRing(probe, outer)) {
+
+      const holePoints = ringWithoutClosure(hole);
+      // Check that ALL vertices of the hole are contained inside or on boundary of outer ring
+      const allPointsInside = holePoints.every((pt) => pointInRing(pt, outer));
+      if (!allPointsInside) {
+        issues.push(`POLYGON_${polygonIndex}_HOLE_${holeIndex}_OUTSIDE_OUTER_RING`);
+      }
+
+      // Check that hole edges do not properly cross outer ring edges
+      const outerEdges = ringEdges(outer);
+      const holeEdges = ringEdges(hole);
+      let holeCrossesOuter = false;
+      for (const [h1, h2] of holeEdges) {
+        for (const [o1, o2] of outerEdges) {
+          if (segmentsCrossProper(h1, h2, o1, o2)) {
+            holeCrossesOuter = true;
+            break;
+          }
+        }
+        if (holeCrossesOuter) break;
+      }
+      if (holeCrossesOuter && allPointsInside) {
         issues.push(`POLYGON_${polygonIndex}_HOLE_${holeIndex}_OUTSIDE_OUTER_RING`);
       }
     });
+
+    // Check that holes within the same polygon do not overlap each other
+    for (let hA = 0; hA < holes.length; hA++) {
+      for (let hB = hA + 1; hB < holes.length; hB++) {
+        const polyA: PolygonGeometry = { type: "Polygon", coordinates: [holes[hA]!] };
+        const polyB: PolygonGeometry = { type: "Polygon", coordinates: [holes[hB]!] };
+        if (polygonsHaveAreaOverlap(polyA, polyB)) {
+          issues.push(`POLYGON_${polygonIndex}_HOLES_OVERLAP`);
+        }
+      }
+    }
   });
+
+  // For MultiPolygon, check that component polygons do not overlap with positive area
+  if (geometry.type === "MultiPolygon") {
+    const polys = polygonsOf(geometry);
+    for (let i = 0; i < polys.length; i++) {
+      for (let j = i + 1; j < polys.length; j++) {
+        if (polygonsHaveAreaOverlap(polys[i]!, polys[j]!)) {
+          issues.push(`MULTIPOLYGON_COMPONENTS_OVERLAP`);
+        }
+      }
+    }
+  }
 
   return issues;
 }

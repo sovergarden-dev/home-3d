@@ -1,8 +1,11 @@
 import { dirname, isAbsolute, resolve } from "node:path";
-import { buildWorldPackage } from "./build";
+import type { WorldOverrideDocument } from "../../src/world/schema";
+import type { WorldData } from "../../src/world/schema";
+import { buildWorldPackage, type BuildWorldPackageOptions } from "./build";
 import { parsePipelineConfig, type PipelineInputFormat } from "./config";
-import { osmOverpassToGeoJson, type OsmOverpassSnapshot } from "./osm";
+import type { ConflationRule } from "./conflate";
 import type { GeoJsonFeatureCollection } from "./normalize";
+import { osmOverpassToGeoJson, type OsmOverpassSnapshot } from "./osm";
 
 interface CliOptions {
   configPath: string;
@@ -96,7 +99,49 @@ export async function runPipeline(argumentsList: string[]) {
     await readInput(options.configPath, config.input),
     config.input.format,
   );
-  const result = buildWorldPackage(source, config);
+
+  let overrides: WorldOverrideDocument | undefined;
+  if (config.overridesPath) {
+    try {
+      const overridesText = await Bun.file(
+        relativeToConfig(options.configPath, config.overridesPath),
+      ).text();
+      overrides = JSON.parse(overridesText) as WorldOverrideDocument;
+    } catch {
+      throw new Error("PIPELINE_OVERRIDES_READ_FAILED");
+    }
+  }
+
+  let conflationRules: ConflationRule[] | undefined;
+  if (config.conflationRulesPath) {
+    try {
+      const rulesText = await Bun.file(
+        relativeToConfig(options.configPath, config.conflationRulesPath),
+      ).text();
+      conflationRules = JSON.parse(rulesText) as ConflationRule[];
+    } catch {
+      throw new Error("PIPELINE_CONFLATION_RULES_READ_FAILED");
+    }
+  }
+
+  let confirmedEmptyLots: WorldData["lots"] | undefined;
+  if (config.confirmedEmptyLotsPath) {
+    try {
+      const lotsText = await Bun.file(
+        relativeToConfig(options.configPath, config.confirmedEmptyLotsPath),
+      ).text();
+      confirmedEmptyLots = JSON.parse(lotsText) as WorldData["lots"];
+    } catch {
+      throw new Error("PIPELINE_EMPTY_LOTS_READ_FAILED");
+    }
+  }
+
+  const buildOptions: BuildWorldPackageOptions = {};
+  if (overrides !== undefined) buildOptions.overrides = overrides;
+  if (conflationRules !== undefined) buildOptions.conflationRules = conflationRules;
+  if (confirmedEmptyLots !== undefined) buildOptions.confirmedEmptyLots = confirmedEmptyLots;
+
+  const result = buildWorldPackage(source, config, buildOptions);
 
   if (!options.dryRun) {
     const packagePath = relativeToConfig(options.configPath, config.output.packagePath);

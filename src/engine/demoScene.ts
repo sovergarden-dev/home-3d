@@ -261,6 +261,56 @@ export function createDemoScene(
     if (force) render();
   }
 
+  // Rain & festival groups attached to world
+  const festivalGroup = new THREE.Group();
+  festivalGroup.name = "festival-group";
+  scene.add(festivalGroup);
+
+  const lanternMat = new THREE.MeshStandardMaterial({
+    color: "#e65100",
+    emissive: "#ff8f00",
+    emissiveIntensity: 0.6,
+    roughness: 0.4,
+  });
+  const lanternGeo = new THREE.SphereGeometry(0.35, 12, 12);
+  const lanternWireGeo = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(-18, 6.2, 0),
+    new THREE.Vector3(0, 5.2, 0),
+    new THREE.Vector3(18, 6.2, 0),
+  ]);
+  const lanternWire = new THREE.Line(
+    lanternWireGeo,
+    new THREE.LineBasicMaterial({ color: "#8d6e63" }),
+  );
+  festivalGroup.add(lanternWire);
+  for (let x = -16; x <= 16; x += 4) {
+    const lantern = new THREE.Mesh(lanternGeo, lanternMat);
+    lantern.position.set(x, 5.2 + (Math.abs(x) / 16) * 1.0, 0);
+    festivalGroup.add(lantern);
+  }
+  festivalGroup.visible = false;
+
+  // Rain particles system
+  const rainCount = 600;
+  const rainGeo = new THREE.BufferGeometry();
+  const rainPositions = new Float32Array(rainCount * 3);
+  for (let i = 0; i < rainCount; i++) {
+    rainPositions[i * 3] = (Math.random() - 0.5) * 80;
+    rainPositions[i * 3 + 1] = Math.random() * 30;
+    rainPositions[i * 3 + 2] = (Math.random() - 0.5) * 80;
+  }
+  rainGeo.setAttribute("position", new THREE.BufferAttribute(rainPositions, 3));
+  const rainMat = new THREE.PointsMaterial({
+    color: "#a4b5bf",
+    size: 0.18,
+    transparent: true,
+    opacity: 0.7,
+  });
+  const rainPoints = new THREE.Points(rainGeo, rainMat);
+  rainPoints.name = "rain-particles";
+  scene.add(rainPoints);
+  rainPoints.visible = false;
+
   function applyEnvironment() {
     const state = useAppStore.getState();
     const daylight = daylightAt(state.timeOfDayMinutes);
@@ -272,6 +322,12 @@ export function createDemoScene(
     sun.position.set(-45 + (state.timeOfDayMinutes / 1440) * 90, 20 + daylight * 65, 28);
     materialFactory("#4c5551", 0.92, 0).roughness = wet ? 0.32 : 0.92;
     audio.set(state.soundOn && !document.hidden, wet);
+
+    // Festival visibility
+    festivalGroup.visible = state.festival !== "normal";
+    // Rain visibility
+    rainPoints.visible = wet;
+
     host.dataset["weather"] = state.weather;
     host.dataset["festival"] = state.festival;
     host.dataset["night"] = String(daylight < 0.1);
@@ -504,6 +560,9 @@ export function createDemoScene(
     currentWorld = snapshot;
     if (snapshot.mode === "private-error") {
       disposeWorld();
+      marker.style.visibility = "hidden";
+      renderer.clear();
+      renderer.render(scene, activeCamera);
       host.dataset["worldMode"] = snapshot.mode;
       host.dataset["activeWorlds"] = "0";
       useAppStore.getState().setPlanMeasurement(null);

@@ -19,6 +19,7 @@ jobs:
           bun-version: 1.4.3
       - run: bun install --frozen-lockfile
       - run: bun run check
+      - run: cd pipeline && bun run src/cli.ts --config tests/fixtures/synthetic-pipeline.json --dry-run
   e2e-full-chromium:
     runs-on: ubuntu-latest
     env:
