@@ -5,6 +5,7 @@ import type {
   FrontageCandidate,
   Position2,
   RoadSegment,
+  RoofType,
   SurfaceGeometry,
   WorldData,
 } from "@/world/schema";
@@ -74,6 +75,123 @@ function createSurfaceMeshes(
     disposables.push(extruded);
   }
   return group;
+}
+
+function footprintBounds(geometry: SurfaceGeometry) {
+  let minX = Infinity;
+  let minZ = Infinity;
+  let maxX = -Infinity;
+  let maxZ = -Infinity;
+  for (const polygon of polygonsOf(geometry)) {
+    for (const [x, z] of ringWithoutClosure(polygon.coordinates[0] ?? [])) {
+      if (x < minX) minX = x;
+      if (z < minZ) minZ = z;
+      if (x > maxX) maxX = x;
+      if (z > maxZ) maxZ = z;
+    }
+  }
+  return { minX, minZ, maxX, maxZ };
+}
+
+// Explicitly approximated roof volumes for pitched roof types: a ridge prism over the
+// footprint bounds. Tagged as `*_prism_approx` so UI/quality never treats it as a
+// surveyed roof; unknown shapes keep the flat cap with a `flat_cap` fallback tag.
+function addRoofPrism(
+  geometry: SurfaceGeometry,
+  topY: number,
+  roofType: RoofType,
+  disposables: Disposable[],
+) {
+  const { minX, minZ, maxX, maxZ } = footprintBounds(geometry);
+  if (!Number.isFinite(minX)) return null;
+  const spanX = maxX - minX;
+  const spanZ = maxZ - minZ;
+  if (spanX <= 0.6 || spanZ <= 0.6) return null;
+
+  const alongX = spanX >= spanZ;
+  const roofHeight = Math.max(1.2, Math.min(4, Math.min(spanX, spanZ) * 0.35));
+  const inset = Math.min(0.6, Math.min(spanX, spanZ) * 0.08);
+
+  let eaveA: Position2;
+  let eaveB: Position2;
+  let eaveC: Position2;
+  let eaveD: Position2;
+  let ridge1: Position2;
+  let ridge2: Position2;
+  if (alongX) {
+    const midZ = (minZ + maxZ) / 2;
+    eaveA = [minX, minZ];
+    eaveB = [maxX, minZ];
+    eaveC = [maxX, maxZ];
+    eaveD = [minX, maxZ];
+    ridge1 = [minX + inset, midZ];
+    ridge2 = [maxX - inset, midZ];
+  } else {
+    const midX = (minX + maxX) / 2;
+    eaveA = [minX, minZ];
+    eaveB = [minX, maxZ];
+    eaveC = [maxX, maxZ];
+    eaveD = [maxX, minZ];
+    ridge1 = [midX, minZ + inset];
+    ridge2 = [midX, maxZ - inset];
+  }
+
+  const top = topY;
+  const apex = topY + roofHeight;
+  const quad = (p1: Position2, p2: Position2, p3: Position2, p4: Position2) => [
+    p1[0],
+    top,
+    p1[1],
+    p2[0],
+    top,
+    p2[1],
+    p3[0],
+    apex,
+    p3[1],
+    p1[0],
+    top,
+    p1[1],
+    p3[0],
+    apex,
+    p3[1],
+    p4[0],
+    apex,
+    p4[1],
+  ];
+  const tri = (p1: Position2, p2: Position2, p3: Position2) => [
+    p1[0],
+    top,
+    p1[1],
+    p2[0],
+    apex,
+    p2[1],
+    p3[0],
+    top,
+    p3[1],
+  ];
+  const positions = new Float32Array([
+    ...quad(eaveA, eaveB, ridge2, ridge1),
+    ...quad(eaveC, eaveD, ridge1, ridge2),
+    ...tri(eaveA, ridge1, eaveD),
+    ...tri(eaveB, eaveC, ridge2),
+  ]);
+
+  const roofGeometry = new THREE.BufferGeometry();
+  roofGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  roofGeometry.computeVertexNormals();
+  const material = new THREE.MeshStandardMaterial({
+    color: roofType === "corrugated" ? "#9aa3a8" : "#7b4a3d",
+    roughness: roofType === "corrugated" ? 0.55 : 0.85,
+    metalness: roofType === "corrugated" ? 0.3 : 0.02,
+    side: THREE.DoubleSide,
+  });
+  const roof = new THREE.Mesh(roofGeometry, material);
+  roof.name = "roof-prism";
+  roof.userData = { roofType, approximation: `${roofType}_prism_approx` };
+  roof.castShadow = true;
+  roof.receiveShadow = true;
+  disposables.push(roofGeometry, material);
+  return roof;
 }
 
 function candidateEdge(
@@ -149,7 +267,21 @@ function addBuilding(
       disposables,
     );
     shell.name = `building-part:${part.localId}`;
-    if (part.roofType !== "flat" && part.roofType !== "terrace_tum") {
+    const topY = part.baseElevation + part.wallHeight;
+    if (
+      part.roofType === "gabled" ||
+      part.roofType === "hipped" ||
+      part.roofType === "corrugated"
+    ) {
+      const roof = addRoofPrism(part.geometry, topY, part.roofType, disposables);
+      if (roof) {
+        roof.name = `roof:${part.localId}`;
+        shell.add(roof);
+        shell.userData["roofApproximation"] = roof.userData["approximation"];
+      } else {
+        shell.userData["roofFallback"] = "flat_cap";
+      }
+    } else if (part.roofType !== "flat" && part.roofType !== "terrace_tum") {
       shell.userData["roofFallback"] = "flat_cap";
     }
     buildingGroup.add(shell);

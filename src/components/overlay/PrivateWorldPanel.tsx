@@ -385,6 +385,10 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
                     <option value="corrugated">Mái tôn (corrugated)</option>
                   </select>
                 </div>
+                <div className="text-[10px] leading-snug text-muted-foreground">
+                  Mái dốc/vát/tôn được dựng dạng khối xấp xỉ (prism) trên mặt bằng, gắn nhãn xấp xỉ
+                  trong mesh — không phải mái khảo sát thật.
+                </div>
                 <div className="flex flex-col gap-1">
                   <label className="text-[11px] text-muted-foreground">
                     Footprint (GeoJSON Polygon/MultiPolygon):
