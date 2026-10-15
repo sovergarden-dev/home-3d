@@ -297,6 +297,62 @@ describe("H6 V4 geometry and renderer regressions", () => {
     expect(result.world.buildings[0]?.parts?.map((part) => part.wallHeight)).toEqual([4, 4]);
   });
 
+  it("rebuilds the part mesh with the edited height while preserving its footprint", () => {
+    const parent = {
+      ...building("building-parent", rectangle(0, 0, 10, 10), 12),
+      parts: [
+        {
+          localId: "part-left",
+          geometry: rectangle(0, 0, 2, 10),
+          wallHeight: 4,
+          roofType: "flat" as const,
+          provenance,
+        },
+        {
+          localId: "part-right",
+          geometry: rectangle(2, 0, 10, 10),
+          wallHeight: 4,
+          roofType: "flat" as const,
+          provenance,
+        },
+      ],
+    };
+    const document: WorldOverrideDocument = {
+      schemaVersion: "1.0",
+      overrides: [
+        {
+          localId: "override-part-height",
+          revision: 1,
+          reason: "Synthetic rendered-part height edit",
+          provenance: { source: "manual_override", quality: "inferred" },
+          patch: {
+            operation: "patch_building_part",
+            buildingId: "building-parent",
+            partId: "part-left",
+            patch: { wallHeight: 8, levels: 3, roofType: "flat" },
+          },
+        },
+      ],
+    };
+    const applied = applyWorldOverrides(world([parent]), document);
+    expect(applied.issues).toEqual([]);
+    expect(applied.world.buildings[0]?.wallHeight).toBe(12);
+    expect(applied.world.buildings[0]?.parts?.[0]?.wallHeight).toBe(8);
+
+    const bundle = buildWorldMeshes(applied.world, material);
+    try {
+      const group = bundle.layers.buildings.children.find(
+        (child) => child.name === "building:building-parent",
+      );
+      expect(group).toBeDefined();
+      expect(projectedTopArea(group!, 8)).toBeCloseTo(20, 4);
+      const bounds = new THREE.Box3().setFromObject(group!);
+      expect(bounds.max.y).toBeCloseTo(8, 4);
+    } finally {
+      bundle.dispose();
+    }
+  });
+
   it("updates provenance only for overridden fields", () => {
     const sourceBuilding = {
       ...building("building-surveyed", rectangle(0, 0, 4, 4), 6),

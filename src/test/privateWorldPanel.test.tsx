@@ -147,4 +147,27 @@ describe("local private preview panel", () => {
     expect(snapshot.world.buildings[0]?.wallHeight).toBe(6);
     expect(snapshot.world.buildings[0]?.parts?.[0]?.wallHeight).toBe(8);
   });
+
+  it("syncs the selected part editor fields after undo and redo", () => {
+    act(() => openPackage(testWorld("building-with-part", 6, true)));
+    render(<PrivateWorldPanel enabled />);
+    fireEvent.change(screen.getByLabelText("Chọn công trình"), {
+      target: { value: "building-with-part" },
+    });
+    const partHeight = screen.getByLabelText("Chiều cao phần (m)");
+    expect(partHeight).toHaveValue(4);
+
+    fireEvent.change(partHeight, { target: { value: "8" } });
+    fireEvent.click(screen.getByRole("button", { name: "Lưu phần" }));
+    expect(privateSnapshot().world.buildings[0]?.parts?.[0]?.wallHeight).toBe(8);
+    expect(partHeight).toHaveValue(8);
+
+    fireEvent.click(screen.getByRole("button", { name: "Undo" }));
+    expect(privateSnapshot().world.buildings[0]?.parts?.[0]?.wallHeight).toBe(4);
+    expect(partHeight).toHaveValue(4);
+
+    fireEvent.click(screen.getByRole("button", { name: "Redo" }));
+    expect(privateSnapshot().world.buildings[0]?.parts?.[0]?.wallHeight).toBe(8);
+    expect(partHeight).toHaveValue(8);
+  });
 });

@@ -275,3 +275,128 @@ test("fails closed when a legacy sampled ID maps to multiple full-geometry featu
     ),
   ).toThrow("PIPELINE_ID_MIGRATION_AMBIGUOUS");
 });
+
+test("rebuilds a rendered-part override from the original source and reloads the effective package", () => {
+  const source = {
+    type: "FeatureCollection" as const,
+    features: [
+      {
+        type: "Feature" as const,
+        id: "qa-parent",
+        properties: { building: "yes", height: 12, roof: "flat" },
+        geometry: {
+          type: "Polygon" as const,
+          coordinates: [
+            [
+              [0.6, 0.4],
+              [0.6001, 0.4],
+              [0.6001, 0.4001],
+              [0.6, 0.4001],
+              [0.6, 0.4],
+            ],
+          ],
+        },
+      },
+      {
+        type: "Feature" as const,
+        id: "qa-part-left",
+        properties: {
+          "building:part": "yes",
+          "building:parent": "qa-parent",
+          height: 4,
+          roof: "flat",
+        },
+        geometry: {
+          type: "Polygon" as const,
+          coordinates: [
+            [
+              [0.6, 0.4],
+              [0.60002, 0.4],
+              [0.60002, 0.4001],
+              [0.6, 0.4001],
+              [0.6, 0.4],
+            ],
+          ],
+        },
+      },
+      {
+        type: "Feature" as const,
+        id: "qa-part-right",
+        properties: {
+          "building:part": "yes",
+          "building:parent": "qa-parent",
+          height: 4,
+          roof: "flat",
+        },
+        geometry: {
+          type: "Polygon" as const,
+          coordinates: [
+            [
+              [0.60002, 0.4],
+              [0.6001, 0.4],
+              [0.6001, 0.4001],
+              [0.60002, 0.4001],
+              [0.60002, 0.4],
+            ],
+          ],
+        },
+      },
+    ],
+  };
+  const config = {
+    schemaVersion: "1.0" as const,
+    datasetRevision: "synthetic-part-rebuild-v1",
+    origin: { longitude: 0.6, latitude: 0.4, altitude: 0 },
+    input: { kind: "file" as const, path: "synthetic-parts.geojson", format: "geojson" as const },
+    source: {
+      kind: "synthetic" as const,
+      namespace: "synthetic-parts",
+      revision: "fixture-v1",
+      licence: "CC0-1.0",
+    },
+    output: { packagePath: "out/package.json", reportPath: "out/report.json" },
+  };
+  const base = buildWorldPackage(source, config);
+  const baseBuilding = base.package.world.buildings[0]!;
+  const targetPart = baseBuilding.parts?.[0];
+  expect(baseBuilding.parts).toHaveLength(2);
+  expect(targetPart).toBeDefined();
+
+  // This serialized document has the same shape produced by the local editor's JSON export.
+  const exportedDocument = JSON.parse(
+    JSON.stringify({
+      schemaVersion: "1.0",
+      overrides: [
+        {
+          localId: "override-qa-part-left",
+          revision: 1,
+          reason: "Synthetic part edit from local editor",
+          provenance: { source: "manual_override", quality: "inferred" },
+          patch: {
+            operation: "patch_building_part",
+            buildingId: baseBuilding.localId,
+            partId: targetPart!.localId,
+            patch: { wallHeight: 8, levels: 3, roofType: "gabled" },
+          },
+        },
+      ],
+    }),
+  );
+  const rebuilt = buildWorldPackage(source, config, { overrides: exportedDocument });
+  expect(rebuilt.report.valid).toBe(true);
+  expect(rebuilt.package.world.buildings[0]?.parts?.[0]?.wallHeight).toBe(4);
+  expect(rebuilt.package.overrides).toEqual(exportedDocument);
+
+  const reloaded = parseWorldPackage(JSON.stringify(rebuilt.package));
+  expect(reloaded.ok).toBe(true);
+  if (!reloaded.ok) throw new Error(reloaded.errorCode);
+  const effectivePart = reloaded.world.buildings[0]?.parts?.[0];
+  expect(effectivePart?.localId).toBe(targetPart!.localId);
+  expect(effectivePart?.wallHeight).toBe(8);
+  expect(effectivePart?.levels).toBe(3);
+  expect(effectivePart?.roofType).toBe("gabled");
+  expect(effectivePart?.attributes?.wallHeight).toMatchObject({
+    source: "manual_override",
+    quality: "inferred",
+  });
+});

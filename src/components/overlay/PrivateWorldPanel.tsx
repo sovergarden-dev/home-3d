@@ -56,6 +56,28 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
     }
   }, [snapshot.packageEpoch, lastPackageEpoch]);
 
+  const buildings = snapshot.mode !== "private-error" ? snapshot.world.buildings : [];
+  const selectedBuilding = buildings.find((item) => item.localId === selectedId);
+  const selectedPart = selectedBuilding?.parts?.find((item) => item.localId === selectedPartId);
+  const selectedPartHeight = selectedPart?.wallHeight;
+  const selectedPartLevels = selectedPart
+    ? (selectedPart.levels ?? Math.round(selectedPart.wallHeight / 3.2))
+    : undefined;
+  const selectedPartRoof = selectedPart?.roofType;
+
+  useEffect(() => {
+    if (
+      selectedPartHeight === undefined ||
+      selectedPartLevels === undefined ||
+      selectedPartRoof === undefined
+    ) {
+      return;
+    }
+    setEditPartHeight(selectedPartHeight);
+    setEditPartLevels(selectedPartLevels);
+    setEditPartRoof(selectedPartRoof);
+  }, [selectedPartId, selectedPartHeight, selectedPartLevels, selectedPartRoof]);
+
   if (!enabled) return null;
 
   const onInput = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -66,11 +88,8 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
     input.value = "";
   };
 
-  const buildings = snapshot.mode !== "private-error" ? snapshot.world.buildings : [];
   const roads = snapshot.mode !== "private-error" ? snapshot.world.roads : [];
   const lots = snapshot.mode !== "private-error" ? snapshot.world.lots : [];
-  const selectedBuilding = buildings.find((item) => item.localId === selectedId);
-  const selectedPart = selectedBuilding?.parts?.find((item) => item.localId === selectedPartId);
 
   const handleSelectBuilding = (id: string) => {
     setSelectedId(id);
@@ -424,19 +443,18 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
                     data-testid="building-part-editor"
                   >
                     <p className="mb-2 text-[10px] leading-snug text-muted-foreground">
-                      Công trình cha là vùng chứa; chỉ các phần bên dưới đang được dựng. Chọn phần
-                      để sửa, không sửa chiều cao cha.
+                      {t.localPreview.partsParentNote}
                     </p>
                     <label className="text-[11px] text-muted-foreground">
-                      Chọn phần công trình:
+                      {t.localPreview.partSelectLabel}:
                     </label>
                     <select
                       className="mb-2 w-full rounded border border-border bg-background px-2 py-1 text-xs text-foreground"
-                      aria-label="Chọn phần công trình"
+                      aria-label={t.localPreview.partSelectLabel}
                       value={selectedPartId}
                       onChange={(event) => handleSelectPart(event.target.value)}
                     >
-                      <option value="">-- Chọn phần --</option>
+                      <option value="">{t.localPreview.partSelectPlaceholder}</option>
                       {selectedBuilding.parts.map((part: BuildingPart) => (
                         <option key={part.localId} value={part.localId}>
                           {part.localId} ({part.wallHeight.toFixed(1)}m)
@@ -446,10 +464,10 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
                     {selectedPart && (
                       <div className="flex flex-col gap-1.5">
                         <label className="flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
-                          Chiều cao phần (m):
+                          {t.localPreview.partHeightLabel}
                           <input
                             type="number"
-                            aria-label="Chiều cao phần (m)"
+                            aria-label={t.localPreview.partHeightLabel.replace(":", "")}
                             step="0.5"
                             className="w-20 rounded border border-border bg-background px-1.5 py-0.5 text-xs text-foreground"
                             value={editPartHeight}
@@ -459,10 +477,10 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
                           />
                         </label>
                         <label className="flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
-                          Số tầng phần:
+                          {t.localPreview.partLevelsLabel}
                           <input
                             type="number"
-                            aria-label="Số tầng phần"
+                            aria-label={t.localPreview.partLevelsLabel.replace(":", "")}
                             className="w-20 rounded border border-border bg-background px-1.5 py-0.5 text-xs text-foreground"
                             value={editPartLevels}
                             onChange={(event) =>
@@ -471,18 +489,22 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
                           />
                         </label>
                         <label className="flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
-                          Kiểu mái phần:
+                          {t.localPreview.partRoofLabel}
                           <select
-                            aria-label="Kiểu mái phần"
+                            aria-label={t.localPreview.partRoofLabel.replace(":", "")}
                             className="rounded border border-border bg-background px-1.5 py-0.5 text-xs text-foreground"
                             value={editPartRoof}
                             onChange={(event) => setEditPartRoof(event.target.value as RoofType)}
                           >
-                            <option value="flat">Bằng (flat)</option>
-                            <option value="terrace_tum">Mái tum (terrace_tum)</option>
-                            <option value="gabled">Mái dốc (gabled)</option>
-                            <option value="hipped">Mái vát (hipped)</option>
-                            <option value="corrugated">Mái tôn (corrugated)</option>
+                            <option value="flat">{t.localPreview.partRoofTypes.flat}</option>
+                            <option value="terrace_tum">
+                              {t.localPreview.partRoofTypes.terrace_tum}
+                            </option>
+                            <option value="gabled">{t.localPreview.partRoofTypes.gabled}</option>
+                            <option value="hipped">{t.localPreview.partRoofTypes.hipped}</option>
+                            <option value="corrugated">
+                              {t.localPreview.partRoofTypes.corrugated}
+                            </option>
                           </select>
                         </label>
                         <button
@@ -491,7 +513,7 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
                           onClick={handleApplyPartOverride}
                         >
                           <Save className="h-3 w-3" />
-                          <span>Lưu phần</span>
+                          <span>{t.localPreview.savePart}</span>
                         </button>
                       </div>
                     )}
