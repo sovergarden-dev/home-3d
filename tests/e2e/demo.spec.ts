@@ -359,6 +359,8 @@ test("local preview editor: edit, geometry gate, undo/redo, road edit, export an
   await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", /ready|fallback/, {
     timeout: 30000,
   });
+  const rendererReady =
+    (await page.locator("#scene-root").getAttribute("data-scene-state")) === "ready";
   await page.getByLabel("Mở gói world").setInputFiles({
     name: "synthetic-editor.json",
     mimeType: "application/json",
@@ -369,7 +371,11 @@ test("local preview editor: edit, geometry gate, undo/redo, road edit, export an
   // 1) Edit wall height and save.
   const buildingSelect = page.getByLabel("Chọn công trình");
   await buildingSelect.selectOption("editor-house");
-  await page.locator('input[type="number"]').first().fill("9.5");
+  await page
+    .getByTestId("private-world-panel")
+    .locator('input[type="number"]')
+    .first()
+    .fill("9.5");
   await page.getByRole("button", { name: "Lưu sửa" }).click();
   await expect(buildingSelect).toContainText("9.5m");
 
@@ -400,7 +406,11 @@ test("local preview editor: edit, geometry gate, undo/redo, road edit, export an
   const lastError = page.getByTestId("private-world-last-error");
   await expect(lastError).toBeVisible();
   await expect(lastError).toHaveText("BUILDING_INTERSECTS_CONFIRMED_EMPTY_LOT");
-  await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-world-mode", "private");
+  // The renderer-dependent world attribute is only asserted where a world is
+  // actually rendered; engines without WebGL2 keep the DOM editor contract.
+  if (rendererReady) {
+    await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-world-mode", "private");
+  }
 
   // 4) A valid footprint elsewhere clears the gate error.
   await footprint.fill(
