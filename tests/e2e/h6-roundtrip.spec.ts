@@ -189,6 +189,13 @@ test("H6 synthetic source → build → editor → export → source rebuild →
     "07-h6-courtyard-roof-and-empty-lot.png",
     "Synthetic courtyard building with a confirmed empty lot fully inside its courtyard hole; default diorama view.",
   );
+  const desktopExpandedPanelBox = await page.getByTestId("private-world-panel").boundingBox();
+  const desktopDockPanelBox = await page.getByRole("tabpanel").boundingBox();
+  expect(desktopExpandedPanelBox).not.toBeNull();
+  expect(desktopDockPanelBox).not.toBeNull();
+  expect(desktopExpandedPanelBox!.y + desktopExpandedPanelBox!.height).toBeLessThanOrEqual(
+    desktopDockPanelBox!.y,
+  );
 
   const planMode = page.getByRole("radio", { name: "Mặt bằng", exact: true });
   await planMode.click();

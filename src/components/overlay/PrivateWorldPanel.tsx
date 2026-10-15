@@ -375,10 +375,10 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
 
   return (
     <section
-      className={`pointer-events-auto absolute z-20 flex max-h-[calc(100dvh-8rem-env(safe-area-inset-top)-env(safe-area-inset-bottom))] max-w-sm flex-col overflow-hidden rounded-xl border border-border bg-background/95 p-3.5 shadow-xl backdrop-blur md:max-h-[calc(100dvh-3rem)] ${
+      className={`pointer-events-auto absolute z-20 flex max-h-[calc(100dvh-8rem-env(safe-area-inset-top)-env(safe-area-inset-bottom))] max-w-sm flex-col overflow-hidden rounded-xl border border-border bg-background/95 p-3.5 shadow-xl backdrop-blur md:max-h-[calc(100dvh-22rem-env(safe-area-inset-bottom))] ${
         panelCollapsed
-          ? "left-4 top-60 w-fit md:bottom-6 md:left-auto md:right-6 md:top-auto md:w-[calc(100vw-2rem)]"
-          : "bottom-[calc(6rem+env(safe-area-inset-bottom)+0.5rem)] right-4 w-[calc(100vw-2rem)] md:bottom-6 md:right-6"
+          ? "left-4 top-60 w-fit md:bottom-auto md:left-4 md:right-auto md:top-52 md:w-fit"
+          : "bottom-[calc(6rem+env(safe-area-inset-bottom)+0.5rem)] right-4 w-[calc(100vw-2rem)] md:bottom-[calc(18rem+env(safe-area-inset-bottom))] md:right-6"
       }`}
       aria-labelledby="private-world-preview-title"
       data-testid="private-world-panel"
