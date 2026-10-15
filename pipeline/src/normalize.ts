@@ -480,6 +480,15 @@ export function normalizeGeoJsonSource(
   // mid-line T-junction vertices) within the connection tolerance.
   const connectionTolerance = 0.1;
   const distance = (p1: Position2, p2: Position2) => Math.hypot(p1[0] - p2[0], p1[1] - p2[1]);
+  const pointToSegmentDistance = (p: Position2, a: Position2, b: Position2) => {
+    const dx = b[0] - a[0];
+    const dy = b[1] - a[1];
+    const lengthSq = dx * dx + dy * dy;
+    if (lengthSq === 0) return distance(p, a);
+    let t = ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / lengthSq;
+    t = Math.max(0, Math.min(1, t));
+    return distance(p, [a[0] + t * dx, a[1] + t * dy]);
+  };
   const polylineBounds = (line: Position2[]) => {
     let minX = Infinity;
     let minY = Infinity;
@@ -493,6 +502,16 @@ export function normalizeGeoJsonSource(
     }
     return { minX, minY, maxX, maxY };
   };
+  const touchesSegment = (points: Position2[], line: Position2[]) => {
+    for (let i = 0; i < line.length - 1; i += 1) {
+      const a = line[i]!;
+      const b = line[i + 1]!;
+      for (const p of points) {
+        if (pointToSegmentDistance(p, a, b) < connectionTolerance) return true;
+      }
+    }
+    return false;
+  };
   const sharesNode = (first: Position2[], second: Position2[]) => {
     const a = polylineBounds(first);
     const b = polylineBounds(second);
@@ -500,11 +519,15 @@ export function normalizeGeoJsonSource(
       return false;
     if (a.minY - connectionTolerance > b.maxY || b.minY - connectionTolerance > a.maxY)
       return false;
+    // Shared vertex (endpoint or interior node) between both polylines.
     for (const pa of first) {
       for (const pb of second) {
         if (distance(pa, pb) < connectionTolerance) return true;
       }
     }
+    // T-junction: a vertex of one road lands on the interior of the other's segment.
+    if (touchesSegment(first, second)) return true;
+    if (touchesSegment(second, first)) return true;
     return false;
   };
 

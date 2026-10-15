@@ -1,0 +1,26 @@
+{
+  "capturedAt": "2026-10-15T07:48:28.299Z",
+  "sceneState": "ready",
+  "viewport": "1280x800",
+  "method": "Playwright chromium (swiftshader), dev server bun run dev --host 127.0.0.1 --port 4178, synthetic fixture only",
+  "fixtureSha256": "b495e31c3a815fa8c657cf52df994f33eabe1d10157e8458b89521438a27fcac",
+  "shots": [
+    {
+      "file": "04-local-preview-editor.png",
+      "note": "Loaded synthetic package; building/road/lot editors visible"
+    },
+    {
+      "file": "05-editor-geometry-gate.png",
+      "note": "Invading footprint refused: BUILDING_INTERSECTS_CONFIRMED_EMPTY_LOT"
+    },
+    {
+      "file": "06-editor-after-export-ready.png",
+      "note": "Valid edits applied; undo/redo and export controls ready"
+    }
+  ],
+  "exportedOverrideOperations": [
+    "replace_building_geometry",
+    "patch_road",
+    "patch_building"
+  ]
+}

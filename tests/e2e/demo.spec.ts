@@ -278,3 +278,180 @@ test("explicit local preview opens a valid synthetic package as one in-memory wo
     await expect(page.getByText("Thiết bị chưa mở được 3D")).toBeVisible();
   }
 });
+
+test("local preview editor: edit, geometry gate, undo/redo, road edit, export and reload", async ({
+  page,
+}) => {
+  const manifest = {
+    schemaVersion: "1.0",
+    datasetRevision: "synthetic-editor-e2e",
+    units: "metres",
+    frameConvention: "ENU_X_EAST_Y_UP_NEG_Z_NORTH",
+    isSynthetic: true,
+    chunks: [],
+    assetHashes: {},
+    licences: ["Synthetic fixture"],
+    coverage: { quality: "synthetic", sourceCount: 1 },
+  };
+  const world = {
+    manifest,
+    roads: [
+      {
+        localId: "editor-road",
+        polylineENU: [
+          [-8, -8],
+          [8, -8],
+        ],
+        connectorIds: [],
+        roadClass: "residential",
+        carriagewayWidth: 5,
+        elevationLayer: 0,
+        direction: "both",
+        provenance: { source: "synthetic", quality: "synthetic" },
+      },
+    ],
+    buildings: [
+      {
+        localId: "editor-house",
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              [-4, -4],
+              [4, -4],
+              [4, 4],
+              [-4, 4],
+              [-4, -4],
+            ],
+          ],
+        },
+        footprintKind: "footprint",
+        wallHeight: 6,
+        levels: 2,
+        roofType: "flat",
+        provenance: { source: "synthetic", quality: "synthetic" },
+      },
+    ],
+    lots: [
+      {
+        localId: "editor-empty-lot",
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              [20, 20],
+              [26, 20],
+              [26, 26],
+              [20, 26],
+              [20, 20],
+            ],
+          ],
+        },
+        confirmed: true,
+        status: "empty",
+        provenance: { source: "survey", quality: "verified" },
+      },
+    ],
+  };
+  const pkgText = JSON.stringify({ manifest, world });
+
+  await page.goto("/?local-preview=1");
+  await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", /ready|fallback/, {
+    timeout: 30000,
+  });
+  await page.getByLabel("Mở gói world").setInputFiles({
+    name: "synthetic-editor.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(pkgText),
+  });
+  await expect(page.getByText("Đã mở gói cục bộ")).toBeVisible();
+
+  // 1) Edit wall height and save.
+  const buildingSelect = page.getByLabel("Chọn công trình");
+  await buildingSelect.selectOption("editor-house");
+  await page.locator('input[type="number"]').first().fill("9.5");
+  await page.getByRole("button", { name: "Lưu sửa" }).click();
+  await expect(buildingSelect).toContainText("9.5m");
+
+  // 2) Undo returns to the source value, redo restores the edit.
+  await page.getByRole("button", { name: "Undo" }).click();
+  await expect(buildingSelect).toContainText("6.0m");
+  await page.getByRole("button", { name: "Redo" }).click();
+  await expect(buildingSelect).toContainText("9.5m");
+
+  // 3) Geometry gate: a footprint invading the confirmed empty lot must be refused
+  // with a coded error, keeping the last valid world rendered.
+  const footprint = page.getByLabel("Footprint GeoJSON");
+  await footprint.fill(
+    JSON.stringify({
+      type: "Polygon",
+      coordinates: [
+        [
+          [20.5, 20.5],
+          [25.5, 20.5],
+          [25.5, 25.5],
+          [20.5, 25.5],
+          [20.5, 20.5],
+        ],
+      ],
+    }),
+  );
+  await page.getByRole("button", { name: "Lưu hình dạng" }).click();
+  const lastError = page.getByTestId("private-world-last-error");
+  await expect(lastError).toBeVisible();
+  await expect(lastError).toHaveText("BUILDING_INTERSECTS_CONFIRMED_EMPTY_LOT");
+  await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-world-mode", "private");
+
+  // 4) A valid footprint elsewhere clears the gate error.
+  await footprint.fill(
+    JSON.stringify({
+      type: "Polygon",
+      coordinates: [
+        [
+          [-6, -6],
+          [-2, -6],
+          [-2, -2],
+          [-6, -2],
+          [-6, -6],
+        ],
+      ],
+    }),
+  );
+  await page.getByRole("button", { name: "Lưu hình dạng" }).click();
+  await expect(lastError).toBeHidden();
+
+  // 5) Road width edit applies through the same validated pipeline.
+  const roadSelect = page.getByLabel("Chọn tuyến đường");
+  await roadSelect.selectOption("editor-road");
+  await page.getByLabel("Bề rộng đường").fill("8");
+  await page.getByRole("button", { name: "Lưu đường" }).click();
+  await expect(roadSelect).toContainText("8m");
+
+  // 6) Export keeps every operation of the multi-part override document.
+  const [download] = await Promise.all([
+    page.waitForEvent("download"),
+    page.getByRole("button", { name: "Xuất file overrides (.json)" }).click(),
+  ]);
+  const stream = await download.createReadStream();
+  const chunks: Buffer[] = [];
+  for await (const chunk of stream) chunks.push(Buffer.from(chunk));
+  const exported = JSON.parse(Buffer.concat(chunks).toString("utf8")) as {
+    overrides: Array<{ patch: { operation: string } }>;
+  };
+  expect(exported.overrides).toHaveLength(3);
+  expect(exported.overrides.map((o) => o.patch.operation).sort()).toEqual([
+    "patch_building",
+    "patch_road",
+    "replace_building_geometry",
+  ]);
+
+  // 7) Reloading the raw package resets to the pristine source revision.
+  await page.getByLabel("Mở gói world").setInputFiles({
+    name: "synthetic-editor.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(pkgText),
+  });
+  await expect(page.getByText("Đã mở gói cục bộ")).toBeVisible();
+  await expect(buildingSelect).toContainText("6.0m");
+  await expect(roadSelect).toContainText("5m");
+});

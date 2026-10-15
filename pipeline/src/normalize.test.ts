@@ -366,6 +366,94 @@ test("source ids that sanitise lossily never collapse to the same localId", () =
   expect(new Set(ids).size).toBe(3);
 });
 
+test("T-junction branch landing mid-segment of the trunk connects on the same layer only", () => {
+  const world = normalizeGeoJsonSource(
+    {
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Feature",
+          id: "trunk-road",
+          properties: { highway: "residential" },
+          geometry: {
+            type: "LineString",
+            coordinates: [
+              [0.6, 0.4],
+              [0.601, 0.4],
+            ],
+          },
+        },
+        {
+          type: "Feature",
+          id: "branch-road",
+          properties: { highway: "residential", bridge: "yes" },
+          geometry: {
+            type: "LineString",
+            coordinates: [
+              [0.6005, 0.4],
+              [0.6005, 0.4005],
+            ],
+          },
+        },
+      ],
+    },
+    {
+      origin,
+      datasetRevision: "t-junction-test",
+      source: { kind: "osm", revision: "1", licence: "ODbL-1.0" },
+    },
+  );
+
+  const trunk = world.roads.find((r) => r.localId.includes("trunk-road"))!;
+  const branch = world.roads.find((r) => r.localId.includes("branch-road"))!;
+  // Same XY footprint but different layers: must NOT connect even though the branch
+  // endpoint touches the trunk interior.
+  expect(trunk.connectorIds).toEqual([]);
+  expect(branch.connectorIds).toEqual([]);
+
+  const worldSameLayer = normalizeGeoJsonSource(
+    {
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Feature",
+          id: "trunk-road",
+          properties: { highway: "residential" },
+          geometry: {
+            type: "LineString",
+            coordinates: [
+              [0.6, 0.4],
+              [0.601, 0.4],
+            ],
+          },
+        },
+        {
+          type: "Feature",
+          id: "branch-road",
+          properties: { highway: "residential" },
+          geometry: {
+            type: "LineString",
+            coordinates: [
+              [0.6005, 0.4],
+              [0.6005, 0.4005],
+            ],
+          },
+        },
+      ],
+    },
+    {
+      origin,
+      datasetRevision: "t-junction-test-2",
+      source: { kind: "osm", revision: "1", licence: "ODbL-1.0" },
+    },
+  );
+
+  const trunk2 = worldSameLayer.roads.find((r) => r.localId.includes("trunk-road"))!;
+  const branch2 = worldSameLayer.roads.find((r) => r.localId.includes("branch-road"))!;
+  expect(trunk2.connectorIds).toContain(branch2.localId);
+  expect(branch2.connectorIds).toContain(trunk2.localId);
+});
+
 test("roads on different layers do not connect and bridge='no' is not classified as bridge", () => {
   const world = normalizeGeoJsonSource(
     {
