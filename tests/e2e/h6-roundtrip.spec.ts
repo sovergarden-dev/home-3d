@@ -350,6 +350,39 @@ test("H6 synthetic source → build → editor → export → source rebuild →
   await page.getByRole("button", { name: "Redo" }).click();
   await expect(partHeight).toHaveValue("6.5");
 
+  await page.setViewportSize({ width: 740, height: 390 });
+  const privatePanel = page.getByTestId("private-world-panel");
+  const landscapeCollapseButton = privatePanel.getByRole("button", {
+    name: "Thu gọn bảng riêng",
+  });
+  await expect(partSelect).toHaveValue(part!.localId);
+  await expect(partHeight).toHaveValue("6.5");
+  await expect(page.getByRole("button", { name: "Undo" })).toBeVisible();
+  const collapseButtonReceivesPointer = await landscapeCollapseButton.evaluate((button) => {
+    const rect = button.getBoundingClientRect();
+    const hitTarget = document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
+    return hitTarget === button || hitTarget?.closest("button") === button;
+  });
+  expect(collapseButtonReceivesPointer).toBe(true);
+  await landscapeCollapseButton.click();
+  await expect(privatePanel).toHaveAttribute("data-collapsed", "true");
+  await expect(page.locator("#private-world-panel-content")).toBeHidden();
+  await expect(page.getByText("Bắc ↑")).toBeVisible();
+  await expect(page.getByText("Thước mét")).toBeVisible();
+  await expect(planMode).toBeVisible();
+  if (rendererReady) {
+    const dioramaMode = page.getByRole("radio", { name: "Diorama", exact: true });
+    await dioramaMode.click();
+    await expect(dioramaMode).toHaveAttribute("aria-checked", "true");
+    await planMode.click();
+    await expect(planMode).toHaveAttribute("aria-checked", "true");
+  }
+  await privatePanel.getByRole("button", { name: "Mở bảng riêng" }).click();
+  await expect(privatePanel).toHaveAttribute("data-collapsed", "false");
+  await expect(partSelect).toHaveValue(part!.localId);
+  await expect(partHeight).toHaveValue("6.5");
+  await expect(page.getByRole("button", { name: "Undo" })).toBeVisible();
+
   if (captureEvidence && outputDirectory) {
     await page.setViewportSize({ width: 390, height: 844 });
     await expect(page.getByTestId("building-part-editor")).toBeVisible();
@@ -405,8 +438,26 @@ test("H6 synthetic source → build → editor → export → source rebuild →
     );
     await capture(
       "16-h6-private-panel-mobile-landscape.png",
-      "Synthetic Plan view at 740x390 with expanded private panel; scroll-limited panel remains inside landscape viewport.",
+      "Synthetic Plan view at 740x390 with expanded private panel left of MapControls; collapse button remains reachable by pointer.",
     );
+    await privatePanel.getByRole("button", { name: "Thu gọn bảng riêng" }).click();
+    await expect(privatePanel).toHaveAttribute("data-collapsed", "true");
+    await expect(page.locator("#private-world-panel-content")).toBeHidden();
+    await expect(page.getByText("Bắc ↑")).toBeVisible();
+    await expect(page.getByText("Thước mét")).toBeVisible();
+    if (rendererReady) {
+      const dioramaMode = page.getByRole("radio", { name: "Diorama", exact: true });
+      await dioramaMode.click();
+      await expect(dioramaMode).toHaveAttribute("aria-checked", "true");
+      await planMode.click();
+      await expect(planMode).toHaveAttribute("aria-checked", "true");
+    }
+    await capture(
+      "17-h6-private-panel-mobile-landscape-collapsed.png",
+      "Synthetic Plan view at 740x390 after a normal collapse click; Plan, north, and metric scale remain accessible.",
+    );
+    await privatePanel.getByRole("button", { name: "Mở bảng riêng" }).click();
+    await expect(page.getByTestId("building-part-editor")).toBeVisible();
     const exportedPath = join(outputDirectory, "14-h6-override-roundtrip-export.json");
     await writeFile(exportedPath, JSON.stringify(exported, null, 2));
     const fixtureSha256 = createHash("sha256")
@@ -420,7 +471,7 @@ test("H6 synthetic source → build → editor → export → source rebuild →
       webglHardwareBenchmark: "not performed; SwiftShader is not a physical GPU benchmark",
       viewports: ["1280x800", "1440x900", "390x844", "740x390"],
       method:
-        "Playwright E2E: load synthetic private package → activate Plan with normal click while panel is open → collapse and verify north/scale → edit part and road width → export → source rebuild/reload → verify retained road fields/provenance and part edit → mobile viewport bounds, collapse, and keyboard Plan navigation",
+        "Playwright E2E: load synthetic private package → activate Plan with normal click while panel is open → edit part and road width → export → source rebuild/reload → verify retained road fields/provenance and part edit → at 740x390 hit-test the collapse button, collapse with a normal click, exercise Plan controls, and reopen with selection/edit/history retained; also capture desktop/portrait/landscape QA",
       fixtureSha256,
       buildReport: { valid: baseBuild.report.valid, rebuiltValid: rebuilt.report.valid },
       exportedOverrideOperations: exported.overrides.map((override) => override.patch.operation),
