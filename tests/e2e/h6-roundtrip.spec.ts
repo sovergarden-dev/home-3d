@@ -198,37 +198,42 @@ test("H6 synthetic source → build → editor → export → source rebuild →
   );
 
   const planMode = page.getByRole("radio", { name: "Mặt bằng", exact: true });
-  await planMode.click();
-  await expect(planMode).toHaveAttribute("aria-checked", "true");
-  await expect(page.getByTestId("plan-scale-bar")).toBeVisible();
-  await expect(page.getByText("Bắc ↑")).toBeVisible();
-  await expect(page.getByText("Thước mét")).toBeVisible();
-  if (rendererReady) await page.waitForTimeout(400);
-  await capture(
-    "10-h6-plan-desktop-panel-expanded.png",
-    "Synthetic Plan view at 1280x800 while the private panel remains expanded; Mặt bằng was activated by a normal click.",
-  );
-  await page.getByRole("button", { name: "Thu gọn bảng riêng" }).click();
-  await expect(page.locator("#private-world-panel-content")).toBeHidden();
-  await expect(page.getByTestId("plan-scale-bar")).toBeVisible();
-  if (rendererReady) await page.waitForTimeout(400);
-  await capture(
-    "11-h6-plan-desktop-panel-collapsed.png",
-    "Synthetic Plan view at 1280x800 after collapsing the private panel; north indicator and metric scale remain visible.",
-  );
-  await page.setViewportSize({ width: 1440, height: 900 });
-  const desktopPanelBox = await page.getByTestId("private-world-panel").boundingBox();
-  expect(desktopPanelBox).not.toBeNull();
-  expect(desktopPanelBox!.y).toBeGreaterThanOrEqual(0);
-  expect(desktopPanelBox!.y + desktopPanelBox!.height).toBeLessThanOrEqual(900);
-  await expect(planMode).toHaveAttribute("aria-checked", "true");
-  await expect(page.getByTestId("plan-scale-bar")).toBeVisible();
-  await capture(
-    "15-h6-plan-desktop-1440x900.png",
-    "Synthetic Plan view and collapsed private-panel bounds at 1440x900.",
-  );
-  await page.setViewportSize({ width: 1280, height: 800 });
-  await page.getByRole("button", { name: "Mở bảng riêng" }).click();
+  if (rendererReady) {
+    // MapControls are intentionally disabled in the no-renderer fallback.
+    // Keep editor/export/rebuild coverage below, but claim Plan visuals only
+    // when the browser can render the world.
+    await planMode.click();
+    await expect(planMode).toHaveAttribute("aria-checked", "true");
+    await expect(page.getByTestId("plan-scale-bar")).toBeVisible();
+    await expect(page.getByText("Bắc ↑")).toBeVisible();
+    await expect(page.getByText("Thước mét")).toBeVisible();
+    await page.waitForTimeout(400);
+    await capture(
+      "10-h6-plan-desktop-panel-expanded.png",
+      "Synthetic Plan view at 1280x800 while the private panel remains expanded; Mặt bằng was activated by a normal click.",
+    );
+    await page.getByRole("button", { name: "Thu gọn bảng riêng" }).click();
+    await expect(page.locator("#private-world-panel-content")).toBeHidden();
+    await expect(page.getByTestId("plan-scale-bar")).toBeVisible();
+    await page.waitForTimeout(400);
+    await capture(
+      "11-h6-plan-desktop-panel-collapsed.png",
+      "Synthetic Plan view at 1280x800 after collapsing the private panel; north indicator and metric scale remain visible.",
+    );
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const desktopPanelBox = await page.getByTestId("private-world-panel").boundingBox();
+    expect(desktopPanelBox).not.toBeNull();
+    expect(desktopPanelBox!.y).toBeGreaterThanOrEqual(0);
+    expect(desktopPanelBox!.y + desktopPanelBox!.height).toBeLessThanOrEqual(900);
+    await expect(planMode).toHaveAttribute("aria-checked", "true");
+    await expect(page.getByTestId("plan-scale-bar")).toBeVisible();
+    await capture(
+      "15-h6-plan-desktop-1440x900.png",
+      "Synthetic Plan view and collapsed private-panel bounds at 1440x900.",
+    );
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.getByRole("button", { name: "Mở bảng riêng" }).click();
+  }
 
   await buildingSelect.selectOption(parent!.localId);
   await expect(page.getByLabel("Chiều cao (m)")).toBeDisabled();
