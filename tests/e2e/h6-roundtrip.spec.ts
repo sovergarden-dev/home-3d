@@ -370,6 +370,21 @@ test("H6 synthetic source → build → editor → export → source rebuild →
   await expect(page.getByText("Bắc ↑")).toBeVisible();
   await expect(page.getByText("Thước mét")).toBeVisible();
   await expect(planMode).toBeVisible();
+  const treeToggle = page.getByTestId("plan-scale-bar").getByRole("button").first();
+  const treeToggleWasPressed = await treeToggle.getAttribute("aria-pressed");
+  const treeToggleReceivesPointer = await treeToggle.evaluate((button) => {
+    const rect = button.getBoundingClientRect();
+    const hitTarget = document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
+    return hitTarget === button || hitTarget?.closest("button") === button;
+  });
+  expect(treeToggleReceivesPointer).toBe(true);
+  await treeToggle.click();
+  await expect(treeToggle).toHaveAttribute(
+    "aria-pressed",
+    treeToggleWasPressed === "true" ? "false" : "true",
+  );
+  await treeToggle.click();
+  await expect(treeToggle).toHaveAttribute("aria-pressed", treeToggleWasPressed!);
   if (rendererReady) {
     const dioramaMode = page.getByRole("radio", { name: "Diorama", exact: true });
     await dioramaMode.click();
@@ -471,7 +486,22 @@ test("H6 synthetic source → build → editor → export → source rebuild →
       webglHardwareBenchmark: "not performed; SwiftShader is not a physical GPU benchmark",
       viewports: ["1280x800", "1440x900", "390x844", "740x390"],
       method:
-        "Playwright E2E: load synthetic private package → activate Plan with normal click while panel is open → edit part and road width → export → source rebuild/reload → verify retained road fields/provenance and part edit → at 740x390 hit-test the collapse button, collapse with a normal click, exercise Plan controls, and reopen with selection/edit/history retained; also capture desktop/portrait/landscape QA",
+        "Playwright E2E: load synthetic private package → activate Plan with normal click while panel is open → edit part and road width → export → source rebuild/reload → verify retained road fields/provenance and part edit → at 740x390 hit-test the collapse button, collapse with a normal click, exercise Plan and scale controls, and reopen with selection/edit/history retained; also capture desktop/portrait/landscape QA",
+      landscapeRegression: {
+        viewport: "740x390",
+        collapseButtonHitTest: collapseButtonReceivesPointer,
+        collapseButtonClick: "normal Playwright click; panel collapsed and reopened",
+        scaleControlHitTest: treeToggleReceivesPointer,
+        scaleControlClick: "normal Playwright click toggled twice; original state restored",
+        planControls: rendererReady
+          ? "normal Playwright clicks toggled Diorama → Plan"
+          : "visible; renderer unavailable for view-mode activation",
+        reopenedEditor: {
+          selectedPartId: part!.localId,
+          wallHeightMetres: 6.5,
+          undoAvailable: true,
+        },
+      },
       fixtureSha256,
       buildReport: { valid: baseBuild.report.valid, rebuiltValid: rebuilt.report.valid },
       exportedOverrideOperations: exported.overrides.map((override) => override.patch.operation),

@@ -105,6 +105,11 @@
     left: max(1rem, env(safe-area-inset-left));
     right: auto;
   }
+
+  .private-world-panel[data-collapsed="true"] {
+    top: max(11rem, calc(env(safe-area-inset-top) + 11rem));
+    bottom: auto;
+  }
 }
 
 @utility chip {
