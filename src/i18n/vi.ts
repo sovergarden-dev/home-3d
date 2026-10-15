@@ -34,6 +34,8 @@ export const vi = {
     reset: "Trở về fixture demo",
     loaded: "Đã mở gói cục bộ",
     error: "Không thể mở gói cục bộ. Giữ gói riêng trên thiết bị và thử lại.",
+    collapse: "Thu gọn bảng riêng",
+    expand: "Mở bảng riêng",
     partsParentNote:
       "Công trình cha là vùng chứa; chỉ các phần bên dưới đang được dựng. Chọn phần để sửa, không sửa chiều cao cha.",
     partSelectLabel: "Chọn phần công trình",

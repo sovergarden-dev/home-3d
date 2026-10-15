@@ -639,6 +639,39 @@ test("MultiLineString component IDs survive component reorder", () => {
   );
 });
 
+test("open route identity preserves adjacency while allowing reversal and collection reorder", () => {
+  const routeA = [
+    [0.6, 0.4],
+    [0.6001, 0.4],
+    [0.6001, 0.4001],
+  ];
+  const routeB = [
+    [0.6001, 0.4],
+    [0.6001, 0.4001],
+    [0.6, 0.4],
+  ];
+  const feature = (coordinates: number[][]) => ({
+    type: "Feature" as const,
+    properties: { highway: "residential" },
+    geometry: { type: "LineString" as const, coordinates },
+  });
+  const normalize = (features: ReturnType<typeof feature>[]) =>
+    normalizeGeoJsonSource(
+      { type: "FeatureCollection", features },
+      {
+        origin,
+        datasetRevision: "open-route-identity-v1",
+        source: { kind: "osm", namespace: "primary", revision: "rev-1", licence: "ODbL-1.0" },
+      },
+    ).roads.map((road) => road.localId);
+
+  const distinctRoutes = normalize([feature(routeA), feature(routeB)]).sort();
+  expect(distinctRoutes).toHaveLength(2);
+  expect(new Set(distinctRoutes).size).toBe(2);
+  expect(normalize([feature([...routeA].reverse())])).toEqual(normalize([feature(routeA)]));
+  expect(normalize([feature(routeB), feature(routeA)]).sort()).toEqual(distinctRoutes);
+});
+
 test("explicit parent references are exact and unresolved references fail closed", () => {
   const parent = {
     type: "Feature" as const,

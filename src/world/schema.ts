@@ -1,4 +1,5 @@
 export const WORLD_SCHEMA_VERSION = "1.0" as const;
+export const WORLD_OVERRIDE_IDENTITY_SCHEME = "stable-local-id-v2" as const;
 
 export type QualityStatus =
   "synthetic" | "verified" | "source_only" | "inferred" | "unknown" | "conflict";
@@ -193,6 +194,7 @@ export type FeaturePatch =
           RoadSegment,
           | "polylineENU"
           | "connectorIds"
+          | "baseElevation"
           | "carriagewayWidth"
           | "sidewalkWidths"
           | "medianWidth"
@@ -209,6 +211,7 @@ export type FeaturePatch =
 export interface WorldOverride {
   localId: string;
   revision: number;
+  identityScheme?: typeof WORLD_OVERRIDE_IDENTITY_SCHEME;
   reason: string;
   provenance?: Provenance;
   patch: FeaturePatch;

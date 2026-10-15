@@ -16,6 +16,8 @@ Config có `schemaVersion`, `datasetRevision`, `origin`, `input`, `source` và `
 - Primary source mặc định namespace `primary`; khai báo `source.namespace` rõ ràng nếu muốn giữ identity qua việc đổi nguồn/chuyển role.
 - Mỗi `secondaryInputs[]` cần `source.namespace` riêng, không rỗng và khác mọi namespace khác trong build. Namespace là identity ổn định, không phải revision; tăng `source.revision` không được đổi local IDs.
 - Tất cả input phải dùng cùng `origin`/ENU frame. Local IDs explicit và fallback đều mang namespace; legacy override/rule IDs chỉ migrate khi alias duy nhất. Alias cũ trỏ nhiều feature sẽ dừng với lỗi ambiguity, không đoán hoặc deduplicate.
+- `LineString` giữ thứ tự kề nhau và hai đầu tuyến; đảo toàn tuyến được chuẩn hóa thành cùng identity nhưng không xoay chuỗi như ring. `MultiLineString` không phụ thuộc thứ tự component, còn từng component vẫn tuân theo quy tắc tuyến mở. Polygon rings được canonicalize riêng theo phép quay/đảo vòng.
+- Mỗi override mới ghi `identityScheme: "stable-local-id-v2"` trên từng operation để phân biệt current IDs với alias legacy. Override cũ không có marker chỉ migrate khi alias không mơ hồ; migration thành công ghi marker vào package export. ID legacy va vào current ID hoặc nhiều alias vẫn fail-closed.
 
 ## Hợp đồng feature GeoJSON
 

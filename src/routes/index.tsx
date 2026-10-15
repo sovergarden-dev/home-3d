@@ -67,14 +67,14 @@ function Home() {
 
         {mobile ? (
           <div
-            className={`absolute right-[max(1rem,env(safe-area-inset-right))] transition-[opacity,visibility] duration-200 motion-reduce:transition-none ${sheetExpanded ? "invisible opacity-0" : "visible opacity-100"}`}
+            className={`absolute right-[max(1rem,env(safe-area-inset-right))] z-30 transition-[opacity,visibility] duration-200 motion-reduce:transition-none ${sheetExpanded ? "invisible opacity-0" : "visible opacity-100"}`}
             style={{ bottom: `calc(${SHEET_PEEK} + env(safe-area-inset-bottom) + 0.75rem)` }}
           >
             <MapControls />
           </div>
         ) : (
           <>
-            <div className="absolute right-[max(1rem,env(safe-area-inset-right))] top-1/2 -translate-y-1/2">
+            <div className="absolute right-[max(1rem,env(safe-area-inset-right))] top-1/2 z-30 -translate-y-1/2">
               <MapControls />
             </div>
             <div className="absolute inset-x-0 bottom-[max(1rem,env(safe-area-inset-bottom))] flex justify-center">

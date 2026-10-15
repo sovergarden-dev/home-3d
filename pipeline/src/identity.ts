@@ -51,6 +51,12 @@ function canonicalRing(ring: number[][]) {
   return canonicalSequence(points, true);
 }
 
+function canonicalOpenLine(points: number[][]) {
+  const forward = JSON.stringify(points.map(positionKey));
+  const reverse = JSON.stringify([...points].reverse().map(positionKey));
+  return forward < reverse ? forward : reverse;
+}
+
 function canonicalPolygon(rings: number[][][]) {
   const [outer, ...holes] = rings;
   return JSON.stringify([outer ? canonicalRing(outer) : "[]", ...holes.map(canonicalRing).sort()]);
@@ -60,10 +66,10 @@ export function canonicalGeometryFingerprint(geometry: IdentityGeometry): string
   if (!geometry) return "null";
   if (geometry.type === "Point") return `Point:${positionKey(geometry.coordinates)}`;
   if (geometry.type === "LineString") {
-    return `LineString:${canonicalSequence(geometry.coordinates, true)}`;
+    return `LineString:${canonicalOpenLine(geometry.coordinates)}`;
   }
   if (geometry.type === "MultiLineString") {
-    return `MultiLineString:${JSON.stringify(geometry.coordinates.map((line) => canonicalSequence(line, true)).sort())}`;
+    return `MultiLineString:${JSON.stringify(geometry.coordinates.map(canonicalOpenLine).sort())}`;
   }
   if (geometry.type === "Polygon") return `Polygon:${canonicalPolygon(geometry.coordinates)}`;
   return `MultiPolygon:${JSON.stringify(geometry.coordinates.map(canonicalPolygon).sort())}`;

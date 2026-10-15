@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test";
 import { buildWorldPackage } from "./build";
 import { parseWorldPackage } from "../../src/world/package";
+import type { WorldOverrideDocument } from "../../src/world/schema";
 
 const source = {
   type: "FeatureCollection" as const,
@@ -276,6 +277,185 @@ test("fails closed when a legacy sampled ID maps to multiple full-geometry featu
   ).toThrow("PIPELINE_ID_MIGRATION_AMBIGUOUS");
 });
 
+test("rebuilds a current primary ID beside a secondary legacy alias but rejects an unmarked ambiguous legacy ID", () => {
+  const primarySource = {
+    type: "FeatureCollection" as const,
+    features: [
+      {
+        type: "Feature" as const,
+        id: 123,
+        properties: { building: "yes", height: 6 },
+        geometry: {
+          type: "Polygon" as const,
+          coordinates: [
+            [
+              [0.6, 0.4],
+              [0.6001, 0.4],
+              [0.6001, 0.4001],
+              [0.6, 0.4001],
+              [0.6, 0.4],
+            ],
+          ],
+        },
+      },
+    ],
+  };
+  const secondarySource = {
+    type: "FeatureCollection" as const,
+    features: [
+      {
+        ...primarySource.features[0]!,
+        geometry: {
+          type: "Polygon" as const,
+          coordinates: [
+            [
+              [0.6002, 0.4],
+              [0.6003, 0.4],
+              [0.6003, 0.4001],
+              [0.6002, 0.4001],
+              [0.6002, 0.4],
+            ],
+          ],
+        },
+      },
+    ],
+  };
+  const primaryConfig = {
+    schemaVersion: "1.0" as const,
+    datasetRevision: "current-id-migration-v1",
+    origin: { longitude: 0.6, latitude: 0.4, altitude: 0 },
+    input: { kind: "file" as const, path: "primary.geojson", format: "geojson" as const },
+    source: { kind: "osm" as const, namespace: "primary", revision: "p1", licence: "ODbL-1.0" },
+    output: { packagePath: "out/package.json", reportPath: "out/report.json" },
+  };
+  const secondaryConfig = {
+    ...primaryConfig,
+    datasetRevision: "current-id-migration-secondary-v1",
+    input: { kind: "file" as const, path: "secondary.geojson", format: "geojson" as const },
+    source: {
+      kind: "overture" as const,
+      namespace: "secondary-a",
+      revision: "s1",
+      licence: "CC-BY-4.0",
+    },
+  };
+  const secondarySources = [{ source: secondarySource, config: secondaryConfig }];
+  const currentOverrides: WorldOverrideDocument = {
+    schemaVersion: "1.0" as const,
+    overrides: [
+      {
+        localId: "ov-current-primary-123",
+        revision: 1,
+        reason: "Synthetic edit to the current primary feature",
+        identityScheme: "stable-local-id-v2" as const,
+        provenance: { source: "manual_override" as const, quality: "inferred" as const },
+        patch: {
+          operation: "patch_building" as const,
+          featureId: "building-123",
+          patch: { wallHeight: 9 },
+        },
+      },
+    ],
+  };
+
+  const rebuilt = buildWorldPackage(primarySource, primaryConfig, {
+    secondarySources,
+    overrides: currentOverrides,
+  });
+  expect(rebuilt.package.world.buildings.map((building) => building.localId).sort()).toEqual([
+    "building-123",
+    "building-secondary-a-123",
+  ]);
+  expect(rebuilt.package.overrides?.overrides[0]?.patch).toMatchObject({
+    operation: "patch_building",
+    featureId: "building-123",
+  });
+  expect(rebuilt.package.overrides?.overrides[0]?.identityScheme).toBe("stable-local-id-v2");
+  const opened = parseWorldPackage(JSON.stringify(rebuilt.package));
+  expect(opened.ok).toBe(true);
+  if (!opened.ok) throw new Error(opened.errorCode);
+  expect(
+    opened.world.buildings.find((building) => building.localId === "building-123")?.wallHeight,
+  ).toBe(9);
+  expect(
+    opened.world.buildings.find((building) => building.localId === "building-secondary-a-123")
+      ?.wallHeight,
+  ).toBe(6);
+
+  const legacyOverrides = structuredClone(currentOverrides);
+  delete legacyOverrides.overrides[0]!.identityScheme;
+  expect(() =>
+    buildWorldPackage(primarySource, primaryConfig, {
+      secondarySources,
+      overrides: legacyOverrides,
+    }),
+  ).toThrow("PIPELINE_ID_MIGRATION_AMBIGUOUS");
+});
+
+test("preserves a current road override when a no-ID route is reversed", () => {
+  const coordinates = [
+    [0.6, 0.4],
+    [0.6001, 0.4],
+    [0.6001, 0.4001],
+  ];
+  const routeSource = (line: number[][]) => ({
+    type: "FeatureCollection" as const,
+    features: [
+      {
+        type: "Feature" as const,
+        properties: { highway: "residential" },
+        geometry: { type: "LineString" as const, coordinates: line },
+      },
+    ],
+  });
+  const config = {
+    schemaVersion: "1.0" as const,
+    datasetRevision: "route-reversal-persistence-v1",
+    origin: { longitude: 0.6, latitude: 0.4, altitude: 0 },
+    input: { kind: "file" as const, path: "route.geojson", format: "geojson" as const },
+    source: {
+      kind: "osm" as const,
+      namespace: "primary",
+      revision: "route-v1",
+      licence: "ODbL-1.0",
+    },
+    output: { packagePath: "out/package.json", reportPath: "out/report.json" },
+  };
+  const original = buildWorldPackage(routeSource(coordinates), config);
+  const roadId = original.package.world.roads[0]!.localId;
+  const overrides: WorldOverrideDocument = {
+    schemaVersion: "1.0",
+    overrides: [
+      {
+        localId: "override-no-id-route-width",
+        revision: 1,
+        identityScheme: "stable-local-id-v2",
+        reason: "Synthetic road-width override for reversal persistence",
+        patch: {
+          operation: "patch_road",
+          featureId: roadId,
+          patch: { carriagewayWidth: 8 },
+        },
+      },
+    ],
+  };
+
+  const rebuilt = buildWorldPackage(routeSource([...coordinates].reverse()), config, { overrides });
+  expect(rebuilt.report.valid).toBe(true);
+  expect(rebuilt.package.world.roads).toHaveLength(1);
+  expect(rebuilt.package.world.roads[0]?.localId).toBe(roadId);
+  expect(rebuilt.package.world.roads[0]?.carriagewayWidth).toBe(6);
+  expect(rebuilt.package.overrides?.overrides[0]?.patch).toMatchObject({
+    operation: "patch_road",
+    featureId: roadId,
+    patch: { carriagewayWidth: 8 },
+  });
+  const opened = parseWorldPackage(JSON.stringify(rebuilt.package));
+  expect(opened.ok).toBe(true);
+  if (!opened.ok) throw new Error(opened.errorCode);
+  expect(opened.world.roads[0]?.carriagewayWidth).toBe(8);
+});
+
 test("rebuilds a rendered-part override from the original source and reloads the effective package", () => {
   const source = {
     type: "FeatureCollection" as const,
@@ -370,6 +550,7 @@ test("rebuilds a rendered-part override from the original source and reloads the
         {
           localId: "override-qa-part-left",
           revision: 1,
+          identityScheme: "stable-local-id-v2",
           reason: "Synthetic part edit from local editor",
           provenance: { source: "manual_override", quality: "inferred" },
           patch: {

@@ -42,6 +42,8 @@ export const en: Dict = {
     reset: "Return to demo fixture",
     loaded: "Local package opened",
     error: "The local package could not be opened. Keep it on this device and try again.",
+    collapse: "Collapse private panel",
+    expand: "Expand private panel",
     partsParentNote:
       "The parent building is a container; only the parts below are rendered. Select a part to edit it; the parent height is not editable.",
     partSelectLabel: "Select building part",

@@ -1,5 +1,10 @@
 import { applyWorldOverrides } from "../../src/world/overrides";
-import type { WorldData, WorldOverrideDocument, WorldPackage } from "../../src/world/schema";
+import {
+  WORLD_OVERRIDE_IDENTITY_SCHEME,
+  type WorldData,
+  type WorldOverrideDocument,
+  type WorldPackage,
+} from "../../src/world/schema";
 import { validateWorld } from "../../src/world/validate";
 import type { PipelineConfig } from "./config";
 import { conflateWorlds, type ConflationRule } from "./conflate";
@@ -79,13 +84,24 @@ function migrateOverrides(
   for (const item of record["overrides"]) {
     if (!item || typeof item !== "object" || Array.isArray(item)) continue;
     const override = item as Record<string, unknown>;
+    if (
+      override["identityScheme"] !== undefined &&
+      override["identityScheme"] !== WORLD_OVERRIDE_IDENTITY_SCHEME
+    ) {
+      throw new Error("PIPELINE_IDENTITY_SCHEME_UNSUPPORTED");
+    }
+    const isCurrentIdentity = override["identityScheme"] === WORLD_OVERRIDE_IDENTITY_SCHEME;
     const patchValue = override["patch"];
     if (!patchValue || typeof patchValue !== "object" || Array.isArray(patchValue)) continue;
     const patch = patchValue as Record<string, unknown>;
-    if (typeof patch["featureId"] === "string") patch["featureId"] = resolveId(patch["featureId"]);
-    if (typeof patch["buildingId"] === "string")
-      patch["buildingId"] = resolveId(patch["buildingId"]);
-    if (typeof patch["partId"] === "string") patch["partId"] = resolveId(patch["partId"]);
+    if (!isCurrentIdentity) {
+      if (typeof patch["featureId"] === "string")
+        patch["featureId"] = resolveId(patch["featureId"]);
+      if (typeof patch["buildingId"] === "string")
+        patch["buildingId"] = resolveId(patch["buildingId"]);
+      if (typeof patch["partId"] === "string") patch["partId"] = resolveId(patch["partId"]);
+      override["identityScheme"] = WORLD_OVERRIDE_IDENTITY_SCHEME;
+    }
   }
   return migrated as WorldOverrideDocument;
 }
