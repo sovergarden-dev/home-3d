@@ -1,6 +1,6 @@
 {
-  "capturedAt": "2026-10-15T23:06:01.151Z",
-  "codeSha": "ed3c5e58173b21be377c0a41d34a354ba9d3fca3",
+  "capturedAt": "2026-10-15T23:26:40.333Z",
+  "codeSha": "68bd1b6cfb0ebef4455f3943904ae0b0adf9c85d",
   "browser": "Playwright Chromium headless with SwiftShader",
   "sceneState": "ready",
   "webglHardwareBenchmark": "not performed; SwiftShader is not a physical GPU benchmark",

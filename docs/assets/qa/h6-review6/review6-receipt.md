@@ -11,7 +11,7 @@
 - Repository: `sovergarden-dev/home-3d`
 - Branch: `feat/h6-pho-that-mat-bang`
 - PR: `#3`
-- Code SHA đã kiểm thử và chụp QA: `ed3c5e58173b21be377c0a41d34a354ba9d3fca3`
+- Code SHA đã kiểm thử và chụp QA: `68bd1b6cfb0ebef4455f3943904ae0b0adf9c85d`
 - Fixture SHA-256: `2ec012a90a1a5698123281ada9805447c3478c92ab2339a57629906acfdcd602`
 
 ## Thay đổi
