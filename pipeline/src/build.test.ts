@@ -124,3 +124,59 @@ test("buildWorldPackage applies overrides and attaches confirmed empty lots", ()
   expect(result.package.world.lots[0]?.status).toBe("empty");
   expect(result.package.world.lots[0]?.confirmed).toBe(true);
 });
+
+test("buildWorldPackage throws PIPELINE_OVERRIDE_FAILED when override target is unknown", () => {
+  const buildingSource = {
+    type: "FeatureCollection" as const,
+    features: [
+      {
+        type: "Feature" as const,
+        id: "building-real",
+        properties: { building: "yes", height: 6, roof: "flat" },
+        geometry: {
+          type: "Polygon" as const,
+          coordinates: [
+            [
+              [0.6, 0.4],
+              [0.6001, 0.4],
+              [0.6001, 0.4001],
+              [0.6, 0.4001],
+              [0.6, 0.4],
+            ],
+          ],
+        },
+      },
+    ],
+  };
+
+  const badOverrides = {
+    schemaVersion: "1.0" as const,
+    overrides: [
+      {
+        localId: "ov-bad",
+        revision: 1,
+        reason: "Target does not exist",
+        patch: {
+          operation: "patch_building" as const,
+          featureId: "building-nonexistent-id",
+          patch: { wallHeight: 20 },
+        },
+      },
+    ],
+  };
+
+  expect(() =>
+    buildWorldPackage(
+      buildingSource,
+      {
+        schemaVersion: "1.0",
+        datasetRevision: "bad-override-test",
+        origin: { longitude: 0.6, latitude: 0.4, altitude: 0 },
+        input: { kind: "file", path: "building.geojson", format: "geojson" },
+        source: { kind: "synthetic", revision: "fixture-v1", licence: "CC0-1.0" },
+        output: { packagePath: "out/package.json", reportPath: "out/report.json" },
+      },
+      { overrides: badOverrides },
+    ),
+  ).toThrow("PIPELINE_OVERRIDE_FAILED");
+});

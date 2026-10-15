@@ -42,6 +42,7 @@ export function buildWorldPackage(
   }
 
   // Conflate secondary sources if rules provided
+  let conflationReport: WorldBuildReport["conflation"];
   if (options?.secondarySources?.length) {
     const secondaryWorlds = options.secondarySources.map((sec) =>
       normalizeGeoJsonSource(sec.source, {
@@ -52,16 +53,25 @@ export function buildWorldPackage(
     );
     const conflated = conflateWorlds([world, ...secondaryWorlds], options.conflationRules ?? []);
     world = conflated.world;
+    conflationReport = {
+      resolved: conflated.report.resolved,
+      unresolved: conflated.report.unresolved,
+      passesQualityGate: conflated.report.unresolved.length === 0,
+    };
   }
 
   // Apply world overrides if provided
   if (options?.overrides) {
     const overrideResult = applyWorldOverrides(world, options.overrides);
+    if (overrideResult.issues.length > 0) {
+      throw new Error(`PIPELINE_OVERRIDE_FAILED:${overrideResult.issues[0]}`);
+    }
     world = overrideResult.world;
   }
 
   const validation = validateWorld(world);
   const report = createWorldBuildReport(world);
+  if (conflationReport) report.conflation = conflationReport;
   if (!validation.valid) throw new Error("PIPELINE_WORLD_VALIDATION_FAILED");
   return { package: { manifest: world.manifest, world }, report };
 }

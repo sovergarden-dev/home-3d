@@ -1,5 +1,5 @@
-import { useState, useSyncExternalStore, type ChangeEvent } from "react";
-import { Download, FileUp, RotateCcw, Save, Undo2 } from "lucide-react";
+import { useState, useSyncExternalStore, useEffect, type ChangeEvent } from "react";
+import { Download, FileUp, Redo2, RotateCcw, Save, Undo2 } from "lucide-react";
 import { useT } from "@/i18n";
 import { worldDataProvider } from "@/world/privateWorldSession";
 import type { RoofType, WorldOverrideDocument } from "@/world/schema";
@@ -21,6 +21,20 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
   const [editLevels, setEditLevels] = useState<number>(2);
   const [editRoof, setEditRoof] = useState<RoofType>("flat");
   const [history, setHistory] = useState<WorldOverrideDocument[]>([]);
+  const [future, setFuture] = useState<WorldOverrideDocument[]>([]);
+  const [lastRevision, setLastRevision] = useState<number>(snapshot.revision);
+
+  // Reset local undo/redo/selection if package is reloaded or fixture reset externally
+  useEffect(() => {
+    if (snapshot.revision !== lastRevision) {
+      setLastRevision(snapshot.revision);
+      if (snapshot.mode === "fixture" || snapshot.mode === "private-error") {
+        setHistory([]);
+        setFuture([]);
+        setSelectedId("");
+      }
+    }
+  }, [snapshot.revision, snapshot.mode, lastRevision]);
 
   if (!enabled) return null;
 
@@ -51,14 +65,15 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
       overrides: [],
     };
     setHistory((prev) => [...prev, currentDoc]);
+    setFuture([]);
 
     const newOverride = {
       localId: `ov-${selectedId}`,
       revision: (currentDoc.overrides.length || 0) + 1,
-      reason: "Chỉnh sửa thực địa qua editor",
+      reason: `Chỉnh sửa cục bộ trong trình biên tập cho ${selectedId}; chưa đối chiếu nguồn thực địa`,
       provenance: {
         source: "manual_override" as const,
-        quality: "verified" as const,
+        quality: "inferred" as const,
       },
       patch: {
         operation: "patch_building" as const,
@@ -74,10 +89,12 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
     const nextOverrides: WorldOverrideDocument = {
       schemaVersion: "1.0",
       overrides: [
-        ...currentDoc.overrides.filter(
-          (o: { patch: { operation: string; featureId?: string } }) =>
-            o.patch.operation === "patch_building" && o.patch.featureId !== selectedId,
-        ),
+        ...currentDoc.overrides.filter((o) => {
+          if (o.patch.operation === "patch_building" && o.patch.featureId === selectedId) {
+            return false;
+          }
+          return true;
+        }),
         newOverride,
       ],
     };
@@ -85,10 +102,27 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
   };
 
   const handleUndo = () => {
-    if (history.length === 0) return;
-    const previous = history[history.length - 1];
+    if (history.length === 0 || snapshot.mode === "private-error") return;
+    const currentDoc = snapshot.overrides ?? {
+      schemaVersion: "1.0" as const,
+      overrides: [],
+    };
+    const previous = history[history.length - 1]!;
     setHistory((prev) => prev.slice(0, -1));
+    setFuture((prev) => [currentDoc, ...prev]);
     worldDataProvider.applyOverrides(previous);
+  };
+
+  const handleRedo = () => {
+    if (future.length === 0 || snapshot.mode === "private-error") return;
+    const currentDoc = snapshot.overrides ?? {
+      schemaVersion: "1.0" as const,
+      overrides: [],
+    };
+    const next = future[0]!;
+    setFuture((prev) => prev.slice(1));
+    setHistory((prev) => [...prev, currentDoc]);
+    worldDataProvider.applyOverrides(next);
   };
 
   const handleExportOverrides = () => {
@@ -126,6 +160,15 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
       {snapshot.mode === "private-error" && (
         <p className="mt-2 text-xs font-medium text-destructive" role="alert">
           {t.localPreview.error}
+        </p>
+      )}
+      {snapshot.mode !== "private-error" && snapshot.lastError && (
+        <p
+          className="mt-2 text-xs font-medium text-destructive"
+          role="alert"
+          data-testid="private-world-last-error"
+        >
+          {snapshot.lastError}
         </p>
       )}
       <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -214,12 +257,30 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
                     <Save className="h-3 w-3" />
                     <span>Lưu sửa</span>
                   </button>
-                  {history.length > 0 && (
-                    <button type="button" className="chip gap-1 text-[11px]" onClick={handleUndo}>
-                      <Undo2 className="h-3 w-3" />
-                      <span>Hoàn tác</span>
-                    </button>
-                  )}
+                  <div className="flex items-center gap-1">
+                    {history.length > 0 && (
+                      <button
+                        type="button"
+                        className="chip gap-1 text-[11px]"
+                        onClick={handleUndo}
+                        title="Hoàn tác (Undo)"
+                      >
+                        <Undo2 className="h-3 w-3" />
+                        <span>Undo</span>
+                      </button>
+                    )}
+                    {future.length > 0 && (
+                      <button
+                        type="button"
+                        className="chip gap-1 text-[11px]"
+                        onClick={handleRedo}
+                        title="Làm lại (Redo)"
+                      >
+                        <Redo2 className="h-3 w-3" />
+                        <span>Redo</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             )}

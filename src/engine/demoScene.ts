@@ -189,12 +189,19 @@ export function createDemoScene(
     span = worldSpan(snapshot.world);
     planPanRevision = 0;
     lastWorldRevision = snapshot.revision;
+    // Effects anchor to the mounted world frame instead of a fixed origin.
+    festivalGroup.position.set(homeCentre.x, 0, homeCentre.z);
+    rainPoints.position.set(homeCentre.x, 0, homeCentre.z);
     applyView(true);
   }
 
   function disposeWorld() {
     worldBundle?.dispose();
     worldBundle = null;
+  }
+
+  function worldRenderable() {
+    return currentWorld.mode !== "private-error" && worldBundle !== null;
   }
 
   function planConfig(state = useAppStore.getState()): PlanCameraConfig {
@@ -323,10 +330,10 @@ export function createDemoScene(
     materialFactory("#4c5551", 0.92, 0).roughness = wet ? 0.32 : 0.92;
     audio.set(state.soundOn && !document.hidden, wet);
 
-    // Festival visibility
-    festivalGroup.visible = state.festival !== "normal";
-    // Rain visibility
-    rainPoints.visible = wet;
+    // Effects only render when a valid world is mounted; rain follows the world frame.
+    const renderable = worldRenderable();
+    festivalGroup.visible = renderable && state.festival !== "normal";
+    rainPoints.visible = renderable && wet;
 
     host.dataset["weather"] = state.weather;
     host.dataset["festival"] = state.festival;
@@ -344,6 +351,15 @@ export function createDemoScene(
 
   function render() {
     if (disposed || !host.clientWidth || !host.clientHeight) return;
+    if (currentWorld.mode === "private-error" || !worldBundle) {
+      marker.style.visibility = "hidden";
+      useAppStore.getState().setPlanMeasurement(null);
+      renderer.clear();
+      renderer.render(scene, activeCamera);
+      host.dataset["activeWorlds"] = "0";
+      host.dataset["worldMode"] = currentWorld.mode;
+      return;
+    }
     renderer.render(scene, activeCamera);
     frameMetrics.record(performance.now());
     const frameSnapshot = frameMetrics.snapshot();
@@ -371,7 +387,25 @@ export function createDemoScene(
     if (motion.matches) return;
     const interval = window.innerWidth < 768 ? 1000 / 30 : 1000 / 60;
     if (now - lastFrame < interval) return;
+    const delta = lastFrame === 0 ? 0.016 : Math.min(0.1, (now - lastFrame) / 1000);
     lastFrame = now;
+
+    // Update falling rain particle positions
+    if (rainPoints.visible && rainGeo.attributes["position"]) {
+      const posAttr = rainGeo.attributes["position"];
+      const positions = posAttr.array as Float32Array;
+      for (let i = 1; i < positions.length; i += 3) {
+        const currentY = positions[i];
+        if (currentY !== undefined) {
+          positions[i] = currentY - delta * 35;
+          if (positions[i]! < 0) {
+            positions[i] = 30;
+          }
+        }
+      }
+      posAttr.needsUpdate = true;
+    }
+
     if (controls.enabled) controls.update();
     render();
   }
@@ -386,7 +420,7 @@ export function createDemoScene(
   }
 
   function onControlChange() {
-    if (disposed || !controls.enabled) return;
+    if (disposed || !controls.enabled || !worldRenderable()) return;
     const heading =
       (Math.atan2(
         perspectiveCamera.position.x - centre.x,
@@ -404,6 +438,7 @@ export function createDemoScene(
   }
 
   function onPlanPointerDown(event: PointerEvent) {
+    if (!worldRenderable()) return;
     if (useAppStore.getState().viewMode !== "topdown") return;
     canvas.setPointerCapture(event.pointerId);
     planPointers.set(event.pointerId, new THREE.Vector2(event.clientX, event.clientY));
@@ -432,6 +467,7 @@ export function createDemoScene(
   }
 
   function onPlanPointerMove(event: PointerEvent) {
+    if (!worldRenderable()) return;
     if (useAppStore.getState().viewMode !== "topdown") return;
     const previous = planPointers.get(event.pointerId);
     if (!previous) return;
@@ -458,6 +494,7 @@ export function createDemoScene(
   }
 
   function onPlanWheel(event: WheelEvent) {
+    if (!worldRenderable()) return;
     if (useAppStore.getState().viewMode !== "topdown") return;
     event.preventDefault();
     const state = useAppStore.getState();
@@ -480,6 +517,7 @@ export function createDemoScene(
   }
 
   function onKey(event: KeyboardEvent) {
+    if (!worldRenderable()) return;
     if (event.target !== canvas || useAppStore.getState().viewMode === "topdown") return;
     const state = useAppStore.getState();
     if (event.key === "ArrowLeft" || event.key.toLowerCase() === "a") {
@@ -560,6 +598,9 @@ export function createDemoScene(
     currentWorld = snapshot;
     if (snapshot.mode === "private-error") {
       disposeWorld();
+      festivalGroup.visible = false;
+      rainPoints.visible = false;
+      controls.enabled = false;
       marker.style.visibility = "hidden";
       renderer.clear();
       renderer.render(scene, activeCamera);
@@ -569,6 +610,7 @@ export function createDemoScene(
       return;
     }
     mountWorld();
+    applyEnvironment();
     updateLayerVisibility();
     render();
   });
@@ -580,6 +622,7 @@ export function createDemoScene(
   renderer.compile(scene, activeCamera);
   render();
   bindCapture(() => {
+    if (!worldRenderable()) return null;
     render();
     return canvas.toDataURL("image/png");
   });
@@ -612,6 +655,12 @@ export function createDemoScene(
       ground.geometry.dispose();
       (ground.material as THREE.Material).dispose();
       materials.forEach((material) => material.dispose());
+      rainGeo.dispose();
+      rainMat.dispose();
+      lanternGeo.dispose();
+      lanternMat.dispose();
+      lanternWireGeo.dispose();
+      (lanternWire.material as THREE.Material).dispose();
       renderer.dispose();
       renderer.forceContextLoss();
       canvas.remove();

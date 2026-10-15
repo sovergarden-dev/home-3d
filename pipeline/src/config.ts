@@ -122,6 +122,20 @@ function parseOptionalPath(value: unknown): string | undefined {
   return value;
 }
 
+function parseSecondaryInputs(value: unknown): PipelineConfig["secondaryInputs"] {
+  if (value === undefined || value === null) return undefined;
+  if (!Array.isArray(value)) throw new Error("PIPELINE_CONFIG_SECONDARY_INPUTS_INVALID");
+  return value.map((item) => {
+    if (!isRecord(item)) throw new Error("PIPELINE_CONFIG_SECONDARY_INPUT_INVALID");
+    const kind = item["kind"];
+    if (kind !== "file") throw new Error("PIPELINE_CONFIG_SECONDARY_INPUT_KIND_INVALID");
+    const path = nonEmptyString(item["path"], "PIPELINE_CONFIG_SECONDARY_INPUT_PATH_REQUIRED");
+    const format = parseInputFormat(item["format"]);
+    const source = parseSource(item["source"]);
+    return { kind: "file", path, format, source };
+  });
+}
+
 export function parsePipelineConfig(value: unknown): PipelineConfig {
   if (!isRecord(value)) throw new Error("PIPELINE_CONFIG_OBJECT_REQUIRED");
   if (value["schemaVersion"] !== "1.0")
@@ -130,6 +144,7 @@ export function parsePipelineConfig(value: unknown): PipelineConfig {
   const conflationRulesPath = parseOptionalPath(value["conflationRulesPath"]);
   const overridesPath = parseOptionalPath(value["overridesPath"]);
   const confirmedEmptyLotsPath = parseOptionalPath(value["confirmedEmptyLotsPath"]);
+  const secondaryInputs = parseSecondaryInputs(value["secondaryInputs"]);
 
   const result: PipelineConfig = {
     schemaVersion: "1.0",
@@ -144,6 +159,7 @@ export function parsePipelineConfig(value: unknown): PipelineConfig {
     ...(conflationRulesPath !== undefined ? { conflationRulesPath } : {}),
     ...(overridesPath !== undefined ? { overridesPath } : {}),
     ...(confirmedEmptyLotsPath !== undefined ? { confirmedEmptyLotsPath } : {}),
+    ...(secondaryInputs !== undefined ? { secondaryInputs } : {}),
   };
   return result;
 }

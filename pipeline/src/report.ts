@@ -1,5 +1,6 @@
 import type { WorldData } from "../../src/world/schema";
 import { validateWorld } from "../../src/world/validate";
+import type { ConflationCandidate, ConflationResolution } from "./conflate";
 
 export interface WorldBuildReport {
   valid: boolean;
@@ -12,6 +13,11 @@ export interface WorldBuildReport {
   };
   qualityCounts: Record<string, number>;
   issueCounts: Record<string, number>;
+  conflation?: {
+    resolved: ConflationResolution[];
+    unresolved: ConflationCandidate[];
+    passesQualityGate: boolean;
+  };
 }
 
 export function createWorldBuildReport(world: WorldData): WorldBuildReport {

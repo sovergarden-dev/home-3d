@@ -1,6 +1,10 @@
 import { geodeticToEnu, type GeodeticPoint } from "../../src/geo/enu";
+import { polygonRingIntersectionArea } from "../../src/world/geometry";
 import {
   WORLD_SCHEMA_VERSION,
+  type Building,
+  type MultiPolygonGeometry,
+  type PolygonGeometry,
   type Position2,
   type RoadClass,
   type RoofType,
@@ -77,6 +81,16 @@ function geometryFingerprint(geometry: GeoJsonFeature["geometry"]): string {
       : "";
     return `ls:${coords.length}:${start}:${end}`;
   }
+  if (geometry.type === "MultiLineString") {
+    const lines = geometry.coordinates;
+    const first = lines[0]?.[0]
+      ? `${lines[0][0][0]?.toFixed(5)}_${lines[0][0][1]?.toFixed(5)}`
+      : "";
+    const last = lines.at(-1)?.at(-1)
+      ? `${lines.at(-1)!.at(-1)![0]?.toFixed(5)}_${lines.at(-1)!.at(-1)![1]?.toFixed(5)}`
+      : "";
+    return `mls:${lines.length}:${first}:${last}`;
+  }
   if (geometry.type === "Polygon") {
     const ring = geometry.coordinates[0] ?? [];
     const len = ring.length;
@@ -87,28 +101,67 @@ function geometryFingerprint(geometry: GeoJsonFeature["geometry"]): string {
     return `poly:${len}:${p0}:${pMid}`;
   }
   if (geometry.type === "MultiPolygon") {
-    const firstPoly = geometry.coordinates[0]?.[0] ?? [];
-    return `mpoly:${geometry.coordinates.length}:${firstPoly.length}`;
+    const parts = geometry.coordinates.map((poly) => {
+      const ring = poly[0] ?? [];
+      let minX = Infinity,
+        minY = Infinity,
+        maxX = -Infinity,
+        maxY = -Infinity;
+      let sumX = 0,
+        sumY = 0;
+      let area = 0;
+      for (let i = 0; i < ring.length; i++) {
+        const pt = ring[i]!;
+        const x = pt[0] ?? 0;
+        const y = pt[1] ?? 0;
+        if (x < minX) minX = x;
+        if (y < minY) minY = y;
+        if (x > maxX) maxX = x;
+        if (y > maxY) maxY = y;
+        sumX += x;
+        sumY += y;
+        if (i < ring.length - 1) {
+          const next = ring[i + 1]!;
+          area += x * (next[1] ?? 0) - y * (next[0] ?? 0);
+        }
+      }
+      const count = ring.length || 1;
+      return `${ring.length}:${(area * 0.5).toFixed(2)}:${(sumX / count).toFixed(5)}_${(sumY / count).toFixed(5)}:[${minX.toFixed(5)},${minY.toFixed(5)},${maxX.toFixed(5)},${maxY.toFixed(5)}]`;
+    });
+    return `mpoly:${geometry.coordinates.length}:${parts.join(";")}`;
   }
   return "other";
 }
 
-function stableLocalId(prefix: string, feature: GeoJsonFeature, lineIndex?: number) {
-  if (feature.id !== undefined && feature.id !== null && String(feature.id).trim() !== "") {
-    const sanitized = String(feature.id)
-      .trim()
-      .replace(/[^a-zA-Z0-9_-]/g, "_");
-    const suffix = lineIndex !== undefined ? `-${lineIndex}` : "";
-    return `${prefix}-${sanitized}${suffix}`;
-  }
-  const input = `${prefix}:${feature.geometry?.type ?? "null"}:${geometryFingerprint(feature.geometry)}`;
+function fnv1aBase36(text: string) {
   let hash = 2166136261;
-  for (const character of input) {
+  for (const character of text) {
     hash ^= character.charCodeAt(0);
     hash = Math.imul(hash, 16777619);
   }
+  return (hash >>> 0).toString(36);
+}
+
+function stableLocalId(
+  prefix: string,
+  feature: GeoJsonFeature,
+  options: NormalizeSourceOptions,
+  lineIndex?: number,
+) {
   const suffix = lineIndex !== undefined ? `-${lineIndex}` : "";
-  return `${prefix}-${(hash >>> 0).toString(36)}${suffix}`;
+  if (feature.id !== undefined && feature.id !== null && String(feature.id).trim() !== "") {
+    const rawId = String(feature.id).trim();
+    const sanitized = rawId.replace(/[/:]/g, "-").replace(/[^a-zA-Z0-9_-]/g, "");
+    if (sanitized.length > 0) {
+      // Keep exact source ids unchanged; disambiguate lossy sanitisation with a raw-id hash
+      // so "synthetic/a" and "synthetic-a" can never collapse into the same key.
+      return sanitized === rawId
+        ? `${prefix}-${sanitized}${suffix}`
+        : `${prefix}-${sanitized}-${fnv1aBase36(rawId)}${suffix}`;
+    }
+  }
+  const input = `${prefix}:${options.source.kind}:${feature.geometry?.type ?? "null"}:${geometryFingerprint(feature.geometry)}`;
+  return `${prefix}-${fnv1aBase36(input)}${suffix}`;
 }
 
 function coordinateToEnu(coordinate: number[], origin: GeodeticPoint): Position2 {
@@ -222,7 +275,15 @@ export function normalizeGeoJsonSource(
     lots: [],
   };
 
-  input.features.forEach((feature, index) => {
+  const pendingParts: Array<{
+    feature: GeoJsonFeature;
+    geometry: PolygonGeometry | MultiPolygonGeometry;
+    properties: Record<string, unknown>;
+  }> = [];
+
+  const buildingByRef = new Map<string, Building>();
+
+  input.features.forEach((feature) => {
     if (!feature.geometry) return;
     const properties = propertiesOf(feature);
     if (feature.geometry.type === "Polygon" || feature.geometry.type === "MultiPolygon") {
@@ -247,68 +308,36 @@ export function normalizeGeoJsonSource(
         properties["landuse"] === "lot";
       if (isLot) {
         const status = properties["status"] === "empty" ? ("empty" as const) : ("final" as const);
+        const confirmedProp = properties["confirmed"];
+        const confirmed =
+          confirmedProp === true ||
+          confirmedProp === "true" ||
+          confirmedProp === 1 ||
+          confirmedProp === "1";
         world.lots.push({
-          localId: stableLocalId("lot", feature),
+          localId: stableLocalId("lot", feature, options),
           geometry,
-          confirmed: Boolean(properties["confirmed"] ?? status === "empty"),
+          confirmed,
           status,
           provenance: source,
         });
         return;
       }
 
-      const levels = numberProperty(properties, "building:levels", "levels");
-      const explicitHeight = numberProperty(properties, "height", "building:height");
-      const hasHeight = explicitHeight !== undefined || levels !== undefined;
       const isPart =
         properties["building:part"] !== undefined && properties["building:part"] !== "no";
 
       if (isPart) {
-        // If it is a part, look for an existing building to attach, or create one
-        const parentId =
-          properties["building:parent"] ?? properties["parent"] ?? properties["building"];
-        const parentBuilding =
-          typeof parentId === "string"
-            ? world.buildings.find((b) => b.localId.includes(parentId))
-            : undefined;
-
-        const partItem = {
-          localId: stableLocalId("part", feature),
-          geometry,
-          wallHeight: explicitHeight ?? (levels === undefined ? 4 : levels * 3.2),
-          ...(levels === undefined ? {} : { levels }),
-          roofType: roofType(properties),
-          provenance: source,
-        };
-
-        if (parentBuilding) {
-          if (!parentBuilding.parts) parentBuilding.parts = [];
-          parentBuilding.parts.push(partItem);
-        } else {
-          // Push as building with parts container
-          world.buildings.push({
-            localId: stableLocalId("building", feature),
-            geometry,
-            footprintKind: "unknown",
-            wallHeight: partItem.wallHeight,
-            ...(levels === undefined ? {} : { levels }),
-            roofType: partItem.roofType,
-            provenance: source,
-            attributes: {
-              wallHeight: hasHeight ? source : inferredPropertyProvenance(options),
-              roofType:
-                properties["roof:shape"] || properties["roof"]
-                  ? source
-                  : unknownPropertyProvenance(options),
-            },
-            parts: [partItem],
-          });
-        }
+        pendingParts.push({ feature, geometry, properties });
         return;
       }
 
-      world.buildings.push({
-        localId: stableLocalId("building", feature),
+      const levels = numberProperty(properties, "building:levels", "levels");
+      const explicitHeight = numberProperty(properties, "height", "building:height");
+      const hasHeight = explicitHeight !== undefined || levels !== undefined;
+
+      const building: Building = {
+        localId: stableLocalId("building", feature, options),
         geometry,
         footprintKind: "footprint",
         wallHeight: explicitHeight ?? (levels === undefined ? 6 : levels * 3.2),
@@ -322,23 +351,40 @@ export function normalizeGeoJsonSource(
               ? source
               : unknownPropertyProvenance(options),
         },
-      });
+      };
+
+      world.buildings.push(building);
+      buildingByRef.set(building.localId, building);
+      if (feature.id !== undefined && feature.id !== null) {
+        buildingByRef.set(String(feature.id).trim(), building);
+      }
       return;
     }
 
-    roadLines(feature).forEach((line, lineIndex) => {
+    const lines = roadLines(feature);
+    lines.forEach((line, lineIndex) => {
+      const lineSuffix = lines.length > 1 ? lineIndex : undefined;
       const explicitWidth = numberProperty(properties, "width");
       const hasWidth = explicitWidth !== undefined && explicitWidth > 0;
       const rClass = roadClass(properties);
       const carriagewayWidth = hasWidth ? explicitWidth : defaultRoadWidth(rClass);
       const sidewalk = numberProperty(properties, "sidewalk:width");
       const layerRaw = numberProperty(properties, "layer");
-      const bridge = properties["bridge"] ? 1 : 0;
-      const tunnel = properties["tunnel"] ? -1 : 0;
-      const elevationLayer = Math.round(layerRaw ?? (bridge || tunnel || 0));
+      const isBridge =
+        properties["bridge"] === true ||
+        properties["bridge"] === "yes" ||
+        properties["bridge"] === "1";
+      const isTunnel =
+        properties["tunnel"] === true ||
+        properties["tunnel"] === "yes" ||
+        properties["tunnel"] === "1";
+      const bridgeVal = isBridge ? 1 : 0;
+      const tunnelVal = isTunnel ? -1 : 0;
+      const elevationLayer = Math.round(layerRaw ?? (bridgeVal || tunnelVal || 0));
+      const explicitElevation = numberProperty(properties, "elevation", "ele");
 
       world.roads.push({
-        localId: stableLocalId("road", feature, lineIndex),
+        localId: stableLocalId("road", feature, options, lineSuffix),
         polylineENU: line.map((coordinate) => coordinateToEnu(coordinate, options.origin)),
         connectorIds: [],
         roadClass: rClass,
@@ -347,6 +393,8 @@ export function normalizeGeoJsonSource(
           ? {}
           : { sidewalkWidths: [sidewalk, sidewalk] as [number, number] }),
         elevationLayer,
+        ...(explicitElevation === undefined ? {} : { baseElevation: explicitElevation }),
+        structure: isBridge ? "bridge" : isTunnel ? "tunnel" : "surface",
         direction: direction(properties),
         surface: "unknown",
         provenance: source,
@@ -354,29 +402,121 @@ export function normalizeGeoJsonSource(
           carriagewayWidth: hasWidth ? source : inferredPropertyProvenance(options),
           direction:
             properties["oneway"] === undefined ? unknownPropertyProvenance(options) : source,
+          baseElevation:
+            explicitElevation === undefined ? inferredPropertyProvenance(options) : source,
         },
       });
     });
   });
 
-  // Calculate road connectors (roads sharing endpoint coordinates within 0.1m)
+  // Pass 2: Attach pending building parts to parents, or create parent container if missing
+  for (const pending of pendingParts) {
+    const { feature, geometry, properties } = pending;
+    const parentId =
+      properties["building:parent"] ?? properties["parent"] ?? properties["building"];
+    let parentBuilding: Building | undefined;
+
+    if (typeof parentId === "string" && parentId.trim()) {
+      parentBuilding =
+        buildingByRef.get(parentId.trim()) ??
+        world.buildings.find((b) => b.localId.includes(parentId.trim()));
+    }
+
+    // If not found by ID, test spatial containment / area overlap with existing buildings
+    if (!parentBuilding && geometry.type === "Polygon") {
+      let maxOverlap = 0;
+      for (const candidate of world.buildings) {
+        if (candidate.geometry.type === "Polygon") {
+          const area = polygonRingIntersectionArea(
+            geometry.coordinates[0]!,
+            candidate.geometry.coordinates[0]!,
+          );
+          if (area > maxOverlap) {
+            maxOverlap = area;
+            parentBuilding = candidate;
+          }
+        }
+      }
+    }
+
+    const explicitHeight = numberProperty(properties, "height", "building:height");
+    const levels = numberProperty(properties, "building:levels", "levels");
+    const partItem = {
+      localId: stableLocalId("part", feature, options),
+      geometry,
+      wallHeight: explicitHeight ?? (levels === undefined ? 4 : levels * 3.2),
+      ...(levels === undefined ? {} : { levels }),
+      roofType: roofType(properties),
+      provenance: source,
+    };
+
+    if (parentBuilding) {
+      if (!parentBuilding.parts) parentBuilding.parts = [];
+      parentBuilding.parts.push(partItem);
+    } else {
+      const bld: Building = {
+        localId: stableLocalId("building", feature, options),
+        geometry,
+        footprintKind: "unknown",
+        wallHeight: partItem.wallHeight,
+        ...(levels === undefined ? {} : { levels }),
+        roofType: partItem.roofType,
+        provenance: source,
+        attributes: {
+          wallHeight: explicitHeight !== undefined ? source : inferredPropertyProvenance(options),
+          roofType:
+            properties["roof:shape"] || properties["roof"]
+              ? source
+              : unknownPropertyProvenance(options),
+        },
+        parts: [partItem],
+      };
+      world.buildings.push(bld);
+      buildingByRef.set(bld.localId, bld);
+    }
+  }
+
+  // Calculate road connectors: same-layer roads that share any node (endpoints or
+  // mid-line T-junction vertices) within the connection tolerance.
+  const connectionTolerance = 0.1;
+  const distance = (p1: Position2, p2: Position2) => Math.hypot(p1[0] - p2[0], p1[1] - p2[1]);
+  const polylineBounds = (line: Position2[]) => {
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+    for (const [x, y] of line) {
+      if (x < minX) minX = x;
+      if (y < minY) minY = y;
+      if (x > maxX) maxX = x;
+      if (y > maxY) maxY = y;
+    }
+    return { minX, minY, maxX, maxY };
+  };
+  const sharesNode = (first: Position2[], second: Position2[]) => {
+    const a = polylineBounds(first);
+    const b = polylineBounds(second);
+    if (a.minX - connectionTolerance > b.maxX || b.minX - connectionTolerance > a.maxX)
+      return false;
+    if (a.minY - connectionTolerance > b.maxY || b.minY - connectionTolerance > a.maxY)
+      return false;
+    for (const pa of first) {
+      for (const pb of second) {
+        if (distance(pa, pb) < connectionTolerance) return true;
+      }
+    }
+    return false;
+  };
+
   for (let i = 0; i < world.roads.length; i++) {
     const r1 = world.roads[i]!;
-    const start1 = r1.polylineENU[0];
-    const end1 = r1.polylineENU.at(-1);
-    if (!start1 || !end1) continue;
+    if (r1.polylineENU.length === 0) continue;
     for (let j = i + 1; j < world.roads.length; j++) {
       const r2 = world.roads[j]!;
-      const start2 = r2.polylineENU[0];
-      const end2 = r2.polylineENU.at(-1);
-      if (!start2 || !end2) continue;
-      const dist = (p1: Position2, p2: Position2) => Math.hypot(p1[0] - p2[0], p1[1] - p2[1]);
-      if (
-        dist(start1, start2) < 0.1 ||
-        dist(start1, end2) < 0.1 ||
-        dist(end1, start2) < 0.1 ||
-        dist(end1, end2) < 0.1
-      ) {
+      // Only connect roads on the same elevationLayer; different layers must stay separate.
+      if (r1.elevationLayer !== r2.elevationLayer) continue;
+      if (r2.polylineENU.length === 0) continue;
+      if (sharesNode(r1.polylineENU, r2.polylineENU)) {
         if (!r1.connectorIds.includes(r2.localId)) r1.connectorIds.push(r2.localId);
         if (!r2.connectorIds.includes(r1.localId)) r2.connectorIds.push(r1.localId);
       }

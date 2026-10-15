@@ -242,8 +242,16 @@ function addRoad(
   const halfCarriageway = road.carriagewayWidth / 2;
   const left = offsetPolyline(road.polylineENU, halfCarriageway);
   const right = offsetPolyline(road.polylineENU, -halfCarriageway);
-  // Realistic road elevation: 0.02 base for z-fighting, plus 4.5m per structural bridge layer
-  const y = road.elevationLayer !== 0 ? 0.02 + road.elevationLayer * 4.5 : 0.02;
+  // Vertical placement: an explicit surveyed baseElevation wins; otherwise fall back to a
+  // clearly-labelled display prior (structural layers offset upward for bridges). The prior
+  // is never reported as source fact — provenance marks it as inferred.
+  const displayPrior =
+    road.structure === "tunnel"
+      ? 0.02
+      : road.elevationLayer !== 0
+        ? 0.02 + road.elevationLayer * 4.5
+        : 0.02;
+  const y = road.baseElevation ?? displayPrior;
   roadGroup.add(createStrip(left, right, y, materialFactory("#4c5551", 0.92, 0), disposables));
 
   const [leftSidewalk = 0, rightSidewalk = 0] = road.sidewalkWidths ?? [];

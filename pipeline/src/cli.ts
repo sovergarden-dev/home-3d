@@ -2,7 +2,7 @@ import { dirname, isAbsolute, resolve } from "node:path";
 import type { WorldOverrideDocument } from "../../src/world/schema";
 import type { WorldData } from "../../src/world/schema";
 import { buildWorldPackage, type BuildWorldPackageOptions } from "./build";
-import { parsePipelineConfig, type PipelineInputFormat } from "./config";
+import { parsePipelineConfig, type PipelineConfig, type PipelineInputFormat } from "./config";
 import type { ConflationRule } from "./conflate";
 import type { GeoJsonFeatureCollection } from "./normalize";
 import { osmOverpassToGeoJson, type OsmOverpassSnapshot } from "./osm";
@@ -136,7 +136,31 @@ export async function runPipeline(argumentsList: string[]) {
     }
   }
 
+  const secondarySources: Array<{ source: GeoJsonFeatureCollection; config: PipelineConfig }> = [];
+  if (config.secondaryInputs?.length) {
+    for (const secInput of config.secondaryInputs) {
+      const secSource = parseSource(
+        await readInput(options.configPath, {
+          kind: "file",
+          path: secInput.path,
+          format: secInput.format,
+        }),
+        secInput.format,
+      );
+      secondarySources.push({
+        source: secSource,
+        config: {
+          ...config,
+          origin: config.origin,
+          datasetRevision: secInput.source.revision,
+          source: secInput.source,
+        },
+      });
+    }
+  }
+
   const buildOptions: BuildWorldPackageOptions = {};
+  if (secondarySources.length > 0) buildOptions.secondarySources = secondarySources;
   if (overrides !== undefined) buildOptions.overrides = overrides;
   if (conflationRules !== undefined) buildOptions.conflationRules = conflationRules;
   if (confirmedEmptyLots !== undefined) buildOptions.confirmedEmptyLots = confirmedEmptyLots;

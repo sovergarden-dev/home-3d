@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { WorldData, WorldOverrideDocument } from "@/world/schema";
 import { applyWorldOverrides } from "@/world/overrides";
+import { createWorldDataProvider } from "@/world/privateWorldSession";
 
 function baseWorld(wallHeight = 6): WorldData {
   return {
@@ -104,5 +105,173 @@ describe("stable private world overrides", () => {
     ]);
     expect(original.buildings[0]?.wallHeight).toBe(6);
     expect(rebuiltSource.buildings[0]?.wallHeight).toBe(7);
+  });
+
+  it("reports OVERRIDE_TARGET_NOT_FOUND for a stale target without dropping other operations", () => {
+    const stale = structuredClone(overrides) as WorldOverrideDocument;
+    stale.overrides = [
+      ...stale.overrides,
+      {
+        localId: "override-stale",
+        revision: 2,
+        reason: "stale target from a previous dataset revision",
+        provenance: { source: "manual_override", quality: "inferred" },
+        patch: {
+          operation: "patch_building",
+          featureId: "building-removed-in-rebuild",
+          patch: { wallHeight: 20 },
+        },
+      },
+    ];
+
+    const result = applyWorldOverrides(baseWorld(), stale);
+    expect(result.issues).toContainEqual("OVERRIDE_TARGET_NOT_FOUND:building-removed-in-rebuild");
+    expect(result.world.buildings[0]?.wallHeight).toBe(11);
+    expect(result.world.roads[0]?.carriagewayWidth).toBe(6);
+  });
+});
+
+describe("editor mutation gate keeps the last valid world", () => {
+  function worldWithEmptyLot(): WorldData {
+    const world = baseWorld();
+    world.lots.push({
+      localId: "lot-empty-gate",
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [20, 20],
+            [24, 20],
+            [24, 24],
+            [20, 24],
+            [20, 20],
+          ],
+        ],
+      },
+      confirmed: true,
+      status: "empty",
+      provenance: { source: "survey", quality: "verified" },
+    });
+    return world;
+  }
+
+  it("refuses a geometry mutation that invades a confirmed empty lot and keeps the previous valid state", () => {
+    const world = worldWithEmptyLot();
+    const before = JSON.stringify(world.buildings[0]!.geometry);
+    const provider = createWorldDataProvider(world);
+
+    provider.applyOverrides({
+      schemaVersion: "1.0",
+      overrides: [
+        {
+          localId: "ov-invade-lot",
+          revision: 1,
+          reason: "synthetic editor mutation into a confirmed empty lot",
+          provenance: { source: "manual_override", quality: "inferred" },
+          patch: {
+            operation: "replace_building_geometry",
+            featureId: "b-stable",
+            geometry: {
+              type: "Polygon",
+              coordinates: [
+                [
+                  [21, 21],
+                  [23, 21],
+                  [23, 23],
+                  [21, 23],
+                  [21, 21],
+                ],
+              ],
+            },
+          },
+        },
+      ],
+    });
+
+    const snapshot = provider.getSnapshot();
+    if (snapshot.mode === "private-error")
+      throw new Error("expected last-valid state, got error mode");
+    expect(snapshot.lastError).toBe("BUILDING_INTERSECTS_CONFIRMED_EMPTY_LOT");
+    expect(JSON.stringify(snapshot.world.buildings[0]!.geometry)).toBe(before);
+  });
+
+  it("applies a valid mutation, tracks the override document, and clears the error state", () => {
+    const provider = createWorldDataProvider(worldWithEmptyLot());
+    provider.applyOverrides({
+      schemaVersion: "1.0",
+      overrides: [
+        {
+          localId: "ov-valid-height",
+          revision: 1,
+          reason: "synthetic valid height correction",
+          provenance: { source: "manual_override", quality: "inferred" },
+          patch: { operation: "patch_building", featureId: "b-stable", patch: { wallHeight: 9 } },
+        },
+      ],
+    });
+
+    const snapshot = provider.getSnapshot();
+    if (snapshot.mode === "private-error") throw new Error("unexpected error mode");
+    expect(snapshot.lastError).toBeNull();
+    expect(snapshot.world.buildings[0]?.wallHeight).toBe(9);
+    expect(snapshot.overrides?.overrides).toHaveLength(1);
+  });
+
+  it("routes a private package through valid → invalid mutation → reload → private again", () => {
+    const world = worldWithEmptyLot();
+    const pkgText = JSON.stringify({
+      manifest: world.manifest,
+      world,
+      overrides: { schemaVersion: "1.0", overrides: [] },
+    });
+    const provider = createWorldDataProvider(worldWithEmptyLot());
+
+    provider.openText(pkgText);
+    expect(provider.getSnapshot().mode).toBe("private");
+
+    const before = JSON.stringify(world.buildings[0]!.geometry);
+    provider.applyOverrides({
+      schemaVersion: "1.0",
+      overrides: [
+        {
+          localId: "ov-route-invade",
+          revision: 1,
+          reason: "synthetic mutation into the confirmed empty lot",
+          provenance: { source: "manual_override", quality: "inferred" },
+          patch: {
+            operation: "replace_building_geometry",
+            featureId: "b-stable",
+            geometry: {
+              type: "Polygon",
+              coordinates: [
+                [
+                  [21, 21],
+                  [23, 21],
+                  [23, 23],
+                  [21, 23],
+                  [21, 21],
+                ],
+              ],
+            },
+          },
+        },
+      ],
+    });
+
+    const invalid = provider.getSnapshot();
+    if (invalid.mode === "private-error") throw new Error("expected last-valid private state");
+    expect(invalid.mode).toBe("private");
+    expect(invalid.lastError).toBe("BUILDING_INTERSECTS_CONFIRMED_EMPTY_LOT");
+    expect(JSON.stringify(invalid.world.buildings[0]!.geometry)).toBe(before);
+
+    provider.openText("{ not valid json");
+    expect(provider.getSnapshot().mode).toBe("private-error");
+
+    provider.openText(pkgText);
+    const recovered = provider.getSnapshot();
+    expect(recovered.mode).toBe("private");
+    if (recovered.mode === "private-error") throw new Error("unreachable");
+    expect(recovered.lastError).toBeFalsy();
+    expect(recovered.world.buildings[0]?.localId).toBe("b-stable");
   });
 });

@@ -97,6 +97,8 @@ export interface RoadSegment {
   sidewalkWidths?: [number, number];
   medianWidth?: number;
   elevationLayer: number;
+  baseElevation?: number;
+  structure?: "surface" | "bridge" | "tunnel";
   direction: TravelDirection;
   surface?: "asphalt" | "concrete" | "paving" | "unknown";
   provenance: Provenance;

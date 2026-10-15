@@ -2,6 +2,7 @@ import { SYNTHETIC_NEIGHBORHOOD } from "./fixtures/syntheticNeighborhood";
 import { applyWorldOverrides } from "./overrides";
 import { parseWorldPackage } from "./package";
 import type { WorldData, WorldOverrideDocument } from "./schema";
+import { validateWorld } from "./validate";
 
 export type WorldSessionSnapshot =
   | {
@@ -9,12 +10,14 @@ export type WorldSessionSnapshot =
       revision: number;
       world: WorldData;
       overrides?: WorldOverrideDocument | undefined;
+      lastError?: string | null;
     }
   | {
       mode: "private";
       revision: number;
       world: WorldData;
       overrides?: WorldOverrideDocument | undefined;
+      lastError?: string | null;
     }
   | { mode: "private-error"; revision: number; errorCode: string };
 
@@ -54,8 +57,13 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
     revision += 1;
     const parsed = parseWorldPackage(text);
     if (parsed.ok) {
-      basePrivateWorld = structuredClone(parsed.world) as WorldData;
-      publish({ mode: "private", revision, world: parsed.world });
+      basePrivateWorld = structuredClone(parsed.package.world) as WorldData;
+      publish({
+        mode: "private",
+        revision,
+        world: parsed.world,
+        overrides: parsed.package.overrides,
+      });
     } else {
       basePrivateWorld = null;
       publish({ mode: "private-error", revision, errorCode: parsed.errorCode });
@@ -70,14 +78,30 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
 
   const applyOverrides = (doc: WorldOverrideDocument | undefined) => {
     if (snapshot.mode === "private-error") return;
-    const base = snapshot.mode === "private" && basePrivateWorld ? basePrivateWorld : fixture;
-    revision += 1;
+    const mode = snapshot.mode;
+    const base = mode === "private" && basePrivateWorld ? basePrivateWorld : fixture;
     if (!doc || doc.overrides.length === 0) {
-      publish({ mode: snapshot.mode, revision, world: structuredClone(base) as WorldData });
+      revision += 1;
+      publish({ mode, revision, world: structuredClone(base) as WorldData, lastError: null });
       return;
     }
     const res = applyWorldOverrides(base, doc);
-    publish({ mode: snapshot.mode, revision, world: res.world, overrides: doc });
+    if (res.issues.length > 0) {
+      // Keep the last valid world visible; surface the failing code instead of
+      // publishing a broken mutation or silently dropping the edit.
+      publish({ ...snapshot, lastError: res.issues[0] ?? "OVERRIDE_APPLICATION_FAILED" });
+      return;
+    }
+    const validation = validateWorld(res.world);
+    if (!validation.valid) {
+      publish({
+        ...snapshot,
+        lastError: validation.issues[0]?.code ?? "MUTATION_VALIDATION_FAILED",
+      });
+      return;
+    }
+    revision += 1;
+    publish({ mode, revision, world: res.world, overrides: doc, lastError: null });
   };
 
   return {

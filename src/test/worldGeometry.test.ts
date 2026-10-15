@@ -169,4 +169,62 @@ describe("world geometry gate", () => {
 
     expect(surfaceAreaIntersects(partA, partB)).toBe(false);
   });
+
+  it("detects exact 3 m2 aligned-edge intersection with confirmed empty lot (Reviewer Case)", () => {
+    const lotGeo: PolygonGeometry = {
+      type: "Polygon",
+      coordinates: [
+        [
+          [0, 0],
+          [10, 0],
+          [10, 10],
+          [0, 10],
+          [0, 0],
+        ],
+      ],
+    };
+    // Building: [9.7, 0] to [19.7, 10], intersection area = 0.3 * 10 = 3 m2
+    const buildingGeo: PolygonGeometry = {
+      type: "Polygon",
+      coordinates: [
+        [
+          [9.7, 0],
+          [19.7, 0],
+          [19.7, 10],
+          [9.7, 10],
+          [9.7, 0],
+        ],
+      ],
+    };
+
+    expect(surfaceAreaIntersects(lotGeo, buildingGeo)).toBe(true);
+
+    const world = syntheticWorld();
+    world.lots = [
+      {
+        localId: "lot-empty-square",
+        geometry: lotGeo,
+        confirmed: true,
+        status: "empty",
+        provenance: { source: "synthetic", quality: "synthetic" },
+      },
+    ];
+    world.buildings.push({
+      localId: "building-invading-3sqm",
+      geometry: buildingGeo,
+      footprintKind: "footprint",
+      wallHeight: 7,
+      roofType: "flat",
+      provenance: { source: "synthetic", quality: "synthetic" },
+    });
+
+    const report = validateWorld(world);
+    expect(report.valid).toBe(false);
+    expect(report.issues).toContainEqual(
+      expect.objectContaining({
+        code: "BUILDING_INTERSECTS_CONFIRMED_EMPTY_LOT",
+        featureIds: ["building-invading-3sqm", "lot-empty-square"],
+      }),
+    );
+  });
 });

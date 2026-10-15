@@ -141,84 +141,164 @@ function polygonsIntersect(a: PolygonGeometry, b: PolygonGeometry) {
   return Boolean((aProbe && pointInPolygon(aProbe, b)) || (bProbe && pointInPolygon(bProbe, a)));
 }
 
-export function isPointStrictlyInsidePolygon(point: Position2, polygon: PolygonGeometry): boolean {
-  const [outer, ...holes] = polygon.coordinates;
-  if (!outer || !pointInRing(point, outer)) return false;
-  // If point lies directly on any outer segment, it is NOT strictly inside
-  const outerPoints = ringWithoutClosure(outer);
-  for (let i = 0, prev = outerPoints.length - 1; i < outerPoints.length; prev = i++) {
-    if (pointOnSegment(point, outerPoints[prev]!, outerPoints[i]!)) return false;
+// Clip a subject polygon against a directed line p1 -> p2 (keeps left side: orientation >= -EPSILON)
+function clipPolygonAgainstLine(poly: Position2[], p1: Position2, p2: Position2): Position2[] {
+  if (poly.length === 0) return [];
+  const out: Position2[] = [];
+  const dx = p2[0] - p1[0];
+  const dy = p2[1] - p1[1];
+
+  const isLeft = (p: Position2) => dx * (p[1] - p1[1]) - dy * (p[0] - p1[0]) >= -1e-8;
+
+  const lineIntersect = (a: Position2, b: Position2): Position2 => {
+    const dpx = b[0] - a[0];
+    const dpy = b[1] - a[1];
+    const denom = dx * dpy - dy * dpx;
+    if (Math.abs(denom) < 1e-10) return a;
+    const t = ((a[0] - p1[0]) * dpy - (a[1] - p1[1]) * dpx) / denom;
+    return [p1[0] + t * dx, p1[1] + t * dy];
+  };
+
+  for (let i = 0; i < poly.length; i++) {
+    const cur = poly[i]!;
+    const prev = poly[(i - 1 + poly.length) % poly.length]!;
+    const curInside = isLeft(cur);
+    const prevInside = isLeft(prev);
+
+    if (curInside) {
+      if (!prevInside) out.push(lineIntersect(prev, cur));
+      out.push(cur);
+    } else if (prevInside) {
+      out.push(lineIntersect(prev, cur));
+    }
   }
-  // Check holes
-  for (const hole of holes) {
-    if (pointInRing(point, hole)) return false;
+  return out;
+}
+
+// Compute the exact convex intersection of two convex polygons
+function convexPolygonIntersection(convexA: Position2[], convexB: Position2[]): Position2[] {
+  let result = convexA;
+  const lenB = convexB.length;
+  for (let i = 0; i < lenB; i++) {
+    const p1 = convexB[i]!;
+    const p2 = convexB[(i + 1) % lenB]!;
+    result = clipPolygonAgainstLine(result, p1, p2);
+    if (result.length < 3) return [];
   }
-  return true;
+  return result;
+}
+
+// Triangulate any simple polygon (ear clipping)
+export function triangulateSimplePolygon(ring: LinearRing): Position2[][] {
+  let points = ringWithoutClosure(ring);
+  if (points.length < 3) return [];
+  // Ensure counter-clockwise orientation
+  if (signedRingArea(points) < 0) {
+    points = [...points].reverse();
+  }
+
+  const triangles: Position2[][] = [];
+  const remaining = [...points];
+
+  let iterations = 0;
+  const maxIterations = remaining.length * remaining.length;
+
+  while (remaining.length > 3 && iterations < maxIterations) {
+    iterations++;
+    let earFound = false;
+    for (let i = 0; i < remaining.length; i++) {
+      const prev = remaining[(i - 1 + remaining.length) % remaining.length]!;
+      const cur = remaining[i]!;
+      const next = remaining[(i + 1) % remaining.length]!;
+
+      // Check if angle is convex (left turn)
+      const cross =
+        (cur[0] - prev[0]) * (next[1] - cur[1]) - (cur[1] - prev[1]) * (next[0] - cur[0]);
+      if (cross <= 1e-9) continue; // Reflex angle
+
+      // Check if any other point lies strictly inside triangle prev-cur-next
+      let containsPoint = false;
+      for (let j = 0; j < remaining.length; j++) {
+        if (
+          j === i ||
+          j === (i - 1 + remaining.length) % remaining.length ||
+          j === (i + 1) % remaining.length
+        )
+          continue;
+        const pt = remaining[j]!;
+        const c1 = (cur[0] - prev[0]) * (pt[1] - prev[1]) - (cur[1] - prev[1]) * (pt[0] - prev[0]);
+        const c2 = (next[0] - cur[0]) * (pt[1] - cur[1]) - (next[1] - cur[1]) * (pt[0] - cur[0]);
+        const c3 =
+          (prev[0] - next[0]) * (pt[1] - next[1]) - (prev[1] - next[1]) * (pt[0] - next[0]);
+        if (c1 > 1e-8 && c2 > 1e-8 && c3 > 1e-8) {
+          containsPoint = true;
+          break;
+        }
+      }
+
+      if (!containsPoint) {
+        triangles.push([prev, cur, next]);
+        remaining.splice(i, 1);
+        earFound = true;
+        break;
+      }
+    }
+    if (!earFound) {
+      // Degenerate/nearly collinear: fan from remaining[0]
+      for (let k = 1; k < remaining.length - 1; k++) {
+        triangles.push([remaining[0]!, remaining[k]!, remaining[k + 1]!]);
+      }
+      break;
+    }
+  }
+
+  if (remaining.length === 3) {
+    triangles.push([remaining[0]!, remaining[1]!, remaining[2]!]);
+  }
+
+  return triangles;
+}
+
+// Compute the exact intersection area between two simple polygon rings (m²)
+export function polygonRingIntersectionArea(ringA: LinearRing, ringB: LinearRing): number {
+  const triA = triangulateSimplePolygon(ringA);
+  const triB = triangulateSimplePolygon(ringB);
+
+  let totalArea = 0;
+  for (const tA of triA) {
+    for (const tB of triB) {
+      // Ensure tB is counter-clockwise for half-plane clipping
+      const orderedTB = signedRingArea(tB) > 0 ? tB : [tB[0]!, tB[2]!, tB[1]!];
+      const clipped = convexPolygonIntersection(tA, orderedTB);
+      if (clipped.length >= 3) {
+        totalArea += Math.abs(signedRingArea(clipped));
+      }
+    }
+  }
+  return totalArea;
 }
 
 export function polygonsHaveAreaOverlap(a: PolygonGeometry, b: PolygonGeometry): boolean {
-  // 1. Any edge of A properly crosses an edge of B (interior intersection)
-  for (const ringA of a.coordinates) {
-    for (const ringB of b.coordinates) {
-      for (const [a1, a2] of ringEdges(ringA)) {
-        for (const [b1, b2] of ringEdges(ringB)) {
-          if (segmentsCrossProper(a1, a2, b1, b2)) return true;
-        }
-      }
-    }
+  const [outerA, ...holesA] = a.coordinates;
+  const [outerB, ...holesB] = b.coordinates;
+  if (!outerA || !outerB) return false;
+
+  // Compute positive overlap area between outer rings
+  const outerIntersection = polygonRingIntersectionArea(outerA, outerB);
+  if (outerIntersection <= 1e-4) return false;
+
+  // Subtract intersection that falls into holes of A
+  let holeArea = 0;
+  for (const holeA of holesA) {
+    holeArea += polygonRingIntersectionArea(holeA, outerB);
+  }
+  // Subtract intersection that falls into holes of B
+  for (const holeB of holesB) {
+    holeArea += polygonRingIntersectionArea(outerA, holeB);
   }
 
-  // 2. An interior point of A is strictly inside B
-  const pointsA = ringWithoutClosure(a.coordinates[0] ?? []);
-  if (pointsA.length >= 3) {
-    // Try centroid of first triangle or interior midpoint
-    const midA: Position2 = [
-      (pointsA[0]![0] + pointsA[1]![0] + pointsA[2]![0]) / 3,
-      (pointsA[0]![1] + pointsA[1]![1] + pointsA[2]![1]) / 3,
-    ];
-    if (isPointStrictlyInsidePolygon(midA, a) && isPointStrictlyInsidePolygon(midA, b)) {
-      return true;
-    }
-    // Also test a few interior candidate points
-    for (let i = 0; i < pointsA.length; i++) {
-      const p1 = pointsA[i]!;
-      const p2 = pointsA[(i + 1) % pointsA.length]!;
-      const midEdge: Position2 = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
-      const inward: Position2 = [
-        midEdge[0] + (midA[0] - midEdge[0]) * 0.1,
-        midEdge[1] + (midA[1] - midEdge[1]) * 0.1,
-      ];
-      if (isPointStrictlyInsidePolygon(inward, a) && isPointStrictlyInsidePolygon(inward, b)) {
-        return true;
-      }
-    }
-  }
-
-  // 3. An interior point of B is strictly inside A
-  const pointsB = ringWithoutClosure(b.coordinates[0] ?? []);
-  if (pointsB.length >= 3) {
-    const midB: Position2 = [
-      (pointsB[0]![0] + pointsB[1]![0] + pointsB[2]![0]) / 3,
-      (pointsB[0]![1] + pointsB[1]![1] + pointsB[2]![1]) / 3,
-    ];
-    if (isPointStrictlyInsidePolygon(midB, b) && isPointStrictlyInsidePolygon(midB, a)) {
-      return true;
-    }
-    for (let i = 0; i < pointsB.length; i++) {
-      const p1 = pointsB[i]!;
-      const p2 = pointsB[(i + 1) % pointsB.length]!;
-      const midEdge: Position2 = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
-      const inward: Position2 = [
-        midEdge[0] + (midB[0] - midEdge[0]) * 0.1,
-        midEdge[1] + (midB[1] - midEdge[1]) * 0.1,
-      ];
-      if (isPointStrictlyInsidePolygon(inward, b) && isPointStrictlyInsidePolygon(inward, a)) {
-        return true;
-      }
-    }
-  }
-
-  return false;
+  const effectiveOverlap = outerIntersection - holeArea;
+  return effectiveOverlap > 1e-4;
 }
 
 export function surfaceAreaIntersects(a: SurfaceGeometry, b: SurfaceGeometry): boolean {
