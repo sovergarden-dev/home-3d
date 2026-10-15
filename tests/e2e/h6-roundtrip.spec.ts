@@ -368,8 +368,15 @@ test("H6 synthetic source → build → editor → export → source rebuild →
   await expect(privatePanel).toHaveAttribute("data-collapsed", "true");
   await expect(page.locator("#private-world-panel-content")).toBeHidden();
   await expect(page.getByText("Bắc ↑")).toBeVisible();
-  await expect(page.getByText("Thước mét")).toBeVisible();
+  const scaleLabel = page.getByText("Thước mét");
+  await expect(scaleLabel).toBeVisible();
   await expect(planMode).toBeVisible();
+  const scaleLabelReceivesPointer = await scaleLabel.evaluate((label) => {
+    const rect = label.getBoundingClientRect();
+    const hitTarget = document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
+    return Boolean(hitTarget?.closest('[data-testid="plan-scale-bar"]'));
+  });
+  expect(scaleLabelReceivesPointer).toBe(true);
   const treeToggle = page.getByTestId("plan-scale-bar").getByRole("button").first();
   const treeToggleWasPressed = await treeToggle.getAttribute("aria-pressed");
   const treeToggleReceivesPointer = await treeToggle.evaluate((button) => {
@@ -491,6 +498,7 @@ test("H6 synthetic source → build → editor → export → source rebuild →
         viewport: "740x390",
         collapseButtonHitTest: collapseButtonReceivesPointer,
         collapseButtonClick: "normal Playwright click; panel collapsed and reopened",
+        scaleLabelHitTest: scaleLabelReceivesPointer,
         scaleControlHitTest: treeToggleReceivesPointer,
         scaleControlClick: "normal Playwright click toggled twice; original state restored",
         planControls: rendererReady

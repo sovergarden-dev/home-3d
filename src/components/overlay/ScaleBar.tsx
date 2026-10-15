@@ -30,7 +30,7 @@ export function ScaleBar() {
   return (
     <div
       data-testid="plan-scale-bar"
-      className="pointer-events-auto fixed bottom-28 left-4 z-10 flex flex-col gap-2 sm:bottom-6 sm:left-6"
+      className="plan-scale-bar pointer-events-auto fixed bottom-28 left-4 z-10 flex flex-col gap-2 sm:bottom-6 sm:left-6"
     >
       <div className="glass flex items-center gap-1 p-1">
         <button

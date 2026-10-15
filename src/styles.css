@@ -112,6 +112,13 @@
   }
 }
 
+@media (min-width: 640px) and (max-width: 767px) and (max-height: 480px) {
+  .plan-scale-bar {
+    bottom: calc(6rem + env(safe-area-inset-bottom) + 1rem);
+    left: calc(50% + 5rem);
+  }
+}
+
 @utility chip {
   display: inline-flex;
   align-items: center;
