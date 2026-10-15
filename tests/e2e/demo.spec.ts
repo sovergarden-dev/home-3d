@@ -371,11 +371,7 @@ test("local preview editor: edit, geometry gate, undo/redo, road edit, export an
   // 1) Edit wall height and save.
   const buildingSelect = page.getByLabel("Chọn công trình");
   await buildingSelect.selectOption("editor-house");
-  await page
-    .getByTestId("private-world-panel")
-    .locator('input[type="number"]')
-    .first()
-    .fill("9.5");
+  await page.getByTestId("private-world-panel").locator('input[type="number"]').first().fill("9.5");
   await page.getByRole("button", { name: "Lưu sửa" }).click();
   await expect(buildingSelect).toContainText("9.5m");
 
