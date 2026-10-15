@@ -1,5 +1,10 @@
 import { surfaceBounds } from "../../src/world/geometry";
-import type { Building, WorldData } from "../../src/world/schema";
+import type {
+  Building,
+  QualityStatus,
+  WorldData,
+  WorldSourceMetadata,
+} from "../../src/world/schema";
 
 export interface ConflationRule {
   primaryBuildingId: string;
@@ -48,35 +53,100 @@ function boundsIou(a: Building, b: Building) {
   return union > 0 ? overlap / union : 0;
 }
 
+function appendUniqueById<T extends { localId: string }>(
+  target: T[],
+  incoming: T[],
+  featureKind: string,
+) {
+  const ids = new Set(target.map((item) => item.localId));
+  for (const item of incoming) {
+    if (ids.has(item.localId)) throw new Error(`CONFLATE_DUPLICATE_${featureKind}_ID`);
+    ids.add(item.localId);
+    target.push(structuredClone(item) as T);
+  }
+}
+
+function combinedQuality(qualities: QualityStatus[]): QualityStatus {
+  if (qualities.length > 0 && qualities.every((quality) => quality === "synthetic"))
+    return "synthetic";
+  if (qualities.includes("conflict")) return "conflict";
+  if (qualities.includes("unknown")) return "unknown";
+  if (qualities.includes("inferred") || qualities.includes("synthetic")) return "inferred";
+  if (qualities.includes("source_only")) return "source_only";
+  return "verified";
+}
+
 export function conflateWorlds(worlds: WorldData[], rules: ConflationRule[]): ConflationResult {
   if (worlds.length === 0) throw new Error("CONFLATE_WORLD_REQUIRED");
   const world = cloneWorld(worlds[0]!);
-  const sourceBuildings = worlds.flatMap((source) =>
-    source.buildings.map((building) => ({ source, building })),
+  const allSourceBuildings = worlds.flatMap((source, sourceIndex) =>
+    source.buildings.map((building) => ({ sourceIndex, building })),
   );
-  const byId = new Map(sourceBuildings.map(({ building }) => [building.localId, building]));
+  const byId = new Map<string, { sourceIndex: number; building: Building }>();
+  for (const item of allSourceBuildings) {
+    if (byId.has(item.building.localId)) throw new Error("CONFLATE_DUPLICATE_BUILDING_ID");
+    byId.set(item.building.localId, item);
+  }
+
   const removals = new Set<string>();
   const resolved: ConflationResolution[] = [];
-
   for (const rule of rules) {
     if (!rule.reason.trim()) throw new Error("CONFLATE_REASON_REQUIRED");
-    if (!byId.has(rule.primaryBuildingId) || !byId.has(rule.duplicateBuildingId)) {
-      throw new Error("CONFLATE_RULE_TARGET_NOT_FOUND");
-    }
+    const primary = byId.get(rule.primaryBuildingId);
+    const duplicate = byId.get(rule.duplicateBuildingId);
+    if (!primary || !duplicate) throw new Error("CONFLATE_RULE_TARGET_NOT_FOUND");
     if (rule.primaryBuildingId === rule.duplicateBuildingId)
       throw new Error("CONFLATE_RULE_SELF_REFERENCE");
+    if (primary.sourceIndex !== 0 || duplicate.sourceIndex === 0) {
+      throw new Error("CONFLATE_RULE_SOURCE_ROLE_INVALID");
+    }
+    if (removals.has(rule.duplicateBuildingId)) throw new Error("CONFLATE_DUPLICATE_RULE_TARGET");
     removals.add(rule.duplicateBuildingId);
     resolved.push({ ...rule });
   }
 
-  const allBuildings = sourceBuildings.map(({ building }) => building);
-  const selectedIds = new Set(world.buildings.map((building) => building.localId));
-  for (const building of allBuildings) {
-    if (selectedIds.has(building.localId) || removals.has(building.localId)) continue;
-    world.buildings.push(structuredClone(building) as Building);
-    selectedIds.add(building.localId);
+  for (let sourceIndex = 1; sourceIndex < worlds.length; sourceIndex += 1) {
+    const source = worlds[sourceIndex]!;
+    appendUniqueById(
+      world.buildings,
+      source.buildings.filter((building) => !removals.has(building.localId)),
+      "BUILDING",
+    );
+    appendUniqueById(world.roads, source.roads, "ROAD");
+    appendUniqueById(world.lots, source.lots, "LOT");
+    world.trees ??= [];
+    world.props ??= [];
+    appendUniqueById(world.trees, source.trees ?? [], "TREE");
+    appendUniqueById(world.props, source.props ?? [], "PROP");
   }
-  world.buildings = world.buildings.filter((building) => !removals.has(building.localId));
+
+  const sourceMetadata = worlds.flatMap((source) => source.manifest.sources ?? []);
+  const sourceNamespaces = new Set<string>();
+  for (const source of sourceMetadata) {
+    if (sourceNamespaces.has(source.namespace))
+      throw new Error("CONFLATE_SOURCE_NAMESPACE_DUPLICATE");
+    sourceNamespaces.add(source.namespace);
+  }
+  const licences = [...new Set(worlds.flatMap((source) => source.manifest.licences))].sort();
+  const sourceCount =
+    sourceMetadata.length ||
+    worlds.reduce((sum, source) => sum + source.manifest.coverage.sourceCount, 0);
+  const revisionParts = sourceMetadata.length
+    ? sourceMetadata
+        .map((source: WorldSourceMetadata) => `${source.namespace}@${source.revision}`)
+        .sort()
+    : worlds.map((source) => source.manifest.datasetRevision);
+  world.manifest = {
+    ...world.manifest,
+    datasetRevision: revisionParts.join("+").slice(0, 512),
+    isSynthetic: worlds.every((source) => source.manifest.isSynthetic),
+    licences,
+    ...(sourceMetadata.length > 0 ? { sources: sourceMetadata } : {}),
+    coverage: {
+      quality: combinedQuality(worlds.map((source) => source.manifest.coverage.quality)),
+      sourceCount,
+    },
+  };
 
   const resolvedPairs = new Set(
     resolved.map((entry) => [entry.primaryBuildingId, entry.duplicateBuildingId].sort().join("::")),
@@ -88,10 +158,9 @@ export function conflateWorlds(worlds: WorldData[], rules: ConflationRule[]): Co
       const b = world.buildings[second]!;
       const pairKey = [a.localId, b.localId].sort().join("::");
       if (resolvedPairs.has(pairKey)) continue;
+      // This is a candidate metric on axis-aligned bounds, not footprint IoU.
       const iou = boundsIou(a, b);
-      if (iou >= 0.7) {
-        unresolved.push({ buildingIds: [a.localId, b.localId], boundsIou: iou });
-      }
+      if (iou >= 0.7) unresolved.push({ buildingIds: [a.localId, b.localId], boundsIou: iou });
     }
   }
 

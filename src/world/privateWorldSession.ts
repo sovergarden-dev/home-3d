@@ -8,6 +8,7 @@ export type WorldSessionSnapshot =
   | {
       mode: "fixture";
       revision: number;
+      packageEpoch: number;
       world: WorldData;
       overrides?: WorldOverrideDocument | undefined;
       lastError?: string | null;
@@ -15,11 +16,12 @@ export type WorldSessionSnapshot =
   | {
       mode: "private";
       revision: number;
+      packageEpoch: number;
       world: WorldData;
       overrides?: WorldOverrideDocument | undefined;
       lastError?: string | null;
     }
-  | { mode: "private-error"; revision: number; errorCode: string };
+  | { mode: "private-error"; revision: number; packageEpoch: number; errorCode: string };
 
 type SessionListener = (snapshot: WorldSessionSnapshot) => void;
 
@@ -38,13 +40,14 @@ export interface WorldDataProvider {
   subscribe: (listener: SessionListener) => () => void;
   openText: (text: string) => void;
   openFile: (file: File) => Promise<void>;
-  applyOverrides: (document: WorldOverrideDocument | undefined) => void;
+  applyOverrides: (document: WorldOverrideDocument | undefined) => boolean;
   resetFixture: () => void;
 }
 
 export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
   let revision = 0;
-  let snapshot: WorldSessionSnapshot = { mode: "fixture", revision, world: fixture };
+  let packageEpoch = 0;
+  let snapshot: WorldSessionSnapshot = { mode: "fixture", revision, packageEpoch, world: fixture };
   let basePrivateWorld: WorldData | null = null;
   const listeners = new Set<SessionListener>();
 
@@ -55,42 +58,56 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
 
   const openText = (text: string) => {
     revision += 1;
+    packageEpoch += 1;
     const parsed = parseWorldPackage(text);
     if (parsed.ok) {
       basePrivateWorld = structuredClone(parsed.package.world) as WorldData;
       publish({
         mode: "private",
         revision,
+        packageEpoch,
         world: parsed.world,
         overrides: parsed.package.overrides,
       });
     } else {
       basePrivateWorld = null;
-      publish({ mode: "private-error", revision, errorCode: parsed.errorCode });
+      publish({ mode: "private-error", revision, packageEpoch, errorCode: parsed.errorCode });
     }
   };
 
   const publishFileReadFailure = () => {
     revision += 1;
+    packageEpoch += 1;
     basePrivateWorld = null;
-    publish({ mode: "private-error", revision, errorCode: "WORLD_PACKAGE_FILE_READ_FAILED" });
+    publish({
+      mode: "private-error",
+      revision,
+      packageEpoch,
+      errorCode: "WORLD_PACKAGE_FILE_READ_FAILED",
+    });
   };
 
   const applyOverrides = (doc: WorldOverrideDocument | undefined) => {
-    if (snapshot.mode === "private-error") return;
+    if (snapshot.mode === "private-error") return false;
     const mode = snapshot.mode;
     const base = mode === "private" && basePrivateWorld ? basePrivateWorld : fixture;
     if (!doc || doc.overrides.length === 0) {
       revision += 1;
-      publish({ mode, revision, world: structuredClone(base) as WorldData, lastError: null });
-      return;
+      publish({
+        mode,
+        revision,
+        packageEpoch,
+        world: structuredClone(base) as WorldData,
+        lastError: null,
+      });
+      return true;
     }
     const res = applyWorldOverrides(base, doc);
     if (res.issues.length > 0) {
       // Keep the last valid world visible; surface the failing code instead of
       // publishing a broken mutation or silently dropping the edit.
       publish({ ...snapshot, lastError: res.issues[0] ?? "OVERRIDE_APPLICATION_FAILED" });
-      return;
+      return false;
     }
     const validation = validateWorld(res.world);
     if (!validation.valid) {
@@ -98,10 +115,11 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
         ...snapshot,
         lastError: validation.issues[0]?.code ?? "MUTATION_VALIDATION_FAILED",
       });
-      return;
+      return false;
     }
     revision += 1;
-    publish({ mode, revision, world: res.world, overrides: doc, lastError: null });
+    publish({ mode, revision, packageEpoch, world: res.world, overrides: doc, lastError: null });
+    return true;
   };
 
   return {
@@ -121,8 +139,9 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
     applyOverrides,
     resetFixture() {
       revision += 1;
+      packageEpoch += 1;
       basePrivateWorld = null;
-      publish({ mode: "fixture", revision, world: fixture });
+      publish({ mode: "fixture", revision, packageEpoch, world: fixture });
     },
   };
 }

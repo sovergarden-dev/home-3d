@@ -1,5 +1,5 @@
 import { geodeticToEnu, type GeodeticPoint } from "../../src/geo/enu";
-import { polygonRingIntersectionArea } from "../../src/world/geometry";
+import { surfaceContains, validateSurfaceGeometry } from "../../src/world/geometry";
 import {
   WORLD_SCHEMA_VERSION,
   type Building,
@@ -8,8 +8,10 @@ import {
   type Position2,
   type RoadClass,
   type RoofType,
+  type WorldSourceMetadata,
   type WorldData,
 } from "../../src/world/schema";
+import { canonicalGeometryFingerprint, legacyLocalId, sha256, stableLocalId } from "./identity";
 
 export interface GeoJsonFeature {
   type: "Feature";
@@ -34,6 +36,7 @@ export interface NormalizeSourceOptions {
   datasetRevision: string;
   source: {
     kind: "osm" | "overture" | "survey" | "synthetic";
+    namespace?: string;
     revision: string;
     licence: string;
     observedAt?: string;
@@ -54,6 +57,7 @@ function provenance(options: NormalizeSourceOptions) {
   return {
     source: options.source.kind,
     quality: sourceQuality(options.source.kind),
+    sourceNamespace: options.source.namespace ?? "primary",
     sourceRevision: options.source.revision,
     licence: options.source.licence,
     ...(options.source.observedAt ? { observedAt: options.source.observedAt } : {}),
@@ -66,102 +70,6 @@ function unknownPropertyProvenance(options: NormalizeSourceOptions) {
 
 function inferredPropertyProvenance(options: NormalizeSourceOptions) {
   return { ...provenance(options), quality: "inferred" as const };
-}
-
-function geometryFingerprint(geometry: GeoJsonFeature["geometry"]): string {
-  if (!geometry) return "null";
-  if (geometry.type === "Point") {
-    return `pt:${geometry.coordinates[0]?.toFixed(5)}_${geometry.coordinates[1]?.toFixed(5)}`;
-  }
-  if (geometry.type === "LineString") {
-    const coords = geometry.coordinates;
-    const start = coords[0] ? `${coords[0][0]?.toFixed(5)}_${coords[0][1]?.toFixed(5)}` : "";
-    const end = coords.at(-1)
-      ? `${coords.at(-1)![0]?.toFixed(5)}_${coords.at(-1)![1]?.toFixed(5)}`
-      : "";
-    return `ls:${coords.length}:${start}:${end}`;
-  }
-  if (geometry.type === "MultiLineString") {
-    const lines = geometry.coordinates;
-    const first = lines[0]?.[0]
-      ? `${lines[0][0][0]?.toFixed(5)}_${lines[0][0][1]?.toFixed(5)}`
-      : "";
-    const last = lines.at(-1)?.at(-1)
-      ? `${lines.at(-1)!.at(-1)![0]?.toFixed(5)}_${lines.at(-1)!.at(-1)![1]?.toFixed(5)}`
-      : "";
-    return `mls:${lines.length}:${first}:${last}`;
-  }
-  if (geometry.type === "Polygon") {
-    const ring = geometry.coordinates[0] ?? [];
-    const len = ring.length;
-    const p0 = ring[0] ? `${ring[0][0]?.toFixed(5)}_${ring[0][1]?.toFixed(5)}` : "";
-    const pMid = ring[Math.floor(len / 2)]
-      ? `${ring[Math.floor(len / 2)]![0]?.toFixed(5)}_${ring[Math.floor(len / 2)]![1]?.toFixed(5)}`
-      : "";
-    return `poly:${len}:${p0}:${pMid}`;
-  }
-  if (geometry.type === "MultiPolygon") {
-    const parts = geometry.coordinates.map((poly) => {
-      const ring = poly[0] ?? [];
-      let minX = Infinity,
-        minY = Infinity,
-        maxX = -Infinity,
-        maxY = -Infinity;
-      let sumX = 0,
-        sumY = 0;
-      let area = 0;
-      for (let i = 0; i < ring.length; i++) {
-        const pt = ring[i]!;
-        const x = pt[0] ?? 0;
-        const y = pt[1] ?? 0;
-        if (x < minX) minX = x;
-        if (y < minY) minY = y;
-        if (x > maxX) maxX = x;
-        if (y > maxY) maxY = y;
-        sumX += x;
-        sumY += y;
-        if (i < ring.length - 1) {
-          const next = ring[i + 1]!;
-          area += x * (next[1] ?? 0) - y * (next[0] ?? 0);
-        }
-      }
-      const count = ring.length || 1;
-      return `${ring.length}:${(area * 0.5).toFixed(2)}:${(sumX / count).toFixed(5)}_${(sumY / count).toFixed(5)}:[${minX.toFixed(5)},${minY.toFixed(5)},${maxX.toFixed(5)},${maxY.toFixed(5)}]`;
-    });
-    return `mpoly:${geometry.coordinates.length}:${parts.join(";")}`;
-  }
-  return "other";
-}
-
-function fnv1aBase36(text: string) {
-  let hash = 2166136261;
-  for (const character of text) {
-    hash ^= character.charCodeAt(0);
-    hash = Math.imul(hash, 16777619);
-  }
-  return (hash >>> 0).toString(36);
-}
-
-function stableLocalId(
-  prefix: string,
-  feature: GeoJsonFeature,
-  options: NormalizeSourceOptions,
-  lineIndex?: number,
-) {
-  const suffix = lineIndex !== undefined ? `-${lineIndex}` : "";
-  if (feature.id !== undefined && feature.id !== null && String(feature.id).trim() !== "") {
-    const rawId = String(feature.id).trim();
-    const sanitized = rawId.replace(/[/:]/g, "-").replace(/[^a-zA-Z0-9_-]/g, "");
-    if (sanitized.length > 0) {
-      // Keep exact source ids unchanged; disambiguate lossy sanitisation with a raw-id hash
-      // so "synthetic/a" and "synthetic-a" can never collapse into the same key.
-      return sanitized === rawId
-        ? `${prefix}-${sanitized}${suffix}`
-        : `${prefix}-${sanitized}-${fnv1aBase36(rawId)}${suffix}`;
-    }
-  }
-  const input = `${prefix}:${options.source.kind}:${feature.geometry?.type ?? "null"}:${geometryFingerprint(feature.geometry)}`;
-  return `${prefix}-${fnv1aBase36(input)}${suffix}`;
 }
 
 function coordinateToEnu(coordinate: number[], origin: GeodeticPoint): Position2 {
@@ -235,17 +143,23 @@ function direction(properties: Record<string, unknown>) {
   return "unknown" as const;
 }
 
-function roadLines(feature: GeoJsonFeature): number[][][] {
-  if (!feature.geometry) return [];
-  if (feature.geometry.type === "LineString") return [feature.geometry.coordinates];
-  if (feature.geometry.type === "MultiLineString") return feature.geometry.coordinates;
-  return [];
+export interface LegacyIdAlias {
+  legacyId: string;
+  localId: string;
+  namespace: string;
 }
 
 export function normalizeGeoJsonSource(
   input: GeoJsonFeatureCollection,
   options: NormalizeSourceOptions,
 ): WorldData {
+  return normalizeGeoJsonSourceWithAliases(input, options).world;
+}
+
+export function normalizeGeoJsonSourceWithAliases(
+  input: GeoJsonFeatureCollection,
+  options: NormalizeSourceOptions,
+): { world: WorldData; idAliases: LegacyIdAlias[] } {
   if (input.type !== "FeatureCollection" || !Array.isArray(input.features)) {
     throw new Error("GEOJSON_FEATURE_COLLECTION_REQUIRED");
   }
@@ -257,7 +171,31 @@ export function normalizeGeoJsonSource(
     throw new Error("SOURCE_METADATA_REQUIRED");
   }
 
+  const namespace = options.source.namespace ?? "primary";
+  if (!namespace.trim()) throw new Error("PIPELINE_SOURCE_NAMESPACE_REQUIRED");
   const source = provenance(options);
+  const idAliases: LegacyIdAlias[] = [];
+  const claimedIds = new Set<string>();
+  const localIdFor = (
+    prefix: string,
+    feature: GeoJsonFeature,
+    legacyLineIndex?: number,
+    componentSuffix?: string,
+  ) => {
+    const localId = stableLocalId(prefix, feature, options.source.kind, namespace, componentSuffix);
+    if (claimedIds.has(localId)) throw new Error("GEOJSON_LOCAL_ID_COLLISION");
+    claimedIds.add(localId);
+    const legacyId = legacyLocalId(prefix, feature, options.source.kind, legacyLineIndex);
+    if (legacyId !== localId) idAliases.push({ legacyId, localId, namespace });
+    return localId;
+  };
+  const sourceMetadata: WorldSourceMetadata = {
+    namespace,
+    kind: options.source.kind,
+    revision: options.source.revision,
+    licence: options.source.licence,
+    ...(options.source.observedAt ? { observedAt: options.source.observedAt } : {}),
+  };
   const world: WorldData = {
     manifest: {
       schemaVersion: WORLD_SCHEMA_VERSION,
@@ -268,6 +206,7 @@ export function normalizeGeoJsonSource(
       chunks: [],
       assetHashes: {},
       licences: [options.source.licence],
+      sources: [sourceMetadata],
       coverage: { quality: source.quality, sourceCount: 1 },
     },
     roads: [],
@@ -284,7 +223,7 @@ export function normalizeGeoJsonSource(
   const buildingByRef = new Map<string, Building>();
 
   input.features.forEach((feature) => {
-    if (!feature.geometry) return;
+    if (!feature.geometry) throw new Error("GEOJSON_GEOMETRY_REQUIRED");
     const properties = propertiesOf(feature);
     if (feature.geometry.type === "Polygon" || feature.geometry.type === "MultiPolygon") {
       const geometry =
@@ -299,6 +238,9 @@ export function normalizeGeoJsonSource(
                 polygonCoordinates(polygon, options.origin),
               ),
             };
+      if (validateSurfaceGeometry(geometry).length > 0) {
+        throw new Error("GEOJSON_GEOMETRY_INVALID");
+      }
 
       // Check if feature is marked as a lot
       const isLot =
@@ -315,7 +257,7 @@ export function normalizeGeoJsonSource(
           confirmedProp === 1 ||
           confirmedProp === "1";
         world.lots.push({
-          localId: stableLocalId("lot", feature, options),
+          localId: localIdFor("lot", feature),
           geometry,
           confirmed,
           status,
@@ -327,6 +269,17 @@ export function normalizeGeoJsonSource(
       const isPart =
         properties["building:part"] !== undefined && properties["building:part"] !== "no";
 
+      const buildingTag = properties["building"];
+      const isBuilding =
+        buildingTag !== undefined &&
+        buildingTag !== null &&
+        buildingTag !== false &&
+        buildingTag !== 0 &&
+        buildingTag !== "" &&
+        String(buildingTag).toLowerCase() !== "no";
+
+      if (!isPart && !isBuilding) throw new Error("GEOJSON_POLYGON_UNCLASSIFIED");
+
       if (isPart) {
         pendingParts.push({ feature, geometry, properties });
         return;
@@ -337,7 +290,7 @@ export function normalizeGeoJsonSource(
       const hasHeight = explicitHeight !== undefined || levels !== undefined;
 
       const building: Building = {
-        localId: stableLocalId("building", feature, options),
+        localId: localIdFor("building", feature),
         geometry,
         footprintKind: "footprint",
         wallHeight: explicitHeight ?? (levels === undefined ? 6 : levels * 3.2),
@@ -361,9 +314,24 @@ export function normalizeGeoJsonSource(
       return;
     }
 
-    const lines = roadLines(feature);
+    if (feature.geometry.type !== "LineString" && feature.geometry.type !== "MultiLineString") {
+      throw new Error("GEOJSON_GEOMETRY_TYPE_UNSUPPORTED");
+    }
+    if (properties["highway"] === undefined || !String(properties["highway"]).trim()) {
+      throw new Error("GEOJSON_LINE_UNCLASSIFIED");
+    }
+    const lines =
+      feature.geometry.type === "LineString"
+        ? [feature.geometry.coordinates]
+        : feature.geometry.coordinates;
     lines.forEach((line, lineIndex) => {
       const lineSuffix = lines.length > 1 ? lineIndex : undefined;
+      const componentSuffix =
+        lines.length > 1
+          ? `segment-${sha256(
+              canonicalGeometryFingerprint({ type: "LineString", coordinates: line }),
+            ).slice(0, 12)}`
+          : undefined;
       const explicitWidth = numberProperty(properties, "width");
       const hasWidth = explicitWidth !== undefined && explicitWidth > 0;
       const rClass = roadClass(properties);
@@ -384,7 +352,7 @@ export function normalizeGeoJsonSource(
       const explicitElevation = numberProperty(properties, "elevation", "ele");
 
       world.roads.push({
-        localId: stableLocalId("road", feature, options, lineSuffix),
+        localId: localIdFor("road", feature, lineSuffix, componentSuffix),
         polylineENU: line.map((coordinate) => coordinateToEnu(coordinate, options.origin)),
         connectorIds: [],
         roadClass: rClass,
@@ -409,71 +377,50 @@ export function normalizeGeoJsonSource(
     });
   });
 
-  // Pass 2: Attach pending building parts to parents, or create parent container if missing
+  // Pass 2: Resolve explicit parent references exactly; otherwise require one
+  // unambiguous containing parent. Never attach by substring or silently retype
+  // an orphan part as a standalone building.
   for (const pending of pendingParts) {
     const { feature, geometry, properties } = pending;
-    const parentId =
-      properties["building:parent"] ?? properties["parent"] ?? properties["building"];
+    const parentId = properties["building:parent"] ?? properties["parent"];
     let parentBuilding: Building | undefined;
 
-    if (typeof parentId === "string" && parentId.trim()) {
-      parentBuilding =
-        buildingByRef.get(parentId.trim()) ??
-        world.buildings.find((b) => b.localId.includes(parentId.trim()));
-    }
-
-    // If not found by ID, test spatial containment / area overlap with existing buildings
-    if (!parentBuilding && geometry.type === "Polygon") {
-      let maxOverlap = 0;
-      for (const candidate of world.buildings) {
-        if (candidate.geometry.type === "Polygon") {
-          const area = polygonRingIntersectionArea(
-            geometry.coordinates[0]!,
-            candidate.geometry.coordinates[0]!,
-          );
-          if (area > maxOverlap) {
-            maxOverlap = area;
-            parentBuilding = candidate;
-          }
-        }
-      }
+    if (parentId !== undefined && parentId !== null && String(parentId).trim()) {
+      const exactParentId = String(parentId).trim();
+      parentBuilding = buildingByRef.get(exactParentId);
+      if (!parentBuilding) throw new Error("GEOJSON_PART_PARENT_NOT_FOUND");
+    } else {
+      const containingParents = world.buildings.filter((candidate) =>
+        surfaceContains(candidate.geometry, geometry),
+      );
+      if (containingParents.length > 1) throw new Error("GEOJSON_PART_PARENT_AMBIGUOUS");
+      parentBuilding = containingParents[0];
+      if (!parentBuilding) throw new Error("GEOJSON_PART_PARENT_UNRESOLVED");
     }
 
     const explicitHeight = numberProperty(properties, "height", "building:height");
     const levels = numberProperty(properties, "building:levels", "levels");
     const partItem = {
-      localId: stableLocalId("part", feature, options),
+      localId: localIdFor("part", feature),
       geometry,
       wallHeight: explicitHeight ?? (levels === undefined ? 4 : levels * 3.2),
       ...(levels === undefined ? {} : { levels }),
       roofType: roofType(properties),
       provenance: source,
+      attributes: {
+        wallHeight:
+          explicitHeight !== undefined || levels !== undefined
+            ? source
+            : inferredPropertyProvenance(options),
+        roofType:
+          properties["roof:shape"] || properties["roof"]
+            ? source
+            : unknownPropertyProvenance(options),
+      },
     };
 
-    if (parentBuilding) {
-      if (!parentBuilding.parts) parentBuilding.parts = [];
-      parentBuilding.parts.push(partItem);
-    } else {
-      const bld: Building = {
-        localId: stableLocalId("building", feature, options),
-        geometry,
-        footprintKind: "unknown",
-        wallHeight: partItem.wallHeight,
-        ...(levels === undefined ? {} : { levels }),
-        roofType: partItem.roofType,
-        provenance: source,
-        attributes: {
-          wallHeight: explicitHeight !== undefined ? source : inferredPropertyProvenance(options),
-          roofType:
-            properties["roof:shape"] || properties["roof"]
-              ? source
-              : unknownPropertyProvenance(options),
-        },
-        parts: [partItem],
-      };
-      world.buildings.push(bld);
-      buildingByRef.set(bld.localId, bld);
-    }
+    if (!parentBuilding.parts) parentBuilding.parts = [];
+    parentBuilding.parts.push(partItem);
   }
 
   // Calculate road connectors: same-layer roads that share any node (endpoints or
@@ -546,5 +493,5 @@ export function normalizeGeoJsonSource(
     }
   }
 
-  return world;
+  return { world, idAliases };
 }

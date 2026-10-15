@@ -8,9 +8,18 @@ export type SourceKind = "synthetic" | "survey" | "osm" | "overture" | "manual_o
 export interface Provenance {
   source: SourceKind;
   quality: QualityStatus;
+  sourceNamespace?: string;
   observedAt?: string;
   sourceRevision?: string;
   licence?: string;
+}
+
+export interface WorldSourceMetadata {
+  namespace: string;
+  kind: Exclude<SourceKind, "manual_override">;
+  revision: string;
+  licence: string;
+  observedAt?: string;
 }
 
 export type Position2 = [number, number];
@@ -49,6 +58,7 @@ export interface WorldManifest {
   chunks: WorldChunk[];
   assetHashes: Record<string, string>;
   licences: string[];
+  sources?: WorldSourceMetadata[];
   coverage: {
     quality: QualityStatus;
     sourceCount: number;
@@ -70,6 +80,7 @@ export interface BuildingPart {
   levels?: number;
   roofType: RoofType;
   provenance: Provenance;
+  attributes?: Record<string, Provenance>;
 }
 
 export interface Building {
@@ -112,6 +123,7 @@ export interface Lot {
   confirmed: boolean;
   frontage?: FrontageCandidate[];
   provenance: Provenance;
+  attributes?: Record<string, Provenance>;
 }
 
 export interface TreeFeature {
@@ -160,6 +172,20 @@ export type FeaturePatch =
       geometry: SurfaceGeometry;
     }
   | {
+      operation: "patch_building_part";
+      buildingId: string;
+      partId: string;
+      patch: Partial<
+        Pick<BuildingPart, "baseElevation" | "wallHeight" | "roofHeight" | "levels" | "roofType">
+      >;
+    }
+  | {
+      operation: "replace_building_part_geometry";
+      buildingId: string;
+      partId: string;
+      geometry: SurfaceGeometry;
+    }
+  | {
       operation: "patch_road";
       featureId: string;
       patch: Partial<
@@ -184,7 +210,7 @@ export interface WorldOverride {
   localId: string;
   revision: number;
   reason: string;
-  provenance: Provenance;
+  provenance?: Provenance;
   patch: FeaturePatch;
 }
 

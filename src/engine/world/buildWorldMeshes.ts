@@ -1,5 +1,10 @@
 import * as THREE from "three";
-import { polygonsOf, ringWithoutClosure, surfaceCentroid } from "@/world/geometry";
+import {
+  polygonsOf,
+  ringWithoutClosure,
+  surfaceCentroid,
+  surfacePartitionCovers,
+} from "@/world/geometry";
 import type {
   Building,
   FrontageCandidate,
@@ -93,6 +98,17 @@ function footprintBounds(geometry: SurfaceGeometry) {
   return { minX, minZ, maxX, maxZ };
 }
 
+function isAxisAlignedRectangle(geometry: SurfaceGeometry): boolean {
+  if (geometry.type !== "Polygon" || geometry.coordinates.length !== 1) return false;
+  const points = ringWithoutClosure(geometry.coordinates[0] ?? []);
+  if (points.length !== 4) return false;
+  const xs = [...new Set(points.map(([x]) => x))];
+  const zs = [...new Set(points.map(([, z]) => z))];
+  if (xs.length !== 2 || zs.length !== 2) return false;
+  const corners = new Set(points.map(([x, z]) => `${x},${z}`));
+  return corners.size === 4 && xs.every((x) => zs.every((z) => corners.has(`${x},${z}`)));
+}
+
 // Explicitly approximated roof volumes for pitched roof types: a ridge prism over the
 // footprint bounds. Tagged as `*_prism_approx` so UI/quality never treats it as a
 // surveyed roof; unknown shapes keep the flat cap with a `flat_cap` fallback tag.
@@ -100,8 +116,13 @@ function addRoofPrism(
   geometry: SurfaceGeometry,
   topY: number,
   roofType: RoofType,
+  requestedRoofHeight: number | undefined,
   disposables: Disposable[],
 ) {
+  // A bbox prism is footprint-safe only for a single, axis-aligned rectangle.
+  // Holes, concavities, rotated outlines, and disjoint components retain the
+  // ExtrudeGeometry flat cap instead of filling courtyard/open space.
+  if (!isAxisAlignedRectangle(geometry)) return null;
   const { minX, minZ, maxX, maxZ } = footprintBounds(geometry);
   if (!Number.isFinite(minX)) return null;
   const spanX = maxX - minX;
@@ -109,7 +130,11 @@ function addRoofPrism(
   if (spanX <= 0.6 || spanZ <= 0.6) return null;
 
   const alongX = spanX >= spanZ;
-  const roofHeight = Math.max(1.2, Math.min(4, Math.min(spanX, spanZ) * 0.35));
+  const roofHeight =
+    requestedRoofHeight === undefined
+      ? Math.max(1.2, Math.min(4, Math.min(spanX, spanZ) * 0.35))
+      : requestedRoofHeight;
+  if (!Number.isFinite(roofHeight) || roofHeight <= 0) return null;
   const inset = Math.min(0.6, Math.min(spanX, spanZ) * 0.08);
 
   let eaveA: Position2;
@@ -235,6 +260,15 @@ function addBuilding(
   disposables: Disposable[],
 ) {
   if (building.hidden) return;
+  if (
+    building.parts?.length &&
+    !surfacePartitionCovers(
+      building.geometry,
+      building.parts.map((part) => part.geometry),
+    )
+  ) {
+    throw new Error("BUILDING_PARTS_DO_NOT_PARTITION_PARENT");
+  }
   const buildingGroup = new THREE.Group();
   buildingGroup.name = `building:${building.localId}`;
   buildingGroup.userData = { localId: building.localId, quality: building.provenance.quality };
@@ -246,6 +280,7 @@ function addBuilding(
         geometry: part.geometry,
         wallHeight: part.wallHeight,
         baseElevation: part.baseElevation ?? baseElevation,
+        roofHeight: part.roofHeight,
         roofType: part.roofType,
       }))
     : [
@@ -254,6 +289,7 @@ function addBuilding(
           geometry: building.geometry,
           wallHeight: building.wallHeight,
           baseElevation,
+          roofHeight: building.roofHeight,
           roofType: building.roofType,
         },
       ];
@@ -273,16 +309,16 @@ function addBuilding(
       part.roofType === "hipped" ||
       part.roofType === "corrugated"
     ) {
-      const roof = addRoofPrism(part.geometry, topY, part.roofType, disposables);
+      const roof = addRoofPrism(part.geometry, topY, part.roofType, part.roofHeight, disposables);
       if (roof) {
         roof.name = `roof:${part.localId}`;
         shell.add(roof);
         shell.userData["roofApproximation"] = roof.userData["approximation"];
       } else {
-        shell.userData["roofFallback"] = "flat_cap";
+        shell.userData["roofFallback"] = "flat_cap_footprint_preserved";
       }
     } else if (part.roofType !== "flat" && part.roofType !== "terrace_tum") {
-      shell.userData["roofFallback"] = "flat_cap";
+      shell.userData["roofFallback"] = "flat_cap_footprint_preserved";
     }
     buildingGroup.add(shell);
   }

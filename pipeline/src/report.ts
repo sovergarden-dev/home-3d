@@ -4,6 +4,9 @@ import type { ConflationCandidate, ConflationResolution } from "./conflate";
 
 export interface WorldBuildReport {
   valid: boolean;
+  sourceCount: number;
+  licences: string[];
+  coverageQuality: WorldData["manifest"]["coverage"]["quality"];
   featureCounts: {
     roads: number;
     buildings: number;
@@ -39,6 +42,9 @@ export function createWorldBuildReport(world: WorldData): WorldBuildReport {
 
   return {
     valid: validation.valid,
+    sourceCount: world.manifest.coverage.sourceCount,
+    licences: [...world.manifest.licences],
+    coverageQuality: world.manifest.coverage.quality,
     featureCounts: {
       roads: world.roads.length,
       buildings: world.buildings.length,

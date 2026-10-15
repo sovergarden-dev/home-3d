@@ -3,6 +3,7 @@ import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { runPipeline } from "./cli";
+import { parseWorldPackage } from "../../src/world/package";
 
 test("CLI fixture run wires secondary sources, conflation rules, terminal lots and exported overrides end to end", async () => {
   const dir = mkdtempSync(join(tmpdir(), "home3d-cli-e2e-"));
@@ -64,6 +65,18 @@ test("CLI fixture run wires secondary sources, conflation rules, terminal lots a
               [0.6, 0.4001],
               [0.6, 0.4],
             ],
+          ],
+        },
+      },
+      {
+        type: "Feature",
+        id: "lane-secondary",
+        properties: { highway: "residential", width: "4" },
+        geometry: {
+          type: "LineString",
+          coordinates: [
+            [0.6002, 0.4002],
+            [0.6003, 0.4002],
           ],
         },
       },
@@ -137,7 +150,12 @@ test("CLI fixture run wires secondary sources, conflation rules, terminal lots a
         kind: "file",
         path: "secondary.geojson",
         format: "geojson",
-        source: { kind: "overture", revision: "secondary-rev-1", licence: "CC-BY-4.0" },
+        source: {
+          kind: "overture",
+          namespace: "overture",
+          revision: "secondary-rev-1",
+          licence: "CC-BY-4.0",
+        },
       },
     ],
     conflationRulesPath: "rules.json",
@@ -156,24 +174,65 @@ test("CLI fixture run wires secondary sources, conflation rules, terminal lots a
 
   const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8")) as {
     world: {
-      buildings: Array<{ localId: string; wallHeight: number; levels?: number }>;
+      manifest: { coverage: { sourceCount: number }; licences: string[] };
+      buildings: Array<{
+        localId: string;
+        wallHeight: number;
+        levels?: number;
+        attributes?: Record<string, { source: string; sourceNamespace?: string }>;
+      }>;
       roads: Array<{ localId: string; carriagewayWidth?: number }>;
       lots: Array<{ localId: string; confirmed: boolean; status: string }>;
     };
+    overrides?: { overrides: unknown[] };
   };
 
   expect(pkg.world.buildings).toHaveLength(1);
   expect(pkg.world.buildings[0]?.localId).toBe("building-house-primary");
-  expect(pkg.world.buildings[0]?.wallHeight).toBe(14);
-  expect(pkg.world.buildings[0]?.levels).toBe(4);
+  expect(pkg.world.buildings[0]?.wallHeight).toBe(6);
+  const opened = parseWorldPackage(JSON.stringify(pkg));
+  expect(opened.ok).toBe(true);
+  if (!opened.ok) throw new Error(opened.errorCode);
+  expect(opened.world.buildings[0]?.wallHeight).toBe(14);
+  expect(opened.world.buildings[0]?.levels).toBe(4);
+  expect(opened.world.buildings[0]?.attributes?.wallHeight).toMatchObject({
+    source: "manual_override",
+    sourceNamespace: "primary",
+  });
 
-  expect(pkg.world.roads).toHaveLength(1);
-  expect(pkg.world.roads[0]?.carriagewayWidth).toBe(7);
+  expect(pkg.world.roads).toHaveLength(2);
+  expect(opened.world.roads[0]?.carriagewayWidth).toBe(7);
+  expect(pkg.world.roads.map((road) => road.localId)).toContain("road-overture-lane-secondary");
 
   expect(pkg.world.lots).toHaveLength(1);
   expect(pkg.world.lots[0]?.localId).toBe("lot-empty-fixture");
   expect(pkg.world.lots[0]?.confirmed).toBe(true);
   expect(pkg.world.lots[0]?.status).toBe("empty");
+  expect(pkg.world.manifest.coverage.sourceCount).toBe(2);
+  expect(pkg.world.manifest.licences).toEqual(["CC-BY-4.0", "CC0-1.0"]);
+  expect(pkg.overrides?.overrides).toHaveLength(2);
+
+  const exportedOverridesPath = write("overrides-exported.json", pkg.overrides);
+  const rebuildConfig = JSON.parse(readFileSync(configPath, "utf8")) as Record<string, unknown>;
+  rebuildConfig["datasetRevision"] = "cli-e2e-rebuild-v2";
+  rebuildConfig["overridesPath"] = exportedOverridesPath;
+  rebuildConfig["output"] = {
+    packagePath: "rebuilt-package.json",
+    reportPath: "rebuilt-report.json",
+  };
+  const rebuildConfigPath = write("config-rebuild.json", rebuildConfig);
+  await runPipeline(["--config", rebuildConfigPath]);
+  const rebuiltPackage = JSON.parse(
+    readFileSync(join(dir, "rebuilt-package.json"), "utf8"),
+  ) as typeof pkg;
+  const reloaded = parseWorldPackage(JSON.stringify(rebuiltPackage));
+  expect(reloaded.ok).toBe(true);
+  if (!reloaded.ok) throw new Error(reloaded.errorCode);
+  expect(reloaded.world.buildings[0]?.wallHeight).toBe(14);
+  expect(reloaded.world.buildings[0]?.levels).toBe(4);
+  expect(reloaded.world.roads[0]?.carriagewayWidth).toBe(7);
+  expect(rebuiltPackage.world.manifest.coverage.sourceCount).toBe(2);
+  expect(rebuiltPackage.world.manifest.licences).toEqual(["CC-BY-4.0", "CC0-1.0"]);
 
   const writtenReport = JSON.parse(readFileSync(join(dir, "report.json"), "utf8")) as {
     conflation?: { resolved: unknown[] };
@@ -237,7 +296,12 @@ test("CLI fixture run fails loudly when a conflation rule targets an unknown bui
         kind: "file",
         path: "secondary.geojson",
         format: "geojson",
-        source: { kind: "overture", revision: "secondary-rev-1", licence: "CC-BY-4.0" },
+        source: {
+          kind: "overture",
+          namespace: "overture",
+          revision: "secondary-rev-1",
+          licence: "CC-BY-4.0",
+        },
       },
     ],
     conflationRulesPath: "rules.json",

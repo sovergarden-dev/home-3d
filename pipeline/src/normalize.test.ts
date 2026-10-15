@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { normalizeGeoJsonSource } from "./normalize";
+import { normalizeGeoJsonSource, normalizeGeoJsonSourceWithAliases } from "./normalize";
 
 const origin = { longitude: 0.6, latitude: 0.4, altitude: 0 };
 
@@ -504,4 +504,230 @@ test("roads on different layers do not connect and bridge='no' is not classified
   // Even though they touch at [0.6001, 0.4], their layers differ (0 vs 1), so they must NOT connect!
   expect(ground.connectorIds).toEqual([]);
   expect(flyover.connectorIds).toEqual([]);
+});
+
+test("full geometry fingerprints separate old sampled-point collisions and expose ambiguous legacy aliases", () => {
+  const makeFeature = (coordinates: number[][]) => ({
+    type: "Feature" as const,
+    properties: { building: "yes" },
+    geometry: { type: "Polygon" as const, coordinates: [coordinates] },
+  });
+  const first = makeFeature([
+    [0.6, 0.4],
+    [0.6001, 0.4],
+    [0.6001, 0.4001],
+    [0.6, 0.4001],
+    [0.6, 0.4],
+  ]);
+  const second = makeFeature([
+    [0.6, 0.4],
+    [0.6002, 0.4],
+    [0.6001, 0.4001],
+    [0.5999, 0.4001],
+    [0.6, 0.4],
+  ]);
+  const result = normalizeGeoJsonSourceWithAliases(
+    { type: "FeatureCollection", features: [first, second] },
+    {
+      origin,
+      datasetRevision: "sampled-collision-v1",
+      source: { kind: "osm", namespace: "primary", revision: "rev-1", licence: "ODbL-1.0" },
+    },
+  );
+
+  expect(result.world.buildings).toHaveLength(2);
+  expect(result.world.buildings[0]!.localId).not.toBe(result.world.buildings[1]!.localId);
+  expect(result.idAliases).toHaveLength(2);
+  expect(result.idAliases[0]!.legacyId).toBe(result.idAliases[1]!.legacyId);
+  expect(new Set(result.idAliases.map((alias) => alias.localId)).size).toBe(2);
+});
+
+test("explicit feature IDs are source-namespaced and stable across revisions and inserted features", () => {
+  const feature = {
+    type: "Feature" as const,
+    id: 123,
+    properties: { building: "yes", height: 8 },
+    geometry: {
+      type: "Polygon" as const,
+      coordinates: [
+        [
+          [0.6, 0.4],
+          [0.6001, 0.4],
+          [0.6001, 0.4001],
+          [0.6, 0.4001],
+          [0.6, 0.4],
+        ],
+      ],
+    },
+  };
+  const world = (namespace: string, revision: string, features = [feature]) =>
+    normalizeGeoJsonSource(
+      { type: "FeatureCollection", features },
+      {
+        origin,
+        datasetRevision: `dataset-${revision}`,
+        source: { kind: "overture", namespace, revision, licence: "CC-BY-4.0" },
+      },
+    );
+
+  const original = world("overture", "rev-1");
+  const rebuilt = world("overture", "rev-2", [
+    {
+      ...feature,
+      id: "unrelated-insert",
+      geometry: {
+        ...feature.geometry,
+        coordinates: [
+          [
+            [0.601, 0.4],
+            [0.6011, 0.4],
+            [0.6011, 0.4001],
+            [0.601, 0.4001],
+            [0.601, 0.4],
+          ],
+        ],
+      },
+    },
+    feature,
+  ]);
+  const primary = world("primary", "rev-1");
+
+  expect(original.buildings[0]?.localId).toBe("building-overture-123");
+  expect(
+    rebuilt.buildings.find((building) => building.localId === original.buildings[0]?.localId),
+  ).toBeDefined();
+  expect(primary.buildings[0]?.localId).toBe("building-123");
+  expect(primary.buildings[0]?.localId).not.toBe(original.buildings[0]?.localId);
+});
+
+test("MultiLineString component IDs survive component reorder", () => {
+  const feature = {
+    type: "Feature" as const,
+    id: "multi-road",
+    properties: { highway: "residential" },
+    geometry: {
+      type: "MultiLineString" as const,
+      coordinates: [
+        [
+          [0.6, 0.4],
+          [0.6001, 0.4],
+        ],
+        [
+          [0.6, 0.4002],
+          [0.6001, 0.4002],
+        ],
+      ],
+    },
+  };
+  const normalize = (coordinates: typeof feature.geometry.coordinates) =>
+    normalizeGeoJsonSource(
+      {
+        type: "FeatureCollection",
+        features: [{ ...feature, geometry: { type: "MultiLineString", coordinates } }],
+      },
+      {
+        origin,
+        datasetRevision: "multi-line-reorder",
+        source: { kind: "osm", namespace: "primary", revision: "rev-1", licence: "ODbL-1.0" },
+      },
+    )
+      .roads.map((road) => road.localId)
+      .sort();
+
+  expect(normalize(feature.geometry.coordinates)).toEqual(
+    normalize([...feature.geometry.coordinates].reverse()),
+  );
+});
+
+test("explicit parent references are exact and unresolved references fail closed", () => {
+  const parent = {
+    type: "Feature" as const,
+    id: "building-alpha",
+    properties: { building: "yes" },
+    geometry: {
+      type: "Polygon" as const,
+      coordinates: [
+        [
+          [0.6, 0.4],
+          [0.6002, 0.4],
+          [0.6002, 0.4002],
+          [0.6, 0.4002],
+          [0.6, 0.4],
+        ],
+      ],
+    },
+  };
+  const part = {
+    type: "Feature" as const,
+    id: "part-alpha",
+    properties: { "building:part": "yes", "building:parent": "alpha" },
+    geometry: {
+      type: "Polygon" as const,
+      coordinates: [
+        [
+          [0.60005, 0.40005],
+          [0.6001, 0.40005],
+          [0.6001, 0.4001],
+          [0.60005, 0.4001],
+          [0.60005, 0.40005],
+        ],
+      ],
+    },
+  };
+
+  expect(() =>
+    normalizeGeoJsonSource(
+      { type: "FeatureCollection", features: [parent, part] },
+      {
+        origin,
+        datasetRevision: "parent-exact",
+        source: { kind: "osm", revision: "rev-1", licence: "ODbL-1.0" },
+      },
+    ),
+  ).toThrow("GEOJSON_PART_PARENT_NOT_FOUND");
+});
+
+test("unclassified polygons and unsupported geometry types are rejected rather than omitted", () => {
+  const polygon = {
+    type: "Feature" as const,
+    properties: { landuse: "grass" },
+    geometry: {
+      type: "Polygon" as const,
+      coordinates: [
+        [
+          [0.6, 0.4],
+          [0.6001, 0.4],
+          [0.6001, 0.4001],
+          [0.6, 0.4001],
+          [0.6, 0.4],
+        ],
+      ],
+    },
+  };
+  expect(() =>
+    normalizeGeoJsonSource(
+      { type: "FeatureCollection", features: [polygon] },
+      {
+        origin,
+        datasetRevision: "unclassified",
+        source: { kind: "osm", revision: "1", licence: "ODbL-1.0" },
+      },
+    ),
+  ).toThrow("GEOJSON_POLYGON_UNCLASSIFIED");
+
+  const point = {
+    type: "Feature",
+    properties: { amenity: "bench" },
+    geometry: { type: "Point", coordinates: [0.6, 0.4] },
+  } as unknown as import("./normalize").GeoJsonFeature;
+  expect(() =>
+    normalizeGeoJsonSource(
+      { type: "FeatureCollection", features: [point] },
+      {
+        origin,
+        datasetRevision: "unsupported-point",
+        source: { kind: "osm", revision: "1", licence: "ODbL-1.0" },
+      },
+    ),
+  ).toThrow("GEOJSON_GEOMETRY_TYPE_UNSUPPORTED");
 });

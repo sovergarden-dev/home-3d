@@ -1,6 +1,8 @@
 import {
   segmentsIntersect,
+  surfaceContains,
   surfaceAreaIntersects,
+  surfacePartitionCovers,
   surfaceIntersects,
   validateSurfaceGeometry,
 } from "./geometry";
@@ -54,12 +56,17 @@ function validateBuilding(issues: WorldIssue[], building: Building) {
       featureIds: [building.localId],
     });
   }
+  if (
+    building.roofHeight !== undefined &&
+    (!Number.isFinite(building.roofHeight) || building.roofHeight < 0)
+  ) {
+    issues.push({
+      severity: "error",
+      code: "BUILDING_INVALID_ROOF_HEIGHT",
+      featureIds: [building.localId],
+    });
+  }
   if (building.parts && building.parts.length > 0) {
-    addUniqueIds(
-      issues,
-      building.parts.map((part) => part.localId),
-      "BUILDING_PART",
-    );
     building.parts.forEach((part) => {
       addGeometryIssues(issues, part.localId, "BUILDING_PART", part.geometry);
       if (!Number.isFinite(part.wallHeight) || part.wallHeight < 0) {
@@ -67,6 +74,23 @@ function validateBuilding(issues: WorldIssue[], building: Building) {
           severity: "error",
           code: "BUILDING_PART_INVALID_WALL_HEIGHT",
           featureIds: [part.localId],
+        });
+      }
+      if (
+        part.roofHeight !== undefined &&
+        (!Number.isFinite(part.roofHeight) || part.roofHeight < 0)
+      ) {
+        issues.push({
+          severity: "error",
+          code: "BUILDING_PART_INVALID_ROOF_HEIGHT",
+          featureIds: [part.localId],
+        });
+      }
+      if (!surfaceContains(building.geometry, part.geometry)) {
+        issues.push({
+          severity: "error",
+          code: "BUILDING_PART_OUTSIDE_PARENT",
+          featureIds: [building.localId, part.localId],
         });
       }
     });
@@ -78,15 +102,27 @@ function validateBuilding(issues: WorldIssue[], building: Building) {
         const aTop = aBase + a.wallHeight;
         const bBase = b.baseElevation ?? building.baseElevation ?? 0;
         const bTop = bBase + b.wallHeight;
-        const verticalOverlap = Math.min(aTop, bTop) - Math.max(aBase, bBase) > 1e-4;
-        if (verticalOverlap && surfaceAreaIntersects(a.geometry, b.geometry)) {
+        if (surfaceAreaIntersects(a.geometry, b.geometry)) {
+          const verticalOverlap = Math.min(aTop, bTop) - Math.max(aBase, bBase) > 1e-4;
           issues.push({
             severity: "error",
-            code: "BUILDING_PARTS_OVERLAP",
+            code: verticalOverlap ? "BUILDING_PARTS_OVERLAP" : "BUILDING_PART_FOOTPRINTS_OVERLAP",
             featureIds: [building.localId, a.localId, b.localId],
           });
         }
       }
+    }
+    if (
+      !surfacePartitionCovers(
+        building.geometry,
+        building.parts.map((part) => part.geometry),
+      )
+    ) {
+      issues.push({
+        severity: "error",
+        code: "BUILDING_PARTS_DO_NOT_PARTITION_PARENT",
+        featureIds: [building.localId],
+      });
     }
   }
 }
@@ -142,6 +178,11 @@ export function validateWorld(world: WorldData): WorldValidationReport {
     issues,
     world.buildings.map((building) => building.localId),
     "BUILDING",
+  );
+  addUniqueIds(
+    issues,
+    world.buildings.flatMap((building) => (building.parts ?? []).map((part) => part.localId)),
+    "BUILDING_PART",
   );
   addUniqueIds(
     issues,

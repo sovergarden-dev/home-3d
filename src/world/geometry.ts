@@ -278,33 +278,95 @@ export function polygonRingIntersectionArea(ringA: LinearRing, ringB: LinearRing
   return totalArea;
 }
 
-export function polygonsHaveAreaOverlap(a: PolygonGeometry, b: PolygonGeometry): boolean {
+function areaOfPolygonSurface(polygon: PolygonGeometry): number {
+  const [outer, ...holes] = polygon.coordinates;
+  if (!outer) return 0;
+  const area =
+    Math.abs(signedRingArea(outer)) -
+    holes.reduce((sum, hole) => sum + Math.abs(signedRingArea(hole)), 0);
+  return Math.max(0, area);
+}
+
+function polygonSurfaceIntersectionArea(a: PolygonGeometry, b: PolygonGeometry): number {
   const [outerA, ...holesA] = a.coordinates;
   const [outerB, ...holesB] = b.coordinates;
-  if (!outerA || !outerB) return false;
+  if (!outerA || !outerB) return 0;
 
-  // Compute positive overlap area between outer rings
   const outerIntersection = polygonRingIntersectionArea(outerA, outerB);
-  if (outerIntersection <= 1e-4) return false;
+  const holeAOverlap = holesA.reduce(
+    (sum, hole) => sum + polygonRingIntersectionArea(hole, outerB),
+    0,
+  );
+  const holeBOverlap = holesB.reduce(
+    (sum, hole) => sum + polygonRingIntersectionArea(outerA, hole),
+    0,
+  );
+  // A point in both holes was subtracted once for each surface above; restore the
+  // hole-hole intersection once (inclusion-exclusion) to avoid a negative result
+  // for identical courtyards and to preserve partial courtyard overlaps.
+  const sharedHoleOverlap = holesA.reduce(
+    (sumA, holeA) =>
+      sumA + holesB.reduce((sumB, holeB) => sumB + polygonRingIntersectionArea(holeA, holeB), 0),
+    0,
+  );
+  return Math.max(0, outerIntersection - holeAOverlap - holeBOverlap + sharedHoleOverlap);
+}
 
-  // Subtract intersection that falls into holes of A
-  let holeArea = 0;
-  for (const holeA of holesA) {
-    holeArea += polygonRingIntersectionArea(holeA, outerB);
-  }
-  // Subtract intersection that falls into holes of B
-  for (const holeB of holesB) {
-    holeArea += polygonRingIntersectionArea(outerA, holeB);
-  }
+export function polygonSurfaceArea(polygon: PolygonGeometry): number {
+  return areaOfPolygonSurface(polygon);
+}
 
-  const effectiveOverlap = outerIntersection - holeArea;
-  return effectiveOverlap > 1e-4;
+export function surfaceArea(geometry: SurfaceGeometry): number {
+  return polygonsOf(geometry).reduce((sum, polygon) => sum + areaOfPolygonSurface(polygon), 0);
+}
+
+export function surfaceIntersectionArea(a: SurfaceGeometry, b: SurfaceGeometry): number {
+  return polygonsOf(a).reduce(
+    (sumA, polygonA) =>
+      sumA +
+      polygonsOf(b).reduce(
+        (sumB, polygonB) => sumB + polygonSurfaceIntersectionArea(polygonA, polygonB),
+        0,
+      ),
+    0,
+  );
+}
+
+export function surfaceContains(
+  container: SurfaceGeometry,
+  candidate: SurfaceGeometry,
+  tolerance = 1e-4,
+): boolean {
+  const candidateArea = surfaceArea(candidate);
+  return (
+    candidateArea > tolerance &&
+    surfaceIntersectionArea(container, candidate) >= candidateArea - tolerance
+  );
+}
+
+export function surfacePartitionCovers(
+  parent: SurfaceGeometry,
+  parts: SurfaceGeometry[],
+  tolerance = 1e-4,
+): boolean {
+  if (parts.length === 0 || parts.some((part) => !surfaceContains(parent, part, tolerance)))
+    return false;
+  for (let first = 0; first < parts.length; first += 1) {
+    for (let second = first + 1; second < parts.length; second += 1) {
+      if (surfaceIntersectionArea(parts[first]!, parts[second]!) > tolerance) return false;
+    }
+  }
+  const parentArea = surfaceArea(parent);
+  const partsArea = parts.reduce((sum, part) => sum + surfaceArea(part), 0);
+  return parentArea > tolerance && Math.abs(partsArea - parentArea) <= tolerance;
+}
+
+export function polygonsHaveAreaOverlap(a: PolygonGeometry, b: PolygonGeometry): boolean {
+  return polygonSurfaceIntersectionArea(a, b) > 1e-4;
 }
 
 export function surfaceAreaIntersects(a: SurfaceGeometry, b: SurfaceGeometry): boolean {
-  return polygonsOf(a).some((polygonA) =>
-    polygonsOf(b).some((polygonB) => polygonsHaveAreaOverlap(polygonA, polygonB)),
-  );
+  return surfaceIntersectionArea(a, b) > 1e-4;
 }
 
 export function surfaceIntersects(a: SurfaceGeometry, b: SurfaceGeometry) {
@@ -417,13 +479,48 @@ export function surfaceBounds(geometry: SurfaceGeometry) {
 }
 
 export function surfaceCentroid(geometry: SurfaceGeometry): Position2 {
-  const polygon = polygonsOf(geometry)[0];
-  const outer = polygon?.coordinates[0];
-  const positions = outer ? ringWithoutClosure(outer) : [];
-  if (positions.length === 0) throw new Error("GEOMETRY_HAS_NO_POSITIONS");
-  const total = positions.reduce<[number, number]>(
-    (sum, [x, z]) => [sum[0] + x, sum[1] + z],
-    [0, 0],
-  );
-  return [total[0] / positions.length, total[1] / positions.length];
+  const ringCentroid = (ring: LinearRing): { centroid: Position2; area: number } => {
+    const points = ringWithoutClosure(ring);
+    let twiceArea = 0;
+    let xWeighted = 0;
+    let zWeighted = 0;
+    for (let index = 0; index < points.length; index += 1) {
+      const current = points[index]!;
+      const next = points[(index + 1) % points.length]!;
+      const cross = current[0] * next[1] - next[0] * current[1];
+      twiceArea += cross;
+      xWeighted += (current[0] + next[0]) * cross;
+      zWeighted += (current[1] + next[1]) * cross;
+    }
+    const signedArea = twiceArea / 2;
+    if (Math.abs(signedArea) <= EPSILON) return { centroid: [0, 0], area: 0 };
+    return {
+      centroid: [xWeighted / (6 * signedArea), zWeighted / (6 * signedArea)],
+      area: Math.abs(signedArea),
+    };
+  };
+
+  let totalArea = 0;
+  let weightedX = 0;
+  let weightedZ = 0;
+  for (const polygon of polygonsOf(geometry)) {
+    const [outer, ...holes] = polygon.coordinates;
+    if (!outer) continue;
+    const outerMass = ringCentroid(outer);
+    let polygonArea = outerMass.area;
+    let polygonX = outerMass.centroid[0] * outerMass.area;
+    let polygonZ = outerMass.centroid[1] * outerMass.area;
+    for (const hole of holes) {
+      const holeMass = ringCentroid(hole);
+      polygonArea -= holeMass.area;
+      polygonX -= holeMass.centroid[0] * holeMass.area;
+      polygonZ -= holeMass.centroid[1] * holeMass.area;
+    }
+    if (polygonArea <= EPSILON) continue;
+    totalArea += polygonArea;
+    weightedX += polygonX;
+    weightedZ += polygonZ;
+  }
+  if (totalArea <= EPSILON) throw new Error("GEOMETRY_HAS_NO_POSITIVE_AREA");
+  return [weightedX / totalArea, weightedZ / totalArea];
 }

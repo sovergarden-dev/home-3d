@@ -20,6 +20,7 @@ export interface PipelineConfig {
   confirmedEmptyLotsPath?: string | undefined;
   source: {
     kind: "osm" | "overture" | "survey" | "synthetic";
+    namespace?: string;
     revision: string;
     licence: string;
     observedAt?: string;
@@ -91,7 +92,7 @@ function parseInput(value: unknown): PipelineConfig["input"] {
   throw new Error("PIPELINE_CONFIG_INPUT_KIND_INVALID");
 }
 
-function parseSource(value: unknown): PipelineConfig["source"] {
+function parseSource(value: unknown, requireNamespace = false): PipelineConfig["source"] {
   if (!isRecord(value)) throw new Error("PIPELINE_CONFIG_SOURCE_REQUIRED");
   const kind = value["kind"];
   if (kind !== "osm" && kind !== "overture" && kind !== "survey" && kind !== "synthetic") {
@@ -100,8 +101,18 @@ function parseSource(value: unknown): PipelineConfig["source"] {
   const observedAt = value["observedAt"];
   if (observedAt !== undefined && typeof observedAt !== "string")
     throw new Error("PIPELINE_CONFIG_OBSERVED_AT_INVALID");
+  const namespaceValue = value["namespace"];
+  if (requireNamespace && (typeof namespaceValue !== "string" || !namespaceValue.trim())) {
+    throw new Error("PIPELINE_CONFIG_SOURCE_NAMESPACE_REQUIRED");
+  }
+  const namespace =
+    namespaceValue === undefined
+      ? "primary"
+      : nonEmptyString(namespaceValue, "PIPELINE_CONFIG_SOURCE_NAMESPACE_REQUIRED");
+  if (namespace.length > 128) throw new Error("PIPELINE_CONFIG_SOURCE_NAMESPACE_INVALID");
   return {
     kind,
+    namespace,
     revision: nonEmptyString(value["revision"], "PIPELINE_CONFIG_SOURCE_REVISION_REQUIRED"),
     licence: nonEmptyString(value["licence"], "PIPELINE_CONFIG_SOURCE_LICENCE_REQUIRED"),
     ...(observedAt === undefined ? {} : { observedAt }),
@@ -131,7 +142,7 @@ function parseSecondaryInputs(value: unknown): PipelineConfig["secondaryInputs"]
     if (kind !== "file") throw new Error("PIPELINE_CONFIG_SECONDARY_INPUT_KIND_INVALID");
     const path = nonEmptyString(item["path"], "PIPELINE_CONFIG_SECONDARY_INPUT_PATH_REQUIRED");
     const format = parseInputFormat(item["format"]);
-    const source = parseSource(item["source"]);
+    const source = parseSource(item["source"], true);
     return { kind: "file", path, format, source };
   });
 }
@@ -145,6 +156,13 @@ export function parsePipelineConfig(value: unknown): PipelineConfig {
   const overridesPath = parseOptionalPath(value["overridesPath"]);
   const confirmedEmptyLotsPath = parseOptionalPath(value["confirmedEmptyLotsPath"]);
   const secondaryInputs = parseSecondaryInputs(value["secondaryInputs"]);
+  const primarySource = parseSource(value["source"]);
+  const sourceNamespaces = new Set([primarySource.namespace ?? "primary"]);
+  for (const secondary of secondaryInputs ?? []) {
+    const namespace = secondary.source.namespace ?? "";
+    if (sourceNamespaces.has(namespace)) throw new Error("PIPELINE_SOURCE_NAMESPACE_DUPLICATE");
+    sourceNamespaces.add(namespace);
+  }
 
   const result: PipelineConfig = {
     schemaVersion: "1.0",
@@ -154,7 +172,7 @@ export function parsePipelineConfig(value: unknown): PipelineConfig {
     ),
     origin: parseOrigin(value["origin"]),
     input: parseInput(value["input"]),
-    source: parseSource(value["source"]),
+    source: primarySource,
     output: parseOutput(value["output"]),
     ...(conflationRulesPath !== undefined ? { conflationRulesPath } : {}),
     ...(overridesPath !== undefined ? { overridesPath } : {}),
