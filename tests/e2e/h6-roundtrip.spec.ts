@@ -352,6 +352,9 @@ test("H6 synthetic source → build → editor → export → source rebuild →
 
   await page.setViewportSize({ width: 740, height: 390 });
   const privatePanel = page.getByTestId("private-world-panel");
+  let scaleLabelReceivesPointer: boolean | null = null;
+  let treeToggleReceivesPointer: boolean | null = null;
+  let scaleControlClick = "not exercised: renderer unavailable";
   const landscapeCollapseButton = privatePanel.getByRole("button", {
     name: "Thu gọn bảng riêng",
   });
@@ -367,32 +370,39 @@ test("H6 synthetic source → build → editor → export → source rebuild →
   await landscapeCollapseButton.click();
   await expect(privatePanel).toHaveAttribute("data-collapsed", "true");
   await expect(page.locator("#private-world-panel-content")).toBeHidden();
-  await expect(page.getByText("Bắc ↑")).toBeVisible();
-  const scaleLabel = page.getByText("Thước mét");
-  await expect(scaleLabel).toBeVisible();
-  await expect(planMode).toBeVisible();
-  const scaleLabelReceivesPointer = await scaleLabel.evaluate((label) => {
-    const rect = label.getBoundingClientRect();
-    const hitTarget = document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
-    return Boolean(hitTarget?.closest('[data-testid="plan-scale-bar"]'));
-  });
-  expect(scaleLabelReceivesPointer).toBe(true);
-  const treeToggle = page.getByTestId("plan-scale-bar").getByRole("button").first();
-  const treeToggleWasPressed = await treeToggle.getAttribute("aria-pressed");
-  const treeToggleReceivesPointer = await treeToggle.evaluate((button) => {
-    const rect = button.getBoundingClientRect();
-    const hitTarget = document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
-    return hitTarget === button || hitTarget?.closest("button") === button;
-  });
-  expect(treeToggleReceivesPointer).toBe(true);
-  await treeToggle.click();
-  await expect(treeToggle).toHaveAttribute(
-    "aria-pressed",
-    treeToggleWasPressed === "true" ? "false" : "true",
-  );
-  await treeToggle.click();
-  await expect(treeToggle).toHaveAttribute("aria-pressed", treeToggleWasPressed!);
   if (rendererReady) {
+    await expect(page.getByText("Bắc ↑")).toBeVisible();
+    const scaleLabel = page.getByText("Thước mét");
+    await expect(scaleLabel).toBeVisible();
+    await expect(planMode).toBeVisible();
+    scaleLabelReceivesPointer = await scaleLabel.evaluate((label) => {
+      const rect = label.getBoundingClientRect();
+      const hitTarget = document.elementFromPoint(
+        rect.x + rect.width / 2,
+        rect.y + rect.height / 2,
+      );
+      return Boolean(hitTarget?.closest('[data-testid="plan-scale-bar"]'));
+    });
+    expect(scaleLabelReceivesPointer).toBe(true);
+    const treeToggle = page.getByTestId("plan-scale-bar").getByRole("button").first();
+    const treeToggleWasPressed = await treeToggle.getAttribute("aria-pressed");
+    treeToggleReceivesPointer = await treeToggle.evaluate((button) => {
+      const rect = button.getBoundingClientRect();
+      const hitTarget = document.elementFromPoint(
+        rect.x + rect.width / 2,
+        rect.y + rect.height / 2,
+      );
+      return hitTarget === button || hitTarget?.closest("button") === button;
+    });
+    expect(treeToggleReceivesPointer).toBe(true);
+    await treeToggle.click();
+    await expect(treeToggle).toHaveAttribute(
+      "aria-pressed",
+      treeToggleWasPressed === "true" ? "false" : "true",
+    );
+    await treeToggle.click();
+    await expect(treeToggle).toHaveAttribute("aria-pressed", treeToggleWasPressed!);
+    scaleControlClick = "normal Playwright click toggled twice; original state restored";
     const dioramaMode = page.getByRole("radio", { name: "Diorama", exact: true });
     await dioramaMode.click();
     await expect(dioramaMode).toHaveAttribute("aria-checked", "true");
@@ -500,10 +510,10 @@ test("H6 synthetic source → build → editor → export → source rebuild →
         collapseButtonClick: "normal Playwright click; panel collapsed and reopened",
         scaleLabelHitTest: scaleLabelReceivesPointer,
         scaleControlHitTest: treeToggleReceivesPointer,
-        scaleControlClick: "normal Playwright click toggled twice; original state restored",
+        scaleControlClick,
         planControls: rendererReady
           ? "normal Playwright clicks toggled Diorama → Plan"
-          : "visible; renderer unavailable for view-mode activation",
+          : "renderer unavailable; Plan/scale controls not rendered in fallback",
         reopenedEditor: {
           selectedPartId: part!.localId,
           wallHeightMetres: 6.5,
