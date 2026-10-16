@@ -401,13 +401,196 @@ function roadDisplayElevation(road: RoadSegment) {
   return road.baseElevation ?? 0.02 + structuralLayer * 4.5;
 }
 
+const ROAD_NODE_TOLERANCE_METRES = 0.001;
+
+type RoadEndpoint = {
+  road: RoadSegment;
+  atStart: boolean;
+  point: Position2;
+};
+
+function cross2d(a: Position2, b: Position2, c: Position2) {
+  return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+}
+
+function convexHull(points: Position2[]) {
+  const sorted = [...points].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  const unique = sorted.filter(
+    (point, index) =>
+      index === 0 ||
+      Math.hypot(point[0] - sorted[index - 1]![0], point[1] - sorted[index - 1]![1]) > 1e-8,
+  );
+  if (unique.length < 3) return unique;
+
+  const lower: Position2[] = [];
+  unique.forEach((point) => {
+    while (lower.length >= 2 && cross2d(lower.at(-2)!, lower.at(-1)!, point) <= 1e-8) {
+      lower.pop();
+    }
+    lower.push(point);
+  });
+
+  const upper: Position2[] = [];
+  [...unique].reverse().forEach((point) => {
+    while (upper.length >= 2 && cross2d(upper.at(-2)!, upper.at(-1)!, point) <= 1e-8) {
+      upper.pop();
+    }
+    upper.push(point);
+  });
+  return [...lower.slice(0, -1), ...upper.slice(0, -1)];
+}
+
+function polygonArea(points: Position2[]) {
+  let twiceArea = 0;
+  for (let index = 0; index < points.length; index += 1) {
+    const current = points[index]!;
+    const next = points[(index + 1) % points.length]!;
+    twiceArea += current[0] * next[1] - next[0] * current[1];
+  }
+  return Math.abs(twiceArea) / 2;
+}
+
+function appendUpwardTriangle(
+  positions: number[],
+  a: Position2,
+  b: Position2,
+  c: Position2,
+  y: number,
+) {
+  const signedArea = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+  const vertices = signedArea > 0 ? [a, c, b] : [a, b, c];
+  for (const [x, z] of vertices) positions.push(x, y, z);
+}
+
+function addRoadJunctionCoverage(roads: RoadSegment[], roadMeshes: Map<RoadSegment, THREE.Mesh>) {
+  const endpointGroups: RoadEndpoint[][] = [];
+  const endpointBuckets = new Map<string, Set<RoadEndpoint[]>>();
+  const cellKey = (x: number, z: number) => `${x}:${z}`;
+
+  roads.forEach((road) => {
+    if (
+      road.polylineENU.length < 2 ||
+      !road.carriagewayWidth ||
+      (road.structure !== undefined && road.structure !== "surface")
+    )
+      return;
+
+    ([true, false] as const).forEach((atStart) => {
+      const point = atStart ? road.polylineENU[0]! : road.polylineENU.at(-1)!;
+      const cellX = Math.floor(point[0] / ROAD_NODE_TOLERANCE_METRES);
+      const cellZ = Math.floor(point[1] / ROAD_NODE_TOLERANCE_METRES);
+      let matchingGroup: RoadEndpoint[] | undefined;
+      const seenGroups = new Set<RoadEndpoint[]>();
+
+      for (let offsetX = -1; offsetX <= 1 && !matchingGroup; offsetX += 1) {
+        for (let offsetZ = -1; offsetZ <= 1 && !matchingGroup; offsetZ += 1) {
+          const candidates = endpointBuckets.get(cellKey(cellX + offsetX, cellZ + offsetZ));
+          if (!candidates) continue;
+          for (const candidate of candidates) {
+            if (seenGroups.has(candidate)) continue;
+            seenGroups.add(candidate);
+            const anchor = candidate[0]!.point;
+            if (
+              Math.hypot(point[0] - anchor[0], point[1] - anchor[1]) <= ROAD_NODE_TOLERANCE_METRES
+            ) {
+              matchingGroup = candidate;
+              break;
+            }
+          }
+        }
+      }
+
+      const endpoint: RoadEndpoint = { road, atStart, point };
+      if (!matchingGroup) {
+        matchingGroup = [endpoint];
+        endpointGroups.push(matchingGroup);
+      } else {
+        matchingGroup.push(endpoint);
+      }
+
+      const key = cellKey(cellX, cellZ);
+      const bucket = endpointBuckets.get(key) ?? new Set<RoadEndpoint[]>();
+      bucket.add(matchingGroup);
+      endpointBuckets.set(key, bucket);
+    });
+  });
+
+  const positionsByMesh = new Map<THREE.Mesh, number[]>();
+  const patchesByMesh = new Map<THREE.Mesh, number>();
+  const patchTrianglesByMesh = new Map<THREE.Mesh, number>();
+
+  endpointGroups.forEach((endpoints) => {
+    if (endpoints.length < 2) return;
+    const byElevationLayer = new Map<number, RoadEndpoint[]>();
+    endpoints.forEach((endpoint) => {
+      const layerEndpoints = byElevationLayer.get(endpoint.road.elevationLayer) ?? [];
+      layerEndpoints.push(endpoint);
+      byElevationLayer.set(endpoint.road.elevationLayer, layerEndpoints);
+    });
+
+    byElevationLayer.forEach((layerEndpoints) => {
+      const elevationGroups: Array<{ y: number; endpoints: RoadEndpoint[] }> = [];
+      layerEndpoints.forEach((endpoint) => {
+        const y = roadDisplayElevation(endpoint.road);
+        const elevationGroup = elevationGroups.find(
+          (candidate) => Math.abs(candidate.y - y) <= ROAD_NODE_TOLERANCE_METRES,
+        );
+        if (elevationGroup) elevationGroup.endpoints.push(endpoint);
+        else elevationGroups.push({ y, endpoints: [endpoint] });
+      });
+
+      elevationGroups.forEach(({ y, endpoints: sameElevationEndpoints }) => {
+        if (sameElevationEndpoints.length < 2) return;
+        const boundaryPoints: Position2[] = [];
+        sameElevationEndpoints.forEach(({ road, atStart }) => {
+          const halfWidth = road.carriagewayWidth! / 2;
+          const left = offsetPolyline(road.polylineENU, halfWidth);
+          const right = offsetPolyline(road.polylineENU, -halfWidth);
+          const endpointIndex = atStart ? 0 : road.polylineENU.length - 1;
+          const leftPoint = left[endpointIndex];
+          const rightPoint = right[endpointIndex];
+          if (leftPoint && rightPoint) boundaryPoints.push(leftPoint, rightPoint);
+        });
+
+        const hull = convexHull(boundaryPoints);
+        if (hull.length < 3 || polygonArea(hull) < 1e-3) return;
+        const targetMesh = roadMeshes.get(sameElevationEndpoints[0]!.road);
+        if (!targetMesh) return;
+
+        const positions =
+          positionsByMesh.get(targetMesh) ??
+          Array.from(targetMesh.geometry.getAttribute("position").array);
+        for (let index = 1; index < hull.length - 1; index += 1) {
+          appendUpwardTriangle(positions, hull[0]!, hull[index]!, hull[index + 1]!, y);
+        }
+        positionsByMesh.set(targetMesh, positions);
+        patchesByMesh.set(targetMesh, (patchesByMesh.get(targetMesh) ?? 0) + 1);
+        patchTrianglesByMesh.set(
+          targetMesh,
+          (patchTrianglesByMesh.get(targetMesh) ?? 0) + hull.length - 2,
+        );
+      });
+    });
+  });
+
+  positionsByMesh.forEach((positions, mesh) => {
+    mesh.geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+    mesh.geometry.deleteAttribute("normal");
+    mesh.geometry.computeVertexNormals();
+    mesh.geometry.computeBoundingBox();
+    mesh.geometry.computeBoundingSphere();
+    mesh.userData["junctionPatchCount"] = patchesByMesh.get(mesh) ?? 0;
+    mesh.userData["junctionPatchTriangles"] = patchTrianglesByMesh.get(mesh) ?? 0;
+  });
+}
+
 function addRoad(
   road: RoadSegment,
   group: THREE.Group,
   materialFactory: MaterialFactory,
   disposables: Disposable[],
-) {
-  if (road.polylineENU.length < 2 || !road.carriagewayWidth) return;
+): THREE.Mesh | null {
+  if (road.polylineENU.length < 2 || !road.carriagewayWidth) return null;
   const roadGroup = new THREE.Group();
   roadGroup.name = `road:${road.localId}`;
   roadGroup.userData = { localId: road.localId, elevationLayer: road.elevationLayer };
@@ -417,7 +600,8 @@ function addRoad(
   // Vertical placement: an explicit surveyed baseElevation wins; otherwise respect the tagged
   // structural layer for bridges and tunnels. This is only a display prior, never source fact.
   const y = roadDisplayElevation(road);
-  roadGroup.add(createStrip(left, right, y, materialFactory("#4c5551", 0.92, 0), disposables));
+  const carriageway = createStrip(left, right, y, materialFactory("#4c5551", 0.92, 0), disposables);
+  roadGroup.add(carriageway);
 
   const [leftSidewalk = 0, rightSidewalk = 0] = road.sidewalkWidths ?? [];
   if (leftSidewalk > 0) {
@@ -443,6 +627,7 @@ function addRoad(
     );
   }
   group.add(roadGroup);
+  return carriageway;
 }
 
 function createLabelSprite(text: string, position: Position2, disposables: Disposable[]) {
@@ -558,7 +743,26 @@ export function buildWorldMeshes(
     group.add(layer);
   });
 
-  world.roads.forEach((road) => addRoad(road, layers.roads, materialFactory, disposables));
+  const roadMaterials = new Map<string, THREE.MeshStandardMaterial>();
+  const roadMaterialFactory: MaterialFactory = (color, roughness = 0.82, metalness = 0) => {
+    const key = `${color}:${roughness}:${metalness}`;
+    let material = roadMaterials.get(key);
+    if (!material) {
+      material = materialFactory(color, roughness, metalness).clone();
+      material.polygonOffset = true;
+      material.polygonOffsetFactor = -1;
+      material.polygonOffsetUnits = -1;
+      roadMaterials.set(key, material);
+      disposables.push(material);
+    }
+    return material;
+  };
+  const roadMeshes = new Map<RoadSegment, THREE.Mesh>();
+  world.roads.forEach((road) => {
+    const mesh = addRoad(road, layers.roads, roadMaterialFactory, disposables);
+    if (mesh) roadMeshes.set(road, mesh);
+  });
+  addRoadJunctionCoverage(world.roads, roadMeshes);
   world.buildings.forEach((building) => {
     addBuilding(
       building,
