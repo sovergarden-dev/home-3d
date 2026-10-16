@@ -3,7 +3,12 @@ import { centerMarkerLabels } from "@/components/overlay/centerMarkerLabels";
 import { vi as viDict } from "@/i18n/vi";
 import { createWorldDataProvider } from "@/world/privateWorldSession";
 import { SYNTHETIC_NEIGHBORHOOD } from "@/world/fixtures/syntheticNeighborhood";
-import type { CenterConfirmation, SurfaceGeometry, WorldData, WorldOverrideDocument } from "@/world/schema";
+import type {
+  CenterConfirmation,
+  SurfaceGeometry,
+  WorldData,
+  WorldOverrideDocument,
+} from "@/world/schema";
 
 function testWorld(localId: string, wallHeight: number): WorldData {
   const world = structuredClone(SYNTHETIC_NEIGHBORHOOD) as WorldData;
