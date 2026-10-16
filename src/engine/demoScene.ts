@@ -75,9 +75,9 @@ function worldSpan(world: WorldData) {
   return Math.max(bounds.maxX - bounds.minX, bounds.maxZ - bounds.minZ, 50) * 1.25;
 }
 
-function worldHomeCentre(world: WorldData) {
+export function worldHomeCentre(world: WorldData) {
   const homeLot = world.lots.find((lot) => lot.confirmed && lot.status === "empty");
-  if (!homeLot) return worldCentre(world);
+  if (!homeLot) return new THREE.Vector3(0, 0, 0);
   const [x, z] = surfaceCentroid(homeLot.geometry);
   return new THREE.Vector3(x, 0, z);
 }
@@ -162,7 +162,7 @@ export function createDemoScene(
   const fallbackWorld = "world" in currentWorld ? currentWorld.world : null;
   let centre = fallbackWorld ? worldCentre(fallbackWorld) : new THREE.Vector3();
   let homeCentre = fallbackWorld ? worldHomeCentre(fallbackWorld) : new THREE.Vector3();
-  const planCentre = centre.clone();
+  const planCentre = homeCentre.clone();
   let span = fallbackWorld ? worldSpan(fallbackWorld) : 100;
   let planPanRevision = 0;
   const planPointers = new Map<number, THREE.Vector2>();
@@ -185,7 +185,7 @@ export function createDemoScene(
     scene.add(worldBundle.group);
     centre = worldCentre(snapshot.world);
     homeCentre = worldHomeCentre(snapshot.world);
-    planCentre.copy(centre);
+    planCentre.copy(homeCentre);
     span = worldSpan(snapshot.world);
     planPanRevision = 0;
     lastWorldRevision = snapshot.revision;

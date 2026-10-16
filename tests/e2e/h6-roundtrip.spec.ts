@@ -153,6 +153,9 @@ test("H6 synthetic source → build → editor → export → source rebuild →
     timeout: 30000,
   });
   const rendererReady = (await sceneRoot.getAttribute("data-scene-state")) === "ready";
+  if (rendererReady) {
+    await expect(sceneRoot.getByText("Lô trống · vị trí giả lập")).toBeVisible();
+  }
   const outputDirectory = process.env["H6_QA_OUTPUT_DIR"];
   const captureEvidence = Boolean(outputDirectory) && browserName === "chromium";
   if (captureEvidence && outputDirectory) await mkdir(outputDirectory, { recursive: true });
@@ -164,6 +167,10 @@ test("H6 synthetic source → build → editor → export → source rebuild →
     buffer: Buffer.from(JSON.stringify(baseBuild.package)),
   });
   await expect(page.getByText("Đã mở gói cục bộ")).toBeVisible();
+  await expect(page.getByText("GÓI RIÊNG · XEM TRƯỚC")).toBeVisible();
+  if (rendererReady) {
+    await expect(sceneRoot.getByText("Lô trống · ranh chưa xác minh")).toBeVisible();
+  }
   const scene = page.getByTestId("demo-scene");
   if (rendererReady) {
     await expect(scene).toHaveAttribute("data-world-mode", "private");
