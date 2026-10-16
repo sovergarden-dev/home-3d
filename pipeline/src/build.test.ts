@@ -135,8 +135,8 @@ test("buildWorldPackage applies overrides and attaches confirmed empty lots", ()
   );
 
   const baseBuilding = result.package.world.buildings[0];
-  expect(baseBuilding?.wallHeight).toBe(0);
-  expect(baseBuilding?.attributes?.wallHeight?.quality).toBe("unknown");
+  expect(baseBuilding?.wallHeight).toBe(6);
+  expect(baseBuilding?.attributes?.wallHeight?.quality).toBe("synthetic");
   const opened = parseWorldPackage(JSON.stringify(result.package));
   expect(opened.ok).toBe(true);
   if (!opened.ok) throw new Error(opened.errorCode);

@@ -89,4 +89,50 @@ describe("world mesh lifecycle", () => {
     bundle.dispose();
     materials.forEach((material) => material.dispose());
   });
+
+  it("keeps all road strip faces front-facing through a hairpin", () => {
+    const world: WorldData = {
+      manifest: {
+        schemaVersion: "1.0",
+        datasetRevision: "road-hairpin-winding-test",
+        units: "metres",
+        frameConvention: "ENU_X_EAST_Y_UP_NEG_Z_NORTH",
+        isSynthetic: true,
+        chunks: [],
+        assetHashes: {},
+        licences: ["Synthetic fixture"],
+        coverage: { quality: "synthetic", sourceCount: 1 },
+      },
+      roads: [
+        {
+          localId: "road-hairpin",
+          polylineENU: [
+            [0, 0],
+            [10, 0],
+            [1, 1],
+          ],
+          connectorIds: [],
+          roadClass: "residential",
+          carriagewayWidth: 6,
+          elevationLayer: 0,
+          direction: "both",
+          surface: "unknown",
+          provenance: { source: "synthetic", quality: "synthetic" },
+        },
+      ],
+      buildings: [],
+      lots: [],
+    };
+    const material = new THREE.MeshStandardMaterial();
+    const bundle = buildWorldMeshes(world, () => material);
+    const road = bundle.group.getObjectByName("road:road-hairpin")?.children[0];
+    if (!(road instanceof THREE.Mesh)) throw new Error("ROAD_MESH_NOT_FOUND");
+    const normals = road.geometry.getAttribute("normal");
+    expect(normals.count).toBeGreaterThan(0);
+    for (let index = 0; index < normals.count; index += 1) {
+      expect(normals.getY(index)).toBeGreaterThan(0.99);
+    }
+    bundle.dispose();
+    material.dispose();
+  });
 });

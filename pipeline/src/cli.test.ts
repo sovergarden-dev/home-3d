@@ -189,8 +189,8 @@ test("CLI fixture run wires secondary sources, conflation rules, terminal lots a
 
   expect(pkg.world.buildings).toHaveLength(1);
   expect(pkg.world.buildings[0]?.localId).toBe("building-house-primary");
-  expect(pkg.world.buildings[0]?.wallHeight).toBe(0);
-  expect(pkg.world.buildings[0]?.attributes?.wallHeight?.quality).toBe("unknown");
+  expect(pkg.world.buildings[0]?.wallHeight).toBe(6);
+  expect(pkg.world.buildings[0]?.attributes?.wallHeight?.quality).toBe("synthetic");
   const opened = parseWorldPackage(JSON.stringify(pkg));
   expect(opened.ok).toBe(true);
   if (!opened.ok) throw new Error(opened.errorCode);

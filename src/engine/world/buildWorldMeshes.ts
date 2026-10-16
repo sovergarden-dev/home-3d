@@ -369,31 +369,18 @@ function createStrip(
   disposables: Disposable[],
 ) {
   const positions: number[] = [];
+  const pushUpwardTriangle = (a: Position2, b: Position2, c: Position2) => {
+    const signedArea = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+    const vertices = signedArea > 0 ? [a, c, b] : [a, b, c];
+    for (const [x, z] of vertices) positions.push(x, y, z);
+  };
   for (let index = 0; index < left.length - 1; index += 1) {
     const aLeft = left[index]!;
     const aRight = right[index]!;
     const bLeft = left[index + 1]!;
     const bRight = right[index + 1]!;
-    positions.push(
-      aLeft[0],
-      y,
-      aLeft[1],
-      bLeft[0],
-      y,
-      bLeft[1],
-      bRight[0],
-      y,
-      bRight[1],
-      aLeft[0],
-      y,
-      aLeft[1],
-      bRight[0],
-      y,
-      bRight[1],
-      aRight[0],
-      y,
-      aRight[1],
-    );
+    pushUpwardTriangle(aLeft, bLeft, bRight);
+    pushUpwardTriangle(aLeft, bRight, aRight);
   }
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
