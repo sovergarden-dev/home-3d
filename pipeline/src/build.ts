@@ -190,6 +190,9 @@ export function buildWorldPackage(
     package: {
       manifest: packageWorld.manifest,
       world: packageWorld,
+      ...(config.centerConfirmation
+        ? { centerConfirmation: structuredClone(config.centerConfirmation) }
+        : {}),
       ...(migratedOverrides ? { overrides: migratedOverrides } : {}),
     },
     report,

@@ -1,4 +1,5 @@
 import type { GeodeticPoint } from "../../src/geo/enu";
+import type { CenterConfirmation } from "../../src/world/schema";
 
 export type PipelineInputFormat = "geojson" | "osm-overpass";
 
@@ -6,6 +7,7 @@ export interface PipelineConfig {
   schemaVersion: "1.0";
   datasetRevision: string;
   origin: GeodeticPoint;
+  centerConfirmation?: CenterConfirmation;
   input:
     | { kind: "file"; path: string; format: PipelineInputFormat }
     | { kind: "url"; url: string; allowedHost: string; format: PipelineInputFormat };
@@ -55,6 +57,23 @@ function parseOrigin(value: unknown): GeodeticPoint {
     throw new Error("PIPELINE_CONFIG_ORIGIN_INVALID");
   }
   return altitude === undefined ? { longitude, latitude } : { longitude, latitude, altitude };
+}
+
+function parseCenterConfirmation(value: unknown): CenterConfirmation | undefined {
+  if (value === undefined) return undefined;
+  if (
+    !isRecord(value) ||
+    (value["status"] !== "confirmed" && value["status"] !== "provisionally-accepted") ||
+    !isRecord(value["provenance"]) ||
+    value["provenance"]["source"] !== "owner" ||
+    value["provenance"]["method"] !== "explicit-user-confirmation"
+  ) {
+    throw new Error("PIPELINE_CONFIG_CENTER_CONFIRMATION_INVALID");
+  }
+  return {
+    status: value["status"],
+    provenance: { source: "owner", method: "explicit-user-confirmation" },
+  };
 }
 
 function parseInputFormat(value: unknown): PipelineInputFormat {
@@ -156,6 +175,7 @@ export function parsePipelineConfig(value: unknown): PipelineConfig {
   const overridesPath = parseOptionalPath(value["overridesPath"]);
   const confirmedEmptyLotsPath = parseOptionalPath(value["confirmedEmptyLotsPath"]);
   const secondaryInputs = parseSecondaryInputs(value["secondaryInputs"]);
+  const centerConfirmation = parseCenterConfirmation(value["centerConfirmation"]);
   const primarySource = parseSource(value["source"]);
   const sourceNamespaces = new Set([primarySource.namespace ?? "primary"]);
   for (const secondary of secondaryInputs ?? []) {
@@ -171,6 +191,7 @@ export function parsePipelineConfig(value: unknown): PipelineConfig {
       "PIPELINE_CONFIG_DATASET_REVISION_REQUIRED",
     ),
     origin: parseOrigin(value["origin"]),
+    ...(centerConfirmation ? { centerConfirmation } : {}),
     input: parseInput(value["input"]),
     source: primarySource,
     output: parseOutput(value["output"]),

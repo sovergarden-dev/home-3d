@@ -169,7 +169,8 @@ test("H6 synthetic source → build → editor → export → source rebuild →
   await expect(page.getByText("Đã mở gói cục bộ")).toBeVisible();
   await expect(page.getByText("GÓI RIÊNG · XEM TRƯỚC")).toBeVisible();
   if (rendererReady) {
-    await expect(sceneRoot.getByText("Vị trí do Syringa xác nhận", { exact: true })).toBeVisible();
+    await expect(sceneRoot.getByText("Điểm tham chiếu", { exact: true })).toBeVisible();
+    await expect(sceneRoot.getByText("Vị trí do Syringa xác nhận", { exact: true })).toHaveCount(0);
     await expect(sceneRoot.getByText("Ranh chưa đo", { exact: true })).toBeVisible();
   }
   const scene = page.getByTestId("demo-scene");

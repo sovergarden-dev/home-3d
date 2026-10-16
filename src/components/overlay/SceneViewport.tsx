@@ -15,7 +15,11 @@ function ViewportInner() {
     worldDataProvider.getSnapshot,
     worldDataProvider.getSnapshot,
   );
-  const markerLabels = centerMarkerLabels(worldSnapshot.mode, t);
+  const markerLabels = centerMarkerLabels(
+    worldSnapshot.mode,
+    t,
+    worldSnapshot.centerConfirmation,
+  );
   const host = useRef<HTMLDivElement>(null);
   const marker = useRef<HTMLDivElement>(null);
   const runtime = useRef<ReturnType<typeof import("@/engine/demoScene").createDemoScene> | null>(

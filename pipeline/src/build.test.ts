@@ -37,6 +37,23 @@ test("builds a private package and a coordinate-free public-safe summary from sy
   expect(JSON.stringify(result.report)).not.toContain("0.4");
 });
 
+test("copies explicit center confirmation provenance into the package only when configured", () => {
+  const confirmation = {
+    status: "confirmed" as const,
+    provenance: { source: "owner" as const, method: "explicit-user-confirmation" as const },
+  };
+  const result = buildWorldPackage(source, {
+    schemaVersion: "1.0",
+    datasetRevision: "confirmed-point-build-v1",
+    origin: { longitude: 0.6, latitude: 0.4, altitude: 0 },
+    input: { kind: "file", path: "synthetic.geojson" },
+    source: { kind: "survey", revision: "fixture-v1", licence: "CC0-1.0" },
+    centerConfirmation: confirmation,
+    output: { packagePath: "out/package.json", reportPath: "out/report.json" },
+  });
+  expect(result.package.centerConfirmation).toEqual(confirmation);
+});
+
 test("buildWorldPackage applies overrides and attaches confirmed empty lots", () => {
   const buildingSource = {
     type: "FeatureCollection" as const,

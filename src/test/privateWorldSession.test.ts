@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
+import { centerMarkerLabels } from "@/components/overlay/centerMarkerLabels";
+import { vi as viDict } from "@/i18n/vi";
 import { createWorldDataProvider } from "@/world/privateWorldSession";
 import { SYNTHETIC_NEIGHBORHOOD } from "@/world/fixtures/syntheticNeighborhood";
-import type { SurfaceGeometry, WorldData, WorldOverrideDocument } from "@/world/schema";
+import type { CenterConfirmation, SurfaceGeometry, WorldData, WorldOverrideDocument } from "@/world/schema";
 
 function testWorld(localId: string, wallHeight: number): WorldData {
   const world = structuredClone(SYNTHETIC_NEIGHBORHOOD) as WorldData;
@@ -38,8 +40,17 @@ function testWorld(localId: string, wallHeight: number): WorldData {
   return world;
 }
 
-function packageText(world: WorldData, overrides?: WorldOverrideDocument) {
-  return JSON.stringify({ manifest: world.manifest, world, ...(overrides ? { overrides } : {}) });
+function packageText(
+  world: WorldData,
+  overrides?: WorldOverrideDocument,
+  centerConfirmation?: CenterConfirmation,
+) {
+  return JSON.stringify({
+    manifest: world.manifest,
+    world,
+    ...(overrides ? { overrides } : {}),
+    ...(centerConfirmation ? { centerConfirmation } : {}),
+  });
 }
 
 function buildingOverride(
@@ -100,6 +111,35 @@ describe("local private world session", () => {
     if (second.mode !== "private") throw new Error("PACKAGE_B_NOT_OPEN");
     expect(second.packageEpoch).toBeGreaterThan(firstEpoch);
     expect(second.world.buildings[0]?.wallHeight).toBe(20);
+  });
+
+  it("keeps point confirmation with its package and clears it when a different package is opened", () => {
+    const provider = createWorldDataProvider(SYNTHETIC_NEIGHBORHOOD);
+    const confirmed: CenterConfirmation = {
+      status: "provisionally-accepted",
+      provenance: { source: "owner", method: "explicit-user-confirmation" },
+    };
+    provider.openText(packageText(testWorld("building-confirmed", 6), undefined, confirmed));
+    let snapshot = provider.getSnapshot();
+    expect(snapshot.mode).toBe("private");
+    if (snapshot.mode !== "private") throw new Error("CONFIRMED_PACKAGE_NOT_OPEN");
+    expect(snapshot.centerConfirmation).toEqual(confirmed);
+    expect(centerMarkerLabels(snapshot.mode, viDict, snapshot.centerConfirmation).title).toBe(
+      "Tâm mới được chấp nhận tạm",
+    );
+    expect(provider.applyOverrides(undefined)).toBe(true);
+    snapshot = provider.getSnapshot();
+    if (snapshot.mode !== "private") throw new Error("CONFIRMATION_LOST_ON_RELOAD");
+    expect(snapshot.centerConfirmation).toEqual(confirmed);
+
+    provider.openText(packageText(testWorld("building-unconfirmed", 8)));
+    snapshot = provider.getSnapshot();
+    if (snapshot.mode !== "private") throw new Error("UNCONFIRMED_PACKAGE_NOT_OPEN");
+    expect(snapshot.centerConfirmation).toBeUndefined();
+    expect(centerMarkerLabels(snapshot.mode, viDict, snapshot.centerConfirmation)).toEqual({
+      title: "Điểm tham chiếu",
+      description: "Ranh chưa đo",
+    });
   });
 
   it("rejects failed mutations atomically and leaves the valid world and revision unchanged", () => {

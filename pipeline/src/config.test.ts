@@ -29,6 +29,52 @@ test("accepts source metadata and an explicit private origin from a config objec
   expect(config.source.namespace).toBe("primary");
 });
 
+test("accepts center confirmation only with an explicit owner-confirmation provenance", () => {
+  const config = parsePipelineConfig({
+    schemaVersion: "1.0",
+    datasetRevision: "synthetic-pipeline-v1",
+    origin: { longitude: 0.6, latitude: 0.4, altitude: 0 },
+    input: { kind: "file", path: "synthetic-source.geojson" },
+    source: { kind: "synthetic", revision: "fixture-v1", licence: "CC0-1.0" },
+    centerConfirmation: {
+      status: "confirmed",
+      provenance: { source: "owner", method: "explicit-user-confirmation" },
+    },
+    output: { packagePath: "out/world-package.json", reportPath: "out/world-report.json" },
+  });
+  expect(config.centerConfirmation).toEqual({
+    status: "confirmed",
+    provenance: { source: "owner", method: "explicit-user-confirmation" },
+  });
+  expect(() =>
+    parsePipelineConfig({
+      schemaVersion: "1.0",
+      datasetRevision: "synthetic-pipeline-v1",
+      origin: { longitude: 0.6, latitude: 0.4, altitude: 0 },
+      input: { kind: "file", path: "synthetic-source.geojson" },
+      source: { kind: "synthetic", revision: "fixture-v1", licence: "CC0-1.0" },
+      centerConfirmation: { status: "confirmed" },
+      output: { packagePath: "out/world-package.json", reportPath: "out/world-report.json" },
+    }),
+  ).toThrow("PIPELINE_CONFIG_CENTER_CONFIRMATION_INVALID");
+});
+
+test("preserves provisional center acceptance as distinct from final confirmation", () => {
+  const config = parsePipelineConfig({
+    schemaVersion: "1.0",
+    datasetRevision: "provisional-center-v1",
+    origin: { longitude: 0.6, latitude: 0.4, altitude: 0 },
+    input: { kind: "file", path: "synthetic-source.geojson" },
+    source: { kind: "synthetic", revision: "fixture-v1", licence: "CC0-1.0" },
+    centerConfirmation: {
+      status: "provisionally-accepted",
+      provenance: { source: "owner", method: "explicit-user-confirmation" },
+    },
+    output: { packagePath: "out/world-package.json", reportPath: "out/world-report.json" },
+  });
+  expect(config.centerConfirmation?.status).toBe("provisionally-accepted");
+});
+
 test("keeps the committed dry-run fixture on neutral synthetic coordinates", async () => {
   const fixtureUrl = new URL("../tests/fixtures/synthetic-pipeline.json", import.meta.url);
   const sourceUrl = new URL("../tests/fixtures/synthetic-source.geojson", import.meta.url);

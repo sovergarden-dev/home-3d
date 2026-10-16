@@ -38,15 +38,45 @@ describe("map centre labels", () => {
     expect(screen.getByText("Our house")).toBeInTheDocument();
   });
 
-  it("labels a private marker as a confirmed location while keeping its boundary unmeasured", () => {
+  it("uses neutral labels for a private synthetic package without point confirmation", () => {
     expect(centerMarkerLabels("private", viDict)).toEqual({
-      title: "Vị trí do Syringa xác nhận",
+      title: "Điểm tham chiếu",
       description: "Ranh chưa đo",
     });
     expect(centerMarkerLabels("private", enDict)).toEqual({
+      title: "Reference point",
+      description: "Boundary not surveyed",
+    });
+  });
+
+  it("requires explicit owner confirmation provenance before claiming the point is confirmed", () => {
+    const confirmed = {
+      status: "confirmed" as const,
+      provenance: { source: "owner" as const, method: "explicit-user-confirmation" as const },
+    };
+    expect(centerMarkerLabels("private", viDict, confirmed)).toEqual({
+      title: "Vị trí do Syringa xác nhận",
+      description: "Ranh chưa đo",
+    });
+    expect(centerMarkerLabels("private", enDict, confirmed)).toEqual({
       title: "Location confirmed by Syringa",
       description: "Boundary not surveyed",
     });
+    expect(
+      centerMarkerLabels("private", viDict, {
+        status: "confirmed",
+        provenance: { source: "synthetic", method: "explicit-user-confirmation" },
+      }),
+    ).toEqual({ title: "Điểm tham chiếu", description: "Ranh chưa đo" });
+  });
+
+  it("labels explicit provisional acceptance as provisional rather than final confirmation", () => {
+    expect(
+      centerMarkerLabels("private", viDict, {
+        status: "provisionally-accepted",
+        provenance: { source: "owner", method: "explicit-user-confirmation" },
+      }),
+    ).toEqual({ title: "Tâm mới được chấp nhận tạm", description: "Ranh chưa đo" });
   });
 
   it("store has no place selection and reset restores the default camera state", () => {

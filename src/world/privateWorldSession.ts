@@ -1,7 +1,7 @@
 import { SYNTHETIC_NEIGHBORHOOD } from "./fixtures/syntheticNeighborhood";
 import { applyWorldOverrides } from "./overrides";
 import { parseWorldPackage } from "./package";
-import type { WorldData, WorldOverrideDocument } from "./schema";
+import type { CenterConfirmation, WorldData, WorldOverrideDocument } from "./schema";
 import { validateWorld } from "./validate";
 
 export type WorldSessionSnapshot =
@@ -10,6 +10,7 @@ export type WorldSessionSnapshot =
       revision: number;
       packageEpoch: number;
       world: WorldData;
+      centerConfirmation?: undefined;
       overrides?: WorldOverrideDocument | undefined;
       lastError?: string | null;
     }
@@ -18,10 +19,17 @@ export type WorldSessionSnapshot =
       revision: number;
       packageEpoch: number;
       world: WorldData;
+      centerConfirmation?: CenterConfirmation | undefined;
       overrides?: WorldOverrideDocument | undefined;
       lastError?: string | null;
     }
-  | { mode: "private-error"; revision: number; packageEpoch: number; errorCode: string };
+  | {
+      mode: "private-error";
+      revision: number;
+      packageEpoch: number;
+      errorCode: string;
+      centerConfirmation?: undefined;
+    };
 
 type SessionListener = (snapshot: WorldSessionSnapshot) => void;
 
@@ -67,6 +75,7 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
         revision,
         packageEpoch,
         world: parsed.world,
+        centerConfirmation: parsed.package.centerConfirmation,
         overrides: parsed.package.overrides,
       });
     } else {
@@ -93,13 +102,24 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
     const base = mode === "private" && basePrivateWorld ? basePrivateWorld : fixture;
     if (!doc || doc.overrides.length === 0) {
       revision += 1;
-      publish({
-        mode,
-        revision,
-        packageEpoch,
-        world: structuredClone(base) as WorldData,
-        lastError: null,
-      });
+      if (mode === "private") {
+        publish({
+          mode,
+          revision,
+          packageEpoch,
+          world: structuredClone(base) as WorldData,
+          centerConfirmation: snapshot.centerConfirmation,
+          lastError: null,
+        });
+      } else {
+        publish({
+          mode,
+          revision,
+          packageEpoch,
+          world: structuredClone(base) as WorldData,
+          lastError: null,
+        });
+      }
       return true;
     }
     const res = applyWorldOverrides(base, doc);
@@ -118,7 +138,19 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
       return false;
     }
     revision += 1;
-    publish({ mode, revision, packageEpoch, world: res.world, overrides: doc, lastError: null });
+    if (mode === "private") {
+      publish({
+        mode,
+        revision,
+        packageEpoch,
+        world: res.world,
+        centerConfirmation: snapshot.centerConfirmation,
+        overrides: doc,
+        lastError: null,
+      });
+    } else {
+      publish({ mode, revision, packageEpoch, world: res.world, overrides: doc, lastError: null });
+    }
     return true;
   };
 

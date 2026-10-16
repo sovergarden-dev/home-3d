@@ -154,6 +154,15 @@ export interface WorldPackage {
   manifest: WorldManifest;
   world: WorldData;
   overrides?: WorldOverrideDocument;
+  centerConfirmation?: CenterConfirmation;
+}
+
+export interface CenterConfirmation {
+  status: "confirmed" | "provisionally-accepted";
+  provenance: {
+    source: "owner";
+    method: "explicit-user-confirmation";
+  };
 }
 
 export type FeaturePatch =
