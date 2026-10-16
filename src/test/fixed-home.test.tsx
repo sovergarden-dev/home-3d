@@ -2,8 +2,16 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Dock } from "@/components/overlay/Dock";
+import { centerMarkerLabels } from "@/components/overlay/centerMarkerLabels";
 import { TopInfo } from "@/components/overlay/TopInfo";
+import { en as enDict } from "@/i18n/en";
+import { vi as viDict } from "@/i18n/vi";
 import { useAppStore } from "@/state/appStore";
+import {
+  clampPrivatePlanCentre,
+  derivePrivateWorldPlanFrame,
+} from "@/engine/view/privateWorldPlanFrame";
+import type { WorldData } from "@/world/schema";
 
 const initialState = useAppStore.getState();
 
@@ -11,8 +19,8 @@ beforeEach(() => {
   useAppStore.setState(initialState, true);
 });
 
-// The map has exactly one centre: the house. Guard against a place picker coming back.
-describe("map is always centred on the house", () => {
+// The preview keeps one centre, but a private world must not claim an unidentified lot.
+describe("map centre labels", () => {
   it("dock has no place picker and opens on the time tab", () => {
     render(<Dock mobile={false} />);
 
@@ -30,7 +38,18 @@ describe("map is always centred on the house", () => {
     expect(screen.getByText("Our house")).toBeInTheDocument();
   });
 
-  it("store has no place selection and reset returns to the house view", () => {
+  it("labels a private marker as a confirmed location while keeping its boundary unmeasured", () => {
+    expect(centerMarkerLabels("private", viDict)).toEqual({
+      title: "Vị trí do Syringa xác nhận",
+      description: "Ranh chưa đo",
+    });
+    expect(centerMarkerLabels("private", enDict)).toEqual({
+      title: "Location confirmed by Syringa",
+      description: "Boundary not surveyed",
+    });
+  });
+
+  it("store has no place selection and reset restores the default camera state", () => {
     const state = useAppStore.getState();
     expect(state).not.toHaveProperty("selectedPlaceId");
     expect(state).not.toHaveProperty("selectPlace");
@@ -39,6 +58,64 @@ describe("map is always centred on the house", () => {
     state.setHeading(90);
     useAppStore.getState().resetView();
     expect(useAppStore.getState()).toMatchObject({ zoom: 1, heading: 0 });
+  });
+});
+
+describe("private-world default and reset camera frame", () => {
+  it("keeps a 300 m core at the supplied origin while allowing pan to a long way", () => {
+    const world = {
+      roads: [
+        {
+          polylineENU: [
+            [-620, -10],
+            [35, -10],
+          ],
+        },
+      ],
+      buildings: [
+        {
+          geometry: {
+            type: "Polygon",
+            coordinates: [
+              [
+                [-5, -5],
+                [5, -5],
+                [5, 5],
+                [-5, 5],
+                [-5, -5],
+              ],
+            ],
+          },
+          parts: [
+            {
+              geometry: {
+                type: "Polygon",
+                coordinates: [
+                  [
+                    [880, 0],
+                    [885, 0],
+                    [885, 5],
+                    [880, 5],
+                    [880, 0],
+                  ],
+                ],
+              },
+            },
+          ],
+        },
+      ],
+      lots: [],
+    } as unknown as WorldData;
+    const frame = derivePrivateWorldPlanFrame(world);
+
+    expect(frame.centre).toEqual({ x: 0, z: 0 });
+    expect(frame.verticalSpanMetres).toBe(300);
+    expect(clampPrivatePlanCentre({ x: -620, z: -10 }, frame.panBounds)).toEqual({
+      x: -620,
+      z: -10,
+    });
+    expect(frame.panBounds.minX).toBeLessThan(-620);
+    expect(frame.panBounds.maxX).toBeGreaterThan(885);
   });
 });
 

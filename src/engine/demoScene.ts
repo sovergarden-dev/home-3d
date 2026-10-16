@@ -11,6 +11,11 @@ import {
   metresPerCssPixel,
   type PlanCameraConfig,
 } from "./view/planCamera";
+import {
+  clampPrivatePlanCentre,
+  derivePrivateWorldPlanFrame,
+  type PrivateWorldPlanFrame,
+} from "./view/privateWorldPlanFrame";
 import { useAppStore } from "@/state/appStore";
 import { surfaceCentroid } from "@/world/geometry";
 import { worldDataProvider } from "@/world/privateWorldSession";
@@ -164,6 +169,17 @@ export function createDemoScene(
   let homeCentre = fallbackWorld ? worldHomeCentre(fallbackWorld) : new THREE.Vector3();
   const planCentre = homeCentre.clone();
   let span = fallbackWorld ? worldSpan(fallbackWorld) : 100;
+  let privatePlanFrame: PrivateWorldPlanFrame | null =
+    currentWorld.mode === "private" && fallbackWorld
+      ? derivePrivateWorldPlanFrame(fallbackWorld)
+      : null;
+  function resetPlanCentre() {
+    if (privatePlanFrame) {
+      planCentre.set(privatePlanFrame.centre.x, 0, privatePlanFrame.centre.z);
+      return;
+    }
+    planCentre.copy(homeCentre);
+  }
   let planPanRevision = 0;
   const planPointers = new Map<number, THREE.Vector2>();
   let lastPinchDistance: number | null = null;
@@ -185,7 +201,9 @@ export function createDemoScene(
     scene.add(worldBundle.group);
     centre = worldCentre(snapshot.world);
     homeCentre = worldHomeCentre(snapshot.world);
-    planCentre.copy(homeCentre);
+    privatePlanFrame =
+      snapshot.mode === "private" ? derivePrivateWorldPlanFrame(snapshot.world) : null;
+    resetPlanCentre();
     span = worldSpan(snapshot.world);
     planPanRevision = 0;
     lastWorldRevision = snapshot.revision;
@@ -205,9 +223,14 @@ export function createDemoScene(
   }
 
   function planConfig(state = useAppStore.getState()): PlanCameraConfig {
+    const verticalSpanMetres = privatePlanFrame?.verticalSpanMetres ?? span;
+    host.dataset["planCoreVerticalSpanMetres"] = String(verticalSpanMetres);
+    host.dataset["planCentreAtPrivateOrigin"] = String(
+      Boolean(privatePlanFrame) && Math.abs(planCentre.x) < 0.001 && Math.abs(planCentre.z) < 0.001,
+    );
     return {
       centre: planCentre,
-      verticalSpanMetres: span,
+      verticalSpanMetres,
       viewportWidthCss: Math.max(host.clientWidth, 1),
       viewportHeightCss: Math.max(host.clientHeight, 1),
       zoom: state.zoom,
@@ -450,6 +473,11 @@ export function createDemoScene(
   }
 
   function clampPlanCentre() {
+    if (privatePlanFrame) {
+      const clamped = clampPrivatePlanCentre(planCentre, privatePlanFrame.panBounds);
+      planCentre.set(clamped.x, 0, clamped.z);
+      return;
+    }
     const limit = span * 0.4;
     planCentre.x = THREE.MathUtils.clamp(planCentre.x, centre.x - limit, centre.x + limit);
     planCentre.z = THREE.MathUtils.clamp(planCentre.z, centre.z - limit, centre.z + limit);
@@ -566,7 +594,7 @@ export function createDemoScene(
   const unsubscribeStore = useAppStore.subscribe((state, previous) => {
     if (disposed) return;
     if (state.viewReset !== previous.viewReset) {
-      planCentre.copy(homeCentre);
+      resetPlanCentre();
       planPanRevision += 1;
       host.dataset["planPanRevision"] = String(planPanRevision);
     }

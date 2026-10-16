@@ -13,7 +13,7 @@ export interface PlanMeasurement {
 
 /**
  * Single source of truth shared by the UI overlay and the future 3D engine.
- * The map is always centred on the house (the ENU origin), so there is no place selection.
+ * The map uses the supplied ENU origin; confirming a point does not confirm a surveyed parcel boundary.
  */
 export interface AppState {
   timeOfDayMinutes: number;
@@ -47,7 +47,7 @@ export interface AppState {
   setZoom: (zoom: number) => void;
   zoomIn: () => void;
   zoomOut: () => void;
-  /** Back to the house: default zoom, facing north. */
+  /** Restore the default camera state without changing the world origin. */
   resetView: () => void;
   toggleSound: () => void;
   toggleTrees: () => void;

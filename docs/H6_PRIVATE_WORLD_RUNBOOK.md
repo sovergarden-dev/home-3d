@@ -67,6 +67,12 @@ Conflation giữ các category đã có trong `WorldData` cùng attribution/lice
 5. Kiểm Diorama sau: massing, footprint, roof fallback, frontend và props.
 6. Nếu package lỗi, app giữ lỗi local. Không gọi fixture là khu thật.
 
+### Khung camera private
+
+- Mặc định và reset ở Mặt bằng giữ tâm ENU đã cung cấp và hiển thị lõi rộng 300 m theo chiều dọc (±150 m); không fit theo bbox của toàn bộ roads/buildings.
+- Geometry nguồn vẫn nạp nguyên vẹn. Pan được giới hạn theo bounds đầy đủ cộng vùng đệm 150 m, nên các way dài ngoài khung đầu vẫn có thể pan tới; zoom vẫn hoạt động bình thường.
+- Khi chưa có parcel geometry, marker chỉ xác nhận vị trí tâm theo chỉ dẫn của chủ nhà; ranh thửa vẫn chưa đo/chưa xác định.
+
 ## Sửa có kiểm soát
 
 - Mỗi override cần stable local ID, revision, reason và provenance.

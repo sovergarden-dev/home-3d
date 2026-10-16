@@ -1,5 +1,6 @@
 import { ClientOnly } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { centerMarkerLabels } from "@/components/overlay/centerMarkerLabels";
 import { PrivateWorldPanel } from "@/components/overlay/PrivateWorldPanel";
 import { useT } from "@/i18n";
 import { useAppStore } from "@/state/appStore";
@@ -14,6 +15,7 @@ function ViewportInner() {
     worldDataProvider.getSnapshot,
     worldDataProvider.getSnapshot,
   );
+  const markerLabels = centerMarkerLabels(worldSnapshot.mode, t);
   const host = useRef<HTMLDivElement>(null);
   const marker = useRef<HTMLDivElement>(null);
   const runtime = useRef<ReturnType<typeof import("@/engine/demoScene").createDemoScene> | null>(
@@ -78,10 +80,8 @@ function ViewportInner() {
         style={{ visibility: "hidden" }}
       >
         <div className="rounded-xl border border-white/70 bg-primary px-3 py-2 text-center text-xs text-primary-foreground shadow-lg">
-          <span className="block font-medium">{t.home}</span>
-          <span className="block opacity-80">
-            {worldSnapshot.mode === "private" ? t.privateEmptyLot : t.emptyLot}
-          </span>
+          <span className="block font-medium">{markerLabels.title}</span>
+          <span className="block opacity-80">{markerLabels.description}</span>
         </div>
         <div className="mx-auto h-3 w-px bg-primary" />
       </div>
