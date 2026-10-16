@@ -91,6 +91,120 @@ test("marks an absent height as an inferred class prior rather than a verified f
   expect(world.buildings[0]?.attributes?.wallHeight?.quality).toBe("inferred");
 });
 
+test("marks a level-derived wall height as inferred while keeping levels source-only", () => {
+  const world = normalizeGeoJsonSource(
+    {
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Feature",
+          id: "levels-without-height",
+          properties: { building: "yes", "building:levels": "2" },
+          geometry: {
+            type: "Polygon",
+            coordinates: [
+              [
+                [0.60002, 0.40002],
+                [0.60008, 0.40002],
+                [0.60008, 0.40008],
+                [0.60002, 0.40008],
+                [0.60002, 0.40002],
+              ],
+            ],
+          },
+        },
+      ],
+    },
+    {
+      origin,
+      datasetRevision: "levels-derived-height-test",
+      source: { kind: "osm", revision: "1", licence: "ODbL-1.0" },
+    },
+  );
+
+  const building = world.buildings[0]!;
+  expect(building.levels).toBe(2);
+  expect(building.attributes?.levels?.quality).toBe("source_only");
+  expect(building.wallHeight).toBe(6.4);
+  expect(building.attributes?.wallHeight?.quality).toBe("inferred");
+});
+
+test("marks absent and default building/road attributes as unknown or inferred", () => {
+  const world = normalizeGeoJsonSource(
+    {
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Feature",
+          id: "building-without-levels",
+          properties: { building: "yes" },
+          geometry: {
+            type: "Polygon",
+            coordinates: [
+              [
+                [0.60002, 0.40002],
+                [0.60008, 0.40002],
+                [0.60008, 0.40008],
+                [0.60002, 0.40008],
+                [0.60002, 0.40002],
+              ],
+            ],
+          },
+        },
+        {
+          type: "Feature",
+          id: "road-without-grade-tags",
+          properties: { highway: "residential" },
+          geometry: {
+            type: "LineString",
+            coordinates: [
+              [0.6, 0.4],
+              [0.6001, 0.4],
+            ],
+          },
+        },
+        {
+          type: "Feature",
+          id: "bridge-without-layer-tag",
+          properties: { highway: "residential", bridge: "yes" },
+          geometry: {
+            type: "LineString",
+            coordinates: [
+              [0.6002, 0.4],
+              [0.6003, 0.4],
+            ],
+          },
+        },
+      ],
+    },
+    {
+      origin,
+      datasetRevision: "missing-attributes-test",
+      source: { kind: "osm", revision: "1", licence: "ODbL-1.0" },
+    },
+  );
+
+  const building = world.buildings[0]!;
+  const road = world.roads[0]!;
+  expect(building.levels).toBeUndefined();
+  expect(building.attributes?.levels?.quality).toBe("unknown");
+  expect(road.elevationLayer).toBe(0);
+  expect(road.attributes?.elevationLayer?.quality).toBe("inferred");
+  expect(road.structure).toBe("surface");
+  expect(road.attributes?.structure?.quality).toBe("inferred");
+  expect(road.baseElevation).toBeUndefined();
+  expect(road.attributes?.baseElevation?.quality).toBe("unknown");
+  expect(road.surface).toBe("unknown");
+  expect(road.attributes?.surface?.quality).toBe("unknown");
+  expect(road.attributes?.sidewalkWidths?.quality).toBe("unknown");
+
+  const bridge = world.roads.find((item) => item.localId.includes("bridge-without-layer-tag"))!;
+  expect(bridge.structure).toBe("bridge");
+  expect(bridge.attributes?.structure?.quality).toBe("source_only");
+  expect(bridge.elevationLayer).toBe(1);
+  expect(bridge.attributes?.elevationLayer?.quality).toBe("inferred");
+});
+
 test("stableLocalId remains invariant under feature reordering in source collection", () => {
   const featA = {
     type: "Feature" as const,
@@ -498,8 +612,12 @@ test("roads on different layers do not connect and bridge='no' is not classified
 
   expect(ground.structure).toBe("surface");
   expect(ground.elevationLayer).toBe(0);
+  expect(ground.attributes.elevationLayer.quality).toBe("source_only");
+  expect(ground.attributes.structure.quality).toBe("source_only");
   expect(flyover.structure).toBe("bridge");
   expect(flyover.elevationLayer).toBe(1);
+  expect(flyover.attributes.elevationLayer.quality).toBe("source_only");
+  expect(flyover.attributes.structure.quality).toBe("source_only");
 
   // Even though they touch at [0.6001, 0.4], their layers differ (0 vs 1), so they must NOT connect!
   expect(ground.connectorIds).toEqual([]);

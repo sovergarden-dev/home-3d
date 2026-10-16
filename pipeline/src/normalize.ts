@@ -287,7 +287,6 @@ export function normalizeGeoJsonSourceWithAliases(
 
       const levels = numberProperty(properties, "building:levels", "levels");
       const explicitHeight = numberProperty(properties, "height", "building:height");
-      const hasHeight = explicitHeight !== undefined || levels !== undefined;
 
       const building: Building = {
         localId: localIdFor("building", feature),
@@ -298,7 +297,9 @@ export function normalizeGeoJsonSourceWithAliases(
         roofType: roofType(properties),
         provenance: source,
         attributes: {
-          wallHeight: hasHeight ? source : inferredPropertyProvenance(options),
+          wallHeight:
+            explicitHeight === undefined ? inferredPropertyProvenance(options) : source,
+          levels: levels === undefined ? unknownPropertyProvenance(options) : source,
           roofType:
             properties["roof:shape"] || properties["roof"]
               ? source
@@ -346,6 +347,8 @@ export function normalizeGeoJsonSourceWithAliases(
         properties["tunnel"] === true ||
         properties["tunnel"] === "yes" ||
         properties["tunnel"] === "1";
+      const hasStructureTag =
+        properties["bridge"] !== undefined || properties["tunnel"] !== undefined;
       const bridgeVal = isBridge ? 1 : 0;
       const tunnelVal = isTunnel ? -1 : 0;
       const elevationLayer = Math.round(layerRaw ?? (bridgeVal || tunnelVal || 0));
@@ -371,7 +374,13 @@ export function normalizeGeoJsonSourceWithAliases(
           direction:
             properties["oneway"] === undefined ? unknownPropertyProvenance(options) : source,
           baseElevation:
-            explicitElevation === undefined ? inferredPropertyProvenance(options) : source,
+            explicitElevation === undefined ? unknownPropertyProvenance(options) : source,
+          elevationLayer:
+            layerRaw === undefined ? inferredPropertyProvenance(options) : source,
+          structure: hasStructureTag ? source : inferredPropertyProvenance(options),
+          surface: unknownPropertyProvenance(options),
+          sidewalkWidths:
+            sidewalk === undefined ? unknownPropertyProvenance(options) : inferredPropertyProvenance(options),
         },
       });
     });
@@ -408,10 +417,8 @@ export function normalizeGeoJsonSourceWithAliases(
       roofType: roofType(properties),
       provenance: source,
       attributes: {
-        wallHeight:
-          explicitHeight !== undefined || levels !== undefined
-            ? source
-            : inferredPropertyProvenance(options),
+        wallHeight: explicitHeight === undefined ? inferredPropertyProvenance(options) : source,
+        levels: levels === undefined ? unknownPropertyProvenance(options) : source,
         roofType:
           properties["roof:shape"] || properties["roof"]
             ? source
