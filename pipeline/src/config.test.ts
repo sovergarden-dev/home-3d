@@ -29,6 +29,38 @@ test("accepts source metadata and an explicit private origin from a config objec
   expect(config.source.namespace).toBe("primary");
 });
 
+test("keeps the committed dry-run fixture on neutral synthetic coordinates", async () => {
+  const fixtureUrl = new URL("../tests/fixtures/synthetic-pipeline.json", import.meta.url);
+  const sourceUrl = new URL("../tests/fixtures/synthetic-source.geojson", import.meta.url);
+  const fixture = (await Bun.file(fixtureUrl).json()) as {
+    origin: { longitude: number; latitude: number };
+    source: { kind: string };
+  };
+  const source = (await Bun.file(sourceUrl).json()) as {
+    features: Array<{ geometry: { coordinates: unknown } }>;
+  };
+
+  expect(fixture.source.kind).toBe("synthetic");
+  expect(fixture.origin).toEqual({ longitude: 0.6, latitude: 0.4, altitude: 5 });
+
+  const coordinatePairs: Array<[number, number]> = [];
+  const collectPairs = (value: unknown): void => {
+    if (!Array.isArray(value)) return;
+    if (value.length >= 2 && typeof value[0] === "number" && typeof value[1] === "number") {
+      coordinatePairs.push([value[0], value[1]]);
+      return;
+    }
+    value.forEach(collectPairs);
+  };
+  source.features.forEach((feature) => collectPairs(feature.geometry.coordinates));
+
+  expect(coordinatePairs.length).toBeGreaterThan(0);
+  for (const [longitude, latitude] of coordinatePairs) {
+    expect(Math.abs(longitude - fixture.origin.longitude)).toBeLessThan(0.001);
+    expect(Math.abs(latitude - fixture.origin.latitude)).toBeLessThan(0.001);
+  }
+});
+
 test("requires a distinct stable namespace for every secondary source", () => {
   const base = {
     schemaVersion: "1.0",
