@@ -169,7 +169,8 @@ test("H6 synthetic source → build → editor → export → source rebuild →
   await expect(page.getByText("Đã mở gói cục bộ")).toBeVisible();
   await expect(page.getByText("GÓI RIÊNG · XEM TRƯỚC")).toBeVisible();
   if (rendererReady) {
-    await expect(sceneRoot.getByText("Lô trống · ranh chưa xác minh")).toBeVisible();
+    await expect(sceneRoot.getByText("Vị trí do Syringa xác nhận", { exact: true })).toBeVisible();
+    await expect(sceneRoot.getByText("Ranh chưa đo", { exact: true })).toBeVisible();
   }
   const scene = page.getByTestId("demo-scene");
   if (rendererReady) {
@@ -211,6 +212,10 @@ test("H6 synthetic source → build → editor → export → source rebuild →
     // when the browser can render the world.
     await planMode.click();
     await expect(planMode).toHaveAttribute("aria-checked", "true");
+    await expect(scene).toHaveAttribute("data-plan-core-vertical-span-metres", "300");
+    await expect(scene).toHaveAttribute("data-plan-camera-zoom", "1");
+    await expect(scene).toHaveAttribute("data-plan-visible-vertical-span-metres", "300");
+    await expect(scene).toHaveAttribute("data-plan-centre-at-private-origin", "true");
     await expect(page.getByTestId("plan-scale-bar")).toBeVisible();
     await expect(page.getByText("Bắc ↑")).toBeVisible();
     await expect(page.getByText("Thước mét")).toBeVisible();

@@ -70,6 +70,7 @@ Conflation giữ các category đã có trong `WorldData` cùng attribution/lice
 ### Khung camera private
 
 - Mặc định và reset ở Mặt bằng giữ tâm ENU đã cung cấp và hiển thị lõi rộng 300 m theo chiều dọc (±150 m); không fit theo bbox của toàn bộ roads/buildings.
+- Khi chuyển từ Diorama sang Mặt bằng, zoom fit của camera perspective không được tái dùng: way dài có thể làm OrbitControls chạm giới hạn khoảng cách và làm bẩn zoom dùng chung. Mặt bằng bắt đầu ở 1× để giữ đúng 300 m; zoom do người dùng chọn được giữ khi vẫn ở Mặt bằng.
 - Geometry nguồn vẫn nạp nguyên vẹn. Pan được giới hạn theo bounds đầy đủ cộng vùng đệm 150 m, nên các way dài ngoài khung đầu vẫn có thể pan tới; zoom vẫn hoạt động bình thường.
 - Khi chưa có parcel geometry, marker chỉ xác nhận vị trí tâm theo chỉ dẫn của chủ nhà; ranh thửa vẫn chưa đo/chưa xác định.
 

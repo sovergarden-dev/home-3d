@@ -225,6 +225,8 @@ export function createDemoScene(
   function planConfig(state = useAppStore.getState()): PlanCameraConfig {
     const verticalSpanMetres = privatePlanFrame?.verticalSpanMetres ?? span;
     host.dataset["planCoreVerticalSpanMetres"] = String(verticalSpanMetres);
+    host.dataset["planCameraZoom"] = String(state.zoom);
+    host.dataset["planVisibleVerticalSpanMetres"] = String(verticalSpanMetres / state.zoom);
     host.dataset["planCentreAtPrivateOrigin"] = String(
       Boolean(privatePlanFrame) && Math.abs(planCentre.x) < 0.001 && Math.abs(planCentre.z) < 0.001,
     );

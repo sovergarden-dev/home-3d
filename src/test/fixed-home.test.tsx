@@ -59,6 +59,16 @@ describe("map centre labels", () => {
     useAppStore.getState().resetView();
     expect(useAppStore.getState()).toMatchObject({ zoom: 1, heading: 0 });
   });
+
+  it("enters Plan at 1× after a perspective fit without resetting an active Plan zoom", () => {
+    useAppStore.setState({ viewMode: "diorama", zoom: 4 });
+    useAppStore.getState().setViewMode("topdown");
+    expect(useAppStore.getState()).toMatchObject({ viewMode: "topdown", zoom: 1 });
+
+    useAppStore.getState().zoomIn();
+    useAppStore.getState().setViewMode("topdown");
+    expect(useAppStore.getState()).toMatchObject({ viewMode: "topdown", zoom: 1.25 });
+  });
 });
 
 describe("private-world default and reset camera frame", () => {

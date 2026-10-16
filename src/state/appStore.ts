@@ -89,7 +89,13 @@ export const useAppStore = create<AppState>((set) => ({
   setWeather: (weather) => set({ weather }),
   setRealWeatherEnabled: (realWeatherEnabled) => set({ realWeatherEnabled }),
   setFestival: (festival) => set({ festival }),
-  setViewMode: (viewMode) => set({ viewMode }),
+  setViewMode: (viewMode) =>
+    set((state) => ({
+      viewMode,
+      // A long private-world perspective can hit OrbitControls' distance cap;
+      // Plan begins at its own 1× core, without resetting an active Plan zoom.
+      zoom: viewMode === "topdown" && state.viewMode !== "topdown" ? 1 : state.zoom,
+    })),
   setHeading: (deg) => set({ heading: ((deg % 360) + 360) % 360 }),
   setZoom: (zoom) => set({ zoom: Math.max(0.25, Math.min(4, zoom)) }),
   zoomIn: () => set((s) => ({ zoom: Math.min(4, +(s.zoom * 1.25).toFixed(3)) })),
