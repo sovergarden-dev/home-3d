@@ -369,7 +369,7 @@ export function createDemoScene(
     hemisphere.intensity = 1 + daylight * (cloudy ? 1.5 : 2.2);
     sun.intensity = daylight * (cloudy ? 0.75 : 3.4);
     sun.position.set(-45 + (state.timeOfDayMinutes / 1440) * 90, 20 + daylight * 65, 28);
-    materialFactory("#4c5551", 0.92, 0).roughness = wet ? 0.32 : 0.92;
+    worldBundle?.setRoadWet(wet);
     audio.set(state.soundOn && !document.hidden, wet);
 
     // Effects only render when a valid world is mounted; rain follows the world frame.

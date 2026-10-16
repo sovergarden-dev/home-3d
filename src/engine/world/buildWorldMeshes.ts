@@ -23,6 +23,7 @@ export interface WorldMeshBundle {
   group: THREE.Group;
   layers: Record<LayerName, THREE.Group>;
   setLayerVisible: (layer: LayerName, visible: boolean) => void;
+  setRoadWet: (wet: boolean) => void;
   dispose: () => void;
 }
 
@@ -790,6 +791,14 @@ export function buildWorldMeshes(
     layers,
     setLayerVisible(layer, visible) {
       layers[layer].visible = visible;
+    },
+    setRoadWet(wet) {
+      const roughness = wet ? 0.32 : 0.92;
+      roadMeshes.forEach((mesh) => {
+        if (mesh.material instanceof THREE.MeshStandardMaterial) {
+          mesh.material.roughness = roughness;
+        }
+      });
     },
     dispose() {
       disposables.forEach((disposable) => disposable.dispose());

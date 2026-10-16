@@ -384,4 +384,50 @@ describe("road ribbon geometry and same-layer junction coverage", () => {
     expect(material.depthTest).toBe(true);
     dispose();
   });
+
+  it("updates the rendered road mesh material through sunny, rain, and sunny weather", () => {
+    const sourceMaterials = new Map<string, THREE.MeshStandardMaterial>();
+    const bundle = buildWorldMeshes(
+      worldWithRoads([
+        road(
+          "weather-road",
+          [
+            [0, 0],
+            [10, 0],
+          ],
+          4,
+        ),
+      ]),
+      (color, roughness = 0.82, metalness = 0) => {
+        const key = `${color}:${roughness}:${metalness}`;
+        let material = sourceMaterials.get(key);
+        if (!material) {
+          material = new THREE.MeshStandardMaterial({ color, roughness, metalness });
+          sourceMaterials.set(key, material);
+        }
+        return material;
+      },
+    );
+    const mesh = bundle.group.getObjectByName("road:weather-road")?.children[0];
+    expect(mesh).toBeInstanceOf(THREE.Mesh);
+    const displayedMaterial = (mesh as THREE.Mesh).material as THREE.MeshStandardMaterial;
+    const cachedSource = sourceMaterials.get("#4c5551:0.92:0");
+    expect(cachedSource).toBeDefined();
+    expect(displayedMaterial).not.toBe(cachedSource);
+
+    bundle.setRoadWet(false); // sunny
+    expect(displayedMaterial.roughness).toBeCloseTo(0.92);
+    expect(cachedSource!.roughness).toBeCloseTo(0.92);
+
+    bundle.setRoadWet(true); // rain
+    expect(displayedMaterial.roughness).toBeCloseTo(0.32);
+    expect(cachedSource!.roughness).toBeCloseTo(0.92);
+
+    bundle.setRoadWet(false); // sunny again
+    expect(displayedMaterial.roughness).toBeCloseTo(0.92);
+    expect(cachedSource!.roughness).toBeCloseTo(0.92);
+
+    bundle.dispose();
+    sourceMaterials.forEach((material) => material.dispose());
+  });
 });
