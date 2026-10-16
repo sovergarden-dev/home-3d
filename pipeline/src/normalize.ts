@@ -297,8 +297,7 @@ export function normalizeGeoJsonSourceWithAliases(
         roofType: roofType(properties),
         provenance: source,
         attributes: {
-          wallHeight:
-            explicitHeight === undefined ? inferredPropertyProvenance(options) : source,
+          wallHeight: explicitHeight === undefined ? inferredPropertyProvenance(options) : source,
           levels: levels === undefined ? unknownPropertyProvenance(options) : source,
           roofType:
             properties["roof:shape"] || properties["roof"]
@@ -375,12 +374,13 @@ export function normalizeGeoJsonSourceWithAliases(
             properties["oneway"] === undefined ? unknownPropertyProvenance(options) : source,
           baseElevation:
             explicitElevation === undefined ? unknownPropertyProvenance(options) : source,
-          elevationLayer:
-            layerRaw === undefined ? inferredPropertyProvenance(options) : source,
+          elevationLayer: layerRaw === undefined ? inferredPropertyProvenance(options) : source,
           structure: hasStructureTag ? source : inferredPropertyProvenance(options),
           surface: unknownPropertyProvenance(options),
           sidewalkWidths:
-            sidewalk === undefined ? unknownPropertyProvenance(options) : inferredPropertyProvenance(options),
+            sidewalk === undefined
+              ? unknownPropertyProvenance(options)
+              : inferredPropertyProvenance(options),
         },
       });
     });
