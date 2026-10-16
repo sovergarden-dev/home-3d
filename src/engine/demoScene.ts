@@ -12,6 +12,7 @@ import {
   type PlanCameraConfig,
 } from "./view/planCamera";
 import {
+  PRIVATE_PLAN_CORE_SPAN_METRES,
   clampPrivatePlanCentre,
   derivePrivateWorldPlanFrame,
   type PrivateWorldPlanFrame,
@@ -78,6 +79,14 @@ function worldSpan(world: WorldData) {
     { minX: Infinity, maxX: -Infinity, minZ: Infinity, maxZ: -Infinity },
   );
   return Math.max(bounds.maxX - bounds.minX, bounds.maxZ - bounds.minZ, 50) * 1.25;
+}
+
+function perspectiveFrame(world: WorldData, isPrivateWorld: boolean) {
+  return {
+    centre: isPrivateWorld ? new THREE.Vector3(0, 0, 0) : worldCentre(world),
+    // Keep the supplied origin in view; longer source roads remain available for panning.
+    span: isPrivateWorld ? PRIVATE_PLAN_CORE_SPAN_METRES : worldSpan(world),
+  };
 }
 
 export function worldHomeCentre(world: WorldData) {
@@ -165,10 +174,13 @@ export function createDemoScene(
   let worldBundle: WorldMeshBundle | null = null;
   let currentWorld = worldDataProvider.getSnapshot();
   const fallbackWorld = "world" in currentWorld ? currentWorld.world : null;
-  let centre = fallbackWorld ? worldCentre(fallbackWorld) : new THREE.Vector3();
+  const initialPerspectiveFrame = fallbackWorld
+    ? perspectiveFrame(fallbackWorld, currentWorld.mode === "private")
+    : null;
+  let centre = initialPerspectiveFrame?.centre ?? new THREE.Vector3();
   let homeCentre = fallbackWorld ? worldHomeCentre(fallbackWorld) : new THREE.Vector3();
   const planCentre = homeCentre.clone();
-  let span = fallbackWorld ? worldSpan(fallbackWorld) : 100;
+  let span = initialPerspectiveFrame?.span ?? 100;
   let privatePlanFrame: PrivateWorldPlanFrame | null =
     currentWorld.mode === "private" && fallbackWorld
       ? derivePrivateWorldPlanFrame(fallbackWorld)
@@ -190,6 +202,10 @@ export function createDemoScene(
   let lastWorldRevision = -1;
   const audio = createDemoAudio();
   const frameMetrics = createFrameMetrics();
+  let frameSnapshot = frameMetrics.snapshot();
+  let lastMetricsSnapshotAt = 0;
+  let updatingControls = false;
+  let syncingControlsState = false;
   const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   function mountWorld() {
@@ -199,12 +215,13 @@ export function createDemoScene(
     worldBundle?.dispose();
     worldBundle = buildWorldMeshes(snapshot.world, materialFactory);
     scene.add(worldBundle.group);
-    centre = worldCentre(snapshot.world);
+    const frame = perspectiveFrame(snapshot.world, snapshot.mode === "private");
+    centre = frame.centre;
     homeCentre = worldHomeCentre(snapshot.world);
     privatePlanFrame =
       snapshot.mode === "private" ? derivePrivateWorldPlanFrame(snapshot.world) : null;
     resetPlanCentre();
-    span = worldSpan(snapshot.world);
+    span = frame.span;
     planPanRevision = 0;
     lastWorldRevision = snapshot.revision;
     // Effects anchor to the mounted world frame instead of a fixed origin.
@@ -269,7 +286,7 @@ export function createDemoScene(
       centre.z + Math.cos(theta) * radius,
     );
     perspectiveCamera.lookAt(controls.target);
-    controls.update();
+    updateControls();
     activeCamera = perspectiveCamera;
     scene.fog = null;
     delete host.dataset["planZenith"];
@@ -386,8 +403,12 @@ export function createDemoScene(
       return;
     }
     renderer.render(scene, activeCamera);
-    frameMetrics.record(performance.now());
-    const frameSnapshot = frameMetrics.snapshot();
+    const renderedAt = performance.now();
+    frameMetrics.record(renderedAt);
+    if (lastMetricsSnapshotAt === 0 || renderedAt - lastMetricsSnapshotAt >= 250) {
+      frameSnapshot = frameMetrics.snapshot();
+      lastMetricsSnapshotAt = renderedAt;
+    }
     const markerWorld = new THREE.Vector3(homeCentre.x, 0.35, homeCentre.z).project(activeCamera);
     marker.style.transform = `translate(-50%, -100%) translate(${(markerWorld.x * 0.5 + 0.5) * host.clientWidth}px, ${(-markerWorld.y * 0.5 + 0.5) * host.clientHeight - 10}px)`;
     marker.style.visibility =
@@ -406,12 +427,23 @@ export function createDemoScene(
     host.dataset["cameraType"] = activeCamera.type;
   }
 
-  function tick(now: number) {
-    if (disposed || document.hidden) return;
+  function scheduleFrame() {
+    if (disposed || document.hidden || motion.matches || animationFrame !== 0) return;
     animationFrame = requestAnimationFrame(tick);
-    if (motion.matches) return;
-    const interval = window.innerWidth < 768 ? 1000 / 30 : 1000 / 60;
-    if (now - lastFrame < interval) return;
+  }
+
+  function updateControls() {
+    updatingControls = true;
+    try {
+      return controls.update();
+    } finally {
+      updatingControls = false;
+    }
+  }
+
+  function tick(now: number) {
+    animationFrame = 0;
+    if (disposed || document.hidden || motion.matches) return;
     const delta = lastFrame === 0 ? 0.016 : Math.min(0.1, (now - lastFrame) / 1000);
     lastFrame = now;
 
@@ -431,8 +463,11 @@ export function createDemoScene(
       posAttr.needsUpdate = true;
     }
 
-    if (controls.enabled) controls.update();
-    render();
+    const controlsChanged = controls.enabled ? updateControls() : false;
+    if (controlsChanged || rainPoints.visible) {
+      render();
+      scheduleFrame();
+    }
   }
 
   function resize() {
@@ -458,8 +493,16 @@ export function createDemoScene(
       0.25,
       4,
     );
-    useAppStore.setState({ heading: (heading + 360) % 360, zoom });
-    render();
+    syncingControlsState = true;
+    try {
+      useAppStore.setState({ heading: (heading + 360) % 360, zoom });
+    } finally {
+      syncingControlsState = false;
+    }
+    if (!updatingControls) {
+      render();
+      scheduleFrame();
+    }
   }
 
   function onPlanPointerDown(event: PointerEvent) {
@@ -533,17 +576,21 @@ export function createDemoScene(
 
   function onVisibility() {
     cancelAnimationFrame(animationFrame);
+    animationFrame = 0;
     lastFrame = 0;
     applyEnvironment();
-    if (!document.hidden && !disposed) animationFrame = requestAnimationFrame(tick);
+    if (!document.hidden && !disposed) {
+      render();
+      scheduleFrame();
+    }
   }
 
   function onMotion() {
     cancelAnimationFrame(animationFrame);
+    animationFrame = 0;
     lastFrame = 0;
     render();
-    if (!motion.matches && !document.hidden && !disposed)
-      animationFrame = requestAnimationFrame(tick);
+    if (!motion.matches && !document.hidden && !disposed) scheduleFrame();
   }
 
   function onKey(event: KeyboardEvent) {
@@ -606,7 +653,7 @@ export function createDemoScene(
       state.zoom !== previous.zoom ||
       state.viewReset !== previous.viewReset
     ) {
-      applyView(true);
+      if (!syncingControlsState) applyView(true);
     }
     if (state.showTrees !== previous.showTrees || state.showLabels !== previous.showLabels) {
       updateLayerVisibility();
@@ -620,6 +667,7 @@ export function createDemoScene(
     ) {
       applyEnvironment();
       render();
+      if (rainPoints.visible) scheduleFrame();
     }
   });
 
@@ -643,6 +691,7 @@ export function createDemoScene(
     applyEnvironment();
     updateLayerVisibility();
     render();
+    if (rainPoints.visible) scheduleFrame();
   });
 
   mountWorld();
@@ -656,7 +705,7 @@ export function createDemoScene(
     render();
     return canvas.toDataURL("image/png");
   });
-  animationFrame = requestAnimationFrame(tick);
+  if (rainPoints.visible) scheduleFrame();
 
   return {
     setLabel(label) {

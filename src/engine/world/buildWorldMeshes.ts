@@ -14,6 +14,7 @@ import type {
   SurfaceGeometry,
   WorldData,
 } from "@/world/schema";
+import { assessWallHeight } from "@/world/wallHeight";
 
 type Disposable = { dispose: () => void };
 type LayerName = "roads" | "buildings" | "trees" | "props" | "labels";
@@ -258,6 +259,7 @@ function addBuilding(
   group: THREE.Group,
   materialFactory: MaterialFactory,
   disposables: Disposable[],
+  syntheticWorld: boolean,
 ) {
   if (building.hidden) return;
   if (
@@ -282,6 +284,7 @@ function addBuilding(
         baseElevation: part.baseElevation ?? baseElevation,
         roofHeight: part.roofHeight,
         roofType: part.roofType,
+        heightAssessment: assessWallHeight(part, syntheticWorld),
       }))
     : [
         {
@@ -291,23 +294,25 @@ function addBuilding(
           baseElevation,
           roofHeight: building.roofHeight,
           roofType: building.roofType,
+          heightAssessment: assessWallHeight(building, syntheticWorld),
         },
       ];
 
   for (const part of renderables) {
+    const renderedHeight = part.heightAssessment.renderedHeight;
     const shell = createSurfaceMeshes(
       part.geometry,
-      part.wallHeight,
+      renderedHeight,
       part.baseElevation,
       material,
       disposables,
     );
     shell.name = `building-part:${part.localId}`;
-    const topY = part.baseElevation + part.wallHeight;
+    shell.userData["wallHeightStatus"] = part.heightAssessment.status;
+    const topY = part.baseElevation + renderedHeight;
     if (
-      part.roofType === "gabled" ||
-      part.roofType === "hipped" ||
-      part.roofType === "corrugated"
+      part.heightAssessment.status !== "unknown" &&
+      (part.roofType === "gabled" || part.roofType === "hipped" || part.roofType === "corrugated")
     ) {
       const roof = addRoofPrism(part.geometry, topY, part.roofType, part.roofHeight, disposables);
       if (roof) {
@@ -317,6 +322,8 @@ function addBuilding(
       } else {
         shell.userData["roofFallback"] = "flat_cap_footprint_preserved";
       }
+    } else if (part.heightAssessment.status === "unknown") {
+      shell.userData["roofFallback"] = "height_unknown_footprint_only";
     } else if (part.roofType !== "flat" && part.roofType !== "terrace_tum") {
       shell.userData["roofFallback"] = "flat_cap_footprint_preserved";
     }
@@ -397,6 +404,16 @@ function createStrip(
   return mesh;
 }
 
+function roadDisplayElevation(road: RoadSegment) {
+  const structuralLayer =
+    road.structure === "tunnel"
+      ? Math.min(road.elevationLayer, -1)
+      : road.structure === "bridge"
+        ? Math.max(road.elevationLayer, 1)
+        : road.elevationLayer;
+  return road.baseElevation ?? 0.02 + structuralLayer * 4.5;
+}
+
 function addRoad(
   road: RoadSegment,
   group: THREE.Group,
@@ -410,16 +427,9 @@ function addRoad(
   const halfCarriageway = road.carriagewayWidth / 2;
   const left = offsetPolyline(road.polylineENU, halfCarriageway);
   const right = offsetPolyline(road.polylineENU, -halfCarriageway);
-  // Vertical placement: an explicit surveyed baseElevation wins; otherwise fall back to a
-  // clearly-labelled display prior (structural layers offset upward for bridges). The prior
-  // is never reported as source fact — provenance marks it as inferred.
-  const displayPrior =
-    road.structure === "tunnel"
-      ? 0.02
-      : road.elevationLayer !== 0
-        ? 0.02 + road.elevationLayer * 4.5
-        : 0.02;
-  const y = road.baseElevation ?? displayPrior;
+  // Vertical placement: an explicit surveyed baseElevation wins; otherwise respect the tagged
+  // structural layer for bridges and tunnels. This is only a display prior, never source fact.
+  const y = roadDisplayElevation(road);
   roadGroup.add(createStrip(left, right, y, materialFactory("#4c5551", 0.92, 0), disposables));
 
   const [leftSidewalk = 0, rightSidewalk = 0] = road.sidewalkWidths ?? [];
@@ -563,7 +573,13 @@ export function buildWorldMeshes(
 
   world.roads.forEach((road) => addRoad(road, layers.roads, materialFactory, disposables));
   world.buildings.forEach((building) => {
-    addBuilding(building, layers.buildings, materialFactory, disposables);
+    addBuilding(
+      building,
+      layers.buildings,
+      materialFactory,
+      disposables,
+      world.manifest.isSynthetic,
+    );
     if (!building.hidden) {
       const centroid = surfaceCentroid(building.geometry);
       layers.labels.add(createLabelSprite(building.localId, centroid, disposables));

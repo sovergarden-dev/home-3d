@@ -56,7 +56,7 @@ test("normalizes a synthetic GeoJSON road and footprint into ENU world geometry 
   expect(world.buildings[0]?.geometry.coordinates[0]?.[0]?.[0]).not.toBeCloseTo(0.60002);
 });
 
-test("marks an absent height as an inferred class prior rather than a verified fact", () => {
+test("keeps an absent height unknown instead of assigning a class-prior height", () => {
   const world = normalizeGeoJsonSource(
     {
       type: "FeatureCollection",
@@ -87,8 +87,8 @@ test("marks an absent height as an inferred class prior rather than a verified f
     },
   );
 
-  expect(world.buildings[0]?.wallHeight).toBe(6);
-  expect(world.buildings[0]?.attributes?.wallHeight?.quality).toBe("inferred");
+  expect(world.buildings[0]?.wallHeight).toBe(0);
+  expect(world.buildings[0]?.attributes?.wallHeight?.quality).toBe("unknown");
 });
 
 test("marks a level-derived wall height as inferred while keeping levels source-only", () => {
@@ -127,6 +127,63 @@ test("marks a level-derived wall height as inferred while keeping levels source-
   expect(building.attributes?.levels?.quality).toBe("source_only");
   expect(building.wallHeight).toBe(6.4);
   expect(building.attributes?.wallHeight?.quality).toBe("inferred");
+});
+
+test("keeps a building-part height unknown when neither height nor levels exist", () => {
+  const world = normalizeGeoJsonSource(
+    {
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Feature",
+          id: "part-parent-with-source-height",
+          properties: { building: "yes", height: 10 },
+          geometry: {
+            type: "Polygon",
+            coordinates: [
+              [
+                [0.6, 0.4],
+                [0.6002, 0.4],
+                [0.6002, 0.4002],
+                [0.6, 0.4002],
+                [0.6, 0.4],
+              ],
+            ],
+          },
+        },
+        {
+          type: "Feature",
+          id: "part-without-height-or-levels",
+          properties: {
+            "building:part": "yes",
+            "building:parent": "part-parent-with-source-height",
+          },
+          geometry: {
+            type: "Polygon",
+            coordinates: [
+              [
+                [0.60005, 0.40005],
+                [0.60015, 0.40005],
+                [0.60015, 0.40015],
+                [0.60005, 0.40015],
+                [0.60005, 0.40005],
+              ],
+            ],
+          },
+        },
+      ],
+    },
+    {
+      origin,
+      datasetRevision: "unknown-building-part-height-test",
+      source: { kind: "osm", revision: "1", licence: "ODbL-1.0" },
+    },
+  );
+
+  const part = world.buildings[0]?.parts?.[0];
+  expect(part?.wallHeight).toBe(0);
+  expect(part?.attributes?.wallHeight?.quality).toBe("unknown");
+  expect(part?.attributes?.levels?.quality).toBe("unknown");
 });
 
 test("marks absent and default building/road attributes as unknown or inferred", () => {
@@ -187,6 +244,8 @@ test("marks absent and default building/road attributes as unknown or inferred",
   const building = world.buildings[0]!;
   const road = world.roads[0]!;
   expect(building.levels).toBeUndefined();
+  expect(building.wallHeight).toBe(0);
+  expect(building.attributes?.wallHeight?.quality).toBe("unknown");
   expect(building.attributes?.levels?.quality).toBe("unknown");
   expect(road.elevationLayer).toBe(0);
   expect(road.attributes?.elevationLayer?.quality).toBe("inferred");

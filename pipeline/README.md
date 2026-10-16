@@ -47,4 +47,6 @@ Pipeline thực hiện: parse config → đọc source snapshot → normalize Ge
 
 Mở ứng dụng với `?local-preview=1`, chọn `world-package.json` bằng file picker. File chỉ được đọc vào bộ nhớ tab hiện tại. Package lỗi hiện lỗi và **không** chuyển âm thầm về fixture mà gọi đó là khu thật. Bấm trở về fixture để bỏ dữ liệu đã mở khỏi scene.
 
+Building không có height và levels được chuẩn hóa thành `wallHeight: 0` với `attributes.wallHeight.quality: "unknown"`; renderer giữ footprint phẳng và không dựng tường/mái. Height suy ra từ số tầng vẫn mang quality `inferred` và được gắn nhãn riêng. Không dùng class-prior 6 m như chiều cao của nhà thật. Khi không có lot geometry, UI giữ nhãn `Ranh chưa đo`.
+
 World thật vẫn `REAL_WORLD_NOT_VERIFIED` cho tới khi Syringa kiểm Mặt bằng và xác nhận ranh lô/điểm cần sửa. Không deploy, upload hoặc Publish từ pipeline này.

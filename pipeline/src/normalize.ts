@@ -292,12 +292,17 @@ export function normalizeGeoJsonSourceWithAliases(
         localId: localIdFor("building", feature),
         geometry,
         footprintKind: "footprint",
-        wallHeight: explicitHeight ?? (levels === undefined ? 6 : levels * 3.2),
+        wallHeight: explicitHeight ?? (levels === undefined ? 0 : levels * 3.2),
         ...(levels === undefined ? {} : { levels }),
         roofType: roofType(properties),
         provenance: source,
         attributes: {
-          wallHeight: explicitHeight === undefined ? inferredPropertyProvenance(options) : source,
+          wallHeight:
+            explicitHeight !== undefined
+              ? source
+              : levels === undefined
+                ? unknownPropertyProvenance(options)
+                : inferredPropertyProvenance(options),
           levels: levels === undefined ? unknownPropertyProvenance(options) : source,
           roofType:
             properties["roof:shape"] || properties["roof"]
@@ -412,12 +417,17 @@ export function normalizeGeoJsonSourceWithAliases(
     const partItem = {
       localId: localIdFor("part", feature),
       geometry,
-      wallHeight: explicitHeight ?? (levels === undefined ? 4 : levels * 3.2),
+      wallHeight: explicitHeight ?? (levels === undefined ? 0 : levels * 3.2),
       ...(levels === undefined ? {} : { levels }),
       roofType: roofType(properties),
       provenance: source,
       attributes: {
-        wallHeight: explicitHeight === undefined ? inferredPropertyProvenance(options) : source,
+        wallHeight:
+          explicitHeight !== undefined
+            ? source
+            : levels === undefined
+              ? unknownPropertyProvenance(options)
+              : inferredPropertyProvenance(options),
         levels: levels === undefined ? unknownPropertyProvenance(options) : source,
         roofType:
           properties["roof:shape"] || properties["roof"]

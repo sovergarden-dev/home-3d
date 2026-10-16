@@ -13,6 +13,8 @@ Mã và fixture public dùng world synthetic. Khu thật chỉ được mở b�
 
 ## Build local
 
+Phần này chỉ dành để tạo hoặc làm mới package từ dữ liệu nguồn riêng. Nếu đã có ZIP chuẩn để kiểm thử, bỏ qua các bước bên dưới và dùng mục **Mở preview trực tiếp trong Lovable**; không cần cài dependencies trên máy kiểm thử.
+
 ```bash
 cd pipeline
 bun run check
@@ -35,13 +37,23 @@ Chỉ dùng config path trên command line. Không truyền toạ độ hoặc s
       "kind": "file",
       "path": "secondary.geojson",
       "format": "geojson",
-      "source": { "kind": "overture", "namespace": "overture-secondary", "revision": "secondary-rev-1", "licence": "CC-BY-4.0" }
+      "source": {
+        "kind": "overture",
+        "namespace": "overture-secondary",
+        "revision": "secondary-rev-1",
+        "licence": "CC-BY-4.0"
+      }
     }
   ],
   "conflationRulesPath": "rules.json",
   "overridesPath": "overrides.json",
   "confirmedEmptyLotsPath": "lots.json",
-  "source": { "kind": "synthetic", "namespace": "fixture-primary", "revision": "fixture-v1", "licence": "CC0-1.0" },
+  "source": {
+    "kind": "synthetic",
+    "namespace": "fixture-primary",
+    "revision": "fixture-v1",
+    "licence": "CC0-1.0"
+  },
   "output": { "packagePath": "package.json", "reportPath": "report.json" }
 }
 ```
@@ -57,19 +69,23 @@ Chỉ dùng config path trên command line. Không truyền toạ độ hoặc s
 
 Conflation giữ các category đã có trong `WorldData` cùng attribution/licences/source metadata/coverage, và không tự deduplicate identity hoặc overlap thiếu resolver rule. GeoJSON adapter hiện chỉ nhập buildings/parts, roads và lots; không coi polygon tùy ý là building và không tuyên bố nhập trees/props từ point data.
 
+## Mở preview trực tiếp trong Lovable (không cài local)
 
-## Mở preview
+1. Mở [project Home 3D trên Lovable](https://lovable.dev/projects/233f103b-6806-4738-9cc3-913722e17ad6).
+2. Trong branch selector, chọn `feat/h6-pho-that-mat-bang` và xác nhận Lovable đã sync nhánh.
+3. Mở **Preview** rồi chọn **Open in new tab** để mở app preview, không phải editor URL.
+4. Trên URL của tab app, thêm `?local-preview=1`; nếu URL đã có query thì dùng `&local-preview=1`. Query này bật file picker trong ứng dụng Lovable preview; không cần chạy app local, cài Node hay upload package.
+5. Trong bảng **Xem trước gói cục bộ**, chọn đúng tệp `world-package.json` từ ZIP chuẩn. Ứng dụng chỉ đọc tệp vào bộ nhớ tab hiện tại; không gửi package/geometry tới repo, Lovable, CI hoặc public assets.
+6. Chỉ tiếp tục khi giao diện báo **GÓI RIÊNG · XEM TRƯỚC** / **Đã mở gói cục bộ**; DOM runtime phải là `data-world-mode="private"` và `data-active-worlds="1"`. Nếu còn **DEMO** hoặc **vị trí giả lập**, package chưa được nạp và không được đánh giá như khu thật. Nếu package lỗi, dừng ở lỗi; không fallback ngầm sang fixture.
+7. Gói đang bàn giao có 317 building footprints, 138 roads và 0 lots. Với building thiếu cả height lẫn levels, giữ footprint phẳng và ghi **Chiều cao chưa biết**; hai height suy ra từ levels vẫn phải hiện là ước tính. Chưa có lô/ranh khảo sát: giữ **Ranh chưa đo**, không xác nhận vị trí hoặc tài sản chưa có nguồn.
+8. Kiểm Mặt bằng trước: north-up, scale bar, road graph và footprint có trong package; sau đó mới xem Diorama. Nếu phát hiện road/building lệch hoặc thiếu, ghi lại như vấn đề nguồn cần xác minh, không tự vẽ thêm.
 
-1. Chạy app local.
-2. Thêm `?local-preview=1` vào URL local.
-3. Chọn package local bằng file picker.
-4. Kiểm Mặt bằng trước: north-up, scale bar, road graph, footprint, courtyard, lot empty và conflict.
-5. Kiểm Diorama sau: massing, footprint, roof fallback, frontend và props.
-6. Nếu package lỗi, app giữ lỗi local. Không gọi fixture là khu thật.
+URL preview hostname phụ thuộc quyền truy cập project và không thể xác minh từ repository; liên kết ở bước 1 là entrypoint project chính xác, còn **Preview → Open in new tab** lấy đúng URL app đang chạy trong tài khoản của bạn.
 
 ### Khung camera private
 
 - Mặc định và reset ở Mặt bằng giữ tâm ENU đã cung cấp và hiển thị lõi rộng 300 m theo chiều dọc (±150 m); không fit theo bbox của toàn bộ roads/buildings.
+- Diorama private cũng bắt đầu ở tâm ENU đã cung cấp và scale 300 m, không dời camera theo midpoint của bbox dài; geometry nguồn không bị dịch. Các tuyến dài ngoài khung đầu có thể được khám phá bằng camera/pan.
 - Khi chuyển từ Diorama sang Mặt bằng, zoom fit của camera perspective không được tái dùng: way dài có thể làm OrbitControls chạm giới hạn khoảng cách và làm bẩn zoom dùng chung. Mặt bằng bắt đầu ở 1× để giữ đúng 300 m; zoom do người dùng chọn được giữ khi vẫn ở Mặt bằng.
 - Geometry nguồn vẫn nạp nguyên vẹn. Pan được giới hạn theo bounds đầy đủ cộng vùng đệm 150 m, nên các way dài ngoài khung đầu vẫn có thể pan tới; zoom vẫn hoạt động bình thường.
 - Khi chưa có parcel geometry, marker chỉ xác nhận vị trí tâm theo chỉ dẫn của chủ nhà; ranh thửa vẫn chưa đo/chưa xác định.

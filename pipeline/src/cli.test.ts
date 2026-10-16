@@ -179,7 +179,7 @@ test("CLI fixture run wires secondary sources, conflation rules, terminal lots a
         localId: string;
         wallHeight: number;
         levels?: number;
-        attributes?: Record<string, { source: string; sourceNamespace?: string }>;
+        attributes?: Record<string, { source: string; sourceNamespace?: string; quality?: string }>;
       }>;
       roads: Array<{ localId: string; carriagewayWidth?: number }>;
       lots: Array<{ localId: string; confirmed: boolean; status: string }>;
@@ -189,7 +189,8 @@ test("CLI fixture run wires secondary sources, conflation rules, terminal lots a
 
   expect(pkg.world.buildings).toHaveLength(1);
   expect(pkg.world.buildings[0]?.localId).toBe("building-house-primary");
-  expect(pkg.world.buildings[0]?.wallHeight).toBe(6);
+  expect(pkg.world.buildings[0]?.wallHeight).toBe(0);
+  expect(pkg.world.buildings[0]?.attributes?.wallHeight?.quality).toBe("unknown");
   const opened = parseWorldPackage(JSON.stringify(pkg));
   expect(opened.ok).toBe(true);
   if (!opened.ok) throw new Error(opened.errorCode);

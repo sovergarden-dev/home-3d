@@ -76,6 +76,7 @@ function ViewportInner() {
       <div ref={host} data-testid="demo-scene" className="absolute inset-0" />
       <div
         ref={marker}
+        data-testid="world-center-marker"
         className={`pointer-events-none absolute left-0 top-0 z-10 ${failed ? "hidden" : ""}`}
         style={{ visibility: "hidden" }}
       >

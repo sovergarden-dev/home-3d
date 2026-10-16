@@ -12,6 +12,7 @@ import {
 import { useT } from "@/i18n";
 import { worldDataProvider } from "@/world/privateWorldSession";
 import { WORLD_OVERRIDE_IDENTITY_SCHEME } from "@/world/schema";
+import { assessWallHeight } from "@/world/wallHeight";
 import type {
   Building,
   BuildingPart,
@@ -26,6 +27,16 @@ interface PrivateWorldPanelProps {
   enabled: boolean;
 }
 
+function wallHeightLabel(
+  feature: Building | BuildingPart,
+  syntheticWorld: boolean,
+  labels: { unknown: string; known: string; inferred: string; synthetic: string },
+) {
+  const assessment = assessWallHeight(feature, syntheticWorld);
+  if (assessment.status === "unknown") return labels.unknown;
+  return `${feature.wallHeight.toFixed(1)} m · ${labels[assessment.status]}`;
+}
+
 export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
   const t = useT();
   const snapshot = useSyncExternalStore(
@@ -33,6 +44,13 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
     worldDataProvider.getSnapshot,
     worldDataProvider.getSnapshot,
   );
+  const syntheticWorld = snapshot.mode !== "private-error" && snapshot.world.manifest.isSynthetic;
+  const heightLabels = {
+    unknown: t.localPreview.heightUnknown,
+    known: t.localPreview.heightKnown,
+    inferred: t.localPreview.heightInferred,
+    synthetic: t.localPreview.heightSynthetic,
+  };
 
   const [selectedId, setSelectedId] = useState<string>("");
   const [selectedPartId, setSelectedPartId] = useState<string>("");
@@ -73,24 +91,14 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
   const selectedPart = selectedBuilding?.parts?.find((item) => item.localId === selectedPartId);
   const selectedRoad = roads.find((item) => item.localId === selectedRoadId);
   const selectedRoadWidth = selectedRoad?.carriagewayWidth;
-  const selectedPartHeight = selectedPart?.wallHeight;
-  const selectedPartLevels = selectedPart
-    ? (selectedPart.levels ?? Math.round(selectedPart.wallHeight / 3.2))
-    : undefined;
-  const selectedPartRoof = selectedPart?.roofType;
 
   useEffect(() => {
-    if (
-      selectedPartHeight === undefined ||
-      selectedPartLevels === undefined ||
-      selectedPartRoof === undefined
-    ) {
-      return;
-    }
-    setEditPartHeight(selectedPartHeight);
-    setEditPartLevels(selectedPartLevels);
-    setEditPartRoof(selectedPartRoof);
-  }, [selectedPartId, selectedPartHeight, selectedPartLevels, selectedPartRoof]);
+    if (!selectedPart) return;
+    const assessment = assessWallHeight(selectedPart, syntheticWorld);
+    setEditPartHeight(assessment.status === "unknown" ? 0 : selectedPart.wallHeight);
+    setEditPartLevels(selectedPart.levels ?? 0);
+    setEditPartRoof(selectedPart.roofType);
+  }, [selectedPartId, selectedPart, syntheticWorld]);
 
   useEffect(() => {
     if (selectedRoadWidth === undefined) return;
@@ -113,15 +121,23 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
     setSelectedId(id);
     const b = buildings.find((item: Building) => item.localId === id);
     if (b) {
-      setEditHeight(b.wallHeight);
-      setEditLevels(b.levels ?? Math.round(b.wallHeight / 3.2));
+      const assessment = assessWallHeight(b, syntheticWorld);
+      setEditHeight(assessment.status === "unknown" ? 0 : b.wallHeight);
+      setEditLevels(b.levels ?? 0);
       setEditRoof(b.roofType);
       setEditGeometry(JSON.stringify(b.geometry));
       const firstPart = b.parts?.[0];
       setSelectedPartId(firstPart?.localId ?? "");
-      setEditPartHeight(firstPart?.wallHeight ?? 6);
-      setEditPartLevels(firstPart?.levels ?? Math.round((firstPart?.wallHeight ?? 6) / 3.2));
-      setEditPartRoof(firstPart?.roofType ?? "flat");
+      if (firstPart) {
+        const partAssessment = assessWallHeight(firstPart, syntheticWorld);
+        setEditPartHeight(partAssessment.status === "unknown" ? 0 : firstPart.wallHeight);
+        setEditPartLevels(firstPart.levels ?? 0);
+        setEditPartRoof(firstPart.roofType);
+      } else {
+        setEditPartHeight(0);
+        setEditPartLevels(0);
+        setEditPartRoof("flat");
+      }
       setGeometryError(null);
     } else {
       setSelectedPartId("");
@@ -132,8 +148,9 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
     setSelectedPartId(id);
     const part = selectedBuilding?.parts?.find((item) => item.localId === id);
     if (part) {
-      setEditPartHeight(part.wallHeight);
-      setEditPartLevels(part.levels ?? Math.round(part.wallHeight / 3.2));
+      const assessment = assessWallHeight(part, syntheticWorld);
+      setEditPartHeight(assessment.status === "unknown" ? 0 : part.wallHeight);
+      setEditPartLevels(part.levels ?? 0);
       setEditPartRoof(part.roofType);
     }
   };
@@ -463,9 +480,9 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
                 onChange={(e) => handleSelectBuilding(e.target.value)}
               >
                 <option value="">-- Chọn công trình để sửa --</option>
-                {buildings.map((b: { localId: string; wallHeight: number; roofType: string }) => (
+                {buildings.map((b: Building) => (
                   <option key={b.localId} value={b.localId}>
-                    {b.localId} ({b.wallHeight.toFixed(1)}m, {b.roofType})
+                    {b.localId} ({wallHeightLabel(b, syntheticWorld, heightLabels)}, {b.roofType})
                   </option>
                 ))}
               </select>
@@ -480,6 +497,15 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
                       <p className="mb-2 text-[10px] leading-snug text-muted-foreground">
                         {t.localPreview.partsParentNote}
                       </p>
+                      {selectedPart &&
+                        assessWallHeight(selectedPart, syntheticWorld).status === "unknown" && (
+                          <p
+                            role="note"
+                            className="mb-2 text-[10px] leading-snug text-muted-foreground"
+                          >
+                            {t.localPreview.heightUnknownNote}
+                          </p>
+                        )}
                       <label className="text-[11px] text-muted-foreground">
                         {t.localPreview.partSelectLabel}:
                       </label>
@@ -492,7 +518,7 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
                         <option value="">{t.localPreview.partSelectPlaceholder}</option>
                         {selectedBuilding.parts.map((part: BuildingPart) => (
                           <option key={part.localId} value={part.localId}>
-                            {part.localId} ({part.wallHeight.toFixed(1)}m)
+                            {part.localId} ({wallHeightLabel(part, syntheticWorld, heightLabels)})
                           </option>
                         ))}
                       </select>
@@ -519,7 +545,7 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
                               className="w-20 rounded border border-border bg-background px-1.5 py-0.5 text-xs text-foreground"
                               value={editPartLevels}
                               onChange={(event) =>
-                                setEditPartLevels(Number.parseInt(event.target.value, 10) || 1)
+                                setEditPartLevels(Number.parseInt(event.target.value, 10) || 0)
                               }
                             />
                           </label>
@@ -554,6 +580,13 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
                       )}
                     </div>
                   ) : null}
+                  {selectedBuilding &&
+                    !selectedBuilding.parts?.length &&
+                    assessWallHeight(selectedBuilding, syntheticWorld).status === "unknown" && (
+                      <p role="note" className="text-[10px] leading-snug text-muted-foreground">
+                        {t.localPreview.heightUnknownNote}
+                      </p>
+                    )}
                   <fieldset
                     disabled={Boolean(selectedBuilding?.parts?.length)}
                     className="contents"
@@ -576,7 +609,7 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
                         aria-label="Số tầng"
                         className="w-20 rounded border border-border bg-background px-1.5 py-0.5 text-xs text-foreground"
                         value={editLevels}
-                        onChange={(e) => setEditLevels(Number.parseInt(e.target.value, 10) || 1)}
+                        onChange={(e) => setEditLevels(Number.parseInt(e.target.value, 10) || 0)}
                       />
                     </div>
                     <div className="flex items-center justify-between gap-2">

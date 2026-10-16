@@ -47,6 +47,12 @@ export const en: Dict = {
     reset: "Return to demo fixture",
     loaded: "Local package opened",
     error: "The local package could not be opened. Keep it on this device and try again.",
+    heightUnknown: "Height unknown",
+    heightInferred: "inferred from levels",
+    heightKnown: "from source",
+    heightSynthetic: "synthetic data",
+    heightUnknownNote:
+      "The source has no height or level data; the footprint is kept flat without a raised mass.",
     collapse: "Collapse private panel",
     expand: "Expand private panel",
     partsParentNote:

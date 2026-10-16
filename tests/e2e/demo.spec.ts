@@ -279,6 +279,142 @@ test("explicit local preview opens a valid synthetic package as one in-memory wo
   }
 });
 
+test("private diorama keeps the supplied ENU origin in frame when source geometry is offset", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 800, height: 600 });
+  const manifest = {
+    schemaVersion: "1.0",
+    datasetRevision: "synthetic-private-camera-origin",
+    units: "metres",
+    frameConvention: "ENU_X_EAST_Y_UP_NEG_Z_NORTH",
+    isSynthetic: true,
+    chunks: [],
+    assetHashes: {},
+    licences: ["Synthetic fixture"],
+    coverage: { quality: "synthetic", sourceCount: 1 },
+  };
+  const world = {
+    manifest,
+    roads: [
+      {
+        localId: "road-offset-from-origin",
+        polylineENU: [
+          [200, 0],
+          [260, 0],
+        ],
+        connectorIds: [],
+        roadClass: "residential",
+        carriagewayWidth: 5,
+        elevationLayer: 0,
+        direction: "both",
+        provenance: { source: "synthetic", quality: "synthetic" },
+      },
+    ],
+    buildings: [],
+    lots: [],
+  };
+
+  await page.goto("/?local-preview=1");
+  await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", /ready|fallback/, {
+    timeout: 30000,
+  });
+  await page.getByLabel("Mở gói world").setInputFiles({
+    name: "synthetic-offset-world.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify({ manifest, world })),
+  });
+  await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-world-mode", "private");
+
+  const marker = page.getByTestId("world-center-marker");
+  await expect(marker).toBeVisible();
+  const markerBox = await marker.boundingBox();
+  const viewportBox = await page.locator("#scene-root").boundingBox();
+  expect(markerBox).not.toBeNull();
+  expect(viewportBox).not.toBeNull();
+  expect(
+    Math.abs(markerBox!.x + markerBox!.width / 2 - (viewportBox!.x + viewportBox!.width / 2)),
+  ).toBeLessThan(25);
+});
+
+test("static scene stops drawing when idle", async ({ page }) => {
+  await page.setViewportSize({ width: 800, height: 600 });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/");
+  await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-world-mode", "fixture", {
+    timeout: 30000,
+  });
+  await page.waitForTimeout(700);
+
+  const scene = page.getByTestId("demo-scene");
+  const startFrames = Number(await scene.getAttribute("data-rendered-frames"));
+  await page.waitForTimeout(700);
+  const endFrames = Number(await scene.getAttribute("data-rendered-frames"));
+  expect(endFrames).toBe(startFrames);
+});
+
+test("private preview labels a no-level class-prior height as unknown", async ({ page }) => {
+  const manifest = {
+    schemaVersion: "1.0",
+    datasetRevision: "synthetic-height-evidence-e2e",
+    units: "metres",
+    frameConvention: "ENU_X_EAST_Y_UP_NEG_Z_NORTH",
+    isSynthetic: false,
+    chunks: [],
+    assetHashes: {},
+    licences: ["OpenStreetMap"],
+    coverage: { quality: "source_only", sourceCount: 1 },
+  };
+  const world = {
+    manifest,
+    roads: [],
+    buildings: [
+      {
+        localId: "building-unknown-height",
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              [-5, -5],
+              [5, -5],
+              [5, 5],
+              [-5, 5],
+              [-5, -5],
+            ],
+          ],
+        },
+        footprintKind: "footprint",
+        wallHeight: 6,
+        roofType: "unknown",
+        provenance: { source: "osm", quality: "source_only" },
+        attributes: {
+          wallHeight: { source: "osm", quality: "inferred" },
+          levels: { source: "osm", quality: "unknown" },
+          roofType: { source: "osm", quality: "unknown" },
+        },
+      },
+    ],
+    lots: [],
+  };
+
+  await page.goto("/?local-preview=1");
+  await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", /ready|fallback/, {
+    timeout: 30000,
+  });
+  await page.getByLabel("Mở gói world").setInputFiles({
+    name: "private-unknown-height.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(JSON.stringify({ manifest, world })),
+  });
+  await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-world-mode", "private");
+  const buildingSelect = page.getByLabel("Chọn công trình");
+  await expect(buildingSelect.locator('option[value="building-unknown-height"]')).toContainText(
+    "Chiều cao chưa biết",
+  );
+  await buildingSelect.selectOption("building-unknown-height");
+  await expect(page.getByRole("note")).toContainText("giữ footprint và không dựng khối cao");
+});
+
 test("local preview editor: edit, geometry gate, undo/redo, road edit, export and reload", async ({
   page,
 }) => {
@@ -373,13 +509,13 @@ test("local preview editor: edit, geometry gate, undo/redo, road edit, export an
   await buildingSelect.selectOption("editor-house");
   await page.getByTestId("private-world-panel").locator('input[type="number"]').first().fill("9.5");
   await page.getByRole("button", { name: "Lưu sửa" }).click();
-  await expect(buildingSelect).toContainText("9.5m");
+  await expect(buildingSelect).toContainText("9.5 m");
 
   // 2) Undo returns to the source value, redo restores the edit.
   await page.getByRole("button", { name: "Undo" }).click();
-  await expect(buildingSelect).toContainText("6.0m");
+  await expect(buildingSelect).toContainText("6.0 m");
   await page.getByRole("button", { name: "Redo" }).click();
-  await expect(buildingSelect).toContainText("9.5m");
+  await expect(buildingSelect).toContainText("9.5 m");
 
   // 3) Geometry gate: a footprint invading the confirmed empty lot must be refused
   // with a coded error, keeping the last valid world rendered.
@@ -458,6 +594,6 @@ test("local preview editor: edit, geometry gate, undo/redo, road edit, export an
     buffer: Buffer.from(pkgText),
   });
   await expect(page.getByText("Đã mở gói cục bộ")).toBeVisible();
-  await expect(buildingSelect).toContainText("6.0m");
+  await expect(buildingSelect).toContainText("6.0 m");
   await expect(roadSelect).toContainText("5m");
 });

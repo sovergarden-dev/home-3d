@@ -76,6 +76,7 @@ export interface BuildingPart {
   localId: string;
   geometry: SurfaceGeometry;
   baseElevation?: number;
+  /** 0 with attributes.wallHeight.quality="unknown" means no measured wall height is available. */
   wallHeight: number;
   roofHeight?: number;
   levels?: number;
@@ -89,6 +90,7 @@ export interface Building {
   geometry: SurfaceGeometry;
   footprintKind: FootprintKind;
   baseElevation?: number;
+  /** 0 with attributes.wallHeight.quality="unknown" means no measured wall height is available. */
   wallHeight: number;
   roofHeight?: number;
   levels?: number;

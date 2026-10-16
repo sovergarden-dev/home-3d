@@ -39,6 +39,12 @@ export const vi = {
     reset: "Trở về fixture demo",
     loaded: "Đã mở gói cục bộ",
     error: "Không thể mở gói cục bộ. Giữ gói riêng trên thiết bị và thử lại.",
+    heightUnknown: "Chiều cao chưa biết",
+    heightInferred: "ước tính từ số tầng",
+    heightKnown: "theo nguồn",
+    heightSynthetic: "dữ liệu tổng hợp",
+    heightUnknownNote:
+      "Nguồn chưa có chiều cao hoặc số tầng; giữ footprint và không dựng khối cao.",
     collapse: "Thu gọn bảng riêng",
     expand: "Mở bảng riêng",
     partsParentNote:
