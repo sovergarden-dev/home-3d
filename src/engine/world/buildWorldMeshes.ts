@@ -15,6 +15,8 @@ import type {
   WorldData,
 } from "@/world/schema";
 import { assessWallHeight } from "@/world/wallHeight";
+import { confidenceColor } from "@/engine/confidence/wallConfidence";
+import { createBuildingLabelBatches } from "@/engine/world/buildingLabels";
 
 type Disposable = { dispose: () => void };
 type LayerName = "roads" | "buildings" | "trees" | "props" | "labels";
@@ -24,6 +26,8 @@ export interface WorldMeshBundle {
   layers: Record<LayerName, THREE.Group>;
   setLayerVisible: (layer: LayerName, visible: boolean) => void;
   setRoadWet: (wet: boolean) => void;
+  setConfidenceVisible: (visible: boolean) => void;
+  setSelectedFeature: (featureId: string | null) => void;
   dispose: () => void;
 }
 
@@ -274,7 +278,12 @@ function addBuilding(
   }
   const buildingGroup = new THREE.Group();
   buildingGroup.name = `building:${building.localId}`;
-  buildingGroup.userData = { localId: building.localId, quality: building.provenance.quality };
+  buildingGroup.userData = {
+    localId: building.localId,
+    quality: building.provenance.quality,
+    featureId: building.localId,
+    featureType: "building",
+  };
   const material = materialFactory(colorFor(building.localId), 0.82, 0.04);
   const baseElevation = building.baseElevation ?? 0;
   const renderables = building.parts?.length
@@ -310,6 +319,10 @@ function addBuilding(
     );
     shell.name = `building-part:${part.localId}`;
     shell.userData["wallHeightStatus"] = part.heightAssessment.status;
+    shell.userData["featureId"] = part.localId;
+    shell.userData["featureType"] = building.parts?.length ? "building-part" : "building";
+    if (building.parts?.length) shell.userData["parentFeatureId"] = building.localId;
+    shell.userData["confidence"] = part.heightAssessment.status;
     const topY = part.baseElevation + renderedHeight;
     if (
       part.heightAssessment.status !== "unknown" &&
@@ -594,7 +607,12 @@ function addRoad(
   if (road.polylineENU.length < 2 || !road.carriagewayWidth) return null;
   const roadGroup = new THREE.Group();
   roadGroup.name = `road:${road.localId}`;
-  roadGroup.userData = { localId: road.localId, elevationLayer: road.elevationLayer };
+  roadGroup.userData = {
+    localId: road.localId,
+    elevationLayer: road.elevationLayer,
+    featureId: road.localId,
+    featureType: "road",
+  };
   const halfCarriageway = road.carriagewayWidth / 2;
   const left = offsetPolyline(road.polylineENU, halfCarriageway);
   const right = offsetPolyline(road.polylineENU, -halfCarriageway);
@@ -759,6 +777,12 @@ export function buildWorldMeshes(
     return material;
   };
   const roadMeshes = new Map<RoadSegment, THREE.Mesh>();
+  const confidenceOriginals = new Map<THREE.Mesh, THREE.Material | THREE.Material[]>();
+  const confidenceVariants = new Map<string, THREE.Material>();
+  let disposed = false;
+  let confidenceVisible = false;
+  let selectedFeatureId: string | null = null;
+  const buildingLabels: Array<{ text: string; position: Position2 }> = [];
   world.roads.forEach((road) => {
     const mesh = addRoad(road, layers.roads, roadMaterialFactory, disposables);
     if (mesh) roadMeshes.set(road, mesh);
@@ -774,17 +798,74 @@ export function buildWorldMeshes(
     );
     if (!building.hidden) {
       const centroid = surfaceCentroid(building.geometry);
-      layers.labels.add(createLabelSprite(building.localId, centroid, disposables));
+      buildingLabels.push({ text: building.localId, position: centroid });
     }
   });
+  const buildingLabelBatches = createBuildingLabelBatches(buildingLabels, disposables);
+  if (buildingLabelBatches) {
+    layers.labels.add(buildingLabelBatches.group);
+  } else {
+    buildingLabels.forEach(({ text, position }) => {
+      layers.labels.add(createLabelSprite(text, position, disposables));
+    });
+  }
   world.lots.forEach((lot) => {
     if (lot.status !== "empty") return;
     const marker = createLabelSprite(lot.localId, surfaceCentroid(lot.geometry), disposables);
     marker.name = `label:${lot.localId}`;
+    marker.userData["featureId"] = lot.localId;
+    marker.userData["featureType"] = "lot";
     layers.labels.add(marker);
   });
   addTrees(world, layers.trees, materialFactory, disposables);
   addProps(world, layers.props, materialFactory, disposables);
+
+  group.traverse((object) => {
+    if (!(object instanceof THREE.Mesh)) return;
+    let owner: THREE.Object3D | null = object;
+    while (owner && owner !== group && !owner.userData["featureId"]) owner = owner.parent;
+    if (owner?.userData["featureId"]) confidenceOriginals.set(object, object.material);
+  });
+
+  function updatePresentation() {
+    confidenceOriginals.forEach((original, mesh) => {
+      let owner: THREE.Object3D | null = mesh;
+      let status: "known" | "inferred" | "synthetic" | "unknown" | undefined;
+      let selected = false;
+      while (owner && owner !== group) {
+        status ??= owner.userData["confidence"] as typeof status;
+        if (selectedFeatureId !== null && owner.userData["featureId"] === selectedFeatureId)
+          selected = true;
+        owner = owner.parent;
+      }
+      if (!selected && !(confidenceVisible && status)) {
+        mesh.material = original;
+        return;
+      }
+      const variants = (Array.isArray(original) ? original : [original]).map((material) => {
+        const key = `${material.uuid}:${confidenceVisible ? (status ?? "none") : "none"}:${selected}`;
+        let variant = confidenceVariants.get(key);
+        if (!variant) {
+          variant = material.clone();
+          if (variant instanceof THREE.MeshStandardMaterial) {
+            if (confidenceVisible && status) variant.color.set(confidenceColor(status));
+            if (selected) {
+              variant.emissive.set("#c99422");
+              variant.emissiveIntensity = 0.4;
+            }
+          }
+          confidenceVariants.set(key, variant);
+        }
+        if (
+          variant instanceof THREE.MeshStandardMaterial &&
+          material instanceof THREE.MeshStandardMaterial
+        )
+          variant.roughness = material.roughness;
+        return variant;
+      });
+      mesh.material = Array.isArray(original) ? variants : variants[0]!;
+    });
+  }
 
   return {
     group,
@@ -795,12 +876,25 @@ export function buildWorldMeshes(
     setRoadWet(wet) {
       const roughness = wet ? 0.32 : 0.92;
       roadMeshes.forEach((mesh) => {
-        if (mesh.material instanceof THREE.MeshStandardMaterial) {
-          mesh.material.roughness = roughness;
+        const original = confidenceOriginals.get(mesh) ?? mesh.material;
+        if (original instanceof THREE.MeshStandardMaterial) {
+          original.roughness = roughness;
         }
       });
+      updatePresentation();
+    },
+    setConfidenceVisible(visible) {
+      confidenceVisible = visible;
+      updatePresentation();
+    },
+    setSelectedFeature(featureId) {
+      selectedFeatureId = featureId;
+      updatePresentation();
     },
     dispose() {
+      if (disposed) return;
+      disposed = true;
+      confidenceVariants.forEach((material) => material.dispose());
       disposables.forEach((disposable) => disposable.dispose());
       group.removeFromParent();
       group.clear();

@@ -11,6 +11,8 @@ export interface PlanMeasurement {
   revision: number;
 }
 
+export type CameraFrame = "home" | "core" | "full";
+
 /**
  * Single source of truth shared by the UI overlay and the future 3D engine.
  * The map uses the supplied ENU origin; confirming a point does not confirm a surveyed parcel boundary.
@@ -30,6 +32,7 @@ export interface AppState {
   loadingProgress: number;
   sceneStatus: "loading" | "ready" | "fallback";
   viewReset: number;
+  cameraFrame: { kind: CameraFrame; request: number };
   showTrees: boolean;
   showLabels: boolean;
   planMeasurement: PlanMeasurement | null;
@@ -49,6 +52,7 @@ export interface AppState {
   zoomOut: () => void;
   /** Restore the default camera state without changing the world origin. */
   resetView: () => void;
+  requestCameraFrame: (kind: CameraFrame) => void;
   toggleSound: () => void;
   toggleTrees: () => void;
   toggleLabels: () => void;
@@ -74,6 +78,7 @@ export const useAppStore = create<AppState>((set) => ({
   loadingProgress: 0,
   sceneStatus: "loading",
   viewReset: 0,
+  cameraFrame: { kind: "home", request: 0 },
   showTrees: true,
   showLabels: true,
   planMeasurement: null,
@@ -102,6 +107,8 @@ export const useAppStore = create<AppState>((set) => ({
   zoomOut: () => set((s) => ({ zoom: Math.max(0.25, +(s.zoom / 1.25).toFixed(3)) })),
   resetView: () =>
     set((s) => ({ zoom: 1, heading: 0, viewMode: "diorama", viewReset: s.viewReset + 1 })),
+  requestCameraFrame: (kind) =>
+    set((s) => ({ cameraFrame: { kind, request: s.cameraFrame.request + 1 } })),
   toggleSound: () => set((s) => ({ soundOn: !s.soundOn })),
   toggleTrees: () => set((s) => ({ showTrees: !s.showTrees })),
   toggleLabels: () => set((s) => ({ showLabels: !s.showLabels })),

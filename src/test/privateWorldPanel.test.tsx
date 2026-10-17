@@ -69,6 +69,10 @@ function openPackage(world: WorldData, overrides?: WorldOverrideDocument) {
   );
 }
 
+function openAdvanced() {
+  fireEvent.click(screen.getByRole("button", { name: "Biên tập nâng cao" }));
+}
+
 function privateSnapshot() {
   const snapshot = worldDataProvider.getSnapshot();
   if (snapshot.mode !== "private") throw new Error("PRIVATE_PACKAGE_NOT_OPEN");
@@ -89,14 +93,15 @@ describe("local private preview panel", () => {
     render(<PrivateWorldPanel enabled />);
     const file = new File(["{ bad"], "invalid-world.json", { type: "application/json" });
     fireEvent.change(screen.getByLabelText("Mở gói world"), { target: { files: [file] } });
-    expect(
-      await screen.findByText("Không thể mở gói cục bộ. Giữ gói riêng trên thiết bị và thử lại."),
-    ).toBeVisible();
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Không thể mở gói cục bộ. Giữ gói riêng trên thiết bị và thử lại.",
+    );
   });
 
   it("clears undo history when switching private packages and preserves redo after an invalid edit", () => {
     act(() => openPackage(testWorld("building-shared-id", 6)));
     render(<PrivateWorldPanel enabled />);
+    openAdvanced();
     const selectBuilding = screen.getByLabelText("Chọn công trình");
     fireEvent.change(selectBuilding, { target: { value: "building-shared-id" } });
     const height = screen.getByLabelText("Chiều cao (m)");
@@ -108,6 +113,7 @@ describe("local private preview panel", () => {
     expect(screen.getByText("Undo")).toBeVisible();
 
     act(() => openPackage(testWorld("building-shared-id", 20)));
+    openAdvanced();
     expect(privateSnapshot().world.buildings[0]?.wallHeight).toBe(20);
     expect(screen.queryByText("Undo")).toBeNull();
 
@@ -132,10 +138,11 @@ describe("local private preview panel", () => {
   it("edits a rendered building part and disables inert parent-height controls", () => {
     act(() => openPackage(testWorld("building-with-part", 6, true)));
     render(<PrivateWorldPanel enabled />);
+    openAdvanced();
     fireEvent.change(screen.getByLabelText("Chọn công trình"), {
       target: { value: "building-with-part" },
     });
-    expect(screen.getByTestId("building-part-editor")).toBeVisible();
+    expect(screen.getByLabelText("Chọn phần công trình")).toBeVisible();
     expect(screen.getByLabelText("Chiều cao (m)")).toBeDisabled();
 
     fireEvent.change(screen.getByLabelText("Chọn phần công trình"), {
@@ -153,6 +160,7 @@ describe("local private preview panel", () => {
   it("syncs the selected part editor fields after undo and redo", () => {
     act(() => openPackage(testWorld("building-with-part", 6, true)));
     render(<PrivateWorldPanel enabled />);
+    openAdvanced();
     fireEvent.change(screen.getByLabelText("Chọn công trình"), {
       target: { value: "building-with-part" },
     });
@@ -207,6 +215,7 @@ describe("local private preview panel", () => {
     };
     act(() => openPackage(world, imported));
     render(<PrivateWorldPanel enabled />);
+    openAdvanced();
     fireEvent.change(screen.getByLabelText("Chọn công trình"), {
       target: { value: "building-imported-fields" },
     });
@@ -253,6 +262,7 @@ describe("local private preview panel", () => {
     };
     act(() => openPackage(world, imported));
     render(<PrivateWorldPanel enabled />);
+    openAdvanced();
     fireEvent.change(screen.getByLabelText("Chọn công trình"), {
       target: { value: "building-imported-part-fields" },
     });
@@ -324,6 +334,7 @@ describe("local private preview panel", () => {
     };
     act(() => openPackage(world, imported));
     render(<PrivateWorldPanel enabled />);
+    openAdvanced();
     fireEvent.change(screen.getByLabelText("Chọn tuyến đường"), { target: { value: "road-r" } });
     fireEvent.change(screen.getByLabelText("Bề rộng đường"), { target: { value: "8" } });
     fireEvent.click(screen.getByRole("button", { name: "Lưu đường" }));

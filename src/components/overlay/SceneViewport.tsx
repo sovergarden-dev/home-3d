@@ -1,4 +1,4 @@
-import { ClientOnly } from "@tanstack/react-router";
+import { ClientOnly, useBlocker } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { centerMarkerLabels } from "@/components/overlay/centerMarkerLabels";
 import { PrivateWorldPanel } from "@/components/overlay/PrivateWorldPanel";
@@ -8,6 +8,18 @@ import { worldDataProvider } from "@/world/privateWorldSession";
 
 function ViewportInner() {
   const t = useT();
+  useBlocker({
+    enableBeforeUnload: false,
+    shouldBlockFn: ({ current, next }) => {
+      const snapshot = worldDataProvider.getSnapshot();
+      return (
+        current.pathname !== next.pathname &&
+        snapshot.mode === "private" &&
+        snapshot.dirty &&
+        !window.confirm(t.localPreview.confirmLeave)
+      );
+    },
+  });
   const sceneStatus = useAppStore((s) => s.sceneStatus);
   const viewMode = useAppStore((s) => s.viewMode);
   const worldSnapshot = useSyncExternalStore(
@@ -28,10 +40,6 @@ function ViewportInner() {
   );
   const [attempt, setAttempt] = useState(0);
   const [failed, setFailed] = useState(false);
-  const [localPreview, setLocalPreview] = useState(false);
-  useEffect(() => {
-    setLocalPreview(new URLSearchParams(window.location.search).get("local-preview") === "1");
-  }, []);
   useEffect(() => {
     let cancelled = false;
     const store = useAppStore.getState();
@@ -102,7 +110,7 @@ function ViewportInner() {
         </div>
         <div className="mx-auto h-3 w-px bg-primary" />
       </div>
-      <PrivateWorldPanel enabled={localPreview} />
+      <PrivateWorldPanel enabled />
       {failed ? (
         <div className="absolute inset-0 grid place-items-center px-6">
           <div className="glass max-w-sm p-6 text-center" role="status">

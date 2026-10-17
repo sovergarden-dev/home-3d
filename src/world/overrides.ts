@@ -39,7 +39,7 @@ function setFieldProvenance(
   target.attributes = { ...target.attributes, [field]: structuredClone(fieldProvenance) };
 }
 
-function isProvenance(value: unknown): value is Provenance {
+export function isProvenance(value: unknown): value is Provenance {
   if (!isRecord(value)) return false;
   const sources: SourceKind[] = ["synthetic", "survey", "osm", "overture", "manual_override"];
   const qualities: QualityStatus[] = [
@@ -50,10 +50,101 @@ function isProvenance(value: unknown): value is Provenance {
     "unknown",
     "conflict",
   ];
+  const allowed = [
+    "source",
+    "quality",
+    "sourceNamespace",
+    "observedAt",
+    "sourceRevision",
+    "licence",
+  ];
   return (
+    Object.keys(value).every((field) => allowed.includes(field)) &&
     sources.includes(value["source"] as SourceKind) &&
-    qualities.includes(value["quality"] as QualityStatus)
+    qualities.includes(value["quality"] as QualityStatus) &&
+    allowed
+      .slice(2)
+      .every((field) => value[field] === undefined || typeof value[field] === "string")
   );
+}
+
+const BUILDING_PATCH_FIELDS = [
+  "baseElevation",
+  "wallHeight",
+  "roofHeight",
+  "levels",
+  "roofType",
+  "hidden",
+] as const;
+const PART_PATCH_FIELDS = [
+  "baseElevation",
+  "wallHeight",
+  "roofHeight",
+  "levels",
+  "roofType",
+] as const;
+const ROAD_PATCH_FIELDS = [
+  "polylineENU",
+  "connectorIds",
+  "baseElevation",
+  "carriagewayWidth",
+  "sidewalkWidths",
+  "medianWidth",
+  "direction",
+] as const;
+const ROOF_TYPES = ["flat", "terrace_tum", "gabled", "hipped", "corrugated", "unknown"];
+const DIRECTIONS = ["both", "forward", "reverse", "unknown"];
+function isFiniteNumber(value: unknown, minimum = -Infinity) {
+  return typeof value === "number" && Number.isFinite(value) && value >= minimum;
+}
+function isPatchFieldValue(field: string, value: unknown) {
+  if (field === "baseElevation") return isFiniteNumber(value);
+  if (field === "wallHeight" || field === "roofHeight") return isFiniteNumber(value, 0);
+  if (field === "levels") return typeof value === "number" && Number.isInteger(value) && value >= 0;
+  if (field === "roofType")
+    return typeof value === "string" && (ROOF_TYPES as readonly string[]).includes(value);
+  if (field === "hidden") return typeof value === "boolean";
+  if (field === "polylineENU")
+    return (
+      Array.isArray(value) &&
+      value.length >= 2 &&
+      value.every(
+        (point) =>
+          Array.isArray(point) &&
+          point.length === 2 &&
+          point.every((coordinate) => isFiniteNumber(coordinate)),
+      )
+    );
+  if (field === "connectorIds")
+    return Array.isArray(value) && value.every((id) => typeof id === "string");
+  if (field === "carriagewayWidth")
+    return isFiniteNumber(value, 0) && typeof value === "number" && value > 0;
+  if (field === "medianWidth") return isFiniteNumber(value, 0);
+  if (field === "sidewalkWidths")
+    return (
+      Array.isArray(value) && value.length === 2 && value.every((width) => isFiniteNumber(width, 0))
+    );
+  if (field === "direction")
+    return typeof value === "string" && (DIRECTIONS as readonly string[]).includes(value);
+  return false;
+}
+function validatePatchFields(
+  patch: Record<string, unknown>,
+  allowedFields: readonly string[],
+  overrideId: string,
+) {
+  for (const field of Object.keys(patch)) {
+    if (!allowedFields.includes(field))
+      return `OVERRIDE_PATCH_FIELD_UNSUPPORTED:${overrideId}:${field}`;
+    if (!isPatchFieldValue(field, patch[field]))
+      return `OVERRIDE_PATCH_FIELD_INVALID:${overrideId}:${field}`;
+  }
+  return null;
+}
+function hasExactKeys(value: Record<string, unknown>, keys: readonly string[]) {
+  const expected = [...keys].sort();
+  const actual = Object.keys(value).sort();
+  return actual.length === expected.length && actual.every((key, index) => key === expected[index]);
 }
 
 export function applyWorldOverrides(
@@ -128,6 +219,13 @@ export function applyWorldOverrides(
 
     const patch = override.patch;
     if (patch.operation === "patch_building") {
+      if (
+        !hasExactKeys(patch, ["operation", "featureId", "patch"]) ||
+        typeof patch.featureId !== "string"
+      ) {
+        issues.push(`OVERRIDE_PATCH_INVALID:${override.localId}`);
+        continue;
+      }
       const building = world.buildings.find((item) => item.localId === patch.featureId);
       if (!building) {
         issues.push(`OVERRIDE_TARGET_NOT_FOUND:${patch.featureId}`);
@@ -135,6 +233,11 @@ export function applyWorldOverrides(
       }
       if (!isRecord(patch.patch)) {
         issues.push(`OVERRIDE_PATCH_INVALID:${override.localId}`);
+        continue;
+      }
+      const fieldIssue = validatePatchFields(patch.patch, BUILDING_PATCH_FIELDS, override.localId);
+      if (fieldIssue) {
+        issues.push(fieldIssue);
         continue;
       }
       const renderedPartFields = [
@@ -157,6 +260,13 @@ export function applyWorldOverrides(
     }
 
     if (patch.operation === "replace_building_geometry") {
+      if (
+        !hasExactKeys(patch, ["operation", "featureId", "geometry"]) ||
+        typeof patch.featureId !== "string"
+      ) {
+        issues.push(`OVERRIDE_PATCH_INVALID:${override.localId}`);
+        continue;
+      }
       const building = world.buildings.find((item) => item.localId === patch.featureId);
       if (!building) {
         issues.push(`OVERRIDE_TARGET_NOT_FOUND:${patch.featureId}`);
@@ -179,6 +289,14 @@ export function applyWorldOverrides(
     }
 
     if (patch.operation === "patch_building_part") {
+      if (
+        !hasExactKeys(patch, ["operation", "buildingId", "partId", "patch"]) ||
+        typeof patch.buildingId !== "string" ||
+        typeof patch.partId !== "string"
+      ) {
+        issues.push(`OVERRIDE_PATCH_INVALID:${override.localId}`);
+        continue;
+      }
       const building = world.buildings.find((item) => item.localId === patch.buildingId);
       const part = building?.parts?.find((item) => item.localId === patch.partId);
       if (!building || !part) {
@@ -189,12 +307,25 @@ export function applyWorldOverrides(
         issues.push(`OVERRIDE_PATCH_INVALID:${override.localId}`);
         continue;
       }
+      const fieldIssue = validatePatchFields(patch.patch, PART_PATCH_FIELDS, override.localId);
+      if (fieldIssue) {
+        issues.push(fieldIssue);
+        continue;
+      }
       Object.assign(part, patch.patch);
       Object.keys(patch.patch).forEach((field) => setFieldProvenance(part, field, provenance));
       continue;
     }
 
     if (patch.operation === "replace_building_part_geometry") {
+      if (
+        !hasExactKeys(patch, ["operation", "buildingId", "partId", "geometry"]) ||
+        typeof patch.buildingId !== "string" ||
+        typeof patch.partId !== "string"
+      ) {
+        issues.push(`OVERRIDE_PATCH_INVALID:${override.localId}`);
+        continue;
+      }
       const building = world.buildings.find((item) => item.localId === patch.buildingId);
       const part = building?.parts?.find((item) => item.localId === patch.partId);
       if (!building || !part) {
@@ -214,6 +345,13 @@ export function applyWorldOverrides(
     }
 
     if (patch.operation === "patch_road") {
+      if (
+        !hasExactKeys(patch, ["operation", "featureId", "patch"]) ||
+        typeof patch.featureId !== "string"
+      ) {
+        issues.push(`OVERRIDE_PATCH_INVALID:${override.localId}`);
+        continue;
+      }
       const road = world.roads.find((item) => item.localId === patch.featureId);
       if (!road) {
         issues.push(`OVERRIDE_TARGET_NOT_FOUND:${patch.featureId}`);
@@ -223,12 +361,24 @@ export function applyWorldOverrides(
         issues.push(`OVERRIDE_PATCH_INVALID:${override.localId}`);
         continue;
       }
+      const fieldIssue = validatePatchFields(patch.patch, ROAD_PATCH_FIELDS, override.localId);
+      if (fieldIssue) {
+        issues.push(fieldIssue);
+        continue;
+      }
       Object.assign(road, patch.patch);
       Object.keys(patch.patch).forEach((field) => setFieldProvenance(road, field, provenance));
       continue;
     }
 
     if (patch.operation === "replace_lot_geometry") {
+      if (
+        !hasExactKeys(patch, ["operation", "featureId", "geometry"]) ||
+        typeof patch.featureId !== "string"
+      ) {
+        issues.push(`OVERRIDE_PATCH_INVALID:${override.localId}`);
+        continue;
+      }
       const lot = world.lots.find((item) => item.localId === patch.featureId);
       if (!lot) {
         issues.push(`OVERRIDE_TARGET_NOT_FOUND:${patch.featureId}`);

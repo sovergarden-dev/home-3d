@@ -178,7 +178,18 @@ test("Mặt bằng renders one orthographic world, measures from its camera and 
   await expect(scene).toHaveAttribute("data-active-worlds", "1");
   await expect(scene).toHaveAttribute("data-camera-type", "OrthographicCamera");
   await expect(scene).toHaveAttribute("data-plan-zenith", "true");
+  // Active-frame metrics must not be invented from initial idle renders.
+  const metricCanvas = page.locator("#scene-root canvas");
+  await metricCanvas.focus();
+  await page.mouse.move(640, 300);
+  await page.mouse.down();
+  for (let i = 0; i < 7; i++) {
+    await page.mouse.move(640 - i * 8, 300);
+    await page.waitForTimeout(60);
+  }
+  await page.mouse.up();
   await expect(scene).toHaveAttribute("data-rendered-frames", /[1-9]/);
+  await expect(scene).toHaveAttribute("data-frame-sample-count", /[1-9]/);
   await expect(scene).toHaveAttribute("data-frame-p95-ms", /[0-9]/);
   const ruler = page.getByTestId("plan-scale-ruler");
   await expect(ruler).toHaveAttribute("style", /width: [1-9]/);
@@ -546,6 +557,7 @@ test("local preview editor: edit, geometry gate, undo/redo, road edit, export an
   // 1) Edit wall height and save.
   const buildingSelect = page.getByLabel("Chọn công trình");
   await buildingSelect.selectOption("editor-house");
+  await page.getByRole("button", { name: "Biên tập nâng cao", exact: true }).click();
   await page.getByTestId("private-world-panel").locator('input[type="number"]').first().fill("9.5");
   await page.getByRole("button", { name: "Lưu sửa" }).click();
   await expect(buildingSelect).toContainText("9.5 m");
@@ -627,6 +639,8 @@ test("local preview editor: edit, geometry gate, undo/redo, road edit, export an
   ]);
 
   // 7) Reloading the raw package resets to the pristine source revision.
+  // A sidecar download is not a saved working package: explicitly confirm discard.
+  page.once("dialog", (dialog) => dialog.accept());
   await page.getByLabel("Mở gói world").setInputFiles({
     name: "synthetic-editor.json",
     mimeType: "application/json",
@@ -634,5 +648,6 @@ test("local preview editor: edit, geometry gate, undo/redo, road edit, export an
   });
   await expect(page.getByText("Đã mở gói cục bộ")).toBeVisible();
   await expect(buildingSelect).toContainText("6.0 m");
+  await page.getByRole("button", { name: "Biên tập nâng cao", exact: true }).click();
   await expect(roadSelect).toContainText("5m");
 });

@@ -167,7 +167,7 @@ test("H6 synthetic source → build → editor → export → source rebuild →
     buffer: Buffer.from(JSON.stringify(baseBuild.package)),
   });
   await expect(page.getByText("Đã mở gói cục bộ")).toBeVisible();
-  await expect(page.getByText("GÓI RIÊNG · XEM TRƯỚC")).toBeVisible();
+  await expect(page.getByText("DỮ LIỆU TỔNG HỢP", { exact: true })).toBeVisible();
   if (rendererReady) {
     await expect(sceneRoot.getByText("Điểm tham chiếu", { exact: true })).toBeVisible();
     await expect(sceneRoot.getByText("Vị trí do Syringa xác nhận", { exact: true })).toHaveCount(0);
@@ -195,6 +195,7 @@ test("H6 synthetic source → build → editor → export → source rebuild →
     });
   };
 
+  await page.getByRole("button", { name: "Biên tập nâng cao" }).click();
   const buildingSelect = page.getByLabel("Chọn công trình");
   await buildingSelect.selectOption(courtyard!.localId);
   if (rendererReady) await page.waitForTimeout(600);
@@ -340,12 +341,15 @@ test("H6 synthetic source → build → editor → export → source rebuild →
     quality: "inferred",
   });
 
+  // A sidecar is not a saved working package. Explicitly accept replacement.
+  page.once("dialog", (dialog) => dialog.accept());
   await page.getByLabel("Mở gói world").setInputFiles({
     name: "synthetic-h6-rebuilt-package.json",
     mimeType: "application/json",
     buffer: Buffer.from(JSON.stringify(rebuilt.package)),
   });
   await expect(page.getByText("Đã mở gói cục bộ")).toBeVisible();
+  await page.getByRole("button", { name: "Biên tập nâng cao" }).click();
   await buildingSelect.selectOption(parent!.localId);
   await partSelect.selectOption(part!.localId);
   await expect(partHeight).toHaveValue("5.5");
@@ -353,6 +357,9 @@ test("H6 synthetic source → build → editor → export → source rebuild →
   await expect(roadWidth).toHaveValue("8");
   await expect(page.getByRole("button", { name: "Undo" })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Redo" })).toHaveCount(0);
+  // Inspector has one active feature; select the part again after checking the road.
+  await buildingSelect.selectOption(parent!.localId);
+  await partSelect.selectOption(part!.localId);
   if (rendererReady) await page.waitForTimeout(600);
   await capture(
     "08-h6-parent-part-editor-after-rebuild.png",
@@ -434,7 +441,7 @@ test("H6 synthetic source → build → editor → export → source rebuild →
 
   if (captureEvidence && outputDirectory) {
     await page.setViewportSize({ width: 390, height: 844 });
-    await expect(page.getByTestId("building-part-editor")).toBeVisible();
+    await expect(partSelect).toBeVisible();
     await planMode.click();
     await expect(planMode).toHaveAttribute("aria-checked", "true");
     await expect(page.getByTestId("plan-scale-bar")).toBeVisible();
@@ -468,7 +475,7 @@ test("H6 synthetic source → build → editor → export → source rebuild →
       "Synthetic Plan view at 390x844 after collapse; Mặt bằng remains keyboard-accessible and north/metric scale are visible.",
     );
     await privatePanel.getByRole("button", { name: "Mở bảng riêng" }).click();
-    await expect(page.getByTestId("building-part-editor")).toBeVisible();
+    await expect(partSelect).toBeVisible();
     await capture(
       "09-h6-parent-part-editor-mobile.png",
       "Mobile viewport showing the synthetic rebuilt package and active part editor after undo/redo; panel bounds remain inside viewport.",
@@ -506,7 +513,7 @@ test("H6 synthetic source → build → editor → export → source rebuild →
       "Synthetic Plan view at 740x390 after a normal collapse click; Plan, north, and metric scale remain accessible.",
     );
     await privatePanel.getByRole("button", { name: "Mở bảng riêng" }).click();
-    await expect(page.getByTestId("building-part-editor")).toBeVisible();
+    await expect(partSelect).toBeVisible();
     const exportedPath = join(outputDirectory, "14-h6-override-roundtrip-export.json");
     await writeFile(exportedPath, JSON.stringify(exported, null, 2));
     const fixtureSha256 = createHash("sha256")

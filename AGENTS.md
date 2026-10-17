@@ -10,15 +10,26 @@
 <!-- LOVABLE:END -->
 
 ## Project rules
-- All map/scene state lives in the single zustand store `src/state/appStore.ts`; UI controls only read/write it so a future 3D engine can subscribe without touching UI.
-- `SceneViewport` mounts a client-only fictional Three.js demo in `#scene-root`; all geographic/private data is absent.
+
+- The shared zustand store `src/state/appStore.ts` contains safe UI controls only. Package world, overrides, selection and marker opt-in belong to the client session; never SSR-serialize private world into the shared store.
+- `SceneViewport` mounts one client-only Three.js world in `#scene-root`: fictional demo by default, or an explicitly opened local package. Private data stays in the tab and explicit local downloads only.
 - UI strings come from `src/i18n/{vi,en}.ts` via `useT()`; never hardcode copy in components.
 
 # Phố Nhà Mình — hướng dẫn cho agent
 
 Web app bản đồ 3D khu phố quanh nhà Syringa, nhà làm tâm. Kế hoạch gốc là trang Notion "Phố Nhà Mình — Siêu kế hoạch map 3D"; `docs/PLAN.md` là bản sao, lệch nhau thì theo Notion. Chỉ làm đúng pha hoặc việc được giao. Demo 1 là ngoại lệ lát cắt xuyên pha được chủ dự án cho phép: bản chạy thử hư cấu trước, chi tiết sau. Xem `docs/DECISIONS.md` và `docs/BACKLOG.md`; không tự thêm dữ liệu thật.
 
-Khối LOVABLE ở đầu file do Lovable quản lý: giữ nguyên. Mục "Project rules" do Lovable viết khi dựng vỏ, vẫn đúng, Demo 1 đã thay câu placeholder bằng engine Three.js client-only; các pha 3D đầy đủ vẫn chưa hoàn tất.
+Khối LOVABLE ở đầu file do Lovable quản lý: giữ nguyên. Quy tắc state phía trên đã đồng bộ cho H6; không dùng mô tả Demo 1 lịch sử để đưa world riêng trở lại store SSR.
+
+## Chỉ đạo hiện hành — H6 một gói tích hợp
+
+- Nguồn scope: Notion “H6 — Cue làm trọn gói, nghiệm thu một lần”, W0–W7 và T01–T20. Cùng nhánh `feat/h6-pho-that-mat-bang` / PR #3; bảo toàn sửa đã nhận ở baseline `07175b33ece59d57023dda32a45be322ddcebf9d`.
+- Cue triển khai, tự kiểm và sửa đến ổn định; một receipt tổng cho Notion AI review kỹ thuật, rồi Syringa nghiệm thu tổng thể một lần. Hermes tạm dừng H6. Không giao vòng QA nhỏ cho Syringa.
+- Scope: mở gói UI, định hướng/chất lượng dữ liệu, editor tối thiểu, xuất bản làm việc mở lại, hiệu năng/lifecycle, privacy và tài liệu. Không kéo thêm P2–P13, nguồn mới, GIS tổng quát, cloud hoặc walking/collision.
+- Không đổi tâm/hình học nguồn để che lỗi render. Ranh chưa đo; minh họa lô là UI opt-in theo phiên, không polygon/nhà/công trường. Không đoán height/roof/frontage.
+- Repo/CI/PR/ảnh bằng chứng chỉ dùng fixture tổng hợp độc lập. ENU thật vẫn riêng tư. Canonical package/snapshot giữ nguyên; không re-intake hoặc đóng ZIP mới.
+- Không merge, auto-merge, Publish hay deploy. CI cuối phải workflow_dispatch đúng full final head và đủ bốn jobs; không thay bằng run PR. GPU vật lý/Preview chưa kiểm ghi NOT_VERIFIED.
+- Runbook hiện hành: `docs/H6_PRIVATE_WORLD_RUNBOOK.md`. Những mô tả Demo 1 bên dưới là lịch sử hoặc ràng buộc nền, không ghi đè scope H6 này.
 
 ## Sự thật cố định
 
@@ -27,7 +38,7 @@ Khối LOVABLE ở đầu file do Lovable quản lý: giữ nguyên. Mục "Proj
 - Khu nhà chưa có Google Photorealistic 3D. Phố mình (tự dựng từ dữ liệu mở và khảo sát) là lớp chính; Phố thật chỉ mở Google Maps qua đường link.
 - OSM ở khu này gần như không có số tầng: chiều cao lấy từ khảo sát, Open Buildings bù chỗ thiếu.
 
-## Vai trò (theo trang Notion "Bảng giao việc Hermes và Cue")
+## Vai trò lịch sử trước H6 (không thay phân vai hiện hành)
 
 - **Syringa** (chủ dự án): giữ mọi key, token, cấu hình riêng; merge; upload R2; deploy bản riêng tư; bấm Publish trên Lovable.
 - **Notion AI**: lập kế hoạch, viết code và patch, review PR, xác nhận PR merge được hay chưa.
@@ -48,7 +59,7 @@ Khối LOVABLE ở đầu file do Lovable quản lý: giữ nguyên. Mục "Proj
 - Dự án Lovable bắt buộc commit `.env`, nên `.env` chỉ chứa giá trị công khai, không nhạy cảm.
 - "Cấu hình riêng" (toạ độ gốc, polygon lô, URL riêng, key nếu có) chỉ có ở bản riêng tư: Worker secret trên Cloudflare của Syringa, sau Cloudflare Access. Khi dev: file local gitignored (ví dụ `.dev.vars` hoặc `*.local`) do Syringa điền. Không hard-code, không commit, không in ra log.
 - Bản Lovable (link công khai) luôn chạy chế độ demo: không cấu hình riêng, không dữ liệu thật, không ảnh riêng. Thiếu cấu hình riêng thì chạy demo (gốc giả, ẩn Phố thật), không crash.
-- Toạ độ trong repo chỉ là ENU tương đối (mét). Gốc lat/lng chỉ đến từ cấu hình riêng.
+- Repo chỉ giữ toạ độ hư cấu/tổng hợp. ENU tương đối của khu thật cũng riêng tư, không đưa vào repo/build/CI. Gốc lat/lng chỉ đến từ cấu hình riêng.
 - Mọi ảnh đi qua pipeline phải xoá EXIF/GPS, có test.
 - Không đụng Google Cloud Console, Cloudflare, cài đặt Lovable, DNS, billing. Viết script hoặc hướng dẫn để Syringa tự chạy.
 - Không ghi secret, token, toạ độ, địa chỉ vào code, log, PR, issue, Notion.
@@ -75,7 +86,7 @@ Khối LOVABLE ở đầu file do Lovable quản lý: giữ nguyên. Mục "Proj
 
 - App: mặc định của Lovable: TanStack Start, React 19, TypeScript, Tailwind 4, shadcn/ui, vite.
 - 3D (từ P3): three, @react-three/fiber 9, @react-three/drei 10 (khớp React 19). WebGL2 là nền, chưa dùng WebGPU.
-- State: zustand. `src/state/appStore.ts` là nguồn duy nhất; UI và engine chỉ giao tiếp qua store.
+- State: zustand cho UI an toàn; provider phiên client cho world/overrides/selection riêng. Không đưa world riêng vào payload SSR.
 - Khác: 3d-tiles-renderer (tileset của mình), camera-controls (qua drei), postprocessing + n8ao, three-mesh-bvh, suncalc, âm lịch Hồ Ngọc Đức (múi giờ +7), Open-Meteo.
 - Giờ hiển thị luôn theo `Asia/Ho_Chi_Minh`, không theo múi giờ của máy hay server.
 - Kiểm thử: vitest (đã có); @playwright/test, size-limit, gitleaks (thêm ở P2).
@@ -88,11 +99,11 @@ Khối LOVABLE ở đầu file do Lovable quản lý: giữ nguyên. Mục "Proj
 
 ## Ngân sách hiệu năng (vượt = chưa xong)
 
-| Tier | DPR tối đa | Draw calls | Tam giác hiển thị | Bộ nhớ GPU | FPS |
-|---|---|---|---|---|---|
-| low | 1.0 | ≤ 120 | ≤ 400k | ≤ 200 MB | ≥ 30 |
-| mid | 1.5 | ≤ 200 | ≤ 800k | ≤ 350 MB | ≥ 55 |
-| high | 2.0 | ≤ 400 | ≤ 3M | ≤ 1 GB | 60 |
+| Tier | DPR tối đa | Draw calls | Tam giác hiển thị | Bộ nhớ GPU | FPS  |
+| ---- | ---------- | ---------- | ----------------- | ---------- | ---- |
+| low  | 1.0        | ≤ 120      | ≤ 400k            | ≤ 200 MB   | ≥ 30 |
+| mid  | 1.5        | ≤ 200      | ≤ 800k            | ≤ 350 MB   | ≥ 55 |
+| high | 2.0        | ≤ 400      | ≤ 3M              | ≤ 1 GB     | 60   |
 
 - JS của vỏ ≤ 250 KB gzip; engine tách chunk. Không frame nào quá 50 ms khi đang xoay/zoom ở tier mid.
 - Dồn việc nặng vào lúc tải: precompile shader cho mọi trạng thái (đêm, mưa, lễ hội), upload GPU, dựng BVH trước khi cho thao tác.

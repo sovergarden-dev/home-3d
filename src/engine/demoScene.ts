@@ -18,10 +18,18 @@ import {
   type PrivateWorldPlanFrame,
 } from "./view/privateWorldPlanFrame";
 import { TEMPORARY_LOT_ILLUSTRATION_POSITION } from "./view/temporaryLotIllustration";
+import { projectMarkerAndCull } from "./view/cameraFrame";
 import { useAppStore } from "@/state/appStore";
 import { surfaceCentroid } from "@/world/geometry";
 import { worldDataProvider } from "@/world/privateWorldSession";
 import type { WorldData } from "@/world/schema";
+import { pickFeature, isTap } from "./interaction/featurePicking";
+import {
+  isConfidenceVisible,
+  getSelectedFeature,
+  selectFeature,
+  subscribeFeatureSelection,
+} from "@/world/featureSelection";
 
 export interface SceneRuntime {
   setLabel: (label: string) => void;
@@ -183,11 +191,13 @@ export function createDemoScene(
   let homeCentre = fallbackWorld ? worldHomeCentre(fallbackWorld) : new THREE.Vector3();
   const planCentre = homeCentre.clone();
   let span = initialPerspectiveFrame?.span ?? 100;
+  let fullPlanSpan: number | null = null;
   let privatePlanFrame: PrivateWorldPlanFrame | null =
     currentWorld.mode === "private" && fallbackWorld
       ? derivePrivateWorldPlanFrame(fallbackWorld)
       : null;
   function resetPlanCentre() {
+    fullPlanSpan = null;
     if (privatePlanFrame) {
       planCentre.set(privatePlanFrame.centre.x, 0, privatePlanFrame.centre.z);
       return;
@@ -196,6 +206,7 @@ export function createDemoScene(
   }
   let planPanRevision = 0;
   const planPointers = new Map<number, THREE.Vector2>();
+  const planPointerStarts = new Map<number, THREE.Vector2>();
   let lastPinchDistance: number | null = null;
   let disposed = false;
   let animationFrame = 0;
@@ -208,6 +219,10 @@ export function createDemoScene(
   let lastMetricsSnapshotAt = 0;
   let updatingControls = false;
   let syncingControlsState = false;
+  let interactionActive = false;
+  let interactionTimer = 0;
+  let pointerGestureWasMultiTouch = false;
+  let lastPackageEpoch = currentWorld.packageEpoch;
   const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   function mountWorld() {
@@ -216,6 +231,8 @@ export function createDemoScene(
     if (!("world" in snapshot)) return;
     worldBundle?.dispose();
     worldBundle = buildWorldMeshes(snapshot.world, materialFactory);
+    worldBundle.setConfidenceVisible(isConfidenceVisible());
+    worldBundle.setSelectedFeature(getSelectedFeature()?.featureId ?? null);
     scene.add(worldBundle.group);
     const frame = perspectiveFrame(snapshot.world, snapshot.mode === "private");
     centre = frame.centre;
@@ -226,6 +243,8 @@ export function createDemoScene(
     span = frame.span;
     planPanRevision = 0;
     lastWorldRevision = snapshot.revision;
+    if (snapshot.packageEpoch !== lastPackageEpoch) selectFeature(null);
+    lastPackageEpoch = snapshot.packageEpoch;
     // Effects anchor to the mounted world frame instead of a fixed origin.
     festivalGroup.position.set(homeCentre.x, 0, homeCentre.z);
     rainPoints.position.set(homeCentre.x, 0, homeCentre.z);
@@ -242,7 +261,7 @@ export function createDemoScene(
   }
 
   function planConfig(state = useAppStore.getState()): PlanCameraConfig {
-    const verticalSpanMetres = privatePlanFrame?.verticalSpanMetres ?? span;
+    const verticalSpanMetres = fullPlanSpan ?? privatePlanFrame?.verticalSpanMetres ?? span;
     host.dataset["planCoreVerticalSpanMetres"] = String(verticalSpanMetres);
     host.dataset["planCameraZoom"] = String(state.zoom);
     host.dataset["planVisibleVerticalSpanMetres"] = String(verticalSpanMetres / state.zoom);
@@ -393,8 +412,8 @@ export function createDemoScene(
     host.dataset["labelsVisible"] = String(state.showLabels);
   }
 
-  function render() {
-    if (disposed || !host.clientWidth || !host.clientHeight) return;
+  function render(activeAnimation = false) {
+    if (disposed || document.hidden || !host.clientWidth || !host.clientHeight) return;
     if (currentWorld.mode === "private-error" || !worldBundle) {
       marker.style.visibility = "hidden";
       useAppStore.getState().setPlanMeasurement(null);
@@ -406,7 +425,10 @@ export function createDemoScene(
     }
     renderer.render(scene, activeCamera);
     const renderedAt = performance.now();
-    frameMetrics.record(renderedAt);
+    frameMetrics.record(
+      renderedAt,
+      interactionActive || activeAnimation || rainPoints.visible ? "active" : "idle",
+    );
     if (lastMetricsSnapshotAt === 0 || renderedAt - lastMetricsSnapshotAt >= 250) {
       frameSnapshot = frameMetrics.snapshot();
       lastMetricsSnapshotAt = renderedAt;
@@ -420,18 +442,17 @@ export function createDemoScene(
     } else {
       markerPosition.set(homeCentre.x, 0.35, homeCentre.z);
     }
-    const markerWorld = markerPosition.project(activeCamera);
-    marker.style.transform = `translate(-50%, -100%) translate(${(markerWorld.x * 0.5 + 0.5) * host.clientWidth}px, ${(-markerWorld.y * 0.5 + 0.5) * host.clientHeight - 10}px)`;
-    marker.style.visibility =
-      Math.abs(markerWorld.x) < 0.94 && Math.abs(markerWorld.y) < 0.94 && markerWorld.z < 1
-        ? "visible"
-        : "hidden";
+    const projected = projectMarkerAndCull(activeCamera, markerPosition, -0.06);
+    marker.style.transform = `translate(-50%, -100%) translate(${projected.x * host.clientWidth}px, ${projected.y * host.clientHeight - 10}px)`;
+    marker.style.visibility = projected.visible ? "visible" : "hidden";
     host.dataset["drawCalls"] = String(renderer.info.render.calls);
     host.dataset["triangles"] = String(renderer.info.render.triangles);
     host.dataset["renderedFrames"] = String(frameSnapshot.renderedFrames);
     host.dataset["frameP50Ms"] = String(frameSnapshot.p50Ms ?? "");
     host.dataset["frameP95Ms"] = String(frameSnapshot.p95Ms ?? "");
     host.dataset["frameLongestMs"] = String(frameSnapshot.longestMs ?? "");
+    host.dataset["frameSampleCount"] = String(frameSnapshot.sampleCount);
+    host.dataset["idleRenderedFrames"] = String(frameMetrics.phaseSnapshot("idle").renderedFrames);
     host.dataset["worldMode"] = currentWorld.mode;
     host.dataset["worldRevision"] = String(currentWorld.revision);
     host.dataset["activeWorlds"] = worldBundle ? "1" : "0";
@@ -476,7 +497,7 @@ export function createDemoScene(
 
     const controlsChanged = controls.enabled ? updateControls() : false;
     if (controlsChanged || rainPoints.visible) {
-      render();
+      render(true);
       scheduleFrame();
     }
   }
@@ -516,12 +537,33 @@ export function createDemoScene(
     }
   }
 
+  function onControlStart() {
+    interactionActive = true;
+  }
+  function onControlEnd() {
+    interactionActive = false;
+    frameMetrics.reset();
+  }
+
+  function transientInteraction() {
+    interactionActive = true;
+    window.clearTimeout(interactionTimer);
+    interactionTimer = window.setTimeout(() => {
+      interactionActive = planPointers.size > 0;
+      if (!interactionActive) frameMetrics.reset();
+    }, 120);
+  }
+
   function onPlanPointerDown(event: PointerEvent) {
     if (!worldRenderable()) return;
-    if (useAppStore.getState().viewMode !== "topdown") return;
-    canvas.setPointerCapture(event.pointerId);
+    const isPlan = useAppStore.getState().viewMode === "topdown";
+    if (isPlan) canvas.setPointerCapture(event.pointerId);
+    if (planPointers.size === 0) pointerGestureWasMultiTouch = false;
+    interactionActive = true;
     planPointers.set(event.pointerId, new THREE.Vector2(event.clientX, event.clientY));
+    planPointerStarts.set(event.pointerId, new THREE.Vector2(event.clientX, event.clientY));
     if (planPointers.size === 2) {
+      pointerGestureWasMultiTouch = true;
       const [first, second] = [...planPointers.values()];
       lastPinchDistance = first && second ? first.distanceTo(second) : null;
     }
@@ -572,7 +614,31 @@ export function createDemoScene(
   }
 
   function onPlanPointerEnd(event: PointerEvent) {
+    const start = planPointerStarts.get(event.pointerId);
+    if (
+      start &&
+      planPointers.size === 1 &&
+      worldBundle &&
+      !pointerGestureWasMultiTouch &&
+      event.type !== "pointercancel" &&
+      isTap(start, new THREE.Vector2(event.clientX, event.clientY))
+    ) {
+      const rect = canvas.getBoundingClientRect();
+      const pointer = new THREE.Vector2(
+        ((event.clientX - rect.left) / rect.width) * 2 - 1,
+        -((event.clientY - rect.top) / rect.height) * 2 + 1,
+      );
+      const hiddenLayers = new Set<string>();
+      if (!worldBundle.layers.trees.visible) hiddenLayers.add("trees");
+      if (!worldBundle.layers.labels.visible) hiddenLayers.add("labels");
+      selectFeature(
+        pickFeature(new THREE.Raycaster(), pointer, activeCamera, worldBundle.group, hiddenLayers),
+      );
+    }
     planPointers.delete(event.pointerId);
+    planPointerStarts.delete(event.pointerId);
+    interactionActive = planPointers.size > 0;
+    if (!interactionActive) frameMetrics.reset();
     if (planPointers.size < 2) lastPinchDistance = null;
     if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
   }
@@ -581,6 +647,7 @@ export function createDemoScene(
     if (!worldRenderable()) return;
     if (useAppStore.getState().viewMode !== "topdown") return;
     event.preventDefault();
+    transientInteraction();
     const state = useAppStore.getState();
     state.setZoom(state.zoom * (event.deltaY < 0 ? 1.12 : 0.89));
   }
@@ -589,6 +656,7 @@ export function createDemoScene(
     cancelAnimationFrame(animationFrame);
     animationFrame = 0;
     lastFrame = 0;
+    frameMetrics.reset();
     applyEnvironment();
     if (!document.hidden && !disposed) {
       render();
@@ -600,14 +668,47 @@ export function createDemoScene(
     cancelAnimationFrame(animationFrame);
     animationFrame = 0;
     lastFrame = 0;
+    frameMetrics.reset();
     render();
     if (!motion.matches && !document.hidden && !disposed) scheduleFrame();
   }
 
   function onKey(event: KeyboardEvent) {
     if (!worldRenderable()) return;
-    if (event.target !== canvas || useAppStore.getState().viewMode === "topdown") return;
+    if (event.target !== canvas) return;
     const state = useAppStore.getState();
+    transientInteraction();
+    if (state.viewMode === "topdown") {
+      const key = event.key.toLowerCase();
+      const deltas: Record<string, readonly [number, number]> = {
+        arrowleft: [24, 0],
+        a: [24, 0],
+        arrowright: [-24, 0],
+        d: [-24, 0],
+        arrowup: [0, 24],
+        w: [0, 24],
+        arrowdown: [0, -24],
+        s: [0, -24],
+      };
+      const delta = deltas[key];
+      if (delta) {
+        event.preventDefault();
+        applyPlanPan(delta[0], delta[1]);
+      }
+      if (key === "r") {
+        event.preventDefault();
+        state.requestCameraFrame("core");
+      }
+      if (key === "+" || key === "=") {
+        event.preventDefault();
+        state.zoomIn();
+      }
+      if (key === "-") {
+        event.preventDefault();
+        state.zoomOut();
+      }
+      return;
+    }
     if (event.key === "ArrowLeft" || event.key.toLowerCase() === "a") {
       event.preventDefault();
       state.setHeading(state.heading - 8);
@@ -639,6 +740,8 @@ export function createDemoScene(
   const resizeObserver = new ResizeObserver(resize);
   resizeObserver.observe(host);
   controls.addEventListener("change", onControlChange);
+  controls.addEventListener("start", onControlStart);
+  controls.addEventListener("end", onControlEnd);
   document.addEventListener("visibilitychange", onVisibility);
   motion.addEventListener("change", onMotion);
   canvas.addEventListener("keydown", onKey);
@@ -657,6 +760,23 @@ export function createDemoScene(
       resetPlanCentre();
       planPanRevision += 1;
       host.dataset["planPanRevision"] = String(planPanRevision);
+    }
+    if (state.cameraFrame.request !== previous.cameraFrame.request) {
+      resetPlanCentre();
+      if (state.cameraFrame.kind === "full") {
+        if ("world" in currentWorld) {
+          planCentre.copy(worldCentre(currentWorld.world));
+          fullPlanSpan =
+            worldSpan(currentWorld.world) *
+            Math.max(1, host.clientHeight / Math.max(host.clientWidth, 1));
+        }
+        useAppStore.setState({ viewMode: "topdown", zoom: 1 });
+      } else if (state.cameraFrame.kind === "core") {
+        useAppStore.setState({ viewMode: "topdown", zoom: 1 });
+      }
+      planPanRevision += 1;
+      applyView(true);
+      return;
     }
     if (
       state.viewMode !== previous.viewMode ||
@@ -682,9 +802,19 @@ export function createDemoScene(
     }
   });
 
+  const unsubscribeConfidence = subscribeFeatureSelection(() => {
+    worldBundle?.setConfidenceVisible(isConfidenceVisible());
+    worldBundle?.setSelectedFeature(getSelectedFeature()?.featureId ?? null);
+    render();
+  });
+
   const unsubscribeWorld = worldDataProvider.subscribe((snapshot) => {
     if (disposed) return;
     currentWorld = snapshot;
+    if (snapshot.packageEpoch !== lastPackageEpoch) {
+      selectFeature(null);
+      lastPackageEpoch = snapshot.packageEpoch;
+    }
     if (snapshot.revision === lastWorldRevision) {
       render();
       return;
@@ -716,7 +846,7 @@ export function createDemoScene(
   renderer.compile(scene, activeCamera);
   render();
   bindCapture(() => {
-    if (!worldRenderable()) return null;
+    if (!worldRenderable() || document.hidden) return null;
     render();
     return canvas.toDataURL("image/png");
   });
@@ -730,10 +860,14 @@ export function createDemoScene(
       if (disposed) return;
       disposed = true;
       bindCapture(null);
+      window.clearTimeout(interactionTimer);
       cancelAnimationFrame(animationFrame);
       unsubscribeStore();
       unsubscribeWorld();
+      unsubscribeConfidence();
       resizeObserver.disconnect();
+      controls.removeEventListener("start", onControlStart);
+      controls.removeEventListener("end", onControlEnd);
       controls.dispose();
       audio.dispose();
       document.removeEventListener("visibilitychange", onVisibility);

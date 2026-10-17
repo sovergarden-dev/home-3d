@@ -1,14 +1,18 @@
 export interface FrameMetricsSnapshot {
   renderedFrames: number;
+  sampleCount: number;
   p50Ms: number | null;
   p95Ms: number | null;
   longestMs: number | null;
 }
 
 export interface FrameMetrics {
-  record: (timestampMs: number) => void;
+  record: (timestampMs: number, phase?: FramePhase) => void;
+  reset: (phase?: FramePhase) => void;
   snapshot: () => FrameMetricsSnapshot;
+  phaseSnapshot: (phase: FramePhase) => FrameMetricsSnapshot;
 }
+export type FramePhase = "active" | "idle" | "hidden";
 
 function percentile(samples: number[], percentileValue: number) {
   if (samples.length === 0) return null;
@@ -23,28 +27,51 @@ function percentile(samples: number[], percentileValue: number) {
 export function createFrameMetrics(capacity = 240): FrameMetrics {
   if (!Number.isInteger(capacity) || capacity < 1)
     throw new Error("FRAME_METRICS_CAPACITY_INVALID");
-  let previousTimestamp: number | null = null;
-  let renderedFrames = 0;
-  const samples: number[] = [];
+  const state: Record<
+    FramePhase,
+    { previous: number | null; rendered: number; samples: number[] }
+  > = {
+    active: { previous: null, rendered: 0, samples: [] },
+    idle: { previous: null, rendered: 0, samples: [] },
+    hidden: { previous: null, rendered: 0, samples: [] },
+  };
+  let currentPhase: FramePhase | null = null;
+  const phaseSnapshot = (phase: FramePhase): FrameMetricsSnapshot => {
+    const current = state[phase];
+    return {
+      renderedFrames: current.rendered,
+      sampleCount: current.samples.length,
+      p50Ms: percentile(current.samples, 0.5),
+      p95Ms: percentile(current.samples, 0.95),
+      longestMs: current.samples.length ? Math.max(...current.samples) : null,
+    };
+  };
 
   return {
-    record(timestampMs) {
+    record(timestampMs, phase = "active") {
       if (!Number.isFinite(timestampMs)) throw new Error("FRAME_METRICS_TIMESTAMP_INVALID");
-      renderedFrames += 1;
-      if (previousTimestamp !== null) {
-        const duration = Math.max(0, timestampMs - previousTimestamp);
-        samples.push(duration);
-        if (samples.length > capacity) samples.shift();
+      const current = state[phase];
+      if (currentPhase !== phase) {
+        current.previous = null;
+        currentPhase = phase;
       }
-      previousTimestamp = timestampMs;
+      current.rendered += 1;
+      if (current.previous !== null) {
+        const duration = Math.max(0, timestampMs - current.previous);
+        current.samples.push(duration);
+        if (current.samples.length > capacity) current.samples.shift();
+      }
+      current.previous = timestampMs;
     },
-    snapshot() {
-      return {
-        renderedFrames,
-        p50Ms: percentile(samples, 0.5),
-        p95Ms: percentile(samples, 0.95),
-        longestMs: samples.length ? Math.max(...samples) : null,
-      };
+    reset(phase) {
+      if (phase) state[phase].previous = null;
+      else
+        Object.values(state).forEach((value) => {
+          value.previous = null;
+        });
+      currentPhase = null;
     },
+    snapshot: () => phaseSnapshot("active"),
+    phaseSnapshot,
   };
 }
