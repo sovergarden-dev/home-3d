@@ -411,7 +411,7 @@ export function createDemoScene(
       frameSnapshot = frameMetrics.snapshot();
       lastMetricsSnapshotAt = renderedAt;
     }
-    if (currentWorld.mode === "private") {
+    if (currentWorld.mode === "private" && currentWorld.temporaryLotIllustrationSelected) {
       markerPosition.set(
         TEMPORARY_LOT_ILLUSTRATION_POSITION.x,
         TEMPORARY_LOT_ILLUSTRATION_POSITION.y,
@@ -683,8 +683,12 @@ export function createDemoScene(
   });
 
   const unsubscribeWorld = worldDataProvider.subscribe((snapshot) => {
-    if (disposed || snapshot.revision === lastWorldRevision) return;
+    if (disposed) return;
     currentWorld = snapshot;
+    if (snapshot.revision === lastWorldRevision) {
+      render();
+      return;
+    }
     if (snapshot.mode === "private-error") {
       disposeWorld();
       festivalGroup.visible = false;

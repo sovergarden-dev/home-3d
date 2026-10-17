@@ -10,7 +10,6 @@ import {
   Undo2,
 } from "lucide-react";
 import { useT } from "@/i18n";
-import { useAppStore } from "@/state/appStore";
 import { worldDataProvider } from "@/world/privateWorldSession";
 import { WORLD_OVERRIDE_IDENTITY_SCHEME } from "@/world/schema";
 import { assessWallHeight } from "@/world/wallHeight";
@@ -40,10 +39,6 @@ function wallHeightLabel(
 
 export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
   const t = useT();
-  const showTemporaryLotIllustration = useAppStore((state) => state.showTemporaryLotIllustration);
-  const toggleTemporaryLotIllustration = useAppStore(
-    (state) => state.toggleTemporaryLotIllustration,
-  );
   const snapshot = useSyncExternalStore(
     worldDataProvider.subscribe,
     worldDataProvider.getSnapshot,
@@ -446,10 +441,10 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
               className="chip shrink-0 text-[11px]"
               data-testid="toggle-temporary-lot-illustration"
               aria-label={t.localPreview.toggleTemporaryLotIllustration}
-              aria-pressed={showTemporaryLotIllustration}
-              onClick={toggleTemporaryLotIllustration}
+              aria-pressed={snapshot.temporaryLotIllustrationSelected}
+              onClick={() => worldDataProvider.toggleTemporaryLotIllustration()}
             >
-              {showTemporaryLotIllustration
+              {snapshot.temporaryLotIllustrationSelected
                 ? t.localPreview.hideTemporaryLotIllustration
                 : t.localPreview.showTemporaryLotIllustration}
             </button>

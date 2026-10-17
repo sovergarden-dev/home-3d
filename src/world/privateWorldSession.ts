@@ -9,6 +9,7 @@ export type WorldSessionSnapshot =
       mode: "fixture";
       revision: number;
       packageEpoch: number;
+      temporaryLotIllustrationSelected: boolean;
       world: WorldData;
       centerConfirmation?: undefined;
       overrides?: WorldOverrideDocument | undefined;
@@ -18,6 +19,7 @@ export type WorldSessionSnapshot =
       mode: "private";
       revision: number;
       packageEpoch: number;
+      temporaryLotIllustrationSelected: boolean;
       world: WorldData;
       centerConfirmation?: CenterConfirmation | undefined;
       overrides?: WorldOverrideDocument | undefined;
@@ -27,6 +29,7 @@ export type WorldSessionSnapshot =
       mode: "private-error";
       revision: number;
       packageEpoch: number;
+      temporaryLotIllustrationSelected: boolean;
       errorCode: string;
       centerConfirmation?: undefined;
     };
@@ -49,13 +52,20 @@ export interface WorldDataProvider {
   openText: (text: string) => void;
   openFile: (file: File) => Promise<void>;
   applyOverrides: (document: WorldOverrideDocument | undefined) => boolean;
+  toggleTemporaryLotIllustration: () => void;
   resetFixture: () => void;
 }
 
 export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
   let revision = 0;
   let packageEpoch = 0;
-  let snapshot: WorldSessionSnapshot = { mode: "fixture", revision, packageEpoch, world: fixture };
+  let snapshot: WorldSessionSnapshot = {
+    mode: "fixture",
+    revision,
+    packageEpoch,
+    temporaryLotIllustrationSelected: false,
+    world: fixture,
+  };
   let basePrivateWorld: WorldData | null = null;
   const listeners = new Set<SessionListener>();
 
@@ -74,13 +84,20 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
         mode: "private",
         revision,
         packageEpoch,
+        temporaryLotIllustrationSelected: false,
         world: parsed.world,
         centerConfirmation: parsed.package.centerConfirmation,
         overrides: parsed.package.overrides,
       });
     } else {
       basePrivateWorld = null;
-      publish({ mode: "private-error", revision, packageEpoch, errorCode: parsed.errorCode });
+      publish({
+        mode: "private-error",
+        revision,
+        packageEpoch,
+        temporaryLotIllustrationSelected: false,
+        errorCode: parsed.errorCode,
+      });
     }
   };
 
@@ -92,6 +109,7 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
       mode: "private-error",
       revision,
       packageEpoch,
+      temporaryLotIllustrationSelected: false,
       errorCode: "WORLD_PACKAGE_FILE_READ_FAILED",
     });
   };
@@ -107,6 +125,7 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
           mode,
           revision,
           packageEpoch,
+          temporaryLotIllustrationSelected: snapshot.temporaryLotIllustrationSelected,
           world: structuredClone(base) as WorldData,
           centerConfirmation: snapshot.centerConfirmation,
           lastError: null,
@@ -116,6 +135,7 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
           mode,
           revision,
           packageEpoch,
+          temporaryLotIllustrationSelected: snapshot.temporaryLotIllustrationSelected,
           world: structuredClone(base) as WorldData,
           lastError: null,
         });
@@ -143,13 +163,22 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
         mode,
         revision,
         packageEpoch,
+        temporaryLotIllustrationSelected: snapshot.temporaryLotIllustrationSelected,
         world: res.world,
         centerConfirmation: snapshot.centerConfirmation,
         overrides: doc,
         lastError: null,
       });
     } else {
-      publish({ mode, revision, packageEpoch, world: res.world, overrides: doc, lastError: null });
+      publish({
+        mode,
+        revision,
+        packageEpoch,
+        temporaryLotIllustrationSelected: snapshot.temporaryLotIllustrationSelected,
+        world: res.world,
+        overrides: doc,
+        lastError: null,
+      });
     }
     return true;
   };
@@ -169,11 +198,24 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
       }
     },
     applyOverrides,
+    toggleTemporaryLotIllustration() {
+      if (snapshot.mode !== "private") return;
+      publish({
+        ...snapshot,
+        temporaryLotIllustrationSelected: !snapshot.temporaryLotIllustrationSelected,
+      });
+    },
     resetFixture() {
       revision += 1;
       packageEpoch += 1;
       basePrivateWorld = null;
-      publish({ mode: "fixture", revision, packageEpoch, world: fixture });
+      publish({
+        mode: "fixture",
+        revision,
+        packageEpoch,
+        temporaryLotIllustrationSelected: false,
+        world: fixture,
+      });
     },
   };
 }

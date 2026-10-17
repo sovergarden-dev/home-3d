@@ -6,11 +6,17 @@ import {
   TEMPORARY_LOT_ILLUSTRATION,
   TEMPORARY_LOT_ILLUSTRATION_POSITION,
 } from "@/engine/view/temporaryLotIllustration";
-import { useAppStore } from "@/state/appStore";
 import { SYNTHETIC_NEIGHBORHOOD } from "@/world/fixtures/syntheticNeighborhood";
 import { createWorldDataProvider } from "@/world/privateWorldSession";
+import type { WorldData, WorldOverrideDocument } from "@/world/schema";
 
 const expectedText = "Lô trống · minh họa tạm · ranh chưa đo";
+
+function packageText(datasetRevision: string) {
+  const world = structuredClone(SYNTHETIC_NEIGHBORHOOD) as WorldData;
+  world.manifest.datasetRevision = datasetRevision;
+  return JSON.stringify({ manifest: world.manifest, world });
+}
 
 describe("temporary lot illustration", () => {
   it("is an origin-anchored UI illustration with no boundary geometry", () => {
@@ -24,7 +30,7 @@ describe("temporary lot illustration", () => {
     expect(TEMPORARY_LOT_ILLUSTRATION).not.toHaveProperty("polygon");
   });
 
-  it("shows the exact Vietnamese label only for a private package while enabled", () => {
+  it("shows the exact label only when a private package's illustration is explicitly selected", () => {
     expect(centerMarkerLabels("private", viDict, undefined, true)).toEqual({
       title: "Điểm tham chiếu",
       description: "Ranh chưa đo",
@@ -43,18 +49,101 @@ describe("temporary lot illustration", () => {
     });
   });
 
-  it("keeps the toggle outside the source world session", () => {
+  it("isolates selection by package session, preserves it for edits, and clears it on reload/reset/error", () => {
     const provider = createWorldDataProvider(SYNTHETIC_NEIGHBORHOOD);
-    const initialSnapshot = provider.getSnapshot();
-    const initialVisibility = useAppStore.getState().showTemporaryLotIllustration;
+    const initial = provider.getSnapshot();
+    expect(initial).toMatchObject({ mode: "fixture", temporaryLotIllustrationSelected: false });
 
-    try {
-      useAppStore.getState().toggleTemporaryLotIllustration();
-      expect(useAppStore.getState().showTemporaryLotIllustration).toBe(!initialVisibility);
-      expect(provider.getSnapshot()).toBe(initialSnapshot);
-      expect(JSON.stringify(SYNTHETIC_NEIGHBORHOOD)).not.toContain(expectedText);
-    } finally {
-      useAppStore.setState({ showTemporaryLotIllustration: initialVisibility });
-    }
+    provider.openText(packageText("synthetic-package-a"));
+    let snapshot = provider.getSnapshot();
+    expect(snapshot).toMatchObject({ mode: "private", temporaryLotIllustrationSelected: false });
+    expect(centerMarkerLabels(snapshot.mode, viDict, snapshot.centerConfirmation, false)).toEqual({
+      title: "Điểm tham chiếu",
+      description: "Ranh chưa đo",
+    });
+
+    const packageAEpoch = snapshot.packageEpoch;
+    provider.toggleTemporaryLotIllustration();
+    snapshot = provider.getSnapshot();
+    expect(snapshot).toMatchObject({
+      mode: "private",
+      packageEpoch: packageAEpoch,
+      temporaryLotIllustrationSelected: true,
+    });
+    expect(
+      centerMarkerLabels(snapshot.mode, viDict, snapshot.centerConfirmation, true),
+    ).toMatchObject({
+      illustration: expectedText,
+    });
+
+    const packageARevision = snapshot.revision;
+    const building = snapshot.mode === "private" ? snapshot.world.buildings[0] : undefined;
+    if (!building) throw new Error("SYNTHETIC_BUILDING_MISSING");
+    const edit: WorldOverrideDocument = {
+      schemaVersion: "1.0",
+      overrides: [
+        {
+          localId: "synthetic-marker-session-edit",
+          revision: 1,
+          reason: "Synthetic same-package revision regression",
+          provenance: { source: "manual_override", quality: "inferred" },
+          patch: {
+            operation: "patch_building",
+            featureId: building.localId,
+            patch: { wallHeight: building.wallHeight + 0.5 },
+          },
+        },
+      ],
+    };
+    expect(provider.applyOverrides(edit)).toBe(true);
+    snapshot = provider.getSnapshot();
+    expect(snapshot).toMatchObject({
+      mode: "private",
+      packageEpoch: packageAEpoch,
+      temporaryLotIllustrationSelected: true,
+    });
+    expect(snapshot.revision).toBeGreaterThan(packageARevision);
+
+    provider.toggleTemporaryLotIllustration();
+    expect(provider.getSnapshot()).toMatchObject({ temporaryLotIllustrationSelected: false });
+    provider.toggleTemporaryLotIllustration();
+    expect(provider.getSnapshot()).toMatchObject({ temporaryLotIllustrationSelected: true });
+
+    provider.openText(packageText("synthetic-package-b"));
+    snapshot = provider.getSnapshot();
+    expect(snapshot).toMatchObject({ mode: "private", temporaryLotIllustrationSelected: false });
+    expect(snapshot.packageEpoch).toBeGreaterThan(packageAEpoch);
+    expect(centerMarkerLabels(snapshot.mode, viDict, snapshot.centerConfirmation, false)).toEqual({
+      title: "Điểm tham chiếu",
+      description: "Ranh chưa đo",
+    });
+
+    provider.toggleTemporaryLotIllustration();
+    expect(provider.getSnapshot()).toMatchObject({ temporaryLotIllustrationSelected: true });
+    provider.openText(packageText("synthetic-package-b"));
+    expect(provider.getSnapshot()).toMatchObject({
+      mode: "private",
+      temporaryLotIllustrationSelected: false,
+    });
+
+    provider.toggleTemporaryLotIllustration();
+    provider.resetFixture();
+    expect(provider.getSnapshot()).toMatchObject({
+      mode: "fixture",
+      temporaryLotIllustrationSelected: false,
+    });
+    provider.toggleTemporaryLotIllustration();
+    expect(provider.getSnapshot()).toMatchObject({
+      mode: "fixture",
+      temporaryLotIllustrationSelected: false,
+    });
+
+    provider.openText(packageText("synthetic-package-error-reset"));
+    provider.toggleTemporaryLotIllustration();
+    provider.openText("{ malformed package");
+    expect(provider.getSnapshot()).toMatchObject({
+      mode: "private-error",
+      temporaryLotIllustrationSelected: false,
+    });
   });
 });

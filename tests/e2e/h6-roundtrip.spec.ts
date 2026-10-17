@@ -171,9 +171,11 @@ test("H6 synthetic source → build → editor → export → source rebuild →
   if (rendererReady) {
     await expect(sceneRoot.getByText("Điểm tham chiếu", { exact: true })).toBeVisible();
     await expect(sceneRoot.getByText("Vị trí do Syringa xác nhận", { exact: true })).toHaveCount(0);
-    await expect(
-      sceneRoot.getByText("Lô trống · minh họa tạm · ranh chưa đo", { exact: true }),
-    ).toBeVisible();
+    await expect(sceneRoot.getByTestId("temporary-lot-illustration")).toHaveCount(0);
+    await expect(page.getByTestId("toggle-temporary-lot-illustration")).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
   }
   const scene = page.getByTestId("demo-scene");
   if (rendererReady) {

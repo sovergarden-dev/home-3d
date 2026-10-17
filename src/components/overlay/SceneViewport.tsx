@@ -10,7 +10,6 @@ function ViewportInner() {
   const t = useT();
   const sceneStatus = useAppStore((s) => s.sceneStatus);
   const viewMode = useAppStore((s) => s.viewMode);
-  const showTemporaryLotIllustration = useAppStore((s) => s.showTemporaryLotIllustration);
   const worldSnapshot = useSyncExternalStore(
     worldDataProvider.subscribe,
     worldDataProvider.getSnapshot,
@@ -20,7 +19,7 @@ function ViewportInner() {
     worldSnapshot.mode,
     t,
     worldSnapshot.centerConfirmation,
-    showTemporaryLotIllustration,
+    worldSnapshot.temporaryLotIllustrationSelected,
   );
   const host = useRef<HTMLDivElement>(null);
   const marker = useRef<HTMLDivElement>(null);
