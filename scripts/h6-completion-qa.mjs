@@ -100,13 +100,14 @@ const report = {
   },
   git: { baseline: gitEvidence("/tmp/h6-completion-baseline"), final: gitEvidence(process.cwd()) },
   environment: {},
+  latencies: {},
   perf: {},
   screenshots: [],
   lifecycle: {},
   soak: {},
   errors: [],
   method:
-    "Each main WebGL color-buffer clear marks an actual renderer pass (shadow depth-only clears excluded). Intervals collected only during an explicit drag window; no slow-frame cutoff. Not GPU time, RAF callback cadence, automation latency or device FPS. Same 250-building/20-road package, core camera, viewport/DPR, dry noon and orbit path; one warmup then three rounds. Synthetic Software WebGL is not a hardware tier certification.",
+    "Only color clears with FRAMEBUFFER_BINDING=null mark main rendered frames; all offscreen/shadow-map clears are excluded and counted separately. Main-frame start intervals collected during explicit held-pointer orbit; no slow-frame cutoff. Not GPU time, RAF cadence, automation latency or device FPS. Same 250-building/20-road package, core camera, viewport/DPR, dry noon and orbit path; one warmup then three rounds. File-open wall latency, actual File.text read, isolated warm browser parser, CPU mesh construction and render+PNG capture latency are separate and single-sample diagnostics, not frame metrics. Baseline uninstrumented phases remain null. Software WebGL is not hardware-tier certification.",
 };
 await mkdir(outDir, { recursive: true });
 const browser = await chromium.launch({
@@ -120,6 +121,7 @@ const context = await browser.newContext({
   deviceScaleFactor: 1,
   reducedMotion: "no-preference",
 });
+context.setDefaultTimeout(30000);
 await context.addInitScript(() => {
   // Deterministic synthetic weather particles; unrelated to private geometry.
   let seed = 63721;
@@ -127,13 +129,30 @@ await context.addInitScript(() => {
     seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
     return seed / 4294967296;
   };
-  window.__h6RenderProbe = { recording: false, timestamps: [], total: 0 };
+  window.__h6RenderProbe = {
+    recording: false,
+    timestamps: [],
+    total: 0,
+    excludedOffscreenClears: 0,
+    fileReadMs: null,
+  };
+  const fileText = File.prototype.text;
+  File.prototype.text = async function () {
+    const start = performance.now();
+    try {
+      return await fileText.call(this);
+    } finally {
+      window.__h6RenderProbe.fileReadMs = performance.now() - start;
+    }
+  };
   const clear = WebGL2RenderingContext.prototype.clear;
   WebGL2RenderingContext.prototype.clear = function (mask) {
     if (mask & this.COLOR_BUFFER_BIT) {
       const p = window.__h6RenderProbe;
-      p.total++;
-      if (p.recording) p.timestamps.push(performance.now());
+      if (this.getParameter(this.FRAMEBUFFER_BINDING) === null) {
+        p.total++;
+        if (p.recording) p.timestamps.push(performance.now());
+      } else if (p.recording) p.excludedOffscreenClears++;
     }
     return clear.call(this, mask);
   };
@@ -142,6 +161,7 @@ function assert(condition, code) {
   if (!condition) throw new Error(code);
 }
 async function openFixture(page) {
+  const openedAt = performance.now();
   const input = page.getByLabel("Mở gói world");
   assert((await input.count()) === 1, "PACKAGE_INPUT_REQUIRED_NO_BASELINE_FALLBACK");
   await input.setInputFiles({
@@ -156,6 +176,7 @@ async function openFixture(page) {
       "private",
   );
   assert((await page.locator("#scene-root canvas").count()) === 1, "ONE_CANVAS_REQUIRED");
+  return performance.now() - openedAt;
 }
 async function goto(page, url, baseline) {
   await page.goto(`${url}/${baseline ? "?local-preview=1" : ""}`);
@@ -164,11 +185,13 @@ async function goto(page, url, baseline) {
     null,
     { timeout: 30000 },
   );
-  await openFixture(page);
+  return openFixture(page);
 }
 async function reset(page) {
   await page.getByRole("radio", { name: "Diorama", exact: true }).click();
   await page.getByRole("button", { name: "Về nhà mình", exact: true }).click();
+  await page.getByRole("tab", { name: "Thời gian", exact: true }).click();
+  await page.getByRole("button", { name: "Dừng", exact: true }).click();
   await page.getByRole("button", { name: /12:00.*Trưa/ }).click();
   await page.waitForTimeout(800);
 }
@@ -196,6 +219,7 @@ async function perfRound(page, round) {
   await reset(page);
   await page.evaluate(() => {
     window.__h6RenderProbe.timestamps = [];
+    window.__h6RenderProbe.excludedOffscreenClears = 0;
     window.__h6RenderProbe.recording = true;
   });
   await drag(page);
@@ -203,12 +227,17 @@ async function perfRound(page, round) {
     const p = window.__h6RenderProbe;
     p.recording = false;
     const scene = document.querySelector('[data-testid="demo-scene"]');
-    return { timestamps: p.timestamps, dataset: scene ? { ...scene.dataset } : {} };
+    return {
+      timestamps: p.timestamps,
+      excludedOffscreenClears: p.excludedOffscreenClears,
+      dataset: scene ? { ...scene.dataset } : {},
+    };
   });
   const intervals = raw.timestamps.slice(1).map((t, i) => t - raw.timestamps[i]);
   assert(intervals.length >= 30, "INSUFFICIENT_RENDERED_SAMPLES");
   return {
     round,
+    excludedOffscreenClears: raw.excludedOffscreenClears,
     ...summary(intervals),
     intervalsMs: intervals,
     drawCalls: Number(raw.dataset.drawCalls),
@@ -247,7 +276,7 @@ async function screenshotSet(page, label) {
   await page.getByRole("radio", { name: "Mưa", exact: true }).click();
   await page.waitForTimeout(100);
   await capture(page, `${label}-diorama-rain.png`);
-  await page.getByRole("radio", { name: "Nắng", exact: true }).click();
+  await page.getByRole("radio", { name: "Nắng nhẹ", exact: true }).click();
   await page.waitForTimeout(100);
   await capture(page, `${label}-diorama-sunny-restored.png`);
   await page.getByRole("radio", { name: "Mặt bằng", exact: true }).click();
@@ -279,7 +308,28 @@ for (const label of phase === "both"
   await page.route("https://fonts.googleapis.com/**", (route) => route.abort());
   await page.route("https://fonts.gstatic.com/**", (route) => route.abort());
   console.log(`${label}: loading SAME fixture`);
-  await goto(page, label === "baseline" ? beforeURL : finalURL, label === "baseline");
+  const fileOpenToFirstSubmittedWorldMs = await goto(
+    page,
+    label === "baseline" ? beforeURL : finalURL,
+    label === "baseline",
+  );
+  const phases = await page.evaluate(async (text) => {
+    const { parseWorldPackage } = await import("/src/world/package.ts");
+    const start = performance.now();
+    const parsed = parseWorldPackage(text);
+    const parserMs = performance.now() - start;
+    if (!parsed.ok) throw new Error("ISOLATED_PARSER_REJECTED_FIXTURE");
+    const host = document.querySelector('[data-testid="demo-scene"]');
+    return {
+      fileReadMs: window.__h6RenderProbe.fileReadMs,
+      isolatedWarmBrowserParserMs: parserMs,
+      cpuMeshConstructionMs:
+        host?.dataset.meshBuildLatencyMs === undefined
+          ? null
+          : Number(host.dataset.meshBuildLatencyMs),
+    };
+  }, fixtureText);
+  report.latencies[label] = { fileOpenToFirstSubmittedWorldMs, ...phases };
   report.environment[label] = await runtimeInfo(page);
   await reset(page);
   await drag(page); // discarded warmup, not evidence samples
@@ -288,9 +338,17 @@ for (const label of phase === "both"
     const result = await perfRound(page, r);
     report.perf[label].push(result);
     console.log(
-      `${label} round${r}: ${result.count} actual passes, p95=${result.p95Ms.toFixed(2)}ms calls=${result.drawCalls}`,
+      `${label} round${r}: ${result.count} main-frame intervals, ${result.excludedOffscreenClears} offscreen clears excluded, p95=${result.p95Ms.toFixed(2)}ms calls=${result.drawCalls}`,
     );
   }
+  const captureClickedAt = performance.now();
+  await page.getByRole("button", { name: "Giữ khoảnh khắc", exact: true }).click();
+  report.latencies[label].captureButtonWallMs = performance.now() - captureClickedAt;
+  report.latencies[label].renderAndPngCaptureMs = await page
+    .locator('[data-testid="demo-scene"]')
+    .evaluate((host) =>
+      host.dataset.captureLatencyMs === undefined ? null : Number(host.dataset.captureLatencyMs),
+    );
   await screenshotSet(page, label);
   if (label === "final") finalPage = page;
   else await page.close();

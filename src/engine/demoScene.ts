@@ -230,7 +230,9 @@ export function createDemoScene(
     currentWorld = snapshot;
     if (!("world" in snapshot)) return;
     worldBundle?.dispose();
+    const meshBuildStartedAt = performance.now();
     worldBundle = buildWorldMeshes(snapshot.world, materialFactory);
+    host.dataset["meshBuildLatencyMs"] = String(performance.now() - meshBuildStartedAt);
     worldBundle.setConfidenceVisible(isConfidenceVisible());
     worldBundle.setSelectedFeature(getSelectedFeature()?.featureId ?? null);
     scene.add(worldBundle.group);
@@ -847,8 +849,11 @@ export function createDemoScene(
   render();
   bindCapture(() => {
     if (!worldRenderable() || document.hidden) return null;
+    const captureStartedAt = performance.now();
     render();
-    return canvas.toDataURL("image/png");
+    const image = canvas.toDataURL("image/png");
+    host.dataset["captureLatencyMs"] = String(performance.now() - captureStartedAt);
+    return image;
   });
   if (rainPoints.visible) scheduleFrame();
 

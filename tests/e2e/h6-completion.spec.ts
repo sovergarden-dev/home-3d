@@ -211,8 +211,16 @@ test.describe("H6 completion synthetic integration", () => {
     await page.getByRole("link", { name: "Giới thiệu", exact: true }).click();
     await expect(page.locator("#scene-root")).toBeVisible();
     await expect(page.getByLabel("Chiều cao (m)", { exact: true })).toHaveValue("12");
-    if (await page.getByRole("button", { name: "Giữ khoảnh khắc", exact: true }).isEnabled())
-      await page.getByRole("button", { name: "Giữ khoảnh khắc", exact: true }).click();
+    await expect(page.getByRole("button", { name: "Giữ khoảnh khắc", exact: true })).toBeEnabled();
+    await page.getByRole("button", { name: "Giữ khoảnh khắc", exact: true }).click();
+    const latencies = await page.getByTestId("demo-scene").evaluate((host) => ({
+      build: Number(host.dataset.meshBuildLatencyMs),
+      capture: Number(host.dataset.captureLatencyMs),
+    }));
+    expect(Number.isFinite(latencies.build)).toBe(true);
+    expect(Number.isFinite(latencies.capture)).toBe(true);
+    expect(latencies.build).toBeGreaterThanOrEqual(0);
+    expect(latencies.capture).toBeGreaterThanOrEqual(0);
     const [download] = await Promise.all([
       page.waitForEvent("download"),
       page.getByRole("button", { name: "Xuất bản làm việc", exact: true }).click(),
