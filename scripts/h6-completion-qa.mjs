@@ -191,7 +191,7 @@ async function reset(page) {
   await page.getByRole("radio", { name: "Diorama", exact: true }).click();
   await page.getByRole("button", { name: "Về nhà mình", exact: true }).click();
   await page.getByRole("tab", { name: "Thời gian", exact: true }).click();
-  await page.getByRole("button", { name: "Dừng", exact: true }).click();
+  await page.getByRole("radio", { name: "Dừng", exact: true }).click();
   await page.getByRole("button", { name: /12:00.*Trưa/ }).click();
   await page.waitForTimeout(800);
 }
