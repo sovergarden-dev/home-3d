@@ -28,12 +28,14 @@ export function centerMarkerLabels(
     referencePoint: string;
     unmeasuredBoundary: string;
     emptyLot: string;
+    temporaryLotIllustration: string;
   },
   centerConfirmation?: unknown,
+  showTemporaryLotIllustration = false,
 ) {
   const isPrivateWorld = mode === "private";
   const pointStatus = isPrivateWorld ? ownerPointStatus(centerConfirmation) : undefined;
-  return {
+  const markerLabels = {
     title: !isPrivateWorld
       ? labels.home
       : pointStatus === "confirmed"
@@ -43,4 +45,8 @@ export function centerMarkerLabels(
           : labels.referencePoint,
     description: isPrivateWorld ? labels.unmeasuredBoundary : labels.emptyLot,
   };
+  if (isPrivateWorld && showTemporaryLotIllustration) {
+    return { ...markerLabels, illustration: labels.temporaryLotIllustration };
+  }
+  return markerLabels;
 }

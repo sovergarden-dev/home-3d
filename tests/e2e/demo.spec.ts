@@ -314,7 +314,26 @@ test("private diorama keeps the supplied ENU origin in frame when source geometr
       },
     ],
     buildings: [],
-    lots: [],
+    lots: [
+      {
+        localId: "synthetic-offset-empty-lot",
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              [1000, 1000],
+              [1010, 1000],
+              [1010, 1010],
+              [1000, 1010],
+              [1000, 1000],
+            ],
+          ],
+        },
+        status: "empty",
+        confirmed: true,
+        provenance: { source: "synthetic", quality: "synthetic" },
+      },
+    ],
   };
 
   await page.goto("/?local-preview=1");
@@ -329,7 +348,11 @@ test("private diorama keeps the supplied ENU origin in frame when source geometr
   await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-world-mode", "private");
 
   const marker = page.getByTestId("world-center-marker");
+  const illustration = page.getByTestId("temporary-lot-illustration");
   await expect(marker).toBeVisible();
+  await expect(illustration).toHaveText("Lô trống · minh họa tạm · ranh chưa đo");
+  const scene = page.getByTestId("demo-scene");
+  const worldRevision = await scene.getAttribute("data-world-revision");
   const markerBox = await marker.boundingBox();
   const viewportBox = await page.locator("#scene-root").boundingBox();
   expect(markerBox).not.toBeNull();
@@ -337,6 +360,13 @@ test("private diorama keeps the supplied ENU origin in frame when source geometr
   expect(
     Math.abs(markerBox!.x + markerBox!.width / 2 - (viewportBox!.x + viewportBox!.width / 2)),
   ).toBeLessThan(25);
+
+  const toggle = page.getByTestId("toggle-temporary-lot-illustration");
+  await expect(toggle).toHaveAttribute("aria-pressed", "true");
+  await toggle.click();
+  await expect(page.getByTestId("temporary-lot-illustration")).toHaveCount(0);
+  await expect(scene).toHaveAttribute("data-world-mode", "private");
+  await expect(scene).toHaveAttribute("data-world-revision", worldRevision!);
 });
 
 test("static scene stops drawing when idle", async ({ page }) => {

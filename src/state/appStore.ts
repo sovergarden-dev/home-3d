@@ -32,6 +32,7 @@ export interface AppState {
   viewReset: number;
   showTrees: boolean;
   showLabels: boolean;
+  showTemporaryLotIllustration: boolean;
   planMeasurement: PlanMeasurement | null;
   moments: { id: number; image: string; minutes: number }[];
   addMoment: (image: string) => void;
@@ -52,6 +53,7 @@ export interface AppState {
   toggleSound: () => void;
   toggleTrees: () => void;
   toggleLabels: () => void;
+  toggleTemporaryLotIllustration: () => void;
   setPlanMeasurement: (measurement: PlanMeasurement | null) => void;
   setLanguage: (l: Language) => void;
   setLoadingProgress: (p: number) => void;
@@ -76,6 +78,7 @@ export const useAppStore = create<AppState>((set) => ({
   viewReset: 0,
   showTrees: true,
   showLabels: true,
+  showTemporaryLotIllustration: true,
   planMeasurement: null,
   moments: [],
   addMoment: (image) =>
@@ -105,6 +108,8 @@ export const useAppStore = create<AppState>((set) => ({
   toggleSound: () => set((s) => ({ soundOn: !s.soundOn })),
   toggleTrees: () => set((s) => ({ showTrees: !s.showTrees })),
   toggleLabels: () => set((s) => ({ showLabels: !s.showLabels })),
+  toggleTemporaryLotIllustration: () =>
+    set((s) => ({ showTemporaryLotIllustration: !s.showTemporaryLotIllustration })),
   setPlanMeasurement: (planMeasurement) => set({ planMeasurement }),
   setLanguage: (language) => set({ language }),
   setLoadingProgress: (p) => set({ loadingProgress: Math.max(0, Math.min(1, p)) }),

@@ -10,12 +10,18 @@ function ViewportInner() {
   const t = useT();
   const sceneStatus = useAppStore((s) => s.sceneStatus);
   const viewMode = useAppStore((s) => s.viewMode);
+  const showTemporaryLotIllustration = useAppStore((s) => s.showTemporaryLotIllustration);
   const worldSnapshot = useSyncExternalStore(
     worldDataProvider.subscribe,
     worldDataProvider.getSnapshot,
     worldDataProvider.getSnapshot,
   );
-  const markerLabels = centerMarkerLabels(worldSnapshot.mode, t, worldSnapshot.centerConfirmation);
+  const markerLabels = centerMarkerLabels(
+    worldSnapshot.mode,
+    t,
+    worldSnapshot.centerConfirmation,
+    showTemporaryLotIllustration,
+  );
   const host = useRef<HTMLDivElement>(null);
   const marker = useRef<HTMLDivElement>(null);
   const runtime = useRef<ReturnType<typeof import("@/engine/demoScene").createDemoScene> | null>(
@@ -82,7 +88,18 @@ function ViewportInner() {
       >
         <div className="rounded-xl border border-white/70 bg-primary px-3 py-2 text-center text-xs text-primary-foreground shadow-lg">
           <span className="block font-medium">{markerLabels.title}</span>
-          <span className="block opacity-80">{markerLabels.description}</span>
+          {"illustration" in markerLabels ? (
+            <span
+              className="block opacity-90"
+              data-testid="temporary-lot-illustration"
+              data-illustrative-only="true"
+              data-boundary-geometry="none"
+            >
+              {markerLabels.illustration}
+            </span>
+          ) : (
+            <span className="block opacity-80">{markerLabels.description}</span>
+          )}
         </div>
         <div className="mx-auto h-3 w-px bg-primary" />
       </div>

@@ -88,7 +88,7 @@ URL preview hostname phụ thuộc quyền truy cập project và không thể x
 - Diorama private cũng bắt đầu ở tâm ENU đã cung cấp và scale 300 m, không dời camera theo midpoint của bbox dài; geometry nguồn không bị dịch. Các tuyến dài ngoài khung đầu có thể được khám phá bằng camera/pan.
 - Khi chuyển từ Diorama sang Mặt bằng, zoom fit của camera perspective không được tái dùng: way dài có thể làm OrbitControls chạm giới hạn khoảng cách và làm bẩn zoom dùng chung. Mặt bằng bắt đầu ở 1× để giữ đúng 300 m; zoom do người dùng chọn được giữ khi vẫn ở Mặt bằng.
 - Geometry nguồn vẫn nạp nguyên vẹn. Pan được giới hạn theo bounds đầy đủ cộng vùng đệm 150 m, nên các way dài ngoài khung đầu vẫn có thể pan tới; zoom vẫn hoạt động bình thường.
-- Khi chưa có parcel geometry, marker chỉ xác nhận vị trí tâm theo chỉ dẫn của chủ nhà; ranh thửa vẫn chưa đo/chưa xác định.
+- Khi chưa có parcel geometry, nhãn `Lô trống · minh họa tạm · ranh chưa đo` là lớp UI-only neo tại ENU origin, tách khỏi `WorldData`/package và không tạo Polygon hay khẳng định ranh đã đo. Có thể tắt bằng nút trong panel local preview; marker tâm và dữ liệu đường/footprint không bị sửa.
 
 ## Sửa có kiểm soát
 

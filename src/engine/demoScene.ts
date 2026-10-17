@@ -17,6 +17,7 @@ import {
   derivePrivateWorldPlanFrame,
   type PrivateWorldPlanFrame,
 } from "./view/privateWorldPlanFrame";
+import { TEMPORARY_LOT_ILLUSTRATION_POSITION } from "./view/temporaryLotIllustration";
 import { useAppStore } from "@/state/appStore";
 import { surfaceCentroid } from "@/world/geometry";
 import { worldDataProvider } from "@/world/privateWorldSession";
@@ -161,6 +162,7 @@ export function createDemoScene(
   scene.add(ground);
 
   const materials = new Map<string, THREE.MeshStandardMaterial>();
+  const markerPosition = new THREE.Vector3();
   const materialFactory = (color: string, roughness = 0.82, metalness = 0) => {
     const key = `${color}:${roughness}:${metalness}`;
     let material = materials.get(key);
@@ -409,7 +411,16 @@ export function createDemoScene(
       frameSnapshot = frameMetrics.snapshot();
       lastMetricsSnapshotAt = renderedAt;
     }
-    const markerWorld = new THREE.Vector3(homeCentre.x, 0.35, homeCentre.z).project(activeCamera);
+    if (currentWorld.mode === "private") {
+      markerPosition.set(
+        TEMPORARY_LOT_ILLUSTRATION_POSITION.x,
+        TEMPORARY_LOT_ILLUSTRATION_POSITION.y,
+        TEMPORARY_LOT_ILLUSTRATION_POSITION.z,
+      );
+    } else {
+      markerPosition.set(homeCentre.x, 0.35, homeCentre.z);
+    }
+    const markerWorld = markerPosition.project(activeCamera);
     marker.style.transform = `translate(-50%, -100%) translate(${(markerWorld.x * 0.5 + 0.5) * host.clientWidth}px, ${(-markerWorld.y * 0.5 + 0.5) * host.clientHeight - 10}px)`;
     marker.style.visibility =
       Math.abs(markerWorld.x) < 0.94 && Math.abs(markerWorld.y) < 0.94 && markerWorld.z < 1

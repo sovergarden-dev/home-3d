@@ -9,6 +9,7 @@ export const en: Dict = {
   emptyLot: "Empty lot · invented location",
   referencePoint: "Reference point",
   unmeasuredBoundary: "Boundary not surveyed",
+  temporaryLotIllustration: "Empty lot · temporary illustration · boundary not surveyed",
   sceneControls: "Fictional 3D street. Drag to orbit, pinch to zoom. Arrows or WASD; R to reset.",
   sceneHint: "Drag to orbit · Pinch / scroll to zoom",
   fallbackTitle: "3D is not available on this device",
@@ -43,6 +44,11 @@ export const en: Dict = {
   localPreview: {
     title: "Local package preview",
     body: "The package opens only in this device's memory. It is not uploaded to a server.",
+    temporaryLotNote:
+      "UI label at the ENU origin; separate from source data and creates no boundary polygon.",
+    toggleTemporaryLotIllustration: "Temporary lot illustration",
+    showTemporaryLotIllustration: "Show temporary illustration",
+    hideTemporaryLotIllustration: "Hide temporary illustration",
     open: "Open world package",
     reset: "Return to demo fixture",
     loaded: "Local package opened",

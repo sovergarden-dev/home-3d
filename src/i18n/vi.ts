@@ -7,6 +7,7 @@ export const vi = {
   emptyLot: "Lô trống · vị trí giả lập",
   referencePoint: "Điểm tham chiếu",
   unmeasuredBoundary: "Ranh chưa đo",
+  temporaryLotIllustration: "Lô trống · minh họa tạm · ranh chưa đo",
   sceneControls: "Phố 3D hư cấu. Kéo để xoay, chụm để zoom. Phím mũi tên hoặc WASD; R về nhà.",
   sceneHint: "Kéo để xoay · Chụm / cuộn để zoom",
   fallbackTitle: "Thiết bị chưa mở được 3D",
@@ -35,6 +36,10 @@ export const vi = {
   localPreview: {
     title: "Xem trước gói cục bộ",
     body: "Gói chỉ mở trong bộ nhớ thiết bị này. Không tải lên máy chủ.",
+    temporaryLotNote: "Nhãn UI tại gốc ENU; tách khỏi dữ liệu nguồn, không tạo polygon ranh.",
+    toggleTemporaryLotIllustration: "Minh họa lô tạm",
+    showTemporaryLotIllustration: "Bật minh họa tạm",
+    hideTemporaryLotIllustration: "Tắt minh họa tạm",
     open: "Mở gói world",
     reset: "Trở về fixture demo",
     loaded: "Đã mở gói cục bộ",
