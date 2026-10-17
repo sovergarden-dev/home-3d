@@ -119,12 +119,29 @@ try {
   }
   await scan(resolve(".output"));
   expect(errors).toEqual([]);
+  const head = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+  const buildSha =
+    (await page.getByTestId("build-info").innerText()).match(/[a-f0-9]{40}/i)?.[0] ?? "unknown";
+  if (buildSha !== "unknown") expect(buildSha).toBe(head);
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 740, height: 390 },
+    { width: 1440, height: 900 },
+  ]) {
+    await page.setViewportSize(viewport);
+    expect(
+      await page
+        .getByTestId("build-info")
+        .evaluate((element) => element.scrollWidth <= element.clientWidth),
+    ).toBe(true);
+  }
   await page.screenshot({ path: join(output, "production-synthetic.png") });
   const report = {
     status: "PASS",
     syntheticOnly: true,
     runtime: "Bun loopback serving built Nitro Cloudflare-module handler and built ASSETS",
-    head: execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
+    head,
+    buildSha,
     dirty: !!execFileSync("git", ["status", "--porcelain"], { encoding: "utf8" }).trim(),
     browser: await browser.version(),
     checks: [
@@ -136,6 +153,7 @@ try {
       "one canvas",
       "no sentinel in requests/SSR/build output",
       "no page errors",
+      "honest build SHA and mobile header bounds",
     ],
     errors,
   };
