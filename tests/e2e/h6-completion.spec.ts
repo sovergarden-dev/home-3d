@@ -194,57 +194,97 @@ test.describe("H6 completion synthetic integration", () => {
       await assertPrivacy(page);
     }
   });
-  test("sentinel open/edit/capture/export/reload never reaches request attempts, console, storage or SSR", async ({
-    page,
-  }) => {
-    await openRoot(page);
-    await openPackage(page);
-    await expect(page.locator(".h6-top-info")).toContainText("Điểm tham chiếu");
-    await expect(page.locator(".h6-top-info")).not.toContainText("Syringa");
-    await expect(page.getByTestId("private-world-panel")).toBeVisible();
-    await page.getByLabel("Chọn công trình").selectOption("synthetic-building-0");
-    await page.getByRole("button", { name: "Biên tập nâng cao", exact: true }).click();
-    await page.getByLabel("Chiều cao (m)", { exact: true }).fill("12");
-    await page.getByRole("button", { name: "Lưu sửa", exact: true }).click();
-    await expect(page.getByLabel("Chiều cao (m)", { exact: true })).toHaveValue("12");
-    page.once("dialog", (dialog) => dialog.dismiss());
-    await page.getByRole("link", { name: "Giới thiệu", exact: true }).click();
-    await expect(page.locator("#scene-root")).toBeVisible();
-    await expect(page.getByLabel("Chiều cao (m)", { exact: true })).toHaveValue("12");
-    await expect(page.getByRole("button", { name: "Giữ khoảnh khắc", exact: true })).toBeEnabled();
-    await page.getByRole("button", { name: "Giữ khoảnh khắc", exact: true }).click();
-    const latencies = await page.getByTestId("demo-scene").evaluate((host) => ({
-      build: Number(host.dataset.meshBuildLatencyMs),
-      capture: Number(host.dataset.captureLatencyMs),
-    }));
-    expect(Number.isFinite(latencies.build)).toBe(true);
-    expect(Number.isFinite(latencies.capture)).toBe(true);
-    expect(latencies.build).toBeGreaterThanOrEqual(0);
-    expect(latencies.capture).toBeGreaterThanOrEqual(0);
-    const [download] = await Promise.all([
-      page.waitForEvent("download"),
-      page.getByRole("button", { name: "Xuất bản làm việc", exact: true }).click(),
-    ]);
-    const stream = await download.createReadStream();
-    expect(stream).not.toBeNull();
-    const chunks: Buffer[] = [];
-    if (stream) for await (const chunk of stream) chunks.push(Buffer.from(chunk));
-    const bytes = Buffer.concat(chunks),
-      working = JSON.parse(bytes.toString("utf8"));
-    expect(working.manifest.datasetRevision).toBe(SENTINEL);
-    expect(working.world.buildings).toHaveLength(250);
-    expect(working.world.buildings[0].wallHeight).toBe(5);
-    expect(working.overrides.overrides.at(-1).patch.patch).toEqual({ wallHeight: 12 });
-    expect(working).not.toHaveProperty("temporaryLotIllustrationSelected");
-    await assertPrivacy(page);
-    await page.reload();
-    await expect(page.getByText("Đã mở gói cục bộ", { exact: false })).toHaveCount(0);
-    await openPackage(page, bytes);
-    await page.getByLabel("Chọn công trình").selectOption("synthetic-building-0");
-    await page.getByRole("button", { name: "Biên tập nâng cao", exact: true }).click();
-    await expect(page.getByLabel("Chiều cao (m)", { exact: true })).toHaveValue("12");
-    await assertPrivacy(page);
-  });
+  for (const forceNoWebGL of [false, true]) {
+    test(
+      forceNoWebGL
+        ? "sentinel unavailable renderer retains edit/export/privacy and never claims capture"
+        : "sentinel open/edit/capture/export/reload never reaches request attempts, console, storage or SSR",
+      async ({ page }) => {
+        if (forceNoWebGL)
+          await page.addInitScript(() => {
+            const original = HTMLCanvasElement.prototype.getContext;
+            HTMLCanvasElement.prototype.getContext = function (type: string, ...args: unknown[]) {
+              if (type === "webgl2") return null;
+              return Reflect.apply(original, this, [type, ...args]);
+            } as typeof original;
+          });
+        await openRoot(page);
+        await openPackage(page);
+        await expect(page.locator(".h6-top-info")).toContainText("Điểm tham chiếu");
+        await expect(page.locator(".h6-top-info")).not.toContainText("Syringa");
+        await expect(page.getByTestId("private-world-panel")).toBeVisible();
+        await page.getByLabel("Chọn công trình").selectOption("synthetic-building-0");
+        await page.getByRole("button", { name: "Biên tập nâng cao", exact: true }).click();
+        await page.getByLabel("Chiều cao (m)", { exact: true }).fill("12");
+        await page.getByRole("button", { name: "Lưu sửa", exact: true }).click();
+        await expect(page.getByLabel("Chiều cao (m)", { exact: true })).toHaveValue("12");
+        page.once("dialog", (dialog) => dialog.dismiss());
+        await page.getByRole("link", { name: "Giới thiệu", exact: true }).click();
+        await expect(page.locator("#scene-root")).toBeVisible();
+        await expect(page.getByLabel("Chiều cao (m)", { exact: true })).toHaveValue("12");
+        const sceneState = await page.locator("#scene-root").getAttribute("data-scene-state");
+        expect(["ready", "fallback"]).toContain(sceneState);
+        if (forceNoWebGL) expect(sceneState).toBe("fallback");
+        else if (process.env["REQUIRE_WEBGL2"] === "1")
+          expect(sceneState, "Required renderer cannot be reported as a fallback PASS").toBe(
+            "ready",
+          );
+        if (sceneState === "ready") {
+          await expect(
+            page.getByRole("button", { name: "Giữ khoảnh khắc", exact: true }),
+          ).toBeEnabled();
+          await page.getByRole("button", { name: "Giữ khoảnh khắc", exact: true }).click();
+          const latencies = await page.getByTestId("demo-scene").evaluate((host) => ({
+            build: Number(host.dataset.meshBuildLatencyMs),
+            capture: Number(host.dataset.captureLatencyMs),
+          }));
+          expect(Number.isFinite(latencies.build)).toBe(true);
+          expect(Number.isFinite(latencies.capture)).toBe(true);
+          expect(latencies.build).toBeGreaterThanOrEqual(0);
+          expect(latencies.capture).toBeGreaterThanOrEqual(0);
+        } else {
+          await expect(page.getByText("Thiết bị chưa mở được 3D")).toBeVisible();
+          await expect(page.getByRole("button", { name: "Thử lại 3D", exact: true })).toBeVisible();
+          await expect(
+            page.getByRole("button", { name: "Giữ khoảnh khắc", exact: true }),
+          ).toBeDisabled();
+          await expect(page.getByTestId("demo-scene")).not.toHaveAttribute(
+            "data-capture-latency-ms",
+            /.+/,
+          );
+          test.info().annotations.push({
+            type: "capability",
+            description: forceNoWebGL
+              ? "WebGL2 intentionally unavailable: disabled capture asserted; no rendered-capture claim."
+              : "WebGL2 unavailable in this environment: disabled capture asserted; rendered capture NOT_VERIFIED. Privacy/export/reopen assertions still run.",
+          });
+        }
+        const [download] = await Promise.all([
+          page.waitForEvent("download"),
+          page.getByRole("button", { name: "Xuất bản làm việc", exact: true }).click(),
+        ]);
+        const stream = await download.createReadStream();
+        expect(stream).not.toBeNull();
+        const chunks: Buffer[] = [];
+        if (stream) for await (const chunk of stream) chunks.push(Buffer.from(chunk));
+        const bytes = Buffer.concat(chunks),
+          working = JSON.parse(bytes.toString("utf8"));
+        expect(working.manifest.datasetRevision).toBe(SENTINEL);
+        expect(working.world.buildings).toHaveLength(250);
+        expect(working.world.buildings[0].wallHeight).toBe(5);
+        expect(working.overrides.overrides.at(-1).patch.patch).toEqual({ wallHeight: 12 });
+        expect(working).not.toHaveProperty("temporaryLotIllustrationSelected");
+        await assertPrivacy(page);
+        await page.reload();
+        await expect(page.getByText("Đã mở gói cục bộ", { exact: false })).toHaveCount(0);
+        await openPackage(page, bytes);
+        await page.getByLabel("Chọn công trình").selectOption("synthetic-building-0");
+        await page.getByRole("button", { name: "Biên tập nâng cao", exact: true }).click();
+        await expect(page.getByLabel("Chiều cao (m)", { exact: true })).toHaveValue("12");
+        await assertPrivacy(page);
+      },
+    );
+  }
   test("portrait/landscape keyboard and VI/EN retain a reachable compact panel", async ({
     page,
   }) => {
