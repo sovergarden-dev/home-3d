@@ -17,7 +17,7 @@ if (![cycles, soakMinutes].every((n) => Number.isFinite(n) && n >= 0))
   throw new Error("H6_CONFIG_INVALID");
 const manifest = {
   schemaVersion: "1.0",
-  datasetRevision: "synthetic-h6-completion-v3",
+  datasetRevision: "synthetic-h6-completion-v4-junction",
   units: "metres",
   frameConvention: "ENU_X_EAST_Y_UP_NEG_Z_NORTH",
   isSynthetic: true,
@@ -54,15 +54,21 @@ const buildings = Array.from({ length: 250 }, (_, i) => {
 });
 const roads = Array.from({ length: 20 }, (_, i) => ({
   localId: `synthetic-road-${i}`,
-  polylineENU: [
-    [-260, (i - 10) * 25],
-    [260, (i - 10) * 25],
-  ],
+  polylineENU:
+    i === 19
+      ? [
+          [10, -260],
+          [10, 260],
+        ]
+      : [
+          [-260, (i - 10) * 25],
+          [260, (i - 10) * 25],
+        ],
   connectorIds: [],
   roadClass: "residential",
   carriagewayWidth: 7,
   sidewalkWidths: [1.5, 1.5],
-  elevationLayer: 0,
+  elevationLayer: i === 10 ? 1 : 0,
   direction: "both",
   surface: "asphalt",
   provenance,
@@ -81,6 +87,7 @@ const report = {
     sha256: createHash("sha256").update(fixtureText).digest("hex"),
     buildings: 250,
     roads: 20,
+    geometryCases: ["same-layer junctions", "different-layer crossing"],
   },
   config: {
     beforeURL,
@@ -240,11 +247,15 @@ async function screenshotSet(page, label) {
   await page.getByRole("radio", { name: "Mưa", exact: true }).click();
   await page.waitForTimeout(100);
   await capture(page, `${label}-diorama-rain.png`);
+  await page.getByRole("radio", { name: "Nắng", exact: true }).click();
+  await page.waitForTimeout(100);
+  await capture(page, `${label}-diorama-sunny-restored.png`);
   await page.getByRole("radio", { name: "Mặt bằng", exact: true }).click();
   await capture(page, `${label}-topdown.png`);
   await page.getByRole("radio", { name: "Tầm mắt (demo)", exact: true }).click();
   await capture(page, `${label}-eye-level.png`);
   await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("radio", { name: "Mặt bằng", exact: true }).click();
   await capture(page, `${label}-portrait.png`);
   await page.setViewportSize({ width: 740, height: 390 });
   await capture(page, `${label}-landscape.png`);
