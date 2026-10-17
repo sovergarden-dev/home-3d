@@ -23,7 +23,7 @@ Build info công khai chỉ gồm phiên bản H6 và SHA build nếu môi trư�
 
 ## Build local
 
-Phần này chỉ dành để tạo hoặc làm mới package từ dữ liệu nguồn riêng. Nếu đã có ZIP chuẩn để kiểm thử, bỏ qua các bước bên dưới và dùng mục **Mở preview trực tiếp trong Lovable**; không cần cài dependencies trên máy kiểm thử.
+Phần này chỉ dành để tạo hoặc làm mới package từ dữ liệu nguồn riêng. Nếu đã có `world-package.json` canonical, bỏ qua các bước bên dưới và dùng mục **Dùng gói hiện có — vài thao tác**; không cần cài dependencies trên máy kiểm thử.
 
 ```bash
 cd pipeline
@@ -127,6 +127,6 @@ bun scripts/h6-production-smoke.mjs
 
 Runner production phục vụ `.output/server/index.mjs` bằng Bun loopback, truyền built public assets qua binding ASSETS đúng adapter Cloudflare-module. Nó mở fixture synthetic, kiểm 3 mode/sửa/xuất/mở lại, SSR/noindex/build không có sentinel rồi tự dừng; không thay config/deploy/Cloudflare. Muốn ghi SHA thật, chỉ build trên cây sạch với `VITE_BUILD_SHA=$(git rev-parse HEAD) bun run build`; build không được cấp SHA vẫn ghi không xác định.
 
-Script QA ghi ảnh/số đo vào `test-results/h6-completion` (gitignored), fixture độc lập không sao từ khu thật. Cần browser Playwright đã cài, có thể truyền `PLAYWRIGHT_CHROMIUM_EXECUTABLE` cho Chromium cục bộ. Soak không thay cho unit/lifecycle; frame interval là của frame render hoạt động, không GPU time; JS heap/estimate không phải GPU memory. Không suy FPS người dùng từ SwiftShader. Screenshot A/B giữ cùng fixture, camera, time, viewport, DPR; không đổi nhãn ảnh cũ thành SHA mới. Mọi skip phải ghi lý do và không gọi fallback là GPU pass.
+Script QA ghi ảnh/số đo vào `test-results/h6-completion` (gitignored), fixture độc lập không sao từ khu thật. Cần browser Playwright đã cài, có thể truyền `PLAYWRIGHT_CHROMIUM_EXECUTABLE` cho Chromium cục bộ. Probe chỉ đếm color clear ở framebuffer chính, loại shadow/offscreen; không đếm mỗi pass bóng thành một frame. Thời gian mở gói tổng, `File.text`, parser browser warm chạy độc lập, CPU mesh construction và render+PNG capture được ghi riêng, không trộn vào frame interval. Đây là diagnostics một mẫu, không phải cold-load percentile. Soak không thay cho unit/lifecycle; frame interval là của frame render hoạt động, không GPU time; JS heap/estimate không phải GPU memory. Không suy FPS người dùng từ SwiftShader. Screenshot A/B giữ cùng fixture, camera, time, viewport, DPR; không đổi nhãn ảnh cũ thành SHA mới. Mọi skip phải ghi lý do và không gọi fallback là GPU pass.
 
 Không merge, Publish, deploy, upload R2 hoặc đổi Cloudflare Access trong runbook này.
