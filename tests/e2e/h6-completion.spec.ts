@@ -199,6 +199,8 @@ test.describe("H6 completion synthetic integration", () => {
   }) => {
     await openRoot(page);
     await openPackage(page);
+    await expect(page.locator(".h6-top-info")).toContainText("Điểm tham chiếu");
+    await expect(page.locator(".h6-top-info")).not.toContainText("Syringa");
     await expect(page.getByTestId("private-world-panel")).toBeVisible();
     await page.getByLabel("Chọn công trình").selectOption("synthetic-building-0");
     await page.getByRole("button", { name: "Biên tập nâng cao", exact: true }).click();
@@ -343,6 +345,31 @@ test.describe("H6 completion synthetic integration", () => {
     await expect(page.getByRole("region", { name: "Inspector", exact: true })).toContainText(
       "pick-west",
     );
+    if (browserName === "chromium") {
+      const touch = await page.context().newCDPSession(page);
+      await touch.send("Input.dispatchTouchEvent", {
+        type: "touchStart",
+        touchPoints: [{ x: 667, y: 400 }],
+      });
+      await touch.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+      await expect(page.getByRole("region", { name: "Inspector", exact: true })).toContainText(
+        "pick-east",
+      );
+      await touch.send("Input.dispatchTouchEvent", {
+        type: "touchStart",
+        touchPoints: [{ x: 612, y: 400 }],
+      });
+      await touch.send("Input.dispatchTouchEvent", {
+        type: "touchMove",
+        touchPoints: [{ x: 720, y: 400 }],
+      });
+      await touch.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+      await expect(page.getByRole("region", { name: "Inspector", exact: true })).toContainText(
+        "pick-east",
+      );
+      await page.getByRole("button", { name: "Về lõi 300 m", exact: true }).click();
+      await touch.detach();
+    }
     await page.mouse.click(507, 400);
     await expect(page.getByRole("region", { name: "Inspector", exact: true })).toContainText(
       "pick-lot",

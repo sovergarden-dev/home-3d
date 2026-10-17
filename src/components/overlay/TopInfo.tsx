@@ -39,7 +39,9 @@ export function TopInfo() {
       </p>
       <div className="mt-1 flex items-center gap-1.5 text-sm font-medium text-foreground">
         <MapPin className="h-3.5 w-3.5 shrink-0 text-accent" aria-hidden />
-        <span className="truncate">{t.home}</span>
+        <span className="truncate">
+          {worldSnapshot.mode === "fixture" ? t.home : t.referencePoint}
+        </span>
       </div>
       <p className="mt-1 text-[10px] text-muted-foreground" data-testid="build-info">
         {PUBLIC_BUILD_VERSION} · SHA {BUILD_SHA ?? t.localPreview.buildUnknown}
