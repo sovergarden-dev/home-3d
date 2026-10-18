@@ -52,7 +52,9 @@ const provenance = (
   field: string,
 ) =>
   feature.attributes?.[field] ??
-  (field === "geometry" ? feature.provenance : { source: "unknown", quality: "unknown" });
+  (["geometry", "polylineENU"].includes(field)
+    ? feature.provenance
+    : { source: "unknown", quality: "unknown" });
 
 export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
   const t = useT();
@@ -632,7 +634,7 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
                 {field(selectedRoad, "carriagewayWidth")}
               </p>
               <p>
-                {t.localPreview.geometry}: {field(selectedRoad, "geometry")}
+                {t.localPreview.roadCenterline}: {field(selectedRoad, "polylineENU")}
               </p>
             </div>
           )}

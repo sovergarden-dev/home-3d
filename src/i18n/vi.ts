@@ -108,6 +108,7 @@ export const vi = {
     roof: "Kiểu mái",
     width: "Bề rộng đường",
     geometry: "Footprint GeoJSON",
+    roadCenterline: "Hình học tim đường",
     save: "Lưu sửa",
     saveRoad: "Lưu đường",
     saveGeometry: "Lưu hình dạng",

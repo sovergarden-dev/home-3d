@@ -4,8 +4,12 @@ import { resolve, relative, sep, join } from "node:path";
 import { mkdir, writeFile, readdir, readFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import { SYNTHETIC_NEIGHBORHOOD } from "../src/world/fixtures/syntheticNeighborhood.ts";
+import {
+  checkMalformedManifestRecovery,
+  checkRoadGeometryRoundtrip,
+  malformedManifestCases,
+} from "../tests/e2e/helpers/h6-review23.ts";
 import worker from "../.output/server/index.mjs";
-
 const output = resolve(process.env.H6_SMOKE_OUTPUT_DIR ?? "/tmp/h6-production-smoke");
 const publicDir = resolve(".output/public");
 const sentinel = "H6_PRODUCTION_SYNTHETIC_SENTINEL_8720";
@@ -108,6 +112,8 @@ try {
   await page.getByRole("button", { name: "Biên tập nâng cao", exact: true }).click();
   await expect(page.getByLabel("Chiều cao (m)", { exact: true })).toHaveValue("13");
   await expect(page.locator("#scene-root canvas")).toHaveCount(1);
+  for (const kind of malformedManifestCases) await checkMalformedManifestRecovery(page, kind);
+  await checkRoadGeometryRoundtrip(page);
   expect(attempts.join("\n")).not.toContain(sentinel);
   expect(await (await page.request.get("http://127.0.0.1:4179/")).text()).not.toContain(sentinel);
   async function scan(directory) {
@@ -151,6 +157,8 @@ try {
       "three modes",
       "edit/export/reload equivalence",
       "one canvas",
+      "R23-1 malformed manifest rejection and valid-file recovery (three variants)",
+      "R23-2 road geometry provenance override/export/reopen and VI/EN labels",
       "no sentinel in requests/SSR/build output",
       "no page errors",
       "honest build SHA and mobile header bounds",

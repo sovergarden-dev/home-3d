@@ -117,6 +117,7 @@ export const en: Dict = {
     roof: "Roof type",
     width: "Road width",
     geometry: "Footprint GeoJSON",
+    roadCenterline: "Road centerline geometry",
     save: "Save edit",
     saveRoad: "Save road",
     saveGeometry: "Save geometry",

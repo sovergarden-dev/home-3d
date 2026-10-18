@@ -13,8 +13,9 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function hasManifestShape(value: unknown) {
+  if (!isRecord(value)) return false;
+  const coverage = value["coverage"];
   return (
-    isRecord(value) &&
     typeof value["schemaVersion"] === "string" &&
     typeof value["datasetRevision"] === "string" &&
     value["datasetRevision"].trim().length > 0 &&
@@ -22,8 +23,28 @@ function hasManifestShape(value: unknown) {
     value["frameConvention"] === "ENU_X_EAST_Y_UP_NEG_Z_NORTH" &&
     typeof value["isSynthetic"] === "boolean" &&
     Array.isArray(value["chunks"]) &&
+    value["chunks"].every(
+      (chunk) =>
+        isRecord(chunk) &&
+        typeof chunk["localId"] === "string" &&
+        Array.isArray(chunk["bounds"]) &&
+        chunk["bounds"].length === 4 &&
+        chunk["bounds"].every((bound) => typeof bound === "number" && Number.isFinite(bound)) &&
+        typeof chunk["tier"] === "string" &&
+        ["core", "context", "periphery"].includes(chunk["tier"]),
+    ) &&
     isRecord(value["assetHashes"]) &&
-    Array.isArray(value["licences"])
+    Object.values(value["assetHashes"]).every((hash) => typeof hash === "string") &&
+    Array.isArray(value["licences"]) &&
+    value["licences"].every((licence) => typeof licence === "string") &&
+    isRecord(coverage) &&
+    typeof coverage["quality"] === "string" &&
+    ["synthetic", "verified", "source_only", "inferred", "unknown", "conflict"].includes(
+      coverage["quality"],
+    ) &&
+    typeof coverage["sourceCount"] === "number" &&
+    Number.isSafeInteger(coverage["sourceCount"]) &&
+    coverage["sourceCount"] >= 0
   );
 }
 function isCenterConfirmation(value: unknown) {
