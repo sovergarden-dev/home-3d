@@ -1,5 +1,5 @@
 import { ClientOnly, useBlocker } from "@tanstack/react-router";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import { centerMarkerLabels } from "@/components/overlay/centerMarkerLabels";
 import { PrivateWorldPanel } from "@/components/overlay/PrivateWorldPanel";
 import { useT } from "@/i18n";
@@ -40,7 +40,9 @@ function ViewportInner() {
   );
   const [attempt, setAttempt] = useState(0);
   const [failed, setFailed] = useState(false);
-  useEffect(() => {
+  // OrbitControls disconnects from canvas.getRootNode(). Dispose before React
+  // detaches the host, otherwise its document key listener retains the old scene.
+  useLayoutEffect(() => {
     let cancelled = false;
     const store = useAppStore.getState();
     store.setLoadingProgress(0.15);

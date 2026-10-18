@@ -5,6 +5,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { join, resolve } from "node:path";
+import { assessLifecycleMemory } from "./h6-lifecycle-memory.mjs";
 
 const beforeURL = process.env.H6_BEFORE_URL ?? "http://127.0.0.1:4180";
 const finalURL = process.env.H6_FINAL_URL ?? "http://127.0.0.1:4178";
@@ -13,8 +14,10 @@ const cycles = Number(process.env.H6_CYCLES ?? 20);
 const soakMinutes = Number(process.env.H6_SOAK_MINUTES ?? 20);
 const phase = process.env.H6_PHASE ?? "both";
 if (!["before", "final", "both"].includes(phase)) throw new Error("H6_PHASE_INVALID");
-if (![cycles, soakMinutes].every((n) => Number.isFinite(n) && n >= 0))
+if (!Number.isInteger(cycles) || ![cycles, soakMinutes].every((n) => Number.isFinite(n) && n >= 0))
   throw new Error("H6_CONFIG_INVALID");
+if (phase !== "before" && (cycles < 20 || soakMinutes < 20))
+  throw new Error("H6_FINAL_REQUIRES_20_CYCLES_AND_20_MINUTES");
 const manifest = {
   schemaVersion: "1.0",
   datasetRevision: "synthetic-h6-completion-v4-junction",
@@ -107,7 +110,7 @@ const report = {
   soak: {},
   errors: [],
   method:
-    "Only color clears with FRAMEBUFFER_BINDING=null mark main rendered frames; all offscreen/shadow-map clears are excluded and counted separately. Main-frame start intervals collected during explicit held-pointer orbit; no slow-frame cutoff. Not GPU time, RAF cadence, automation latency or device FPS. Same 250-building/20-road package, core camera, viewport/DPR, dry noon and orbit path; one warmup then three rounds. File-open wall latency, actual File.text read, isolated warm browser parser, CPU mesh construction and render+PNG capture latency are separate and single-sample diagnostics, not frame metrics. Baseline uninstrumented phases remain null. Software WebGL is not hardware-tier certification.",
+    "Only color clears with FRAMEBUFFER_BINDING=null mark main rendered frames; all offscreen/shadow-map clears are excluded and counted separately. Main-frame start intervals collected during explicit held-pointer orbit; no slow-frame cutoff. Not GPU time, RAF cadence, automation latency or device FPS. Same 250-building/20-road package, core camera, viewport/DPR, dry noon and orbit path; one warmup then three rounds. Browser File/DataTransfer input events exercise the actual File.text/parser/UI handler without a driver-retained alias of each detached input; native setInputFiles is separately covered by E2E. File-open wall latency excludes an OS chooser. It, actual File.text read, isolated warm browser parser, CPU mesh construction and render+PNG capture latency are separate single-sample diagnostics, not frame metrics. Baseline uninstrumented phases remain null. Software WebGL is not hardware-tier certification.",
 };
 await mkdir(outDir, { recursive: true });
 const browser = await chromium.launch({
@@ -164,11 +167,17 @@ async function openFixture(page) {
   const openedAt = performance.now();
   const input = page.getByLabel("Mở gói world");
   assert((await input.count()) === 1, "PACKAGE_INPUT_REQUIRED_NO_BASELINE_FALLBACK");
-  await input.setInputFiles({
-    name: "synthetic-h6-completion.json",
-    mimeType: "application/json",
-    buffer: Buffer.from(fixtureText),
-  });
+  // Keep file-input semantics without the driver's retained retargeted-input alias.
+  // Native setInputFiles remains covered by the separate integrated E2E suite.
+  await input.evaluate((element, text) => {
+    const transfer = new DataTransfer();
+    transfer.items.add(
+      new File([text], "synthetic-h6-completion.json", { type: "application/json" }),
+    );
+    element.files = transfer.files;
+    element.dispatchEvent(new Event("input", { bubbles: true, composed: true }));
+    element.dispatchEvent(new Event("change", { bubbles: true }));
+  }, fixtureText);
   await page.getByText("Đã mở gói cục bộ", { exact: false }).waitFor();
   await page.waitForFunction(
     () =>
@@ -361,13 +370,23 @@ if (finalPage) {
   async function memory() {
     await cdp.send("HeapProfiler.collectGarbage");
     const data = await cdp.send("Performance.getMetrics");
-    return Object.fromEntries(
-      data.metrics
-        .filter((m) =>
-          ["JSHeapUsedSize", "Nodes", "Documents", "JSEventListeners"].includes(m.name),
-        )
-        .map((m) => [m.name, m.value]),
-    );
+    const attached = await page.evaluate(() => ({
+      attachedCanvases: document.querySelectorAll("#scene-root canvas").length,
+      activeWorlds: Number(
+        document.querySelector('[data-testid="demo-scene"]')?.getAttribute("data-active-worlds"),
+      ),
+    }));
+    assert(attached.attachedCanvases === 1 && attached.activeWorlds === 1, "MEMORY_SCENE_COUNT");
+    return {
+      ...Object.fromEntries(
+        data.metrics
+          .filter((m) =>
+            ["JSHeapUsedSize", "Nodes", "Documents", "JSEventListeners"].includes(m.name),
+          )
+          .map((m) => [m.name, m.value]),
+      ),
+      ...attached,
+    };
   }
   const memorySamples = [{ stage: "before-cycles", ...(await memory()) }];
   report.lifecycle = { requested: cycles, completed: 0 };
@@ -386,6 +405,17 @@ if (finalPage) {
     if ((i + 1) % 5 === 0) {
       memorySamples.push({ stage: `cycle-${i + 1}`, ...(await memory()) });
       console.log(`lifecycle ${i + 1}/${cycles}`);
+    }
+  }
+  if (cycles >= 20) {
+    report.lifecycle.retainedMemory = assessLifecycleMemory(memorySamples);
+    console.log(`retained lifecycle: ${JSON.stringify(report.lifecycle.retainedMemory)}`);
+    if (!report.lifecycle.retainedMemory.passed) {
+      report.errors.push("LIFECYCLE_RETAINED_GROWTH");
+      report.soak = { requestedMinutes: soakMinutes, actualSeconds: 0, memorySamples };
+      report.finishedAt = new Date().toISOString();
+      await writeFile(join(outDir, "report.json"), JSON.stringify(report, null, 2) + "\n");
+      throw new Error("LIFECYCLE_RETAINED_GROWTH");
     }
   }
   const start = Date.now(),
@@ -421,10 +451,14 @@ if (finalPage) {
     memoryMethod:
       "Chromium CDP Performance JSHeapUsedSize/DOM counts after explicit collectGarbage at each sample; JS retained heap only, not GPU memory. Other test/browser processes may affect environment.",
   };
+  if (cycles >= 20) {
+    report.soak.retainedMemory = assessLifecycleMemory(memorySamples);
+    if (!report.soak.retainedMemory.passed) report.errors.push("SOAK_RETAINED_GROWTH");
+  }
 }
-assert(report.errors.length === 0, "PAGE_ERRORS_PRESENT");
 report.finishedAt = new Date().toISOString();
 await writeFile(join(outDir, "report.json"), JSON.stringify(report, null, 2) + "\n");
 await writeFile(join(outDir, "synthetic-fixture.json"), JSON.stringify(fixture, null, 2) + "\n");
-console.log(`QA complete: ${join(outDir, "report.json")}`);
 await browser.close();
+assert(report.errors.length === 0, "QA_ERRORS_PRESENT");
+console.log(`QA complete: ${join(outDir, "report.json")}`);
