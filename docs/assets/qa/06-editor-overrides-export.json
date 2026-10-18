@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "1.0",
+  "overrides": [
+    {
+      "localId": "ov-replace_building_geometry-qa-house",
+      "revision": 1,
+      "reason": "Chỉnh footprint trong trình biên tập cho qa-house; chưa đối chiếu nguồn thực địa",
+      "provenance": {
+        "source": "manual_override",
+        "quality": "inferred"
+      },
+      "patch": {
+        "operation": "replace_building_geometry",
+        "featureId": "qa-house",
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -6,
+                -6
+              ],
+              [
+                -2,
+                -6
+              ],
+              [
+                -2,
+                -2
+              ],
+              [
+                -6,
+                -2
+              ],
+              [
+                -6,
+                -6
+              ]
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "localId": "ov-road-width-qa-road",
+      "revision": 2,
+      "reason": "Chỉnh bề rộng đường qa-road trong trình biên tập; chưa đối chiếu nguồn thực địa",
+      "provenance": {
+        "source": "manual_override",
+        "quality": "inferred"
+      },
+      "patch": {
+        "operation": "patch_road",
+        "featureId": "qa-road",
+        "patch": {
+          "carriagewayWidth": 8
+        }
+      }
+    },
+    {
+      "localId": "ov-qa-house",
+      "revision": 3,
+      "reason": "Chỉnh sửa cục bộ trong trình biên tập cho qa-house; chưa đối chiếu nguồn thực địa",
+      "provenance": {
+        "source": "manual_override",
+        "quality": "inferred"
+      },
+      "patch": {
+        "operation": "patch_building",
+        "featureId": "qa-house",
+        "patch": {
+          "wallHeight": 9.5,
+          "levels": 2,
+          "roofType": "flat"
+        }
+      }
+    }
+  ]
+}

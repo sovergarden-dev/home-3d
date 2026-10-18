@@ -1,0 +1,38 @@
+{
+  "capturedAt": "2026-10-15T10:40:42.946Z",
+  "codeSha": "be1d6930470f9394be69f8d0b8433f43dc2cf447",
+  "browser": "Playwright Chromium headless with SwiftShader",
+  "sceneState": "ready",
+  "webglHardwareBenchmark": "not performed; SwiftShader is not a physical GPU benchmark",
+  "viewports": [
+    "1280x800",
+    "390x844"
+  ],
+  "method": "Playwright E2E: buildWorldPackage(source) → load in local editor → patch part → undo/redo → download overrides → buildWorldPackage(originalSource, exportedOverrides) → parseWorldPackage → reload in editor → verify persisted part and reset history",
+  "fixtureSha256": "2ec012a90a1a5698123281ada9805447c3478c92ab2339a57629906acfdcd602",
+  "buildReport": {
+    "valid": true,
+    "rebuiltValid": true
+  },
+  "exportedOverrideOperations": [
+    "patch_building_part"
+  ],
+  "screenshots": [
+    {
+      "file": "07-h6-courtyard-roof-and-empty-lot.png",
+      "viewport": "1280x800",
+      "note": "Synthetic courtyard building with a confirmed empty lot fully inside its courtyard hole; default diorama view."
+    },
+    {
+      "file": "08-h6-parent-part-editor-after-rebuild.png",
+      "viewport": "1280x800",
+      "note": "Rebuilt source package reloaded with the exported 5.5 m part override; package history reset."
+    },
+    {
+      "file": "09-h6-parent-part-editor-mobile.png",
+      "viewport": "390x844",
+      "note": "Mobile viewport showing the synthetic rebuilt package and active part editor after undo/redo."
+    }
+  ],
+  "exportedOverrideFile": "07-h6-part-overrides-export.json"
+}

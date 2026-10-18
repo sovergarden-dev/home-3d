@@ -1,0 +1,72 @@
+{
+  "capturedAt": "2026-10-15T15:08:33.964Z",
+  "codeSha": "abf1a54efd5c3bf5e53ad359a2545b430137e5cb",
+  "browser": "Playwright Chromium headless with SwiftShader",
+  "sceneState": "ready",
+  "webglHardwareBenchmark": "not performed; SwiftShader is not a physical GPU benchmark",
+  "viewports": [
+    "1280x800",
+    "1440x900",
+    "390x844",
+    "740x390"
+  ],
+  "method": "Playwright E2E: load synthetic private package → activate Plan with normal click while panel is open → collapse and verify north/scale → edit part and road width → export → source rebuild/reload → verify retained road fields/provenance and part edit → mobile viewport bounds, collapse, and keyboard Plan navigation",
+  "fixtureSha256": "2ec012a90a1a5698123281ada9805447c3478c92ab2339a57629906acfdcd602",
+  "buildReport": {
+    "valid": true,
+    "rebuiltValid": true
+  },
+  "exportedOverrideOperations": [
+    "patch_road",
+    "patch_building_part",
+    "patch_road"
+  ],
+  "screenshots": [
+    {
+      "file": "07-h6-courtyard-roof-and-empty-lot.png",
+      "viewport": "1280x800",
+      "note": "Synthetic courtyard building with a confirmed empty lot fully inside its courtyard hole; default diorama view."
+    },
+    {
+      "file": "10-h6-plan-desktop-panel-expanded.png",
+      "viewport": "1280x800",
+      "note": "Synthetic Plan view at 1280x800 while the private panel remains expanded; Mặt bằng was activated by a normal click."
+    },
+    {
+      "file": "11-h6-plan-desktop-panel-collapsed.png",
+      "viewport": "1280x800",
+      "note": "Synthetic Plan view at 1280x800 after collapsing the private panel; north indicator and metric scale remain visible."
+    },
+    {
+      "file": "15-h6-plan-desktop-1440x900.png",
+      "viewport": "1440x900",
+      "note": "Synthetic Plan view and collapsed private-panel bounds at 1440x900."
+    },
+    {
+      "file": "08-h6-parent-part-editor-after-rebuild.png",
+      "viewport": "1280x800",
+      "note": "Rebuilt source package reloaded with the exported 5.5 m part override; package history reset."
+    },
+    {
+      "file": "12-h6-plan-mobile-panel-expanded.png",
+      "viewport": "390x844",
+      "note": "Synthetic Plan view at 390x844 with the private editor open; panel bounds stay within the viewport and scale controls remain available."
+    },
+    {
+      "file": "13-h6-plan-mobile-panel-collapsed.png",
+      "viewport": "390x844",
+      "note": "Synthetic Plan view at 390x844 after collapse; Mặt bằng remains keyboard-accessible and north/metric scale are visible."
+    },
+    {
+      "file": "09-h6-parent-part-editor-mobile.png",
+      "viewport": "390x844",
+      "note": "Mobile viewport showing the synthetic rebuilt package and active part editor after undo/redo; panel bounds remain inside viewport."
+    },
+    {
+      "file": "16-h6-private-panel-mobile-landscape.png",
+      "viewport": "740x390",
+      "note": "Synthetic Plan view at 740x390 with expanded private panel; scroll-limited panel remains inside landscape viewport."
+    }
+  ],
+  "exportedOverrideFile": "14-h6-override-roundtrip-export.json"
+}

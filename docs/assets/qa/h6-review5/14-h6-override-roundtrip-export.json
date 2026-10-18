@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "1.0",
+  "overrides": [
+    {
+      "localId": "review5-imported-road-fields",
+      "revision": 1,
+      "reason": "Synthetic imported direction and elevation",
+      "provenance": {
+        "source": "survey",
+        "quality": "verified",
+        "sourceNamespace": "survey-fixture"
+      },
+      "patch": {
+        "operation": "patch_road",
+        "featureId": "road-synthetic-h6-qa-road",
+        "patch": {
+          "direction": "forward",
+          "baseElevation": 3,
+          "carriagewayWidth": 7
+        }
+      },
+      "identityScheme": "stable-local-id-v2"
+    },
+    {
+      "localId": "ov-part-part-synthetic-h6-qa-part-left-2",
+      "revision": 2,
+      "identityScheme": "stable-local-id-v2",
+      "reason": "Chỉnh phần part-synthetic-h6-qa-part-left trong trình biên tập; chưa đối chiếu nguồn thực địa",
+      "provenance": {
+        "source": "manual_override",
+        "quality": "inferred"
+      },
+      "patch": {
+        "operation": "patch_building_part",
+        "buildingId": "building-synthetic-h6-qa-parent",
+        "partId": "part-synthetic-h6-qa-part-left",
+        "patch": {
+          "wallHeight": 5.5,
+          "levels": 1,
+          "roofType": "flat"
+        }
+      }
+    },
+    {
+      "localId": "ov-road-width-road-synthetic-h6-qa-road-3",
+      "revision": 3,
+      "identityScheme": "stable-local-id-v2",
+      "reason": "Chỉnh bề rộng đường road-synthetic-h6-qa-road trong trình biên tập; chưa đối chiếu nguồn thực địa",
+      "provenance": {
+        "source": "manual_override",
+        "quality": "inferred"
+      },
+      "patch": {
+        "operation": "patch_road",
+        "featureId": "road-synthetic-h6-qa-road",
+        "patch": {
+          "carriagewayWidth": 8
+        }
+      }
+    }
+  ]
+}
