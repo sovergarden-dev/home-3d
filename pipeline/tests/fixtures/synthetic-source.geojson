@@ -1,0 +1,34 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "synthetic-road-1",
+      "properties": { "highway": "residential", "width": 6 },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [0.5999, 0.3999],
+          [0.6001, 0.4001]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "synthetic-building-1",
+      "properties": { "building": "yes", "building:levels": 3, "roof:shape": "flat" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [0.60002, 0.40002],
+            [0.60008, 0.40002],
+            [0.60008, 0.40008],
+            [0.60002, 0.40008],
+            [0.60002, 0.40002]
+          ]
+        ]
+      }
+    }
+  ]
+}

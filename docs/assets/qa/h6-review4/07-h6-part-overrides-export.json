@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "1.0",
+  "overrides": [
+    {
+      "localId": "ov-part-part-synthetic-h6-qa-part-left",
+      "revision": 1,
+      "reason": "Chỉnh phần part-synthetic-h6-qa-part-left trong trình biên tập; chưa đối chiếu nguồn thực địa",
+      "provenance": {
+        "source": "manual_override",
+        "quality": "inferred"
+      },
+      "patch": {
+        "operation": "patch_building_part",
+        "buildingId": "building-synthetic-h6-qa-parent",
+        "partId": "part-synthetic-h6-qa-part-left",
+        "patch": {
+          "wallHeight": 5.5,
+          "levels": 1,
+          "roofType": "flat"
+        }
+      }
+    }
+  ]
+}

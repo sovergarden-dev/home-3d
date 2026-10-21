@@ -1,519 +1,716 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { useAppStore } from "@/state/appStore";
-import { DEMO_CONFIG } from "@/config/demo";
 import { bindCapture } from "./capture";
 import { createDemoAudio } from "./demoAudio";
-import { createDemoLayout, daylightAt, seededRandom } from "./demoLayout";
+import { daylightAt } from "./demoLayout";
+import { buildWorldMeshes, type WorldMeshBundle } from "./world/buildWorldMeshes";
+import { createFrameMetrics } from "./quality/frameMetrics";
+import {
+  configurePlanCamera,
+  isPlanCameraZenith,
+  metresPerCssPixel,
+  type PlanCameraConfig,
+} from "./view/planCamera";
+import {
+  PRIVATE_PLAN_CORE_SPAN_METRES,
+  clampPrivatePlanCentre,
+  derivePrivateWorldPlanFrame,
+  type PrivateWorldPlanFrame,
+} from "./view/privateWorldPlanFrame";
+import { TEMPORARY_LOT_ILLUSTRATION_POSITION } from "./view/temporaryLotIllustration";
+import { projectMarkerAndCull } from "./view/cameraFrame";
+import { useAppStore } from "@/state/appStore";
+import { surfaceCentroid } from "@/world/geometry";
+import { worldDataProvider } from "@/world/privateWorldSession";
+import type { WorldData } from "@/world/schema";
+import { pickFeature, isTap } from "./interaction/featurePicking";
+import {
+  isConfidenceVisible,
+  getSelectedFeature,
+  selectFeature,
+  subscribeFeatureSelection,
+} from "@/world/featureSelection";
 
-type Shape = "box" | "cylinder" | "sphere";
-interface Part {
-  x: number;
-  y: number;
-  z: number;
-  sx: number;
-  sy: number;
-  sz: number;
-  rx: number;
-  ry: number;
-  rz: number;
+export interface SceneRuntime {
+  setLabel: (label: string) => void;
+  dispose: () => void;
 }
 
-/** Geometry is authored procedurally from an invented layout; no real-world imagery or coordinates. */
-export function createDemoScene(host: HTMLDivElement, marker: HTMLDivElement, onLost: () => void) {
+function worldCentre(world: WorldData) {
+  const positions = [
+    ...world.roads.flatMap((road) => road.polylineENU),
+    ...world.lots.flatMap((lot) =>
+      lot.geometry.type === "Polygon"
+        ? lot.geometry.coordinates.flat()
+        : lot.geometry.coordinates.flat(2),
+    ),
+    ...world.buildings.flatMap((building) =>
+      building.geometry.type === "Polygon"
+        ? building.geometry.coordinates.flat()
+        : building.geometry.coordinates.flat(2),
+    ),
+  ];
+  if (positions.length === 0) return new THREE.Vector3(0, 0, 0);
+  const bounds = positions.reduce(
+    (value, [x, z]) => ({
+      minX: Math.min(value.minX, x),
+      maxX: Math.max(value.maxX, x),
+      minZ: Math.min(value.minZ, z),
+      maxZ: Math.max(value.maxZ, z),
+    }),
+    { minX: Infinity, maxX: -Infinity, minZ: Infinity, maxZ: -Infinity },
+  );
+  return new THREE.Vector3((bounds.minX + bounds.maxX) / 2, 0, (bounds.minZ + bounds.maxZ) / 2);
+}
+
+function worldSpan(world: WorldData) {
+  const positions = [
+    ...world.roads.flatMap((road) => road.polylineENU),
+    ...world.lots.flatMap((lot) =>
+      lot.geometry.type === "Polygon"
+        ? lot.geometry.coordinates.flat()
+        : lot.geometry.coordinates.flat(2),
+    ),
+    ...world.buildings.flatMap((building) =>
+      building.geometry.type === "Polygon"
+        ? building.geometry.coordinates.flat()
+        : building.geometry.coordinates.flat(2),
+    ),
+  ];
+  if (positions.length === 0) return 100;
+  const bounds = positions.reduce(
+    (value, [x, z]) => ({
+      minX: Math.min(value.minX, x),
+      maxX: Math.max(value.maxX, x),
+      minZ: Math.min(value.minZ, z),
+      maxZ: Math.max(value.maxZ, z),
+    }),
+    { minX: Infinity, maxX: -Infinity, minZ: Infinity, maxZ: -Infinity },
+  );
+  return Math.max(bounds.maxX - bounds.minX, bounds.maxZ - bounds.minZ, 50) * 1.25;
+}
+
+function perspectiveFrame(world: WorldData, isPrivateWorld: boolean) {
+  return {
+    centre: isPrivateWorld ? new THREE.Vector3(0, 0, 0) : worldCentre(world),
+    // Keep the supplied origin in view; longer source roads remain available for panning.
+    span: isPrivateWorld ? PRIVATE_PLAN_CORE_SPAN_METRES : worldSpan(world),
+  };
+}
+
+export function worldHomeCentre(world: WorldData) {
+  const homeLot = world.lots.find((lot) => lot.confirmed && lot.status === "empty");
+  if (!homeLot) return new THREE.Vector3(0, 0, 0);
+  const [x, z] = surfaceCentroid(homeLot.geometry);
+  return new THREE.Vector3(x, 0, z);
+}
+
+export function createDemoScene(
+  host: HTMLDivElement,
+  marker: HTMLDivElement,
+  onContextLost: () => void,
+): SceneRuntime {
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("webgl2", { antialias: true, alpha: false });
   if (!context) throw new Error("WEBGL_UNAVAILABLE");
+
   const renderer = new THREE.WebGLRenderer({ canvas, context, antialias: true });
-  host.appendChild(canvas);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 768 ? 1 : 1.5));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.08;
   canvas.style.width = "100%";
   canvas.style.height = "100%";
   canvas.style.display = "block";
   canvas.style.touchAction = "none";
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 768 ? 1 : 1.25));
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.12;
+  host.appendChild(canvas);
+
   const scene = new THREE.Scene();
-  const sky = new THREE.Color("#eddfc8");
+  const sky = new THREE.Color("#ecdfca");
   scene.background = sky;
-  const fog = new THREE.Fog("#eddfc8", 120, 260);
-  scene.fog = fog;
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 500);
-  const controls = new OrbitControls(camera, canvas);
-  controls.enablePan = false;
-  controls.enableDamping = false;
+  const perspectiveCamera = new THREE.PerspectiveCamera(42, 1, 0.1, 800);
+  const planCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 800);
+  let activeCamera: THREE.Camera = perspectiveCamera;
+  const controls = new OrbitControls(perspectiveCamera, canvas);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.09;
   controls.minPolarAngle = 0.3;
   controls.maxPolarAngle = Math.PI / 2 - 0.06;
-  controls.minDistance = 18;
-  controls.maxDistance = 230;
+  controls.minDistance = 16;
+  controls.maxDistance = 380;
   controls.rotateSpeed = 0.6;
   controls.zoomSpeed = 0.75;
-  const ambient = new THREE.HemisphereLight("#fff7e3", "#685d48", 2.1);
-  scene.add(ambient);
-  const sun = new THREE.DirectionalLight("#fff0cd", 3.4);
-  sun.position.set(-30, 65, 30);
+  controls.screenSpacePanning = true;
+
+  const hemisphere = new THREE.HemisphereLight("#fff8e8", "#5e6658", 2.2);
+  const sun = new THREE.DirectionalLight("#fff0cd", 3.3);
+  sun.position.set(-45, 70, 36);
   sun.castShadow = true;
   sun.shadow.mapSize.set(1024, 1024);
   Object.assign(sun.shadow.camera, {
-    left: -80,
-    right: 80,
-    top: 75,
-    bottom: -75,
+    left: -90,
+    right: 90,
+    top: 90,
+    bottom: -90,
     near: 1,
-    far: 200,
+    far: 250,
   });
   sun.shadow.bias = -0.0007;
   sun.shadow.normalBias = 0.12;
-  scene.add(sun);
-  const geometries: Record<Shape, THREE.BufferGeometry> = {
-    box: new THREE.BoxGeometry(1, 1, 1),
-    cylinder: new THREE.CylinderGeometry(0.5, 0.5, 1, 8),
-    sphere: new THREE.IcosahedronGeometry(0.5, 1),
-  };
-  const materials = new Map<string, THREE.MeshStandardMaterial>();
-  const batches = new Map<
-    string,
-    { shape: Shape; material: THREE.MeshStandardMaterial; parts: Part[] }
-  >();
-  const lit = new THREE.MeshStandardMaterial({
-    color: "#f5d89a",
-    emissive: "#f9ba52",
-    emissiveIntensity: 0,
-    roughness: 0.7,
-  });
-  const lanternMat = new THREE.MeshStandardMaterial({
-    color: "#c95e39",
-    emissive: "#db6d2f",
-    emissiveIntensity: 0.1,
-    roughness: 0.65,
-  });
-  const nightMaterials = [lit, lanternMat];
-  function material(color: string) {
-    let m = materials.get(color);
-    if (!m) {
-      m = new THREE.MeshStandardMaterial({ color, roughness: 0.88 });
-      materials.set(color, m);
-    }
-    return m;
-  }
-  function part(
-    shape: Shape,
-    color: string | THREE.MeshStandardMaterial,
-    x: number,
-    y: number,
-    z: number,
-    sx: number,
-    sy: number,
-    sz: number,
-    rx = 0,
-    ry = 0,
-    rz = 0,
-  ) {
-    const m = typeof color === "string" ? material(color) : color;
-    const key = `${shape}:${m.uuid}`;
-    let batch = batches.get(key);
-    if (!batch) {
-      batch = { shape, material: m, parts: [] };
-      batches.set(key, batch);
-    }
-    batch.parts.push({ x, y, z, sx, sy, sz, rx, ry, rz });
-  }
-  const box = (
-    color: string | THREE.MeshStandardMaterial,
-    x: number,
-    y: number,
-    z: number,
-    sx: number,
-    sy: number,
-    sz: number,
-    rx = 0,
-    ry = 0,
-    rz = 0,
-  ) => part("box", color, x, y, z, sx, sy, sz, rx, ry, rz);
-  const random = seededRandom(DEMO_CONFIG.seed);
-  const green = ["#3e6551", "#587a55", "#6d8a5d"];
-  function plant(x: number, y: number, z: number, size = 0.55) {
-    part("cylinder", "#aa7252", x, y + size * 0.35, z, size * 0.65, size * 0.7, size * 0.65);
-    part(
-      "sphere",
-      green[Math.floor(random() * green.length)]!,
-      x,
-      y + size,
-      z,
-      size,
-      size * 1.2,
-      size,
-    );
-  }
-  function tree(x: number, z: number, size = 1) {
-    part("cylinder", "#83634b", x, 2.2 * size, z, 0.5 * size, 4.4 * size, 0.5 * size);
-    for (const [dx, dy, dz, s] of [
-      [0, 5.2, 0, 4.4],
-      [-1, 4.4, 0.7, 3.2],
-      [1.1, 4.5, -0.5, 3.4],
-    ]) {
-      part(
-        "sphere",
-        green[Math.floor(random() * green.length)]!,
-        x + dx! * size,
-        dy! * size,
-        z + dz! * size,
-        s! * size,
-        s! * size,
-        s! * size,
-      );
-    }
-  }
-  box("#bdab8c", 0, -1.1, -3, 124, 2, 94);
-  box("#cfc5ab", 0, -0.03, -3, 122, 0.2, 92);
-  for (const z of [12, -21]) {
-    box("#666d67", 0, 0.12, z, 121.8, 0.1, 10);
-    for (const edge of [-6.2, 6.2]) box("#ded5bc", 0, 0.22, z + edge, 121.8, 0.34, 2.4);
-    for (let x = -57; x <= 57; x += 7) box("#d6d0b5", x, 0.185, z, 2.4, 0.015, 0.15);
-    for (let x = -42; x <= 42; x += 84)
-      for (let stripe = -3; stripe <= 3; stripe++)
-        box("#ede5ce", x, 0.185, z + stripe, 2.6, 0.015, 0.48);
-  }
-  for (const x of [-33, 33]) box("#7a8074", x, 0.13, -3, 6, 0.12, 91.8);
-  for (const b of createDemoLayout(DEMO_CONFIG.seed)) {
-    const height = b.floors * 3.2;
-    box(b.color, b.x, height / 2 + 0.3, b.z, b.width, height, b.depth);
-    box("#e9ddc2", b.x, 0.36, b.z, b.width + 0.16, 0.3, b.depth + 0.1);
-    const front = b.z + b.front * (b.depth / 2 + 0.04);
-    box("#4e6862", b.x, 1.65, front, b.width - 0.85, 2.35, 0.18);
-    if (b.shop) {
-      box(
-        ["#a85d3f", "#447465", "#c9a35d"][Math.floor(random() * 3)]!,
-        b.x,
-        2.95,
-        front + b.front * 0.38,
-        b.width + 0.1,
-        0.2,
-        1.45,
-        b.front * 0.09,
-      );
-      box("#efe3cc", b.x, 2.6, front + b.front * 0.13, b.width - 0.4, 0.45, 0.15);
-      for (let shutter = -2; shutter <= 2; shutter++)
-        box("#677f70", b.x + shutter * 0.8, 1.65, front + b.front * 0.11, 0.06, 2.15, 0.08);
-    }
-    for (let level = 1; level < b.floors; level++) {
-      const y = level * 3.2;
-      for (const side of [-1.25, 1.25]) {
-        box("#465a56", b.x + side, y + 1.65, front, 1.25, 1.6, 0.18);
-        box(lit, b.x + side, y + 1.65, front + b.front * 0.1, 1.0, 1.3, 0.08);
-        box("#e8dcca", b.x + side, y + 1.65, front + b.front * 0.15, 0.06, 1.6, 0.04);
-      }
-      box("#eddfc4", b.x, y + 0.05, front + b.front * 0.48, b.width + 0.1, 0.18, 1.3);
-      box("#526b60", b.x, y + 0.95, front + b.front * 1.08, b.width - 0.3, 0.08, 0.08);
-      for (let railing = -2; railing <= 2; railing++)
-        box("#526b60", b.x + railing, y + 0.5, front + b.front * 1.08, 0.05, 0.9, 0.05);
-      plant(b.x - 1.8, y + 0.18, front + b.front * 0.6, 0.45);
-    }
-    box("#bba98c", b.x, height + 0.32, b.z, b.width + 0.35, 0.3, b.depth + 0.3);
-    for (const side of [-1, 1])
-      box(b.color, b.x + side * (b.width / 2 - 0.1), height + 0.65, b.z, 0.2, 0.6, b.depth);
-    part("cylinder", "#98a9a4", b.x + 1.25, height + 1.25, b.z - 1.7, 1.35, 1.35, 1.35);
-    box("#526967", b.x - 0.9, height + 0.6, b.z - 1.4, 1.7, 0.16, 1.35, -0.15);
-    if (random() > 0.55) {
-      box("#819b88", b.x, height + 1.2, b.z + 2, b.width - 0.6, 0.18, 2.4, 0.1);
-      box("#62695a", b.x - 2, height + 0.7, b.z + 2.7, 0.06, 1.2, 0.06);
-      box("#62695a", b.x + 2, height + 0.7, b.z + 2.7, 0.06, 1.2, 0.06);
-    }
-    plant(b.x - 1.5, height + 0.5, b.z + 0.8, 0.7);
-    plant(b.x + 1.1, 0.4, front + b.front * 0.8, 0.65);
-  }
-  // The origin is an EMPTY plot: no old house, construction scene or real-world sign.
-  box("#c4b899", 0, 0.18, 0, 5.8, 0.18, 8.8);
-  for (const x of [-2.9, 2.9]) box("#af7553", x, 0.34, 0, 0.1, 0.3, 8.8);
-  box("#af7553", 0, 0.34, -4.4, 5.8, 0.3, 0.1);
-  for (const x of [-2.9, 2.9])
-    for (const z of [-4.4, 4.4]) box("#a76c4f", x, 0.75, z, 0.16, 1.1, 0.16);
-  const ring = new THREE.Mesh(
-    new THREE.RingGeometry(0.6, 0.72, 32),
-    new THREE.MeshBasicMaterial({ color: "#b87045", side: THREE.DoubleSide }),
+  scene.add(hemisphere, sun);
+
+  const ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(800, 800),
+    new THREE.MeshStandardMaterial({ color: "#cfc5ad", roughness: 0.95 }),
   );
-  ring.rotation.x = -Math.PI / 2;
-  ring.position.set(0, 0.29, 0);
-  scene.add(ring);
-  for (const x of [-48, -18, 18, 48])
-    for (const z of [6, 18, -27]) tree(x, z, 0.7 + random() * 0.25);
-  box("#9ca681", -45, 0.2, 35, 23, 0.3, 10);
-  for (let x = -53; x <= -37; x += 8) {
-    tree(x, 36);
-    box("#8c6a4f", x + 2.5, 0.65, 32, 2.2, 0.18, 0.7);
-    box("#8c6a4f", x + 2.5, 1.05, 32.35, 2.2, 0.6, 0.12);
-  }
-  const festivalGroup = new THREE.Group();
-  scene.add(festivalGroup);
-  for (let x = -24; x <= 24; x += 6) {
-    const lantern = new THREE.Mesh(geometries.sphere, lanternMat);
-    lantern.scale.set(0.8, 1, 0.8);
-    lantern.position.set(x, 5.5, 12);
-    festivalGroup.add(lantern);
-  }
-  const wireGeo = new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(-28, 6.5, 12),
-    new THREE.Vector3(0, 5.6, 12),
-    new THREE.Vector3(28, 6.5, 12),
-  ]);
-  festivalGroup.add(new THREE.Line(wireGeo, new THREE.LineBasicMaterial({ color: "#565f51" })));
-  for (const x of [-27, 27]) box("#596655", x, 3.3, 12, 0.12, 6.6, 0.12);
-  for (const x of [-54, -24, 24, 54])
-    for (const z of [6.5, -26.5]) {
-      part("cylinder", "#4d6358", x, 3.1, z, 0.14, 6, 0.14);
-      box("#4d6358", x + 0.55, 6.1, z, 1.15, 0.1, 0.12);
-      part("sphere", lit, x + 1.1, 5.9, z, 0.4, 0.28, 0.4);
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.y = -0.02;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  const materials = new Map<string, THREE.MeshStandardMaterial>();
+  const markerPosition = new THREE.Vector3();
+  const materialFactory = (color: string, roughness = 0.82, metalness = 0) => {
+    const key = `${color}:${roughness}:${metalness}`;
+    let material = materials.get(key);
+    if (!material) {
+      material = new THREE.MeshStandardMaterial({ color, roughness, metalness });
+      materials.set(key, material);
     }
-  for (let i = 0; i < 16; i++) {
-    const x = -53 + random() * 106,
-      z = (i % 2 ? 6 : 18) + random() * 0.5;
-    part("cylinder", ["#b87152", "#567976", "#dabd76"][i % 3]!, x, 1, z, 0.4, 0.9, 0.4);
-    part("sphere", "#bf9777", x, 1.65, z, 0.4, 0.4, 0.4);
-    box("#45574e", x - 0.1, 0.38, z, 0.1, 0.55, 0.13);
-    box("#45574e", x + 0.1, 0.38, z, 0.1, 0.55, 0.13);
-  }
-  const dummy = new THREE.Object3D();
-  for (const batch of batches.values()) {
-    const mesh = new THREE.InstancedMesh(
-      geometries[batch.shape],
-      batch.material,
-      batch.parts.length,
-    );
-    for (let i = 0; i < batch.parts.length; i++) {
-      const p = batch.parts[i]!;
-      dummy.position.set(p.x, p.y, p.z);
-      dummy.scale.set(p.sx, p.sy, p.sz);
-      dummy.rotation.set(p.rx, p.ry, p.rz);
-      dummy.updateMatrix();
-      mesh.setMatrixAt(i, dummy.matrix);
+    return material;
+  };
+
+  let worldBundle: WorldMeshBundle | null = null;
+  let currentWorld = worldDataProvider.getSnapshot();
+  const fallbackWorld = "world" in currentWorld ? currentWorld.world : null;
+  const initialPerspectiveFrame = fallbackWorld
+    ? perspectiveFrame(fallbackWorld, currentWorld.mode === "private")
+    : null;
+  let centre = initialPerspectiveFrame?.centre ?? new THREE.Vector3();
+  let homeCentre = fallbackWorld ? worldHomeCentre(fallbackWorld) : new THREE.Vector3();
+  const planCentre = homeCentre.clone();
+  let span = initialPerspectiveFrame?.span ?? 100;
+  let fullPlanSpan: number | null = null;
+  let privatePlanFrame: PrivateWorldPlanFrame | null =
+    currentWorld.mode === "private" && fallbackWorld
+      ? derivePrivateWorldPlanFrame(fallbackWorld)
+      : null;
+  function resetPlanCentre() {
+    fullPlanSpan = null;
+    if (privatePlanFrame) {
+      planCentre.set(privatePlanFrame.centre.x, 0, privatePlanFrame.centre.z);
+      return;
     }
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-    mesh.computeBoundingSphere();
-    scene.add(mesh);
+    planCentre.copy(homeCentre);
   }
-  const scooters: THREE.Group[] = [];
-  const scooterMats = [material("#a6573e"), material("#3e6c68"), material("#d2ae66")];
-  for (let i = 0; i < 8; i++) {
-    const group = new THREE.Group();
-    const body = new THREE.Mesh(geometries.box, scooterMats[i % 3]);
-    body.scale.set(1.3, 0.45, 0.55);
-    body.position.y = 0.6;
-    group.add(body);
-    for (const x of [-0.5, 0.5]) {
-      const wheel = new THREE.Mesh(geometries.cylinder, material("#37473d"));
-      wheel.rotation.x = Math.PI / 2;
-      wheel.scale.set(0.45, 0.14, 0.45);
-      wheel.position.set(x, 0.33, 0);
-      group.add(wheel);
-    }
-    const rider = new THREE.Mesh(geometries.cylinder, scooterMats[(i + 1) % 3]);
-    rider.scale.set(0.35, 0.7, 0.35);
-    rider.position.set(0, 1.1, 0);
-    group.add(rider);
-    const helmet = new THREE.Mesh(geometries.sphere, material("#ece1c7"));
-    helmet.scale.set(0.4, 0.4, 0.4);
-    helmet.position.set(0.05, 1.65, 0);
-    group.add(helmet);
-    scene.add(group);
-    scooters.push(group);
-  }
-  const dropCount = window.innerWidth < 768 ? 250 : 450;
-  const rainArray = new Float32Array(dropCount * 6);
-  for (let i = 0; i < dropCount; i++) {
-    const index = i * 6;
-    rainArray[index] = random() * 120 - 60;
-    rainArray[index + 1] = random() * 28;
-    rainArray[index + 2] = random() * 90 - 45;
-    rainArray[index + 3] = rainArray[index]! + 0.16;
-    rainArray[index + 4] = rainArray[index + 1]! + 0.8;
-    rainArray[index + 5] = rainArray[index + 2]!;
-  }
-  const rainGeo = new THREE.BufferGeometry();
-  rainGeo.setAttribute("position", new THREE.BufferAttribute(rainArray, 3));
-  const rainMat = new THREE.LineBasicMaterial({
-    color: "#d3e0df",
-    transparent: true,
-    opacity: 0.55,
-    depthWrite: false,
-  });
-  const rain = new THREE.LineSegments(rainGeo, rainMat);
-  rain.frustumCulled = false;
-  scene.add(rain);
+  let planPanRevision = 0;
+  const planPointers = new Map<number, THREE.Vector2>();
+  const planPointerStarts = new Map<number, THREE.Vector2>();
+  let lastPinchDistance: number | null = null;
+  let disposed = false;
+  let animationFrame = 0;
+  let lastFrame = 0;
+  let renderRevision = 0;
+  let lastWorldRevision = -1;
   const audio = createDemoAudio();
+  const frameMetrics = createFrameMetrics();
+  let frameSnapshot = frameMetrics.snapshot();
+  let lastMetricsSnapshotAt = 0;
+  let updatingControls = false;
+  let syncingControlsState = false;
+  let interactionActive = false;
+  let interactionTimer = 0;
+  let pointerGestureWasMultiTouch = false;
+  let lastPackageEpoch = currentWorld.packageEpoch;
   const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  let applying = false,
-    disposed = false,
-    frame = 0,
-    lastFrame = 0,
-    elapsed = 0;
-  const projected = new THREE.Vector3();
-  const nightSky = new THREE.Color("#182e39"),
-    daySky = new THREE.Color("#eee0c9"),
-    overcastSky = new THREE.Color("#aebdc0");
-  function applyCamera() {
-    const state = useAppStore.getState();
+
+  function mountWorld() {
+    const snapshot = worldDataProvider.getSnapshot();
+    currentWorld = snapshot;
+    if (!("world" in snapshot)) return;
+    worldBundle?.dispose();
+    const meshBuildStartedAt = performance.now();
+    worldBundle = buildWorldMeshes(snapshot.world, materialFactory);
+    host.dataset["meshBuildLatencyMs"] = String(performance.now() - meshBuildStartedAt);
+    worldBundle.setConfidenceVisible(isConfidenceVisible());
+    worldBundle.setSelectedFeature(getSelectedFeature()?.featureId ?? null);
+    scene.add(worldBundle.group);
+    const frame = perspectiveFrame(snapshot.world, snapshot.mode === "private");
+    centre = frame.centre;
+    homeCentre = worldHomeCentre(snapshot.world);
+    privatePlanFrame =
+      snapshot.mode === "private" ? derivePrivateWorldPlanFrame(snapshot.world) : null;
+    resetPlanCentre();
+    span = frame.span;
+    planPanRevision = 0;
+    lastWorldRevision = snapshot.revision;
+    if (snapshot.packageEpoch !== lastPackageEpoch) selectFeature(null);
+    lastPackageEpoch = snapshot.packageEpoch;
+    // Effects anchor to the mounted world frame instead of a fixed origin.
+    festivalGroup.position.set(homeCentre.x, 0, homeCentre.z);
+    rainPoints.position.set(homeCentre.x, 0, homeCentre.z);
+    applyView(true);
+  }
+
+  function disposeWorld() {
+    worldBundle?.dispose();
+    worldBundle = null;
+  }
+
+  function worldRenderable() {
+    return currentWorld.mode !== "private-error" && worldBundle !== null;
+  }
+
+  function planConfig(state = useAppStore.getState()): PlanCameraConfig {
+    const verticalSpanMetres = fullPlanSpan ?? privatePlanFrame?.verticalSpanMetres ?? span;
+    host.dataset["planCoreVerticalSpanMetres"] = String(verticalSpanMetres);
+    host.dataset["planCameraZoom"] = String(state.zoom);
+    host.dataset["planVisibleVerticalSpanMetres"] = String(verticalSpanMetres / state.zoom);
+    host.dataset["planCentreAtPrivateOrigin"] = String(
+      Boolean(privatePlanFrame) && Math.abs(planCentre.x) < 0.001 && Math.abs(planCentre.z) < 0.001,
+    );
+    return {
+      centre: planCentre,
+      verticalSpanMetres,
+      viewportWidthCss: Math.max(host.clientWidth, 1),
+      viewportHeightCss: Math.max(host.clientHeight, 1),
+      zoom: state.zoom,
+    };
+  }
+
+  function updatePlanMeasurement() {
+    const measurement = metresPerCssPixel(planCamera, Math.max(host.clientHeight, 1));
+    renderRevision += 1;
+    useAppStore
+      .getState()
+      .setPlanMeasurement({ metresPerCssPixel: measurement, revision: renderRevision });
+  }
+
+  function applyPerspective(state = useAppStore.getState()) {
     const theta = THREE.MathUtils.degToRad(state.heading);
     const walk = state.viewMode === "walk";
-    controls.minDistance = walk ? 4 : 18;
-    controls.maxDistance = walk ? 50 : 344;
-    const distance = walk ? 15 / Math.sqrt(state.zoom) : 112 / state.zoom;
-    const height = walk ? 2.5 : distance * 0.64;
+    const distance = (walk ? 22 : span * 1.15) / state.zoom;
+    const height = walk ? 2.5 : distance * 0.66;
     const radius = walk ? distance : distance * 0.77;
-    applying = true;
-    controls.target.set(0, walk ? 1.6 : 1, 0);
-    camera.position.set(Math.sin(theta) * radius, height, Math.cos(theta) * radius);
-    controls.update();
-    applying = false;
+    const targetY = walk ? 1.6 : 0.8;
+    controls.object = perspectiveCamera;
+    controls.enabled = true;
+    controls.enableRotate = true;
+    controls.enablePan = true;
+    controls.minPolarAngle = 0.3;
+    controls.maxPolarAngle = Math.PI / 2 - 0.06;
+    controls.minDistance = walk ? 4 : 16;
+    controls.maxDistance = walk ? 50 : 380;
+    controls.target.set(centre.x, targetY, centre.z);
+    perspectiveCamera.position.set(
+      centre.x + Math.sin(theta) * radius,
+      height,
+      centre.z + Math.cos(theta) * radius,
+    );
+    perspectiveCamera.lookAt(controls.target);
+    updateControls();
+    activeCamera = perspectiveCamera;
+    scene.fog = null;
+    delete host.dataset["planZenith"];
+    useAppStore.getState().setPlanMeasurement(null);
   }
+
+  function applyPlan(state = useAppStore.getState()) {
+    configurePlanCamera(planCamera, planConfig(state));
+    controls.enabled = false;
+    activeCamera = planCamera;
+    scene.fog = null;
+    host.dataset["planZenith"] = String(isPlanCameraZenith(planCamera));
+    updatePlanMeasurement();
+  }
+
+  function applyView(force = false) {
+    if (disposed || !host.clientWidth || !host.clientHeight) return;
+    const state = useAppStore.getState();
+    if (state.viewMode === "topdown") applyPlan(state);
+    else applyPerspective(state);
+    if (force) render();
+  }
+
+  // Rain & festival groups attached to world
+  const festivalGroup = new THREE.Group();
+  festivalGroup.name = "festival-group";
+  scene.add(festivalGroup);
+
+  const lanternMat = new THREE.MeshStandardMaterial({
+    color: "#e65100",
+    emissive: "#ff8f00",
+    emissiveIntensity: 0.6,
+    roughness: 0.4,
+  });
+  const lanternGeo = new THREE.SphereGeometry(0.35, 12, 12);
+  const lanternWireGeo = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(-18, 6.2, 0),
+    new THREE.Vector3(0, 5.2, 0),
+    new THREE.Vector3(18, 6.2, 0),
+  ]);
+  const lanternWire = new THREE.Line(
+    lanternWireGeo,
+    new THREE.LineBasicMaterial({ color: "#8d6e63" }),
+  );
+  festivalGroup.add(lanternWire);
+  for (let x = -16; x <= 16; x += 4) {
+    const lantern = new THREE.Mesh(lanternGeo, lanternMat);
+    lantern.position.set(x, 5.2 + (Math.abs(x) / 16) * 1.0, 0);
+    festivalGroup.add(lantern);
+  }
+  festivalGroup.visible = false;
+
+  // Rain particles system
+  const rainCount = 600;
+  const rainGeo = new THREE.BufferGeometry();
+  const rainPositions = new Float32Array(rainCount * 3);
+  for (let i = 0; i < rainCount; i++) {
+    rainPositions[i * 3] = (Math.random() - 0.5) * 80;
+    rainPositions[i * 3 + 1] = Math.random() * 30;
+    rainPositions[i * 3 + 2] = (Math.random() - 0.5) * 80;
+  }
+  rainGeo.setAttribute("position", new THREE.BufferAttribute(rainPositions, 3));
+  const rainMat = new THREE.PointsMaterial({
+    color: "#a4b5bf",
+    size: 0.18,
+    transparent: true,
+    opacity: 0.7,
+  });
+  const rainPoints = new THREE.Points(rainGeo, rainMat);
+  rainPoints.name = "rain-particles";
+  scene.add(rainPoints);
+  rainPoints.visible = false;
+
   function applyEnvironment() {
     const state = useAppStore.getState();
     const daylight = daylightAt(state.timeOfDayMinutes);
     const wet = state.weather === "rain" || state.weather === "storm";
     const cloudy = state.weather !== "sunny";
-    sky.copy(nightSky).lerp(cloudy ? overcastSky : daySky, Math.min(1, daylight * 3));
-    sky.multiplyScalar(1.5);
-    fog.color.copy(sky);
-    ambient.intensity = 1.05 + daylight * (cloudy ? 1.7 : 2.3);
-    sun.intensity = daylight * (cloudy ? 0.65 : 3.4);
+    sky.set(cloudy ? "#aebdc0" : "#eee0c9").multiplyScalar(0.8 + daylight * 0.7);
+    hemisphere.intensity = 1 + daylight * (cloudy ? 1.5 : 2.2);
+    sun.intensity = daylight * (cloudy ? 0.75 : 3.4);
     sun.position.set(-45 + (state.timeOfDayMinutes / 1440) * 90, 20 + daylight * 65, 28);
-    const night = Math.max(0, 1 - daylight * 4);
-    lit.color.set(night > 0.1 ? "#f5d89a" : "#6d918d");
-    lit.emissiveIntensity = 1.9 * night;
-    lanternMat.emissiveIntensity = 0.1 + 1.4 * night;
-    festivalGroup.visible = state.festival !== "normal";
-    lanternMat.color.set(state.festival === "tet" ? "#bc4936" : "#e7b25d");
-    rain.visible = wet;
-    rainMat.opacity = state.weather === "storm" ? 0.75 : 0.45;
-    const road = materials.get("#666d67");
-    if (road) {
-      road.roughness = wet ? 0.32 : 0.9;
-      road.color.set(wet ? "#485e5d" : "#666d67");
-    }
+    worldBundle?.setRoadWet(wet);
     audio.set(state.soundOn && !document.hidden, wet);
+
+    // Effects only render when a valid world is mounted; rain follows the world frame.
+    const renderable = worldRenderable();
+    festivalGroup.visible = renderable && state.festival !== "normal";
+    rainPoints.visible = renderable && wet;
+
     host.dataset["weather"] = state.weather;
     host.dataset["festival"] = state.festival;
     host.dataset["night"] = String(daylight < 0.1);
   }
-  function render() {
-    if (disposed || document.hidden) return;
-    renderer.render(scene, camera);
-    projected.set(0, 0.35, 0).project(camera);
-    marker.style.transform = `translate(-50%, -100%) translate(${(projected.x * 0.5 + 0.5) * host.clientWidth}px, ${(-projected.y * 0.5 + 0.5) * host.clientHeight - 10}px)`;
-    marker.style.visibility =
-      Math.abs(projected.x) < 0.88 && Math.abs(projected.y) < 0.9 && projected.z < 1
-        ? "visible"
-        : "hidden";
-    host.dataset["drawCalls"] = String(renderer.info.render.calls);
-    host.dataset["triangles"] = String(renderer.info.render.triangles);
+
+  function updateLayerVisibility() {
+    if (!worldBundle) return;
+    const state = useAppStore.getState();
+    worldBundle.setLayerVisible("trees", state.showTrees);
+    worldBundle.setLayerVisible("labels", state.showLabels);
+    host.dataset["treesVisible"] = String(state.showTrees);
+    host.dataset["labelsVisible"] = String(state.showLabels);
   }
-  function moveActors(delta: number) {
-    if (!motion.matches) elapsed += delta;
-    scooters.forEach((scooter, i) => {
-      const direction = i % 2 ? 1 : -1;
-      scooter.position.set(
-        (((i * 17 + elapsed * (2.5 + i * 0.12)) % 112) - 56) * direction,
-        0.15,
-        (i < 4 ? 12 : -21) + direction * 2.2,
-      );
-      scooter.rotation.y = direction === 1 ? 0 : Math.PI;
-    });
-    if (rain.visible && !motion.matches) {
-      for (let i = 0; i < dropCount; i++) {
-        const index = i * 6;
-        rainArray[index + 1] = (rainArray[index + 1]! - delta * 15 + 28) % 28;
-        rainArray[index + 4] = rainArray[index + 1]! + 0.8;
-      }
-      rainGeo.attributes["position"]!.needsUpdate = true;
-    }
-  }
-  function tick(now: number) {
-    if (disposed || document.hidden) return;
-    if (motion.matches) {
-      moveActors(0);
-      render();
+
+  function render(activeAnimation = false) {
+    if (disposed || document.hidden || !host.clientWidth || !host.clientHeight) return;
+    if (currentWorld.mode === "private-error" || !worldBundle) {
+      marker.style.visibility = "hidden";
+      useAppStore.getState().setPlanMeasurement(null);
+      renderer.clear();
+      renderer.render(scene, activeCamera);
+      host.dataset["activeWorlds"] = "0";
+      host.dataset["worldMode"] = currentWorld.mode;
       return;
     }
-    frame = requestAnimationFrame(tick);
-    const interval = window.innerWidth < 768 ? 1000 / 30 : 1000 / 60;
-    if (now - lastFrame < interval) return;
-    const delta = lastFrame ? Math.min((now - lastFrame) / 1000, 0.08) : 0;
+    renderer.render(scene, activeCamera);
+    const renderedAt = performance.now();
+    frameMetrics.record(
+      renderedAt,
+      interactionActive || activeAnimation || rainPoints.visible ? "active" : "idle",
+    );
+    if (lastMetricsSnapshotAt === 0 || renderedAt - lastMetricsSnapshotAt >= 250) {
+      frameSnapshot = frameMetrics.snapshot();
+      lastMetricsSnapshotAt = renderedAt;
+    }
+    if (currentWorld.mode === "private" && currentWorld.temporaryLotIllustrationSelected) {
+      markerPosition.set(
+        TEMPORARY_LOT_ILLUSTRATION_POSITION.x,
+        TEMPORARY_LOT_ILLUSTRATION_POSITION.y,
+        TEMPORARY_LOT_ILLUSTRATION_POSITION.z,
+      );
+    } else {
+      markerPosition.set(homeCentre.x, 0.35, homeCentre.z);
+    }
+    const projected = projectMarkerAndCull(activeCamera, markerPosition, -0.06);
+    marker.style.transform = `translate(-50%, -100%) translate(${projected.x * host.clientWidth}px, ${projected.y * host.clientHeight - 10}px)`;
+    marker.style.visibility = projected.visible ? "visible" : "hidden";
+    host.dataset["drawCalls"] = String(renderer.info.render.calls);
+    host.dataset["triangles"] = String(renderer.info.render.triangles);
+    host.dataset["renderedFrames"] = String(frameSnapshot.renderedFrames);
+    host.dataset["frameP50Ms"] = String(frameSnapshot.p50Ms ?? "");
+    host.dataset["frameP95Ms"] = String(frameSnapshot.p95Ms ?? "");
+    host.dataset["frameLongestMs"] = String(frameSnapshot.longestMs ?? "");
+    host.dataset["frameSampleCount"] = String(frameSnapshot.sampleCount);
+    host.dataset["idleRenderedFrames"] = String(frameMetrics.phaseSnapshot("idle").renderedFrames);
+    host.dataset["worldMode"] = currentWorld.mode;
+    host.dataset["worldRevision"] = String(currentWorld.revision);
+    host.dataset["activeWorlds"] = worldBundle ? "1" : "0";
+    host.dataset["cameraType"] = activeCamera.type;
+  }
+
+  function scheduleFrame() {
+    if (disposed || document.hidden || motion.matches || animationFrame !== 0) return;
+    animationFrame = requestAnimationFrame(tick);
+  }
+
+  function updateControls() {
+    updatingControls = true;
+    try {
+      return controls.update();
+    } finally {
+      updatingControls = false;
+    }
+  }
+
+  function tick(now: number) {
+    animationFrame = 0;
+    if (disposed || document.hidden || motion.matches) return;
+    const delta = lastFrame === 0 ? 0.016 : Math.min(0.1, (now - lastFrame) / 1000);
     lastFrame = now;
-    moveActors(delta);
-    render();
+
+    // Update falling rain particle positions
+    if (rainPoints.visible && rainGeo.attributes["position"]) {
+      const posAttr = rainGeo.attributes["position"];
+      const positions = posAttr.array as Float32Array;
+      for (let i = 1; i < positions.length; i += 3) {
+        const currentY = positions[i];
+        if (currentY !== undefined) {
+          positions[i] = currentY - delta * 35;
+          if (positions[i]! < 0) {
+            positions[i] = 30;
+          }
+        }
+      }
+      posAttr.needsUpdate = true;
+    }
+
+    const controlsChanged = controls.enabled ? updateControls() : false;
+    if (controlsChanged || rainPoints.visible) {
+      render(true);
+      scheduleFrame();
+    }
   }
-  let lastWidth = 0,
-    lastHeight = 0;
+
   function resize() {
-    const width = host.clientWidth,
-      height = host.clientHeight;
-    if (!width || !height || disposed || (width === lastWidth && height === lastHeight)) return;
-    lastWidth = width;
-    lastHeight = height;
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-    renderer.setSize(width, height, false);
+    if (disposed || !host.clientWidth || !host.clientHeight) return;
+    perspectiveCamera.aspect = host.clientWidth / host.clientHeight;
+    perspectiveCamera.updateProjectionMatrix();
+    renderer.setSize(host.clientWidth, host.clientHeight, false);
+    applyView();
     render();
   }
-  const resizeObserver = new ResizeObserver(resize);
-  resizeObserver.observe(host);
+
   function onControlChange() {
-    if (applying || disposed) return;
-    const state = useAppStore.getState();
-    applying = true;
-    const direction = (Math.atan2(camera.position.x, camera.position.z) * 180) / Math.PI;
-    state.setHeading(direction);
-    if (state.viewMode !== "walk")
-      useAppStore.setState({
-        zoom: THREE.MathUtils.clamp(112 / camera.position.distanceTo(controls.target), 0.25, 4),
-      });
-    applying = false;
+    if (disposed || !controls.enabled || !worldRenderable()) return;
+    const heading =
+      (Math.atan2(
+        perspectiveCamera.position.x - centre.x,
+        perspectiveCamera.position.z - centre.z,
+      ) *
+        180) /
+      Math.PI;
+    const zoom = THREE.MathUtils.clamp(
+      (span * 1.15) / perspectiveCamera.position.distanceTo(controls.target),
+      0.25,
+      4,
+    );
+    syncingControlsState = true;
+    try {
+      useAppStore.setState({ heading: (heading + 360) % 360, zoom });
+    } finally {
+      syncingControlsState = false;
+    }
+    if (!updatingControls) {
+      render();
+      scheduleFrame();
+    }
+  }
+
+  function onControlStart() {
+    interactionActive = true;
+  }
+  function onControlEnd() {
+    interactionActive = false;
+    frameMetrics.reset();
+  }
+
+  function transientInteraction() {
+    interactionActive = true;
+    window.clearTimeout(interactionTimer);
+    interactionTimer = window.setTimeout(() => {
+      interactionActive = planPointers.size > 0;
+      if (!interactionActive) frameMetrics.reset();
+    }, 120);
+  }
+
+  function onPlanPointerDown(event: PointerEvent) {
+    if (!worldRenderable()) return;
+    const isPlan = useAppStore.getState().viewMode === "topdown";
+    if (isPlan) canvas.setPointerCapture(event.pointerId);
+    if (planPointers.size === 0) pointerGestureWasMultiTouch = false;
+    interactionActive = true;
+    planPointers.set(event.pointerId, new THREE.Vector2(event.clientX, event.clientY));
+    planPointerStarts.set(event.pointerId, new THREE.Vector2(event.clientX, event.clientY));
+    if (planPointers.size === 2) {
+      pointerGestureWasMultiTouch = true;
+      const [first, second] = [...planPointers.values()];
+      lastPinchDistance = first && second ? first.distanceTo(second) : null;
+    }
+    event.preventDefault();
+  }
+
+  function clampPlanCentre() {
+    if (privatePlanFrame) {
+      const clamped = clampPrivatePlanCentre(planCentre, privatePlanFrame.panBounds);
+      planCentre.set(clamped.x, 0, clamped.z);
+      return;
+    }
+    const limit = span * 0.4;
+    planCentre.x = THREE.MathUtils.clamp(planCentre.x, centre.x - limit, centre.x + limit);
+    planCentre.z = THREE.MathUtils.clamp(planCentre.z, centre.z - limit, centre.z + limit);
+  }
+
+  function applyPlanPan(deltaX: number, deltaY: number) {
+    const metres = metresPerCssPixel(planCamera, Math.max(host.clientHeight, 1));
+    planCentre.x -= deltaX * metres;
+    planCentre.z -= deltaY * metres;
+    clampPlanCentre();
+    planPanRevision += 1;
+    host.dataset["planPanRevision"] = String(planPanRevision);
+    applyPlan();
     render();
   }
-  controls.addEventListener("change", onControlChange);
-  const unsubscribe = useAppStore.subscribe((state, previous) => {
-    if (disposed || applying) return;
-    let dirty = false;
-    if (
-      state.heading !== previous.heading ||
-      state.zoom !== previous.zoom ||
-      state.viewMode !== previous.viewMode ||
-      state.viewReset !== previous.viewReset
-    ) {
-      applyCamera();
-      dirty = true;
+
+  function onPlanPointerMove(event: PointerEvent) {
+    if (!worldRenderable()) return;
+    if (useAppStore.getState().viewMode !== "topdown") return;
+    const previous = planPointers.get(event.pointerId);
+    if (!previous) return;
+    const next = new THREE.Vector2(event.clientX, event.clientY);
+    planPointers.set(event.pointerId, next);
+    if (planPointers.size === 1) {
+      applyPlanPan(next.x - previous.x, next.y - previous.y);
+    } else if (planPointers.size === 2) {
+      const [first, second] = [...planPointers.values()];
+      const currentDistance = first && second ? first.distanceTo(second) : null;
+      if (currentDistance && lastPinchDistance && lastPinchDistance > 0) {
+        const state = useAppStore.getState();
+        state.setZoom(state.zoom * (currentDistance / lastPinchDistance));
+      }
+      lastPinchDistance = currentDistance;
     }
+    event.preventDefault();
+  }
+
+  function onPlanPointerEnd(event: PointerEvent) {
+    const start = planPointerStarts.get(event.pointerId);
     if (
-      state.weather !== previous.weather ||
-      state.timeOfDayMinutes !== previous.timeOfDayMinutes ||
-      state.festival !== previous.festival ||
-      state.soundOn !== previous.soundOn
+      start &&
+      planPointers.size === 1 &&
+      worldBundle &&
+      !pointerGestureWasMultiTouch &&
+      event.type !== "pointercancel" &&
+      isTap(start, new THREE.Vector2(event.clientX, event.clientY))
     ) {
-      applyEnvironment();
-      dirty = true;
+      const rect = canvas.getBoundingClientRect();
+      const pointer = new THREE.Vector2(
+        ((event.clientX - rect.left) / rect.width) * 2 - 1,
+        -((event.clientY - rect.top) / rect.height) * 2 + 1,
+      );
+      const hiddenLayers = new Set<string>();
+      if (!worldBundle.layers.trees.visible) hiddenLayers.add("trees");
+      if (!worldBundle.layers.labels.visible) hiddenLayers.add("labels");
+      selectFeature(
+        pickFeature(new THREE.Raycaster(), pointer, activeCamera, worldBundle.group, hiddenLayers),
+      );
     }
-    if (dirty) render();
-  });
+    planPointers.delete(event.pointerId);
+    planPointerStarts.delete(event.pointerId);
+    interactionActive = planPointers.size > 0;
+    if (!interactionActive) frameMetrics.reset();
+    if (planPointers.size < 2) lastPinchDistance = null;
+    if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+  }
+
+  function onPlanWheel(event: WheelEvent) {
+    if (!worldRenderable()) return;
+    if (useAppStore.getState().viewMode !== "topdown") return;
+    event.preventDefault();
+    transientInteraction();
+    const state = useAppStore.getState();
+    state.setZoom(state.zoom * (event.deltaY < 0 ? 1.12 : 0.89));
+  }
+
   function onVisibility() {
-    cancelAnimationFrame(frame);
+    cancelAnimationFrame(animationFrame);
+    animationFrame = 0;
     lastFrame = 0;
-    const state = useAppStore.getState();
-    audio.set(state.soundOn && !document.hidden, rain.visible);
-    if (!document.hidden && !disposed) frame = requestAnimationFrame(tick);
+    frameMetrics.reset();
+    applyEnvironment();
+    if (!document.hidden && !disposed) {
+      render();
+      scheduleFrame();
+    }
   }
+
   function onMotion() {
-    cancelAnimationFrame(frame);
+    cancelAnimationFrame(animationFrame);
+    animationFrame = 0;
     lastFrame = 0;
-    moveActors(0);
+    frameMetrics.reset();
     render();
-    if (!motion.matches && !document.hidden && !disposed) frame = requestAnimationFrame(tick);
+    if (!motion.matches && !document.hidden && !disposed) scheduleFrame();
   }
-  motion.addEventListener("change", onMotion);
+
   function onKey(event: KeyboardEvent) {
+    if (!worldRenderable()) return;
     if (event.target !== canvas) return;
     const state = useAppStore.getState();
+    transientInteraction();
+    if (state.viewMode === "topdown") {
+      const key = event.key.toLowerCase();
+      const deltas: Record<string, readonly [number, number]> = {
+        arrowleft: [24, 0],
+        a: [24, 0],
+        arrowright: [-24, 0],
+        d: [-24, 0],
+        arrowup: [0, 24],
+        w: [0, 24],
+        arrowdown: [0, -24],
+        s: [0, -24],
+      };
+      const delta = deltas[key];
+      if (delta) {
+        event.preventDefault();
+        applyPlanPan(delta[0], delta[1]);
+      }
+      if (key === "r") {
+        event.preventDefault();
+        state.requestCameraFrame("core");
+      }
+      if (key === "+" || key === "=") {
+        event.preventDefault();
+        state.zoomIn();
+      }
+      if (key === "-") {
+        event.preventDefault();
+        state.zoomOut();
+      }
+      return;
+    }
     if (event.key === "ArrowLeft" || event.key.toLowerCase() === "a") {
       event.preventDefault();
       state.setHeading(state.heading - 8);
@@ -535,58 +732,168 @@ export function createDemoScene(host: HTMLDivElement, marker: HTMLDivElement, on
       state.resetView();
     }
   }
-  canvas.tabIndex = 0;
-  canvas.setAttribute("role", "application");
-  canvas.addEventListener("keydown", onKey);
-  function lost(event: Event) {
+
+  function handleContextLost(event: Event) {
     event.preventDefault();
     bindCapture(null);
-    onLost();
+    onContextLost();
   }
-  canvas.addEventListener("webglcontextlost", lost);
+
+  const resizeObserver = new ResizeObserver(resize);
+  resizeObserver.observe(host);
+  controls.addEventListener("change", onControlChange);
+  controls.addEventListener("start", onControlStart);
+  controls.addEventListener("end", onControlEnd);
   document.addEventListener("visibilitychange", onVisibility);
-  applyCamera();
+  motion.addEventListener("change", onMotion);
+  canvas.addEventListener("keydown", onKey);
+  canvas.addEventListener("pointerdown", onPlanPointerDown);
+  canvas.addEventListener("pointermove", onPlanPointerMove);
+  canvas.addEventListener("pointerup", onPlanPointerEnd);
+  canvas.addEventListener("pointercancel", onPlanPointerEnd);
+  canvas.addEventListener("wheel", onPlanWheel, { passive: false });
+  canvas.addEventListener("webglcontextlost", handleContextLost);
+  canvas.tabIndex = 0;
+  canvas.setAttribute("role", "application");
+
+  const unsubscribeStore = useAppStore.subscribe((state, previous) => {
+    if (disposed) return;
+    if (state.viewReset !== previous.viewReset) {
+      resetPlanCentre();
+      planPanRevision += 1;
+      host.dataset["planPanRevision"] = String(planPanRevision);
+    }
+    if (state.cameraFrame.request !== previous.cameraFrame.request) {
+      resetPlanCentre();
+      if (state.cameraFrame.kind === "full") {
+        if ("world" in currentWorld) {
+          planCentre.copy(worldCentre(currentWorld.world));
+          fullPlanSpan =
+            worldSpan(currentWorld.world) *
+            Math.max(1, host.clientHeight / Math.max(host.clientWidth, 1));
+        }
+        useAppStore.setState({ viewMode: "topdown", zoom: 1 });
+      } else if (state.cameraFrame.kind === "core") {
+        useAppStore.setState({ viewMode: "topdown", zoom: 1 });
+      }
+      planPanRevision += 1;
+      applyView(true);
+      return;
+    }
+    if (
+      state.viewMode !== previous.viewMode ||
+      state.heading !== previous.heading ||
+      state.zoom !== previous.zoom ||
+      state.viewReset !== previous.viewReset
+    ) {
+      if (!syncingControlsState) applyView(true);
+    }
+    if (state.showTrees !== previous.showTrees || state.showLabels !== previous.showLabels) {
+      updateLayerVisibility();
+      render();
+    }
+    if (
+      state.weather !== previous.weather ||
+      state.timeOfDayMinutes !== previous.timeOfDayMinutes ||
+      state.festival !== previous.festival ||
+      state.soundOn !== previous.soundOn
+    ) {
+      applyEnvironment();
+      render();
+      if (rainPoints.visible) scheduleFrame();
+    }
+  });
+
+  const unsubscribeConfidence = subscribeFeatureSelection(() => {
+    worldBundle?.setConfidenceVisible(isConfidenceVisible());
+    worldBundle?.setSelectedFeature(getSelectedFeature()?.featureId ?? null);
+    render();
+  });
+
+  const unsubscribeWorld = worldDataProvider.subscribe((snapshot) => {
+    if (disposed) return;
+    currentWorld = snapshot;
+    if (snapshot.packageEpoch !== lastPackageEpoch) {
+      selectFeature(null);
+      lastPackageEpoch = snapshot.packageEpoch;
+    }
+    if (snapshot.revision === lastWorldRevision) {
+      render();
+      return;
+    }
+    if (snapshot.mode === "private-error") {
+      disposeWorld();
+      festivalGroup.visible = false;
+      rainPoints.visible = false;
+      controls.enabled = false;
+      marker.style.visibility = "hidden";
+      renderer.clear();
+      renderer.render(scene, activeCamera);
+      host.dataset["worldMode"] = snapshot.mode;
+      host.dataset["activeWorlds"] = "0";
+      useAppStore.getState().setPlanMeasurement(null);
+      return;
+    }
+    mountWorld();
+    applyEnvironment();
+    updateLayerVisibility();
+    render();
+    if (rainPoints.visible) scheduleFrame();
+  });
+
+  mountWorld();
+  updateLayerVisibility();
   applyEnvironment();
-  moveActors(0);
   resize();
-  renderer.compile(scene, camera);
+  renderer.compile(scene, activeCamera);
   render();
   bindCapture(() => {
+    if (!worldRenderable() || document.hidden) return null;
+    const captureStartedAt = performance.now();
     render();
-    return canvas.toDataURL("image/png");
+    const image = canvas.toDataURL("image/png");
+    host.dataset["captureLatencyMs"] = String(performance.now() - captureStartedAt);
+    return image;
   });
-  frame = requestAnimationFrame(tick);
+  if (rainPoints.visible) scheduleFrame();
+
   return {
-    setLabel(label: string) {
+    setLabel(label) {
       canvas.setAttribute("aria-label", label);
     },
     dispose() {
       if (disposed) return;
       disposed = true;
       bindCapture(null);
-      cancelAnimationFrame(frame);
-      unsubscribe();
+      window.clearTimeout(interactionTimer);
+      cancelAnimationFrame(animationFrame);
+      unsubscribeStore();
+      unsubscribeWorld();
+      unsubscribeConfidence();
       resizeObserver.disconnect();
-      audio.dispose();
+      controls.removeEventListener("start", onControlStart);
+      controls.removeEventListener("end", onControlEnd);
       controls.dispose();
-      motion.removeEventListener("change", onMotion);
+      audio.dispose();
       document.removeEventListener("visibilitychange", onVisibility);
+      motion.removeEventListener("change", onMotion);
       canvas.removeEventListener("keydown", onKey);
-      canvas.removeEventListener("webglcontextlost", lost);
-      scene.traverse((object) => {
-        if (object instanceof THREE.InstancedMesh) object.dispose();
-      });
-      for (const geometry of Object.values(geometries)) geometry.dispose();
-      for (const m of materials.values()) m.dispose();
-      nightMaterials.forEach((m) => m.dispose());
-      ring.geometry.dispose();
-      (ring.material as THREE.Material).dispose();
-      wireGeo.dispose();
-      festivalGroup.children.forEach((child) => {
-        if (child instanceof THREE.Line) (child.material as THREE.Material).dispose();
-      });
+      canvas.removeEventListener("pointerdown", onPlanPointerDown);
+      canvas.removeEventListener("pointermove", onPlanPointerMove);
+      canvas.removeEventListener("pointerup", onPlanPointerEnd);
+      canvas.removeEventListener("pointercancel", onPlanPointerEnd);
+      canvas.removeEventListener("wheel", onPlanWheel);
+      canvas.removeEventListener("webglcontextlost", handleContextLost);
+      disposeWorld();
+      ground.geometry.dispose();
+      (ground.material as THREE.Material).dispose();
+      materials.forEach((material) => material.dispose());
       rainGeo.dispose();
       rainMat.dispose();
+      lanternGeo.dispose();
+      lanternMat.dispose();
+      lanternWireGeo.dispose();
+      (lanternWire.material as THREE.Material).dispose();
       renderer.dispose();
       renderer.forceContextLoss();
       canvas.remove();

@@ -87,6 +87,9 @@
       },
     },
   },
+  "patchedDependencies": {
+    "sonner@2.0.7": "patches/sonner@2.0.7.patch",
+  },
   "overrides": {
     "rolldown": "1.2.1",
   },

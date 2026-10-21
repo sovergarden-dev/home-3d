@@ -1,11 +1,38 @@
-import { ClientOnly } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { ClientOnly, useBlocker } from "@tanstack/react-router";
+import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
+import { centerMarkerLabels } from "@/components/overlay/centerMarkerLabels";
+import { PrivateWorldPanel } from "@/components/overlay/PrivateWorldPanel";
 import { useT } from "@/i18n";
 import { useAppStore } from "@/state/appStore";
+import { worldDataProvider } from "@/world/privateWorldSession";
 
 function ViewportInner() {
   const t = useT();
+  useBlocker({
+    enableBeforeUnload: false,
+    shouldBlockFn: ({ current, next }) => {
+      const snapshot = worldDataProvider.getSnapshot();
+      return (
+        current.pathname !== next.pathname &&
+        snapshot.mode === "private" &&
+        snapshot.dirty &&
+        !window.confirm(t.localPreview.confirmLeave)
+      );
+    },
+  });
   const sceneStatus = useAppStore((s) => s.sceneStatus);
+  const viewMode = useAppStore((s) => s.viewMode);
+  const worldSnapshot = useSyncExternalStore(
+    worldDataProvider.subscribe,
+    worldDataProvider.getSnapshot,
+    worldDataProvider.getSnapshot,
+  );
+  const markerLabels = centerMarkerLabels(
+    worldSnapshot.mode,
+    t,
+    worldSnapshot.centerConfirmation,
+    worldSnapshot.temporaryLotIllustrationSelected,
+  );
   const host = useRef<HTMLDivElement>(null);
   const marker = useRef<HTMLDivElement>(null);
   const runtime = useRef<ReturnType<typeof import("@/engine/demoScene").createDemoScene> | null>(
@@ -13,7 +40,9 @@ function ViewportInner() {
   );
   const [attempt, setAttempt] = useState(0);
   const [failed, setFailed] = useState(false);
-  useEffect(() => {
+  // OrbitControls disconnects from canvas.getRootNode(). Dispose before React
+  // detaches the host, otherwise its document key listener retains the old scene.
+  useLayoutEffect(() => {
     let cancelled = false;
     const store = useAppStore.getState();
     store.setLoadingProgress(0.15);
@@ -62,15 +91,28 @@ function ViewportInner() {
       <div ref={host} data-testid="demo-scene" className="absolute inset-0" />
       <div
         ref={marker}
+        data-testid="world-center-marker"
         className={`pointer-events-none absolute left-0 top-0 z-10 ${failed ? "hidden" : ""}`}
         style={{ visibility: "hidden" }}
       >
         <div className="rounded-xl border border-white/70 bg-primary px-3 py-2 text-center text-xs text-primary-foreground shadow-lg">
-          <span className="block font-medium">{t.home}</span>
-          <span className="block opacity-80">{t.emptyLot}</span>
+          <span className="block font-medium">{markerLabels.title}</span>
+          {"illustration" in markerLabels ? (
+            <span
+              className="block opacity-90"
+              data-testid="temporary-lot-illustration"
+              data-illustrative-only="true"
+              data-boundary-geometry="none"
+            >
+              {markerLabels.illustration}
+            </span>
+          ) : (
+            <span className="block opacity-80">{markerLabels.description}</span>
+          )}
         </div>
         <div className="mx-auto h-3 w-px bg-primary" />
       </div>
+      <PrivateWorldPanel enabled />
       {failed ? (
         <div className="absolute inset-0 grid place-items-center px-6">
           <div className="glass max-w-sm p-6 text-center" role="status">
@@ -88,11 +130,11 @@ function ViewportInner() {
             </button>
           </div>
         </div>
-      ) : (
+      ) : viewMode !== "topdown" ? (
         <p className="pointer-events-none absolute bottom-[112px] left-4 max-w-[200px] rounded-lg bg-background/80 px-3 py-2 text-xs text-foreground sm:bottom-5 sm:max-w-[230px]">
           {t.sceneHint}
         </p>
-      )}
+      ) : null}
     </div>
   );
 }

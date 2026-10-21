@@ -1,5 +1,5 @@
-let capture: (() => string) | null = null;
-export function bindCapture(callback: (() => string) | null) {
+let capture: (() => string | null) | null = null;
+export function bindCapture(callback: (() => string | null) | null) {
   capture = callback;
 }
 export function captureDemoFrame() {

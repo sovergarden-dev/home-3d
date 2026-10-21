@@ -19,9 +19,11 @@ jobs:
           bun-version: 1.4.3
       - run: bun install --frozen-lockfile
       - run: bun run check
+      - run: cd pipeline && bun run src/cli.ts --config tests/fixtures/synthetic-pipeline.json --dry-run
   e2e-full-chromium:
-    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    env:
+      REQUIRE_WEBGL2: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
@@ -36,7 +38,6 @@ jobs:
           name: e2e-chromium
           path: test-results
   e2e-full-firefox:
-    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -52,7 +53,6 @@ jobs:
           name: e2e-firefox
           path: test-results
   e2e-full-webkit:
-    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
