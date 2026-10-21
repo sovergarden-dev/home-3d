@@ -5,7 +5,7 @@ import { RealStreetControl } from "@/components/overlay/RealStreetControl";
 import { worldDataProvider } from "@/world/privateWorldSession";
 import { SYNTHETIC_NEIGHBORHOOD } from "@/world/fixtures/syntheticNeighborhood";
 import { useAppStore } from "@/state/appStore";
-import { bindRealStreetView, openRealStreetWindow } from "@/engine/view/realStreetView";
+import { bindRealStreetView, openRealStreetWindow } from "@/engine/view/externalMapView";
 import { sha256Text } from "@/world/packageGeoreference";
 import type { CameraView } from "@/geo/realStreet";
 

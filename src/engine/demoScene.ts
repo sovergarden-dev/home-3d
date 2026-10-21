@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { bindCapture } from "./capture";
-import { bindRealStreetView } from "./view/realStreetView";
+import { bindRealStreetView } from "./view/externalMapView";
 import { createDemoAudio } from "./demoAudio";
 import { daylightAt } from "./demoLayout";
 import { buildWorldMeshes, type WorldMeshBundle } from "./world/buildWorldMeshes";

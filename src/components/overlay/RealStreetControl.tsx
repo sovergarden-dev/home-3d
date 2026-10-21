@@ -5,7 +5,7 @@ import { useT } from "@/i18n";
 import { useAppStore } from "@/state/appStore";
 import { worldDataProvider } from "@/world/privateWorldSession";
 import { buildGoogleMapsUrl, resolveRealStreetView } from "@/geo/realStreet";
-import { openRealStreetWindow, readRealStreetView } from "@/engine/view/realStreetView";
+import { openRealStreetWindow, readRealStreetView } from "@/engine/view/externalMapView";
 
 function useWorldSession() {
   return useSyncExternalStore(

@@ -251,7 +251,7 @@ test.describe("P7 synthetic real-street handoff", () => {
     await expect(page.getByRole("button", { name: "Phố thật", exact: true })).toBeDisabled();
   });
 
-  test("package switch and imported reset invalidate references without rebuilding the scene host", async ({
+  test("package switch and UI reset invalidate references without rebuilding the scene host", async ({
     page,
   }) => {
     await loadReadyPrivateWorld(page);
@@ -271,10 +271,7 @@ test.describe("P7 synthetic real-street handoff", () => {
       "p7-b-georeference.json",
     );
     await expect(page.getByRole("button", { name: "Phố thật", exact: true })).toBeEnabled();
-    await page.evaluate(async () => {
-      const { worldDataProvider } = await import("/src/world/privateWorldSession.ts");
-      worldDataProvider.resetFixture();
-    });
+    await page.getByRole("button", { name: "Trở về fixture demo", exact: true }).click();
     await expect(page.getByRole("button", { name: "Phố thật", exact: true })).toBeDisabled();
     await expect
       .poll(() =>
