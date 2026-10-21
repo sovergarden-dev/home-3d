@@ -10,6 +10,7 @@ import {
   Redo2,
 } from "lucide-react";
 import { useT } from "@/i18n";
+import { GeoreferenceInput } from "./RealStreetControl";
 import { worldDataProvider } from "@/world/privateWorldSession";
 import {
   WORLD_OVERRIDE_IDENTITY_SCHEME,
@@ -452,6 +453,7 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
         hidden={collapsed}
       >
         <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{t.localPreview.body}</p>
+        <GeoreferenceInput />
         <div className="mt-2 flex flex-wrap items-center gap-2 rounded border border-border p-2 text-[10px]">
           <div className="font-medium">{t.localPreview.toggleTemporaryLotIllustration}</div>
           <p className="sr-only">{t.localPreview.temporaryLotNote}</p>
