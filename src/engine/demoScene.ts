@@ -3,7 +3,9 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { bindCapture } from "./capture";
 import { bindRealStreetView } from "./view/externalMapView";
 import { createDemoAudio } from "./demoAudio";
-import { daylightAt } from "./demoLayout";
+import { createAtmosphereLayer } from "./atmosphere";
+import { getAstronomy, phaseMoon } from "@/atmosphere/astronomy";
+import { getEffectiveFestival, getEffectiveSeason } from "@/atmosphere/calendar";
 import { buildWorldMeshes, type WorldMeshBundle } from "./world/buildWorldMeshes";
 import { createFrameMetrics } from "./quality/frameMetrics";
 import {
@@ -146,6 +148,7 @@ export function createDemoScene(
 
   const hemisphere = new THREE.HemisphereLight("#fff8e8", "#5e6658", 2.2);
   const sun = new THREE.DirectionalLight("#fff0cd", 3.3);
+  const moon = new THREE.DirectionalLight("#b9d5ff", 0);
   sun.position.set(-45, 70, 36);
   sun.castShadow = true;
   sun.shadow.mapSize.set(1024, 1024);
@@ -159,7 +162,7 @@ export function createDemoScene(
   });
   sun.shadow.bias = -0.0007;
   sun.shadow.normalBias = 0.12;
-  scene.add(hemisphere, sun);
+  scene.add(hemisphere, sun, moon);
 
   const ground = new THREE.Mesh(
     new THREE.PlaneGeometry(800, 800),
@@ -249,8 +252,7 @@ export function createDemoScene(
     if (snapshot.packageEpoch !== lastPackageEpoch) selectFeature(null);
     lastPackageEpoch = snapshot.packageEpoch;
     // Effects anchor to the mounted world frame instead of a fixed origin.
-    festivalGroup.position.set(homeCentre.x, 0, homeCentre.z);
-    rainPoints.position.set(homeCentre.x, 0, homeCentre.z);
+    atmosphere.group.position.set(homeCentre.x, 0, homeCentre.z);
     applyView(true);
   }
 
@@ -334,76 +336,70 @@ export function createDemoScene(
     if (force) render();
   }
 
-  // Rain & festival groups attached to world
-  const festivalGroup = new THREE.Group();
-  festivalGroup.name = "festival-group";
-  scene.add(festivalGroup);
-
-  const lanternMat = new THREE.MeshStandardMaterial({
-    color: "#e65100",
-    emissive: "#ff8f00",
-    emissiveIntensity: 0.6,
-    roughness: 0.4,
+  // One non-pickable atmosphere layer: decorations and weather never enter world geometry.
+  const atmosphere = createAtmosphereLayer({
+    scene,
+    sky,
+    hemisphere,
+    sun,
+    moon,
+    onRoadWet: (wet) => worldBundle?.setRoadWet(wet),
+    host,
+    tier: renderer.capabilities.maxTextureSize <= 4096 ? "low" : "mid",
   });
-  const lanternGeo = new THREE.SphereGeometry(0.35, 12, 12);
-  const lanternWireGeo = new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(-18, 6.2, 0),
-    new THREE.Vector3(0, 5.2, 0),
-    new THREE.Vector3(18, 6.2, 0),
-  ]);
-  const lanternWire = new THREE.Line(
-    lanternWireGeo,
-    new THREE.LineBasicMaterial({ color: "#8d6e63" }),
-  );
-  festivalGroup.add(lanternWire);
-  for (let x = -16; x <= 16; x += 4) {
-    const lantern = new THREE.Mesh(lanternGeo, lanternMat);
-    lantern.position.set(x, 5.2 + (Math.abs(x) / 16) * 1.0, 0);
-    festivalGroup.add(lantern);
-  }
-  festivalGroup.visible = false;
-
-  // Rain particles system
-  const rainCount = 600;
-  const rainGeo = new THREE.BufferGeometry();
-  const rainPositions = new Float32Array(rainCount * 3);
-  for (let i = 0; i < rainCount; i++) {
-    rainPositions[i * 3] = (Math.random() - 0.5) * 80;
-    rainPositions[i * 3 + 1] = Math.random() * 30;
-    rainPositions[i * 3 + 2] = (Math.random() - 0.5) * 80;
-  }
-  rainGeo.setAttribute("position", new THREE.BufferAttribute(rainPositions, 3));
-  const rainMat = new THREE.PointsMaterial({
-    color: "#a4b5bf",
-    size: 0.18,
-    transparent: true,
-    opacity: 0.7,
-  });
-  const rainPoints = new THREE.Points(rainGeo, rainMat);
-  rainPoints.name = "rain-particles";
-  scene.add(rainPoints);
-  rainPoints.visible = false;
 
   function applyEnvironment() {
     const state = useAppStore.getState();
-    const daylight = daylightAt(state.timeOfDayMinutes);
-    const wet = state.weather === "rain" || state.weather === "storm";
-    const cloudy = state.weather !== "sunny";
-    sky.set(cloudy ? "#aebdc0" : "#eee0c9").multiplyScalar(0.8 + daylight * 0.7);
-    hemisphere.intensity = 1 + daylight * (cloudy ? 1.5 : 2.2);
-    sun.intensity = daylight * (cloudy ? 0.75 : 3.4);
-    sun.position.set(-45 + (state.timeOfDayMinutes / 1440) * 90, 20 + daylight * 65, 28);
-    worldBundle?.setRoadWet(wet);
-    audio.set(state.soundOn && !document.hidden, wet);
-
-    // Effects only render when a valid world is mounted; rain follows the world frame.
-    const renderable = worldRenderable();
-    festivalGroup.visible = renderable && state.festival !== "normal";
-    rainPoints.visible = renderable && wet;
-
-    host.dataset["weather"] = state.weather;
-    host.dataset["festival"] = state.festival;
-    host.dataset["night"] = String(daylight < 0.1);
+    const effectiveWeather =
+      state.realWeatherEnabled && state.realWeatherKind ? state.realWeatherKind : state.weather;
+    const selectedDate = state.selectedDate;
+    const reference =
+      currentWorld.mode === "private" ? worldDataProvider.getGeoreference()?.origin : null;
+    const astronomy =
+      reference || currentWorld.mode !== "private"
+        ? getAstronomy(selectedDate, state.timeOfDayMinutes, reference ?? null)
+        : null;
+    const effectiveFestival = getEffectiveFestival(state);
+    const effectiveSeason = getEffectiveSeason(state);
+    const presentationVisible =
+      state.atmosphereEnabled && worldRenderable() && state.viewMode !== "topdown";
+    worldBundle?.setAtmospherePresentation(
+      presentationVisible ? effectiveSeason : null,
+      presentationVisible &&
+        (astronomy?.sun?.elevation ??
+          -Math.cos((state.timeOfDayMinutes / 1440) * Math.PI * 2) * 60) < -6,
+    );
+    atmosphere.update(
+      {
+        timeOfDayMinutes: state.timeOfDayMinutes,
+        weather: effectiveWeather,
+        festival: effectiveFestival,
+        selectedDate,
+        season: effectiveSeason,
+        atmosphereEnabled: state.atmosphereEnabled,
+        floodLevel: state.floodLevel,
+        moonPhase: phaseMoon(selectedDate, state.timeOfDayMinutes) ?? 0.5,
+        astronomy:
+          astronomy?.sun && astronomy.moon
+            ? {
+                sunAzimuthDeg: astronomy.sun.azimuth,
+                sunElevationDeg: astronomy.sun.elevation,
+                moonAzimuthDeg: astronomy.moon.azimuth,
+                moonElevationDeg: astronomy.moon.elevation,
+              }
+            : null,
+      },
+      worldRenderable() && state.viewMode !== "topdown",
+      homeCentre,
+    );
+    audio.set(
+      state.soundOn && !document.hidden,
+      effectiveWeather === "rain" || effectiveWeather === "storm",
+    );
+    host.dataset["weather"] = effectiveWeather;
+    host.dataset["festival"] = effectiveFestival;
+    host.dataset["astronomySynthetic"] = String(astronomy?.synthetic ?? false);
+    host.dataset["simulationLabel"] = "simulation";
   }
 
   function updateLayerVisibility() {
@@ -430,7 +426,7 @@ export function createDemoScene(
     const renderedAt = performance.now();
     frameMetrics.record(
       renderedAt,
-      interactionActive || activeAnimation || rainPoints.visible ? "active" : "idle",
+      interactionActive || activeAnimation || atmosphere.rainVisible ? "active" : "idle",
     );
     if (lastMetricsSnapshotAt === 0 || renderedAt - lastMetricsSnapshotAt >= 250) {
       frameSnapshot = frameMetrics.snapshot();
@@ -482,24 +478,10 @@ export function createDemoScene(
     const delta = lastFrame === 0 ? 0.016 : Math.min(0.1, (now - lastFrame) / 1000);
     lastFrame = now;
 
-    // Update falling rain particle positions
-    if (rainPoints.visible && rainGeo.attributes["position"]) {
-      const posAttr = rainGeo.attributes["position"];
-      const positions = posAttr.array as Float32Array;
-      for (let i = 1; i < positions.length; i += 3) {
-        const currentY = positions[i];
-        if (currentY !== undefined) {
-          positions[i] = currentY - delta * 35;
-          if (positions[i]! < 0) {
-            positions[i] = 30;
-          }
-        }
-      }
-      posAttr.needsUpdate = true;
-    }
+    atmosphere.tick(delta);
 
     const controlsChanged = controls.enabled ? updateControls() : false;
-    if (controlsChanged || rainPoints.visible) {
+    if (controlsChanged || atmosphere.rainVisible) {
       render(true);
       scheduleFrame();
     }
@@ -787,7 +769,7 @@ export function createDemoScene(
       state.zoom !== previous.zoom ||
       state.viewReset !== previous.viewReset
     ) {
-      if (!syncingControlsState) applyView(true);
+      if (!syncingControlsState) applyView(state.viewMode === previous.viewMode);
     }
     if (state.showTrees !== previous.showTrees || state.showLabels !== previous.showLabels) {
       updateLayerVisibility();
@@ -795,13 +777,21 @@ export function createDemoScene(
     }
     if (
       state.weather !== previous.weather ||
+      state.realWeatherKind !== previous.realWeatherKind ||
+      state.realWeatherEnabled !== previous.realWeatherEnabled ||
+      state.viewMode !== previous.viewMode ||
       state.timeOfDayMinutes !== previous.timeOfDayMinutes ||
       state.festival !== previous.festival ||
-      state.soundOn !== previous.soundOn
+      state.soundOn !== previous.soundOn ||
+      state.selectedDate !== previous.selectedDate ||
+      state.season !== previous.season ||
+      state.festivalAuto !== previous.festivalAuto ||
+      state.atmosphereEnabled !== previous.atmosphereEnabled ||
+      state.floodLevel !== previous.floodLevel
     ) {
       applyEnvironment();
       render();
-      if (rainPoints.visible) scheduleFrame();
+      if (atmosphere.rainVisible) scheduleFrame();
     }
   });
 
@@ -819,13 +809,16 @@ export function createDemoScene(
       lastPackageEpoch = snapshot.packageEpoch;
     }
     if (snapshot.revision === lastWorldRevision) {
+      applyEnvironment();
       render();
       return;
     }
     if (snapshot.mode === "private-error") {
       disposeWorld();
-      festivalGroup.visible = false;
-      rainPoints.visible = false;
+      atmosphere.update(
+        { timeOfDayMinutes: 720, weather: "sunny", festival: "normal", atmosphereEnabled: false },
+        false,
+      );
       controls.enabled = false;
       marker.style.visibility = "hidden";
       renderer.clear();
@@ -839,14 +832,14 @@ export function createDemoScene(
     applyEnvironment();
     updateLayerVisibility();
     render();
-    if (rainPoints.visible) scheduleFrame();
+    if (atmosphere.rainVisible) scheduleFrame();
   });
 
   mountWorld();
   updateLayerVisibility();
   applyEnvironment();
   resize();
-  renderer.compile(scene, activeCamera);
+  atmosphere.warm(renderer, activeCamera);
   render();
   bindRealStreetView(() => {
     if (disposed || !worldRenderable()) return null;
@@ -869,7 +862,7 @@ export function createDemoScene(
     host.dataset["captureLatencyMs"] = String(performance.now() - captureStartedAt);
     return image;
   });
-  if (rainPoints.visible) scheduleFrame();
+  if (atmosphere.rainVisible) scheduleFrame();
 
   return {
     setLabel(label) {
@@ -900,15 +893,11 @@ export function createDemoScene(
       canvas.removeEventListener("wheel", onPlanWheel);
       canvas.removeEventListener("webglcontextlost", handleContextLost);
       disposeWorld();
+      moon.dispose();
       ground.geometry.dispose();
       (ground.material as THREE.Material).dispose();
       materials.forEach((material) => material.dispose());
-      rainGeo.dispose();
-      rainMat.dispose();
-      lanternGeo.dispose();
-      lanternMat.dispose();
-      lanternWireGeo.dispose();
-      (lanternWire.material as THREE.Material).dispose();
+      atmosphere.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
       canvas.remove();

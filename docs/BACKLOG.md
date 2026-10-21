@@ -35,3 +35,10 @@ Demo 1 chỉ là bản chơi thử hư cấu. Không coi checklist các pha chí
 - Nút map ẩn ngay trong quá trình kéo sheet và phục hồi sau pointercancel.
 - Lint sạch lỗi (giữ 6 cảnh báo Fast Refresh có sẵn).
 - Nhãn demo rõ, tắt dữ liệu thật, noindex/robots, giờ Việt Nam, progress tải thật và capture thật.
+
+## P8 — Lượt hiện hành
+
+- [ ] Đối chiếu receipt cuối P8: lịch/thiên văn, lớp không khí, lễ Việt, adapter consent, perf/lifecycle/privacy và cổng CI đúng head.
+- [ ] BLOCKED_MISSING_GEOREFERENCE: activation thời tiết khu thật cần georeference đã kiểm chứng, xử lý riêng; REAL_WORLD_NOT_VERIFIED giữ nguyên.
+- [ ] NOT_VERIFIED: GPU vật lý, native Safari/iOS/Android và nghiệm thu thực địa. Không chuyển việc benchmark trung gian cho Syringa.
+- H6/P7 accepted giữ nguyên; P9 (xe/người/âm thanh mới), GIS/intake, nhà mới, cloud/deploy ngoài scope P8.

@@ -77,7 +77,7 @@ function Home() {
             <div className="h6-map-controls-anchor absolute right-[max(1rem,env(safe-area-inset-right))] top-1/2 z-30 -translate-y-1/2">
               <MapControls />
             </div>
-            <div className="absolute inset-x-0 bottom-[max(1rem,env(safe-area-inset-bottom))] flex justify-center">
+            <div className="absolute left-4 right-[30rem] bottom-[max(1rem,env(safe-area-inset-bottom))] flex justify-center max-xl:right-24">
               <Dock mobile={false} />
             </div>
           </>

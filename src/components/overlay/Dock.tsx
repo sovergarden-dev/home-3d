@@ -81,8 +81,10 @@ export function Dock({ mobile, onExpandedChange }: DockProps) {
 
   if (!mobile) {
     return (
-      <div className="pointer-events-auto glass w-[min(680px,calc(100vw-2rem))] p-3">
-        <div className="mb-3">{panel}</div>
+      <div className="pointer-events-auto glass w-full max-w-[680px] p-3">
+        <div className="mb-3 max-h-[min(55dvh,420px)] overflow-y-auto overscroll-contain">
+          {panel}
+        </div>
         {tabBar}
       </div>
     );

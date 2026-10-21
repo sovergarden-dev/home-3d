@@ -21,7 +21,17 @@ Web app bản đồ 3D khu phố quanh nhà Syringa, nhà làm tâm. Kế hoạc
 
 Khối LOVABLE ở đầu file do Lovable quản lý: giữ nguyên. Quy tắc state phía trên đã đồng bộ cho H6; không dùng mô tả Demo 1 lịch sử để đưa world riêng trở lại store SSR.
 
-## Chỉ đạo hiện hành — H6 một gói tích hợp
+## Chỉ đạo hiện hành — P8 không khí (stacked trên P7)
+
+- Scope: Notion “Home 3D — P8: Không khí, Cue làm trọn gói”. Runbook: `docs/P8_RUNBOOK.md`. Giữ Three.js trực tiếp, một world/canvas và UI dock; không rewrite app.
+- H6 accepted tại `70967c003c0b39e74c7196665ca37e54c1ad0cf8`; P7 accepted phần mềm tại `957e4fcff9395c46a55a2927b8728ccb1ad051e0`. Không sửa nhánh/PR #3/#4 hoặc chạy lại CI hai head này. P8 nhánh/PR riêng, stacked trên P7 khi #4 còn mở.
+- Ngày/giờ/thiên văn/lễ/mùa/thời tiết chỉ là presentation; không sửa canonical, geometry, provenance, center, overrides, selection, undo hay opt-in H6. Origin/world vẫn chỉ trong client session, không SSR/store dùng chung.
+- Thời tiết thật mặc định tắt; cần binding hiện hành + consent riêng cho Open-Meteo. Không geocode, suy tọa độ, xin định vị hay gửi request khi chỉ mở panel. Tất cả QA dùng synthetic + interception.
+- Kích hoạt khu thật vẫn `BLOCKED_MISSING_GEOREFERENCE`; giữ `REAL_WORLD_NOT_VERIFIED`. Tính theo tham chiếu cục bộ không xác nhận ranh/origin thực địa.
+- Cue tự kiểm/sửa trọn gói, một receipt cuối `SUBMITTED_FOR_TECHNICAL_REVIEW`. Chỉ Notion AI đặt `SOFTWARE_TECHNICAL_REVIEW_PASSED`. Không yêu cầu chủ dự án QA từng hiệu ứng.
+- Không merge/auto-merge/Publish/deploy, đổi Lovable sync, force-push/rebase/amend lịch sử đã push hoặc đưa dữ liệu khu thật vào repo/CI.
+
+## Lịch sử chỉ đạo — H6 một gói tích hợp
 
 - Nguồn scope: Notion “H6 — Cue làm trọn gói, nghiệm thu một lần”, W0–W7 và T01–T20. Cùng nhánh `feat/h6-pho-that-mat-bang` / PR #3; bảo toàn sửa đã nhận ở baseline `07175b33ece59d57023dda32a45be322ddcebf9d`.
 - Cue triển khai, tự kiểm và sửa đến ổn định; một receipt tổng cho Notion AI review kỹ thuật, rồi Syringa nghiệm thu tổng thể một lần. Hermes tạm dừng H6. Không giao vòng QA nhỏ cho Syringa.

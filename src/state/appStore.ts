@@ -1,8 +1,11 @@
+import { parseIsoDate } from "@/atmosphere/calendar";
+import { vietnamDateTime } from "@/atmosphere/clock";
 import { create } from "zustand";
 
 export type TimeSpeed = 0 | 1 | 4;
 export type Weather = "sunny" | "cloudy" | "rain" | "storm";
-export type Festival = "normal" | "tet" | "midautumn";
+export type Festival = "normal" | "tet" | "midautumn" | "christmas" | "reunification" | "national";
+export type Season = "auto" | "dry" | "wet";
 export type ViewMode = "diorama" | "walk" | "topdown" | "real";
 export type Language = "vi" | "en";
 
@@ -18,11 +21,17 @@ export type CameraFrame = "home" | "core" | "full";
  * The map uses the supplied ENU origin; confirming a point does not confirm a surveyed parcel boundary.
  */
 export interface AppState {
+  selectedDate: string;
   timeOfDayMinutes: number;
+  season: Season;
+  festivalAuto: boolean;
+  atmosphereEnabled: boolean;
+  floodLevel: number;
   timeSpeed: TimeSpeed;
   realTimeEnabled: boolean;
   weather: Weather;
   realWeatherEnabled: boolean;
+  realWeatherKind: Weather | null;
   festival: Festival;
   viewMode: ViewMode;
   heading: number;
@@ -39,10 +48,16 @@ export interface AppState {
   moments: { id: number; image: string; minutes: number }[];
   addMoment: (image: string) => void;
   clearMoments: () => void;
+  setSelectedDate: (date: string) => void;
   setTimeOfDayMinutes: (m: number) => void;
+  setSeason: (season: Season) => void;
+  setFestivalAuto: (enabled: boolean) => void;
+  setAtmosphereEnabled: (enabled: boolean) => void;
+  setFloodLevel: (level: number) => void;
   setTimeSpeed: (s: TimeSpeed) => void;
   setRealTimeEnabled: (v: boolean) => void;
   setWeather: (w: Weather) => void;
+  setRealWeatherKind: (w: Weather | null) => void;
   setRealWeatherEnabled: (v: boolean) => void;
   setFestival: (f: Festival) => void;
   setViewMode: (v: ViewMode) => void;
@@ -64,11 +79,17 @@ export interface AppState {
 const wrapMinutes = (m: number) => ((Math.round(m) % 1440) + 1440) % 1440;
 
 export const useAppStore = create<AppState>((set) => ({
+  selectedDate: vietnamDateTime().date,
   timeOfDayMinutes: 7 * 60,
+  season: "auto",
+  festivalAuto: true,
+  atmosphereEnabled: true,
+  floodLevel: 0,
   timeSpeed: 0,
   realTimeEnabled: false,
   weather: "sunny",
   realWeatherEnabled: false,
+  realWeatherKind: null,
   festival: "normal",
   viewMode: "diorama",
   heading: 28,
@@ -88,11 +109,23 @@ export const useAppStore = create<AppState>((set) => ({
       moments: [{ id: Date.now(), image, minutes: s.timeOfDayMinutes }, ...s.moments].slice(0, 4),
     })),
   clearMoments: () => set({ moments: [] }),
+  setSelectedDate: (selectedDate) => {
+    if (parseIsoDate(selectedDate)) set({ selectedDate });
+  },
   setTimeOfDayMinutes: (m) => set({ timeOfDayMinutes: wrapMinutes(m) }),
+  setSeason: (season) => set({ season }),
+  setFestivalAuto: (festivalAuto) => set({ festivalAuto }),
+  setAtmosphereEnabled: (atmosphereEnabled) => set({ atmosphereEnabled }),
+  setFloodLevel: (floodLevel) =>
+    set({ floodLevel: Math.max(0, Math.min(1, Number.isFinite(floodLevel) ? floodLevel : 0)) }),
   setTimeSpeed: (timeSpeed) => set({ timeSpeed }),
   setRealTimeEnabled: (realTimeEnabled) => set({ realTimeEnabled }),
-  setWeather: (weather) => set({ weather }),
-  setRealWeatherEnabled: (realWeatherEnabled) => set({ realWeatherEnabled }),
+  setWeather: (weather) => set({ weather, realWeatherEnabled: false, realWeatherKind: null }),
+  setRealWeatherKind: (realWeatherKind) => set({ realWeatherKind }),
+  setRealWeatherEnabled: (realWeatherEnabled) =>
+    set(
+      realWeatherEnabled ? { realWeatherEnabled } : { realWeatherEnabled, realWeatherKind: null },
+    ),
   setFestival: (festival) => set({ festival }),
   setViewMode: (viewMode) =>
     set((state) => ({
