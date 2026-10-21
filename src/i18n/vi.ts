@@ -33,6 +33,25 @@ export const vi = {
   northUp: "Bắc ↑",
   scalePending: "Đang đo thước",
   layers: { trees: "Cây xanh", labels: "Nhãn" },
+  realStreet: {
+    streetView: "Street View",
+    missing: "Chưa có tham chiếu địa lý hợp lệ cho gói này; Phố thật chưa khả dụng.",
+    referenceReady: "Tham chiếu riêng đã khớp nội dung gói trong phiên này.",
+    loadReference: "Mở tham chiếu địa lý",
+    invalidReference: "Tham chiếu không hợp lệ hoặc không khớp gói. Không vị trí nào được mở.",
+    disclosure:
+      "Chỉ khi bạn chọn Mở Google, vị trí điểm đang xem và hướng camera lúc xác nhận sẽ chuyển sang Google ở tab/app bên ngoài. Vệ tinh chỉ gửi vị trí và mức zoom. Gói và dữ liệu chỉnh sửa vẫn ở đây.",
+    coverage:
+      "Ảnh có thể cũ hoặc không có Street View. Nếu Google không có ảnh, đóng tab đó để tiếp tục phiên ở đây.",
+    northConvention: "Mặt bằng hoặc hướng nhìn thẳng đứng dùng hướng Bắc (0°).",
+    currentTarget: "Điểm đang xem / hướng (kiểm lại khi mở)",
+    choose: "Chọn cách xem bên ngoài",
+    satellite: "Vệ tinh",
+    cancel: "Hủy",
+    confirm: "Mở Google",
+    blocked:
+      "Không mở được tab ngoài. Kiểm tra quyền popup rồi thử lại; phiên chỉnh sửa vẫn được giữ.",
+  },
   localPreview: {
     title: "Xem trước gói cục bộ",
     viewCore: "Về lõi 300 m",

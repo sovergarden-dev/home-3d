@@ -3,6 +3,11 @@ import { applyWorldOverrides } from "./overrides";
 import { MAX_WORLD_PACKAGE_BYTES, parseWorldPackage } from "./package";
 import type { CenterConfirmation, WorldData, WorldOverrideDocument, WorldPackage } from "./schema";
 import { validateWorld } from "./validate";
+import {
+  parsePackageGeoreference,
+  sha256Text,
+  type PackageGeoreference,
+} from "./packageGeoreference";
 
 export type WorldSessionSnapshot =
   | {
@@ -16,6 +21,7 @@ export type WorldSessionSnapshot =
       centerConfirmation?: undefined;
       overrides?: WorldOverrideDocument | undefined;
       lastError?: string | null;
+      georeferenceReady?: boolean;
     }
   | {
       mode: "private";
@@ -28,6 +34,7 @@ export type WorldSessionSnapshot =
       centerConfirmation?: CenterConfirmation | undefined;
       overrides?: WorldOverrideDocument | undefined;
       lastError?: string | null;
+      georeferenceReady?: boolean;
     }
   | {
       mode: "private-error";
@@ -38,6 +45,7 @@ export type WorldSessionSnapshot =
       dirty: false;
       errorCode: string;
       centerConfirmation?: undefined;
+      georeferenceReady?: boolean;
     };
 
 type SessionListener = (snapshot: WorldSessionSnapshot) => void;
@@ -56,6 +64,9 @@ export interface WorldDataProvider {
   getSnapshot: () => WorldSessionSnapshot;
   subscribe: (listener: SessionListener) => () => void;
   openText: (text: string) => void;
+  openGeoreferenceText: (text: string) => Promise<boolean>;
+  getGeoreference: () => { origin: PackageGeoreference["origin"] } | null;
+  getPackageEpoch: () => number;
   openFile: (file: File) => Promise<void>;
   applyOverrides: (document: WorldOverrideDocument | undefined) => boolean;
   /** Returns the current base world plus current overrides, never an already-applied world twice. */
@@ -70,6 +81,9 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
   let revision = 0;
   let packageEpoch = 0;
   let requestId = 0;
+  let georeferenceRequestId = 0;
+  let packageText: string | null = null;
+  let georeference: PackageGeoreference | null = null;
   let snapshot: WorldSessionSnapshot = {
     mode: "fixture",
     revision,
@@ -93,10 +107,14 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
 
   const openText = (text: string) => {
     requestId += 1;
+    georeferenceRequestId += 1;
+    georeference = null;
+    packageText = null;
     revision += 1;
     packageEpoch += 1;
     const parsed = parseWorldPackage(text);
     if (parsed.ok) {
+      packageText = text;
       basePrivateWorld = structuredClone(parsed.package.world) as WorldData;
       workingPackage = structuredClone(parsed.package) as WorldPackage;
       exportedDocumentSignature = documentSignature(parsed.package.overrides);
@@ -111,6 +129,7 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
         centerConfirmation: parsed.package.centerConfirmation,
         overrides: parsed.package.overrides,
         lastError: null,
+        georeferenceReady: false,
       });
     } else {
       basePrivateWorld = null;
@@ -123,6 +142,7 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
         loading: false,
         dirty: false,
         errorCode: parsed.errorCode,
+        georeferenceReady: false,
       });
     }
   };
@@ -132,6 +152,9 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
     packageEpoch += 1;
     basePrivateWorld = null;
     workingPackage = null;
+    packageText = null;
+    georeferenceRequestId += 1;
+    georeference = null;
     publish({
       mode: "private-error",
       revision,
@@ -140,6 +163,7 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
       loading: false,
       dirty: false,
       errorCode,
+      georeferenceReady: false,
     });
   };
 
@@ -161,6 +185,7 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
           centerConfirmation: snapshot.centerConfirmation,
           overrides: undefined,
           lastError: null,
+          georeferenceReady: georeference !== null,
         });
       } else {
         publish({
@@ -202,6 +227,7 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
         centerConfirmation: snapshot.centerConfirmation,
         overrides: structuredClone(doc),
         lastError: null,
+        georeferenceReady: georeference !== null,
       });
     } else {
       publish({
@@ -228,12 +254,15 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
     openText,
     async openFile(file) {
       const currentRequest = ++requestId;
+      georeferenceRequestId += 1;
+      georeference = null;
+      packageText = null;
       if (file.size > MAX_WORLD_PACKAGE_BYTES) {
         if (currentRequest !== requestId) return;
         publishFileFailure("WORLD_PACKAGE_TOO_LARGE");
         return;
       }
-      publish({ ...snapshot, loading: true });
+      publish({ ...snapshot, loading: true, georeferenceReady: false });
       try {
         const text = await readLocalFile(file);
         if (currentRequest !== requestId) return;
@@ -245,6 +274,34 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
         if (currentRequest === requestId) publishFileFailure("WORLD_PACKAGE_FILE_READ_FAILED");
       }
     },
+    async openGeoreferenceText(text) {
+      const candidate = parsePackageGeoreference(text);
+      const currentRequest = ++georeferenceRequestId;
+      georeference = null;
+      publish({ ...snapshot, georeferenceReady: false });
+      if (!candidate || packageText === null || snapshot.mode !== "private") return false;
+      const epoch = packageEpoch;
+      const openedText = packageText;
+      try {
+        const hash = await sha256Text(openedText);
+        if (
+          currentRequest !== georeferenceRequestId ||
+          epoch !== packageEpoch ||
+          packageText !== openedText ||
+          hash !== candidate.packageSha256
+        )
+          return false;
+        georeference = candidate;
+        publish({ ...snapshot, georeferenceReady: true });
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    getGeoreference() {
+      return georeference ? { origin: structuredClone(georeference.origin) } : null;
+    },
+    getPackageEpoch: () => packageEpoch,
     applyOverrides,
     exportWorkingPackage() {
       if (snapshot.mode !== "private" || !workingPackage || !basePrivateWorld) return null;
@@ -274,6 +331,9 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
       packageEpoch += 1;
       basePrivateWorld = null;
       workingPackage = null;
+      packageText = null;
+      georeferenceRequestId += 1;
+      georeference = null;
       publish({
         mode: "fixture",
         revision,
@@ -282,6 +342,7 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
         loading: false,
         dirty: false,
         world: fixture,
+        georeferenceReady: false,
       });
     },
   };

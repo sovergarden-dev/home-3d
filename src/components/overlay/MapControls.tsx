@@ -2,7 +2,6 @@ import {
   Compass,
   Footprints,
   Box,
-  Building2,
   Minus,
   Plus,
   LocateFixed,
@@ -12,6 +11,7 @@ import {
 } from "lucide-react";
 import { useAppStore, type ViewMode } from "@/state/appStore";
 import { useT } from "@/i18n";
+import { RealStreetControl } from "./RealStreetControl";
 
 const modes: { id: ViewMode; Icon: typeof Box }[] = [
   { id: "diorama", Icon: Box },
@@ -121,15 +121,7 @@ export function MapControls() {
             <Icon className="h-5 w-5" />
           </button>
         ))}
-        <button
-          type="button"
-          disabled
-          aria-label={t.viewMode.real}
-          title={t.demoOnly}
-          className={`${btn} opacity-40`}
-        >
-          <Building2 className="h-5 w-5" />
-        </button>
+        <RealStreetControl />
       </div>
     </div>
   );

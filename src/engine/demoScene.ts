@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { bindCapture } from "./capture";
+import { bindRealStreetView } from "./view/realStreetView";
 import { createDemoAudio } from "./demoAudio";
 import { daylightAt } from "./demoLayout";
 import { buildWorldMeshes, type WorldMeshBundle } from "./world/buildWorldMeshes";
@@ -847,6 +848,19 @@ export function createDemoScene(
   resize();
   renderer.compile(scene, activeCamera);
   render();
+  bindRealStreetView(() => {
+    if (disposed || !worldRenderable()) return null;
+    const mode = useAppStore.getState().viewMode;
+    if (mode === "real") return null;
+    const target = mode === "topdown" ? planCentre : controls.target;
+    const direction = activeCamera.getWorldDirection(new THREE.Vector3());
+    return {
+      target: { x: target.x, y: target.y, z: target.z },
+      direction: { x: direction.x, y: direction.y, z: direction.z },
+      mode,
+      zoom: 19,
+    };
+  });
   bindCapture(() => {
     if (!worldRenderable() || document.hidden) return null;
     const captureStartedAt = performance.now();
@@ -865,6 +879,7 @@ export function createDemoScene(
       if (disposed) return;
       disposed = true;
       bindCapture(null);
+      bindRealStreetView(null);
       window.clearTimeout(interactionTimer);
       cancelAnimationFrame(animationFrame);
       unsubscribeStore();

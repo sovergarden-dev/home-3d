@@ -41,6 +41,25 @@ export const en: Dict = {
   northUp: "North ↑",
   scalePending: "Measuring scale",
   layers: { trees: "Trees", labels: "Labels" },
+  realStreet: {
+    streetView: "Street View",
+    missing: "No valid georeference for this package; Real street is unavailable.",
+    referenceReady: "Private reference matches the package content in this session.",
+    loadReference: "Open georeference",
+    invalidReference: "Invalid or mismatched reference. No location was opened.",
+    disclosure:
+      "Only when you choose Open Google will the current target and camera heading at confirmation be sent to Google in an external tab/app. Satellite sends only the location and zoom. Your package and edits stay here.",
+    coverage:
+      "Imagery may be old or Street View unavailable. If Google has no imagery, close that tab to continue your session here.",
+    northConvention: "Plan view or a vertical view uses North (0°).",
+    currentTarget: "Current target / heading (checked again when opening)",
+    choose: "Choose external view",
+    satellite: "Satellite",
+    cancel: "Cancel",
+    confirm: "Open Google",
+    blocked:
+      "Could not open the external tab. Check popup permissions and retry; your editing session is preserved.",
+  },
   localPreview: {
     title: "Local package preview",
     viewCore: "Return to 300 m core",
