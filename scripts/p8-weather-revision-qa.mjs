@@ -34,6 +34,8 @@ const companion = JSON.stringify({ schemaVersion: "1.0", packageSha256: sha256(t
 const report = {
   status: "RUNNING",
   mode: diagnostic ? "DIAGNOSTIC" : "FINAL",
+  fixtureImport:
+    "DataTransfer through file inputs for profiling; native setInputFiles covered by E2E",
   source: {
     head: git("rev-parse", "HEAD"),
     worktree: git("status", "--porcelain"),
@@ -88,16 +90,18 @@ const dialog = page.getByRole("dialog");
 const top = page.locator(".h6-top-info");
 const scene = page.getByTestId("demo-scene");
 async function openPackage() {
-  await page.getByLabel("Mở gói world").setInputFiles({
-    name: "synthetic-weather.json",
-    mimeType: "application/json",
-    buffer: Buffer.from(text),
-  });
-  await page.getByLabel("Mở tham chiếu địa lý").setInputFiles({
-    name: "synthetic-reference.json",
-    mimeType: "application/json",
-    buffer: Buffer.from(companion),
-  });
+  await page.getByLabel("Mở gói world").evaluate((input, content) => {
+    const transfer = new DataTransfer();
+    transfer.items.add(new File([content], "synthetic.json", { type: "application/json" }));
+    input.files = transfer.files;
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+  }, text);
+  await page.getByLabel("Mở tham chiếu địa lý").evaluate((input, content) => {
+    const transfer = new DataTransfer();
+    transfer.items.add(new File([content], "synthetic.json", { type: "application/json" }));
+    input.files = transfer.files;
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+  }, companion);
   await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "ready");
   await page.getByRole("tab", { name: "Thời tiết", exact: true }).click();
   await expect(trigger).toBeEnabled();
