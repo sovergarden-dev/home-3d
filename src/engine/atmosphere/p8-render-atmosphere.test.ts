@@ -54,6 +54,9 @@ describe("P8 atmosphere rendering contract", () => {
     expect(rain.geometry.getAttribute("position")).toBe(positions);
     expect(rain.material).toBe(material);
     expect(wet).toEqual([true, false, true]);
+    atmosphere.invalidateWorld();
+    atmosphere.update(state({ weather: "rain" }), true);
+    expect(wet).toEqual([true, false, true, true]);
     atmosphere.dispose();
     expect(scene.getObjectByName("atmosphere-layer")).toBeUndefined();
   });
@@ -106,6 +109,76 @@ describe("P8 atmosphere rendering contract", () => {
           o.geometry.parameters.shapes.getPoints().length === 11,
       ),
     ).toBe(true);
+    atmosphere.dispose();
+  });
+
+  it("warms selectable variants without combinations and restores render state", () => {
+    const { atmosphere, scene, wet, sky, sun } = layer();
+    const externalFog = new THREE.FogExp2("#123456", 0.25);
+    atmosphere.update(state({ weather: "rain", festival: "tet", floodLevel: 0.4 }), true);
+    const ownedFog = scene.fog as THREE.FogExp2;
+    const ownedFogColor = ownedFog.color.clone();
+    const ownedFogDensity = ownedFog.density;
+    scene.fog = externalFog;
+    const group = atmosphere.group;
+    group.visible = false;
+    const rain = group.getObjectByName("rain-particles")!;
+    const tet = group.getObjectByName("festival-decoration-tet")!;
+    rain.visible = false;
+    tet.visible = false;
+    const before = {
+      sky: sky.clone(),
+      sunPosition: sun.position.clone(),
+      groupVisible: group.visible,
+      rainVisible: rain.visible,
+      tetVisible: tet.visible,
+      camera: new THREE.PerspectiveCamera(),
+    };
+    before.camera.position.set(2, 3, 4);
+    before.camera.updateMatrixWorld();
+    const compileStates: Array<{
+      rain: boolean;
+      festival: string;
+      fog: THREE.Fog | THREE.FogExp2 | null;
+      moon: boolean;
+      flood: boolean;
+    }> = [];
+    const renderer = {
+      compile: (_scene: THREE.Scene, _camera: THREE.Camera) => {
+        compileStates.push({
+          rain: rain.visible,
+          festival:
+            ["tet", "midautumn", "christmas", "reunification", "national"].find(
+              (name) => group.getObjectByName(`festival-decoration-${name}`)?.visible,
+            ) ?? "normal",
+          fog: scene.fog,
+          moon: group.getObjectByName("moon-phase-disc")?.visible ?? false,
+          flood: group.getObjectByName("simulation-flood-water")?.visible ?? false,
+        });
+      },
+    } as unknown as THREE.WebGLRenderer;
+    const cameraBefore = before.camera.matrixWorld.clone();
+    atmosphere.warm(renderer, before.camera);
+    expect(compileStates).toHaveLength(13);
+    expect(compileStates.slice(0, 12).every(({ fog }) => fog instanceof THREE.FogExp2)).toBe(true);
+    expect(compileStates[12]!.fog).toBeNull();
+    expect(compileStates.filter(({ rain }) => rain).map(({ festival }) => festival)).toEqual([
+      "normal",
+      "normal",
+    ]);
+    expect(compileStates[10]!.moon).toBe(true);
+    expect(compileStates[11]!.flood).toBe(true);
+    expect(compileStates[12]!.flood).toBe(false);
+    expect(scene.fog).toBe(externalFog);
+    expect(ownedFog.color.equals(ownedFogColor)).toBe(true);
+    expect(ownedFog.density).toBe(ownedFogDensity);
+    expect(sky.equals(before.sky)).toBe(true);
+    expect(sun.position.equals(before.sunPosition)).toBe(true);
+    expect(group.visible).toBe(before.groupVisible);
+    expect(rain.visible).toBe(before.rainVisible);
+    expect(tet.visible).toBe(before.tetVisible);
+    expect(before.camera.matrixWorld.equals(cameraBefore)).toBe(true);
+    expect(wet).toEqual([true]);
     atmosphere.dispose();
   });
 });

@@ -113,6 +113,13 @@ const report = {
   phase,
   startedAt: new Date().toISOString(),
   git: git(),
+  application: { worktree: cwd, head: git().head },
+  harnessGit: {
+    head: execFileSync("git", ["rev-parse", "HEAD"], {
+      cwd: process.cwd(),
+      encoding: "utf8",
+    }).trim(),
+  },
   fixture: {
     sha256: hash(text),
     buildings: 64,
@@ -135,7 +142,7 @@ const report = {
   errors: [],
   blockedExternalRequests: [],
   method:
-    "Default-framebuffer color clears followed by microtask completion mark actual synchronous rendered submissions; shadow/offscreen passes excluded. Held pointer warmup + three rounds; every slow interval retained. Click-to-first subsequent completed main-frame submission with matching changed state; PNG canvas hashes establish pixel changes independently. Parse/build/idle/capture excluded from interaction metrics. CDP JS/DOM after explicit GC is retained-memory estimate, not GPU memory. SwiftShader is not physical GPU certification.",
+    "Each measured round and pixel sequence starts in a fresh document to remove residual accepted OrbitControls damping, with the same prescribed camera. Default-framebuffer color clears followed by microtask completion mark actual synchronous rendered submissions; shadow/offscreen passes excluded. Held pointer warmup + three rounds; every slow interval retained. Click-to-first subsequent completed main-frame submission with matching changed state; PNG canvas hashes establish pixel changes independently. Parse/build/idle/capture excluded from interaction metrics. CDP JS/DOM after explicit GC is retained-memory estimate, not GPU memory. SwiftShader is not physical GPU certification.",
 };
 const browser = await chromium.launch({
   args: ["--enable-unsafe-swiftshader"],
@@ -191,17 +198,15 @@ await context.addInitScript(() => {
     p.links++;
     return link.call(this, program);
   };
-  document.addEventListener(
-    "click",
-    () => {
-      if (p.armed) {
-        p.requestedAt = performance.now();
-        p.firstFrame = null;
-        p.armed = false;
-      }
-    },
-    true,
-  );
+  const beginOption = () => {
+    if (p.armed) {
+      p.requestedAt = performance.now();
+      p.firstFrame = null;
+      p.armed = false;
+    }
+  };
+  for (const type of ["click", "input", "change", "keydown"])
+    document.addEventListener(type, beginOption, true);
 });
 const page = await context.newPage();
 const cdp = await context.newCDPSession(page);
@@ -264,6 +269,15 @@ async function reset() {
   await page.getByRole("tab", { name: "Thời gian", exact: true }).click();
   await page.waitForTimeout(300);
 }
+async function freshFixture() {
+  await page.goto(`${url}/?local-preview=1`);
+  await page.waitForFunction(
+    () => document.querySelector("#scene-root")?.dataset.sceneState === "ready",
+  );
+  await openFixture();
+  await collapse();
+  await reset();
+}
 async function drag() {
   const box = await page.locator("#scene-root canvas").boundingBox();
   assert(box, "CANVAS_MISSING");
@@ -300,7 +314,7 @@ async function memory(stage) {
     ...counts,
   };
 }
-async function option(name, tab, expected) {
+async function measuredAction(tab, expected, action) {
   await page.getByRole("tab", { name: tab, exact: true }).click();
   const beforeLinks = await page.evaluate(() => window.__p8Probe.links);
   await page.evaluate((e) => {
@@ -310,13 +324,18 @@ async function option(name, tab, expected) {
     p.firstFrame = null;
     p.expected = e;
   }, expected);
-  await page.getByRole("radio", { name, exact: true }).click();
+  await action();
   await page.waitForFunction(() => Number.isFinite(window.__p8Probe.firstFrame));
   const result = await page.evaluate(() => {
     const p = window.__p8Probe;
     return { latencyMs: p.firstFrame - p.requestedAt, links: p.links, expected: p.expected };
   });
   return { ...result, newProgramLinks: result.links - beforeLinks };
+}
+async function option(name, tab, expected) {
+  return measuredAction(tab, expected, () =>
+    page.getByRole("radio", { name, exact: true }).click(),
+  );
 }
 async function capturePixels() {
   const data = await page.evaluate(async () => {
@@ -341,13 +360,7 @@ async function shot(name, patchValue, tab = "Thời tiết") {
   return hash(canvas);
 }
 try {
-  await page.goto(`${url}/?local-preview=1`);
-  await page.waitForFunction(
-    () => document.querySelector("#scene-root")?.dataset.sceneState === "ready",
-  );
-  await openFixture();
-  await collapse();
-  await reset();
+  await freshFixture();
   report.environment = await page.evaluate(() => {
     const gl = document.querySelector("#scene-root canvas").getContext("webgl2"),
       ext = gl.getExtension("WEBGL_debug_renderer_info");
@@ -362,7 +375,7 @@ try {
   });
   await drag();
   for (let round = 1; round <= 3; round++) {
-    await reset();
+    await freshFixture();
     await page.evaluate(() => {
       const p = window.__p8Probe;
       p.timestamps = [];
@@ -392,7 +405,7 @@ try {
     console.log(`P8 ${phase} perf ${round}/3 p95=${report.perf.at(-1).p95Ms}`);
   }
   if (phase === "final") {
-    await reset();
+    await freshFixture();
     for (const [name, tab, expected] of [
       ["Nhiều mây", "Thời tiết", { weather: "cloudy" }],
       ["Mưa", "Thời tiết", { weather: "rain" }],
@@ -404,6 +417,38 @@ try {
     ]) {
       report.latencies[name] = await option(name, tab, expected);
     }
+    report.latencies["Mùa mưa"] = await option("Mùa mưa", "Thời tiết", { season: "wet" });
+    report.latencies["Mùa khô"] = await option("Mùa khô", "Thời tiết", { season: "dry" });
+    report.latencies["Khuya"] = await measuredAction("Thời gian", { timeMinutes: "1380" }, () =>
+      page.getByRole("button", { name: "23:00 Khuya", exact: true }).click(),
+    );
+    report.latencies["Ngày đang xem"] = await measuredAction(
+      "Thời gian",
+      { selectedDate: "2026-12-25" },
+      () => page.getByLabel("Ngày đang xem", { exact: true }).fill("2026-12-25"),
+    );
+    report.latencies["Ngập mô phỏng"] = await measuredAction(
+      "Thời tiết",
+      { floodLevel: "0.1" },
+      () => page.getByLabel("Mức ngập mô phỏng", { exact: true }).press("ArrowRight"),
+    );
+    report.latencies["Tắt lớp"] = await measuredAction(
+      "Thời tiết",
+      { atmosphereEnabled: "false" },
+      () => page.getByRole("switch", { name: "Lớp không khí", exact: true }).click(),
+    );
+    report.latencies["Bật lớp"] = await measuredAction(
+      "Thời tiết",
+      { atmosphereEnabled: "true" },
+      () => page.getByRole("switch", { name: "Lớp không khí", exact: true }).click(),
+    );
+    report.shaderWarmup = {
+      newProgramLinks: Object.values(report.latencies).reduce(
+        (n, row) => n + row.newProgramLinks,
+        0,
+      ),
+    };
+    assert(report.shaderWarmup.newProgramLinks === 0, "SHADER_VARIANT_LINKED_AFTER_WARMUP");
     await reset();
     const day = await shot("day", {});
     const sunset = await shot("sunset", { timeOfDayMinutes: 1080 });
@@ -556,7 +601,7 @@ try {
       : "COMPLETED_WITH_PERFORMANCE_LIMITATIONS";
   await writeFile(join(out, "synthetic-fixture.json"), JSON.stringify(fixture, null, 2) + "\n");
   await save("report.json");
-  console.log(`P8 ${phase} QA PASS: ${join(out, "report.json")}`);
+  console.log(`P8 ${phase} QA ${report.status}: ${join(out, "report.json")}`);
 } catch (error) {
   report.status = "FAIL";
   report.failure = String(error);

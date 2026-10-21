@@ -279,8 +279,13 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
   let disposed = false,
     activeRain = false,
     lastWet: boolean | undefined;
+  let lastState: AtmosphereState | undefined;
   const update = (state: AtmosphereState, renderable: boolean, anchor?: THREE.Vector3) => {
     if (disposed) return;
+    if (!warming) {
+      lastState = { ...state };
+      if (state.astronomy) lastState.astronomy = { ...state.astronomy };
+    }
     const visible = state.atmosphereEnabled !== false && renderable;
     const wet = visible && (state.weather === "rain" || state.weather === "storm");
     const level = clamp(state.floodLevel ?? 0);
@@ -362,7 +367,7 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
     flood.position.y = 0.06 + level * 1.3;
     floodMaterial.opacity = 0.12 + level * 0.2;
     const roadWet = visible && (wet || level > 0);
-    if (roadWet !== lastWet) {
+    if (!warming && roadWet !== lastWet) {
       onRoadWet(roadWet);
       lastWet = roadWet;
     }
@@ -385,26 +390,163 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
     if (!disposed && activeRain)
       rainMaterial.uniforms["time"]!.value += Math.max(0, Math.min(0.1, delta));
   };
-  /** Compile only actual material variants, once, before options can be used. */
+  let warming = false;
+  /** Compile each selectable variant, without warming their cartesian product. */
   const warm = (renderer: THREE.WebGLRenderer, camera: THREE.Camera) => {
     const visibility = new Map<THREE.Object3D, boolean>();
-    group.traverse((object) => {
-      visibility.set(object, object.visible);
-      object.visible = true;
-    });
-    try {
-      const previousFog = scene.fog;
-      scene.fog = null;
-      try {
-        renderer.compile(scene, camera);
-      } finally {
-        scene.fog = previousFog;
-      }
+    group.traverse((object) => visibility.set(object, object.visible));
+    const previous = {
+      fog: scene.fog,
+      ownedFog: { color: fog.color.clone(), density: fog.density },
+      lastState: lastState
+        ? {
+            ...lastState,
+            ...(lastState.astronomy === undefined
+              ? {}
+              : { astronomy: lastState.astronomy ? { ...lastState.astronomy } : null }),
+          }
+        : undefined,
+      sky: sky.clone(),
+      hemisphere: {
+        color: hemisphere.color.clone(),
+        ground: hemisphere.groundColor.clone(),
+        intensity: hemisphere.intensity,
+      },
+      sun: {
+        position: sun.position.clone(),
+        color: sun.color.clone(),
+        intensity: sun.intensity,
+        target: sun.target.position.clone(),
+      },
+      moon: moon
+        ? {
+            position: moon.position.clone(),
+            color: moon.color.clone(),
+            intensity: moon.intensity,
+            target: moon.target.position.clone(),
+          }
+        : undefined,
+      groupPosition: group.position.clone(),
+      activeRain,
+      lastWet,
+      rainRange: { start: rainGeometry.drawRange.start, count: rainGeometry.drawRange.count },
+      rainOpacity: rainMaterial.uniforms["opacity"]!.value,
+      flood: { visible: flood.visible, y: flood.position.y, opacity: floodMaterial.opacity },
+      puddlesVisible: puddles.visible,
+      ringsVisible: rings.visible,
+      moonVisual: {
+        position: moonVisual.position.clone(),
+        quaternion: moonVisual.quaternion.clone(),
+        visible: moonVisual.visible,
+      },
+      moonUniforms: {
+        phase: moonMaterial.uniforms["phase"]!.value,
+        opacity: moonMaterial.uniforms["opacity"]!.value,
+      },
+      hostDataset: host
+        ? ["atmosphereEnabled", "season", "floodLevel", "night"].map(
+            (key) => [key, host.dataset[key]] as const,
+          )
+        : [],
+      camera: {
+        matrixWorld: camera.matrixWorld.clone(),
+        matrixWorldInverse: camera.matrixWorldInverse.clone(),
+        projectionMatrix: camera.projectionMatrix.clone(),
+      },
+    };
+    const compile = (variant: AtmosphereState) => {
+      update(variant, true);
       renderer.compile(scene, camera);
-    } finally {
-      visibility.forEach((visible, object) => {
-        object.visible = visible;
+    };
+    warming = true;
+    group.visible = true;
+    try {
+      // Weather and festival choices are independently selectable; do not compile every combination.
+      const base = lastState ?? {
+        timeOfDayMinutes: 720,
+        weather: "sunny" as const,
+        festival: "normal" as const,
+      };
+      for (const weather of ["sunny", "cloudy", "rain", "storm"] as const)
+        compile({ ...base, weather, festival: "normal", atmosphereEnabled: true, floodLevel: 0 });
+      for (const festival of [
+        "normal",
+        "tet",
+        "midautumn",
+        "christmas",
+        "reunification",
+        "national",
+      ] as const)
+        compile({ ...base, weather: "sunny", festival, atmosphereEnabled: true, floodLevel: 0 });
+      compile({
+        ...base,
+        timeOfDayMinutes: 0,
+        weather: "sunny",
+        festival: "normal",
+        atmosphereEnabled: true,
+        floodLevel: 0,
+        moonPhase: 0.5,
       });
+      compile({
+        ...base,
+        weather: "sunny",
+        festival: "normal",
+        atmosphereEnabled: true,
+        floodLevel: 1,
+      });
+      compile({
+        ...base,
+        weather: "sunny",
+        festival: "normal",
+        atmosphereEnabled: false,
+        floodLevel: 0,
+      });
+    } finally {
+      scene.fog = previous.fog;
+      fog.color.copy(previous.ownedFog.color);
+      fog.density = previous.ownedFog.density;
+      lastState = previous.lastState;
+      sky.copy(previous.sky);
+      hemisphere.color.copy(previous.hemisphere.color);
+      hemisphere.groundColor.copy(previous.hemisphere.ground);
+      hemisphere.intensity = previous.hemisphere.intensity;
+      sun.position.copy(previous.sun.position);
+      sun.color.copy(previous.sun.color);
+      sun.intensity = previous.sun.intensity;
+      sun.target.position.copy(previous.sun.target);
+      sun.target.updateMatrixWorld();
+      if (moon && previous.moon) {
+        moon.position.copy(previous.moon.position);
+        moon.color.copy(previous.moon.color);
+        moon.intensity = previous.moon.intensity;
+        moon.target.position.copy(previous.moon.target);
+        moon.target.updateMatrixWorld();
+      }
+      group.position.copy(previous.groupPosition);
+      activeRain = previous.activeRain;
+      lastWet = previous.lastWet;
+      rainGeometry.setDrawRange(previous.rainRange.start, previous.rainRange.count);
+      rainMaterial.uniforms["opacity"]!.value = previous.rainOpacity;
+      flood.visible = previous.flood.visible;
+      flood.position.y = previous.flood.y;
+      floodMaterial.opacity = previous.flood.opacity;
+      puddles.visible = previous.puddlesVisible;
+      rings.visible = previous.ringsVisible;
+      moonVisual.position.copy(previous.moonVisual.position);
+      moonVisual.quaternion.copy(previous.moonVisual.quaternion);
+      moonVisual.visible = previous.moonVisual.visible;
+      moonMaterial.uniforms["phase"]!.value = previous.moonUniforms.phase;
+      moonMaterial.uniforms["opacity"]!.value = previous.moonUniforms.opacity;
+      if (host)
+        previous.hostDataset.forEach(([key, value]) => {
+          if (value === undefined) delete host.dataset[key];
+          else host.dataset[key] = value;
+        });
+      visibility.forEach((visible, object) => (object.visible = visible));
+      camera.matrixWorld.copy(previous.camera.matrixWorld);
+      camera.matrixWorldInverse.copy(previous.camera.matrixWorldInverse);
+      camera.projectionMatrix.copy(previous.camera.projectionMatrix);
+      warming = false;
     }
   };
   const dispose = () => {
@@ -419,11 +561,15 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
     rings.dispose();
     group.clear();
   };
+  const invalidateWorld = () => {
+    lastWet = undefined;
+  };
   return {
     group,
     update,
     tick,
     warm,
+    invalidateWorld,
     markOptionChanged: () => undefined,
     dispose,
     get rainVisible() {

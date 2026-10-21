@@ -123,9 +123,60 @@ test.describe("P8 synthetic atmosphere integration", () => {
       festivalAuto: false,
       festival: "tet",
     });
-    for (const name of ["Mặt bằng", "Tầm mắt (demo)", "Diorama"])
-      await page.getByRole("radio", { name, exact: true }).click();
+    const ready = (await page.locator("#scene-root").getAttribute("data-scene-state")) === "ready";
+    if (process.env["REQUIRE_WEBGL2"] === "1") expect(ready).toBe(true);
+    for (const name of ["Mặt bằng", "Tầm mắt (demo)", "Diorama"]) {
+      const mode = page.getByRole("radio", { name, exact: true });
+      if (ready) await mode.click();
+      else await expect(mode).toBeDisabled();
+    }
     await store(page, { atmosphereEnabled: false });
+    const after = await exportPackage(page);
+    expect(after).toEqual(before);
+    expect(after.manifest.datasetRevision).toBe(P8_SENTINEL);
+    expect(after.world.buildings).toEqual(P8_FIXTURE.world.buildings);
+  });
+  test("export invariant survives disabled presentation controls in Firefox fallback", async ({
+    page,
+    browserName,
+  }) => {
+    if (browserName === "firefox") {
+      await page.addInitScript(() => {
+        const original = HTMLCanvasElement.prototype.getContext;
+        HTMLCanvasElement.prototype.getContext = function (type: string, ...args: unknown[]) {
+          if (type === "webgl2") return null;
+          return Reflect.apply(original, this, [type, ...args]);
+        };
+      });
+    }
+    await open(page);
+    const sceneState = await page.locator("#scene-root").getAttribute("data-scene-state");
+    expect(sceneState === "ready" || sceneState === "fallback").toBe(true);
+    const modes = ["Mặt bằng", "Tầm mắt (demo)", "Diorama"].map((name) =>
+      page.getByRole("radio", { name, exact: true }),
+    );
+    if (sceneState === "ready") {
+      for (const mode of modes) {
+        await mode.evaluate((element) => (element as HTMLButtonElement).click());
+        await expect(mode).toHaveAttribute("aria-checked", "true");
+      }
+    } else {
+      for (const mode of modes) {
+        await expect(mode).toBeDisabled();
+        await mode.evaluate((element) => (element as HTMLButtonElement).click());
+      }
+    }
+    const before = await exportPackage(page);
+    await store(page, {
+      selectedDate: "2033-12-22",
+      timeOfDayMinutes: 1380,
+      weather: "storm",
+      season: "wet",
+      floodLevel: 1,
+      festivalAuto: false,
+      festival: "tet",
+      atmosphereEnabled: false,
+    });
     const after = await exportPackage(page);
     expect(after).toEqual(before);
     expect(after.manifest.datasetRevision).toBe(P8_SENTINEL);

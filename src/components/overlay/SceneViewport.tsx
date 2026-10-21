@@ -114,8 +114,8 @@ function ViewportInner() {
       </div>
       <PrivateWorldPanel enabled />
       {failed ? (
-        <div className="absolute inset-0 grid place-items-center px-6">
-          <div className="glass max-w-sm p-6 text-center" role="status">
+        <div className="pointer-events-none absolute inset-0 z-40 grid place-items-center px-6">
+          <div className="pointer-events-auto glass max-w-sm p-6 text-center" role="status">
             <p className="font-serif text-xl italic text-primary">{t.fallbackTitle}</p>
             <p className="mt-3 text-sm text-muted-foreground">{t.fallbackBody}</p>
             <button

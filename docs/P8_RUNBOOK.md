@@ -39,11 +39,11 @@ Production smoke P8 dùng `.output` của build cùng commit, Bun loopback 4179,
 ## Pixel, hiệu năng và retained-memory estimate
 
 ```sh
-P8_PHASE=before P8_BEFORE_URL=http://127.0.0.1:4180 P8_BEFORE_CWD=/workspace/home-3d-p7 P8_OUTPUT_DIR=/workspace/home-3d-p8-evidence/before-v2 node scripts/p8-atmosphere-qa.mjs
+P8_PHASE=before P8_BEFORE_URL=http://127.0.0.1:4180 P8_BEFORE_CWD=/workspace/home-3d-p7 P8_OUTPUT_DIR=/workspace/home-3d-p8-evidence/before-final node scripts/p8-atmosphere-qa.mjs
 P8_PHASE=final P8_FINAL_URL=http://127.0.0.1:4178 P8_CYCLES=20 P8_SOAK_MINUTES=20 P8_OUTPUT_DIR=/workspace/home-3d-p8-evidence/final node scripts/p8-atmosphere-qa.mjs
 ```
 
-Không chạy benchmark đồng thời với test/build khác trong cùng máy. Cả hai dùng cùng JSON synthetic (64 buildings/10 roads/2 trees/1 light), seed, camera, ngày 21/6/2026 trưa, 1440×900 DPR1. Một warm-up và ba vòng held-pointer; mọi interval chậm được giữ. Tách parse/build/idle/capture khỏi interaction metrics. Latency bắt đầu ở click capture phase và dừng ở main-frame submission đã phản ánh trạng thái mới; canvas PNG hashes kiểm thay đổi pixel riêng. Shader warm chỉ compile các vật liệu/lớp thật dùng và fog on/off, không tạo mọi tổ hợp tùy chọn.
+Không chạy benchmark đồng thời với test/build khác trong cùng máy. Cả hai dùng cùng JSON synthetic (64 buildings/10 roads/2 trees/1 light), seed, camera, ngày 21/6/2026 trưa, 1440×900 DPR1. Một warm-up và ba vòng held-pointer; mỗi vòng và chuỗi pixel bắt đầu bằng document mới để camera không mang damping từ vòng trước; mọi interval chậm được giữ. Tách parse/build/idle/capture khỏi interaction metrics. Latency bắt đầu ở click/input/keydown capture phase và dừng ở main-frame submission đã phản ánh trạng thái mới; canvas PNG hashes kiểm thay đổi pixel riêng. Shader warm chỉ compile các biến thể thật dùng: weather và festival độc lập, đêm/pha trăng, ngập và lớp trung tính; không tạo tích mọi tổ hợp tùy chọn. Raw report tách SHA ứng dụng baseline/P8 và SHA harness.
 
 Bộ ảnh gồm ngày/hoàng hôn/đêm, bốn thời tiết, khô→ướt→khô, hai mùa, ngập, các lễ, tắt lớp, topdown trung tính, eye-level, mobile portrait/landscape. Tối thiểu 20 vòng đổi hiệu ứng/mode/gói/route/capture và soak 20 phút, raw GC/CDP samples dùng helper H6 với ngưỡng giữ nguyên. Đây là **ước lượng retained JS/DOM**, không phải GPU-memory certification. Mục tiêu <100ms option và không frame >50ms phải báo đúng trên môi trường đo; SwiftShader không chứng minh hiệu năng GPU vật lý.
 

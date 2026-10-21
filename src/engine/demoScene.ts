@@ -236,6 +236,7 @@ export function createDemoScene(
     worldBundle?.dispose();
     const meshBuildStartedAt = performance.now();
     worldBundle = buildWorldMeshes(snapshot.world, materialFactory);
+    atmosphere.invalidateWorld();
     host.dataset["meshBuildLatencyMs"] = String(performance.now() - meshBuildStartedAt);
     worldBundle.setConfidenceVisible(isConfidenceVisible());
     worldBundle.setSelectedFeature(getSelectedFeature()?.featureId ?? null);
@@ -397,6 +398,8 @@ export function createDemoScene(
       effectiveWeather === "rain" || effectiveWeather === "storm",
     );
     host.dataset["weather"] = effectiveWeather;
+    host.dataset["selectedDate"] = selectedDate;
+    host.dataset["timeMinutes"] = String(state.timeOfDayMinutes);
     host.dataset["festival"] = effectiveFestival;
     host.dataset["astronomySynthetic"] = String(astronomy?.synthetic ?? false);
     host.dataset["simulationLabel"] = "simulation";
