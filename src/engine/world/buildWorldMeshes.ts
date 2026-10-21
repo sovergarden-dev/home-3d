@@ -26,6 +26,7 @@ export interface WorldMeshBundle {
   layers: Record<LayerName, THREE.Group>;
   setLayerVisible: (layer: LayerName, visible: boolean) => void;
   setRoadWet: (wet: boolean) => void;
+  setAtmospherePresentation: (season: "dry" | "wet" | null, night: boolean) => void;
   setConfidenceVisible: (visible: boolean) => void;
   setSelectedFeature: (featureId: string | null) => void;
   dispose: () => void;
@@ -708,6 +709,7 @@ function addTrees(
     trunkMesh.scale.y = treeHeight / 4;
     trunkMesh.position.y = treeHeight / 4;
     const canopy = new THREE.Mesh(foliage, foliageMaterial);
+    canopy.userData["seasonalFoliage"] = true;
     canopy.position.y = treeHeight * 0.72;
     canopy.scale.setScalar(Math.max(0.75, treeHeight / 4));
     root.add(trunkMesh, canopy);
@@ -735,7 +737,10 @@ function addProps(
     pole.position.y = 3;
     root.add(pole);
     if (prop.kind === "street_light") {
-      const lamp = new THREE.Mesh(lampGeometry, material);
+      const lampMaterial = material.clone();
+      disposables.push(lampMaterial);
+      const lamp = new THREE.Mesh(lampGeometry, lampMaterial);
+      lamp.userData["existingStreetLight"] = true;
       lamp.position.y = 5.9;
       root.add(lamp);
     }
@@ -882,6 +887,28 @@ export function buildWorldMeshes(
         }
       });
       updatePresentation();
+    },
+    setAtmospherePresentation(season, night) {
+      layers.trees.traverse((object) => {
+        if (
+          object instanceof THREE.Mesh &&
+          object.userData["seasonalFoliage"] &&
+          object.material instanceof THREE.MeshStandardMaterial
+        )
+          object.material.color.set(
+            season === "dry" ? "#7b8150" : season === "wet" ? "#366746" : "#3e6e4d",
+          );
+      });
+      layers.props.traverse((object) => {
+        if (
+          object instanceof THREE.Mesh &&
+          object.userData["existingStreetLight"] &&
+          object.material instanceof THREE.MeshStandardMaterial
+        ) {
+          object.material.emissive.set(night ? "#ffd58a" : "#000000");
+          object.material.emissiveIntensity = night ? 1 : 0;
+        }
+      });
     },
     setConfidenceVisible(visible) {
       confidenceVisible = visible;

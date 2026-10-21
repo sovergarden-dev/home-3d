@@ -2,7 +2,6 @@ import { useSyncExternalStore } from "react";
 import { useAppStore } from "@/state/appStore";
 import { formatMinutes, useT } from "@/i18n";
 import { MapPin } from "lucide-react";
-import { vietnamTime } from "@/lib/vietnamTime";
 import { worldDataProvider } from "@/world/privateWorldSession";
 import { BUILD_SHA, PUBLIC_BUILD_VERSION } from "@/config/buildInfo";
 
@@ -14,8 +13,12 @@ export function TopInfo() {
     worldDataProvider.getSnapshot,
   );
   const minutes = useAppStore((s) => s.timeOfDayMinutes);
-  const weather = useAppStore((s) => s.weather);
-  const weekday = t.weekdays[vietnamTime().weekday];
+  const weather = useAppStore((s) =>
+    s.realWeatherEnabled && s.realWeatherKind ? s.realWeatherKind : s.weather,
+  );
+  const live = useAppStore((s) => s.realWeatherEnabled);
+  const selectedDate = useAppStore((s) => s.selectedDate);
+  const weekday = t.weekdays[new Date(`${selectedDate}T12:00:00+07:00`).getUTCDay()];
 
   return (
     <div
@@ -26,7 +29,7 @@ export function TopInfo() {
         {formatMinutes(minutes)}
       </div>
       <div className="mt-1 text-sm text-muted-foreground">
-        {weekday} · {t.weather[weather]}
+        {weekday} · {selectedDate} · {t.weather[weather]}
       </div>
       <p className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
         {worldSnapshot.mode === "private-error"
@@ -43,6 +46,13 @@ export function TopInfo() {
           {worldSnapshot.mode === "fixture" ? t.home : t.referencePoint}
         </span>
       </div>
+      <p className="mt-1 max-w-xs text-[10px] text-muted-foreground">
+        {live
+          ? t.weatherConnection.live
+          : worldSnapshot.georeferenceReady
+            ? t.atmosphere.localReference
+            : t.atmosphere.simulation}
+      </p>
       <p className="mt-1 text-[10px] text-muted-foreground" data-testid="build-info">
         {PUBLIC_BUILD_VERSION} · SHA {BUILD_SHA ?? t.localPreview.buildUnknown}
       </p>

@@ -28,7 +28,56 @@ export const en: Dict = {
   provisionallyAcceptedCenter: "Center provisionally accepted",
   weekdays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
   weather: { sunny: "Light sun", cloudy: "Cloudy", rain: "Rain", storm: "Heavy rain" },
-  festival: { normal: "Everyday", tet: "Lunar New Year", midautumn: "Mid-Autumn" },
+  festival: {
+    normal: "Everyday",
+    tet: "Lunar New Year",
+    midautumn: "Mid-Autumn",
+    christmas: "Christmas",
+    reunification: "April 30",
+    national: "September 2",
+  },
+  weatherConnection: {
+    offline: "Offline — using simulated weather.",
+    missingReference: "Blocked: missing package-bound georeference. BLOCKED_MISSING_GEOREFERENCE",
+    stale: "Cached weather — not current",
+    live: "Current weather",
+    disclosure:
+      "Current weather sends the package reference coordinates to Open-Meteo. The provider receives your IP and may keep logs containing coordinates for up to 90 days under its policy. Continue only if you agree.",
+    privacy:
+      "No package, IDs, file names or tokens are sent. Cache stays in this tab and is cleared when the package changes or resets.",
+    confirm: "Allow current weather",
+    retry: "Retry current weather",
+    loading: "Loading current weather…",
+    off: "Use simulated weather",
+    missingGeoreference:
+      "Blocked: no valid georeference bound to this package. BLOCKED_MISSING_GEOREFERENCE",
+    notVerified: "Blocked: real-world location has not been verified. REAL_WORLD_NOT_VERIFIED",
+    consentRequired: "Separate disclosure confirmation is required before sending a location.",
+    currentOnly: "Current weather only; past or future viewing dates are not supported.",
+    error: "Weather is unavailable; private package data stays in this tab.",
+    timeout: "Weather request timed out. Retry when ready.",
+  },
+  atmosphere: {
+    date: "Viewing date",
+    layer: "Atmosphere layer",
+    season: "Simulated season",
+    seasons: { auto: "Automatic season", dry: "Dry season", wet: "Wet season" },
+    speedNote:
+      "1× = 1 simulated minute / second; 4× = 4 minutes / second. Hidden tabs pause simulation.",
+    timeNote:
+      "UTC+7 · Afternoon rain is a simulation preset. Without a reference, 18:00 sunset is illustrative, not an actual sunset time.",
+    seasonNote:
+      "Southern-region simulation convention: May–November wet season; not observations at home.",
+    flood: "Simulated flood level",
+    floodNote:
+      "Water effect only; not a flood forecast, surveyed elevation or risk map. Set 0% to disable.",
+    festivalAuto: "Automatic festivals",
+    festivalNote:
+      "Vietnamese UTC+7 calendar: Tet days 1–3, non-leap 15/8 Mid-Autumn; Christmas Dec 24–25; Apr 30; Sep 2. Choose Everyday to disable auto.",
+    illustrationNote: "Decorations are an illustration layer, not surveyed buildings or features.",
+    simulation: "SIMULATED ATMOSPHERE",
+    localReference: "LOCAL REFERENCE CALCULATION · REAL WORLD NOT VERIFIED",
+  },
   viewMode: {
     diorama: "Diorama",
     walk: "Eye-level (demo)",

@@ -1,4 +1,4 @@
-export const PUBLIC_BUILD_VERSION = "H6";
+export const PUBLIC_BUILD_VERSION = "P8";
 
 /** Only an explicitly supplied build revision is evidence of a build's identity. */
 export function normalizeBuildSha(value: unknown): string | null {
