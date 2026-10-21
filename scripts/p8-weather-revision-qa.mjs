@@ -164,11 +164,9 @@ async function cycle(index) {
   await manual();
   report.weather.off++;
   expect(report.weather.requests).toBe(before + 3);
-  if (index % 5 === 0) {
-    const download = page.waitForEvent("download");
-    await page.getByRole("button", { name: "Giữ khoảnh khắc", exact: true }).click();
-    await download;
-  }
+  await page.getByRole("button", { name: "Giữ khoảnh khắc", exact: true }).click();
+  await expect(page.getByText("Đã giữ lại khoảnh khắc này", { exact: true }).last()).toBeVisible();
+  report.weather.capture = (report.weather.capture ?? 0) + 1;
   await page.getByRole("link", { name: "Giới thiệu", exact: true }).click();
   await page.getByRole("link", { name: "Về phố", exact: true }).click();
   await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "ready");
