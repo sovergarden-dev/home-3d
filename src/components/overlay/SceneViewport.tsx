@@ -6,7 +6,7 @@ import { useT } from "@/i18n";
 import { useAppStore } from "@/state/appStore";
 import { worldDataProvider } from "@/world/privateWorldSession";
 
-function ViewportInner() {
+function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
   const t = useT();
   useBlocker({
     enableBeforeUnload: false,
@@ -41,6 +41,9 @@ function ViewportInner() {
   const [attempt, setAttempt] = useState(0);
   const [failed, setFailed] = useState(false);
   const [shortLandscape, setShortLandscape] = useState(false);
+  // Reuse the compact recovery card while the mobile sheet is open: a centered
+  // card would cover its tabs. Keep recovery above the sheet, not behind it.
+  const compactFallback = shortLandscape || dockExpanded;
   useEffect(() => {
     const query = window.matchMedia("(max-width: 767px) and (max-height: 480px)");
     const update = () => setShortLandscape(query.matches);
@@ -123,19 +126,19 @@ function ViewportInner() {
       <PrivateWorldPanel enabled />
       {failed ? (
         <div
-          className={`pointer-events-none absolute inset-0 z-40 grid px-6 ${shortLandscape ? "items-start justify-start" : "place-items-center"}`}
+          className={`pointer-events-none absolute inset-0 z-40 grid px-6 ${compactFallback ? "items-start justify-start" : "place-items-center"}`}
         >
           <div
-            className={`pointer-events-auto glass max-w-sm p-6 text-center ${shortLandscape ? "absolute right-4 top-20 w-[200px] max-w-[calc(100vw-3rem)] p-3 text-left" : ""}`}
+            className={`pointer-events-auto glass max-w-sm p-6 text-center ${compactFallback ? "absolute right-4 top-20 w-[200px] max-w-[calc(100vw-3rem)] p-3 text-left" : ""}`}
             role="status"
           >
             <p className="font-serif text-xl italic text-primary">{t.fallbackTitle}</p>
-            <p className={`mt-3 text-sm text-muted-foreground ${shortLandscape ? "hidden" : ""}`}>
+            <p className={`mt-3 text-sm text-muted-foreground ${compactFallback ? "hidden" : ""}`}>
               {t.fallbackBody}
             </p>
             <button
               type="button"
-              className={`chip mt-4 ${shortLandscape ? "mt-2" : ""}`}
+              className={`chip mt-4 ${compactFallback ? "mt-2" : ""}`}
               onClick={() => {
                 setFailed(false);
                 setAttempt((n) => n + 1);
@@ -153,14 +156,14 @@ function ViewportInner() {
     </div>
   );
 }
-export function SceneViewport() {
+export function SceneViewport({ dockExpanded = false }: { dockExpanded?: boolean }) {
   return (
     <ClientOnly
       fallback={
         <div className="absolute inset-0" style={{ background: "var(--gradient-scene)" }} />
       }
     >
-      <ViewportInner />
+      <ViewportInner dockExpanded={dockExpanded} />
     </ClientOnly>
   );
 }

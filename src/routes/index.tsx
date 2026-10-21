@@ -47,7 +47,7 @@ function Home() {
 
   return (
     <main className="fixed inset-0 overflow-hidden overscroll-none">
-      <SceneViewport />
+      <SceneViewport dockExpanded={mobile && sheetExpanded} />
       <div
         className="pointer-events-none absolute inset-0"
         style={{

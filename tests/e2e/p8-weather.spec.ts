@@ -18,11 +18,13 @@ const georeferenceText = JSON.stringify({ schemaVersion: "1.0", packageSha256, o
 const FIXED_TIME = new Date("2026-06-21T05:00:00.000Z");
 
 type Language = "vi" | "en";
-type Viewport = { name: string; width: number; height: number };
+type Viewport = { name: string; width: number; height: number; forceFallback?: boolean };
 
 const viewports: Viewport[] = [
   { name: "phone", width: 390, height: 844 },
   { name: "landscape", width: 740, height: 390 },
+  { name: "phone", width: 390, height: 844, forceFallback: true },
+  { name: "landscape", width: 740, height: 390, forceFallback: true },
 ];
 
 function localFixtureTime(date: Date) {
@@ -162,13 +164,23 @@ async function clickNamedAction(dialog: Locator, pattern: RegExp) {
 test.describe("P8 weather consent and responsive lifecycle", () => {
   for (const language of ["vi", "en"] as const) {
     for (const viewport of viewports) {
-      test(`${language} ${viewport.name} covers consent, ready, stale, and error actions`, async ({
+      const forceFallback = viewport.forceFallback === true;
+      test(`${forceFallback ? "forced fallback " : ""}${language} ${viewport.name} covers consent, ready, stale, and error actions`, async ({
         page,
       }, testInfo) => {
         const requests = { count: 0 };
         let malformed = false;
         await page.setViewportSize({ width: viewport.width, height: viewport.height });
         await installFixtureRoute(page, () => malformed, requests);
+        if (forceFallback) {
+          await page.addInitScript(() => {
+            const original = HTMLCanvasElement.prototype.getContext;
+            HTMLCanvasElement.prototype.getContext = function (type: string, ...args: unknown[]) {
+              if (type === "webgl2") return null;
+              return Reflect.apply(original, this, [type, ...args]);
+            };
+          });
+        }
         await page.goto("/");
         await expect(page.locator("#scene-root")).toHaveAttribute(
           "data-scene-state",
@@ -238,7 +250,10 @@ test.describe("P8 weather consent and responsive lifecycle", () => {
           );
         const sceneReady =
           (await page.locator("#scene-root").getAttribute("data-scene-state")) === "ready";
-        if (process.env["REQUIRE_WEBGL2"] === "1") expect(sceneReady).toBe(true);
+        // Normal Chromium cases retain the required-GPU guard. These additional
+        // explicit fallback cases exercise DOM controls, never claim GPU coverage.
+        if (process.env["REQUIRE_WEBGL2"] === "1" && !forceFallback) expect(sceneReady).toBe(true);
+        if (forceFallback) expect(sceneReady).toBe(false);
         if (sceneReady) expect(weatherAttributes).toContain("rain");
         else
           await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "fallback");
@@ -300,6 +315,17 @@ test.describe("P8 weather consent and responsive lifecycle", () => {
         await expect(page.getByRole("dialog").getByRole("status").last()).toContainText(
           language === "vi" ? /thời tiết/i : /weather/i,
         );
+        if (forceFallback) {
+          await clickNamedAction(page.getByRole("dialog"), language === "vi" ? /Hủy/ : /Cancel/);
+          await page
+            .getByRole("button", {
+              name: language === "vi" ? "Thử lại 3D" : "Retry 3D",
+              exact: true,
+            })
+            .click();
+          await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "fallback");
+          expect(requests.count).toBe(5);
+        }
       });
     }
   }

@@ -25,7 +25,7 @@ Nguồn/license và giới hạn: [lịch/thiên văn](./p8-calendar-sources.md)
 
 Freshness của response và cache dùng chung giới hạn: cache phiên 15 phút, tuổi reading không quá 90 phút, tương lai không quá 15 phút và đúng ngày UTC+7. Khi ready hết hạn, một timeout cục bộ chuyển sang stale, giữ timestamp để tham khảo nhưng tắt live ở store/TopInfo/engine và khôi phục lựa chọn mô phỏng. Timeout không tải lại hoặc gửi lại vị trí; chỉ thao tác xác nhận/retry hợp lệ mới có thể yêu cầu mạng. Tắt/ẩn tab/đổi gói/reference/ngày/dispose phải dọn timeout và abort response đang chờ. Không nâng giới hạn 90 phút để chữa nhãn hiện tại.
 
-Dialog vẫn nằm trong panel thời tiết hiện có: action xuống hàng/xếp cột, nhãn đầy đủ, vùng chạm tối thiểu 44px, chiều cao có giới hạn và cuộn trong safe area. Regression VI/EN kiểm 390×844 và 740×390 trước consent, sau ready/error/stale, cả bounding boxes và thao tác focus/click. Hủy không request; off không làm mất phiên chỉnh sửa.
+Dialog vẫn nằm trong panel thời tiết hiện có: action xuống hàng/xếp cột, nhãn đầy đủ, vùng chạm tối thiểu 44px, chiều cao có giới hạn và cuộn trong safe area. Regression VI/EN kiểm 390×844 và 740×390 trước consent, sau ready/error/stale, cả bounding boxes và thao tác focus/click. Hủy không request; off không làm mất phiên chỉnh sửa. Bốn ca DOM bổ sung cố tình chặn WebGL2 để kiểm cùng ma trận VI/EN và viewport khi renderer fallback; không gọi đó là GPU pass. Khi sheet mobile mở, dùng card recovery compact hiện có để không đè tab Weather mà vẫn bấm được Retry 3D. Guard WebGL2 của các ca Chromium chuẩn giữ nguyên.
 
 ## Cổng kiểm thử cùng mã cuối
 
