@@ -39,5 +39,6 @@ pipeline/dist/
 pipeline/cache/
 pipeline/private/
 private-world/
+src/engine/life/audio-local/
 *.private.json
 *.private.geojson

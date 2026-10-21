@@ -53,3 +53,11 @@ Notion AI tạo và kiểm patch. Hermes áp nguyên patch, chạy frozen instal
 - Không khí là lớp tách khỏi WorldData. Mùa tự động dùng quy ước mô phỏng miền Nam (tháng 5–11 mưa), không phải quan trắc khu nhà. Ngập là hiệu ứng mặt nước tắt được, không phải cao độ/rủi ro.
 - Tham chiếu dùng binding P7 của đúng gói trong phiên. Không lấy demo làm vị trí khu thật. Consent Google không cấp quyền cho Open-Meteo; quyền thời tiết chỉ ở client session và bị xóa khi đổi gói/reference/reset.
 - Không thêm backend/key/hạ tầng. Asset trang trí procedural tự tạo; không tải nội dung Google làm model/texture. Thiết bị/GPU vật lý chưa kiểm ghi NOT_VERIFIED.
+
+## P9 — Lớp sống/âm thanh và POV client-only
+
+- P9 từ main `7221b0c416633d2bd4273afdbd77b894b9ac5f23`, PR thường, không stack H6/P7/P8. Lõi các pha đã nhận giữ nguyên; thay nhãn Đi bộ cũ thành POV thực có BVH; hành vi export P7 vẫn dùng hợp đồng mode `walk` khi camera ở POV.
+- Chung vòng render/đồng hồ P8, không thêm RAF/timer. Dừng đứng yên, 1× = 1 giây chuyển động/giây thực, 4× = bốn lần có bước cố định 1/30 giây. Đồng hồ lịch P8 vẫn giữ quy ước một phút/giây tại1×; không sửa pha đã chấp nhận. Tab ẩn bỏ catch-up; reduced-motion bỏ head bob và giảm tốc/nhìn rung.
+- Đồ thị/làn/lối đi suy ra là bộ nhớ trình bày, không ghi vào roads/footprints. BVH CPU tường footprint bảo thủ (thiếu chiều cao dùng3m), mặt đất/biên gói, vật cản xe buffer tái dùng; không dependency vật lý/audio mới. Xe ôm chỉ một tuyến đồ thị hữu hạn nối liên tục từ tâm tới nút hợp lệ; fixture có nhãn đích giả; không chỉ đường thật.
+- Nút tắt nhanh lớp sống luôn thấy; Mặt bằng trung tính không tác nhân. AudioContext chỉ tạo bằng thao tác âm thanh thực, một context trong scene; tổng hợp/clip local manifestSHA256≤1.000.000byte. Không fetch/micro/storage/upload. Thư mục audio-local gitignored; asset procedural tự tạo.
+- Ngưỡng CPU update tiermid đặt trước ≤4ms p95; latency mục tiêu<100ms. So sánh perf phải cùng fixture/time/camera/DPR, rawslowframe không lọc; JS heap estimate không phải GPUmemory. Thiết bị/GPU vật lý/nativeSafari/khu thật chưa đo ghi NOT_VERIFIED. Chi tiết và giới hạn trong runbook/receipt, không đổi ngưỡng để gọi đạt.

@@ -1,5 +1,6 @@
+import { sendLifeCommand } from "@/engine/life/session";
 import { Link } from "@tanstack/react-router";
-import { Camera, Info, Volume2, VolumeX } from "lucide-react";
+import { Camera, Info, Volume2, VolumeX, Users } from "lucide-react";
 import { toast } from "sonner";
 import { useAppStore, type Language } from "@/state/appStore";
 import { useT } from "@/i18n";
@@ -17,6 +18,7 @@ export function TopActions() {
     useAppStore.getState().addMoment(image);
     toast(t.captured);
   }
+  const lifeEnabled = useAppStore((s) => s.lifeEnabled);
   const soundOn = useAppStore((s) => s.soundOn);
   const toggleSound = useAppStore((s) => s.toggleSound);
   const lang = useAppStore((s) => s.language);
@@ -27,7 +29,10 @@ export function TopActions() {
       <div className="glass flex items-center gap-1 p-1">
         <button
           type="button"
-          onClick={toggleSound}
+          onClick={() => {
+            if (!soundOn) sendLifeCommand({ kind: "soundGesture" });
+            toggleSound();
+          }}
           disabled={!ready}
           title={t.soundDemo}
           aria-pressed={soundOn}
@@ -63,6 +68,20 @@ export function TopActions() {
           <Info className="h-4 w-4" />
         </Link>
       </div>
+      <button
+        type="button"
+        disabled={!ready}
+        aria-pressed={lifeEnabled}
+        aria-label={t.life.quickToggle}
+        title={t.life.quickToggle}
+        className="ctl glass px-2"
+        onClick={() => {
+          const state = useAppStore.getState();
+          state.setLifeEnabled(!state.lifeEnabled);
+        }}
+      >
+        <Users className="h-4 w-4" />
+      </button>
       <button
         type="button"
         onClick={capture}

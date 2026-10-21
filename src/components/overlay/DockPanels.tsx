@@ -1,3 +1,4 @@
+import { LifeControls } from "./LifeControls";
 import { createOpenMeteoWeatherAdapter } from "@/atmosphere/weatherOpenMeteo";
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { sunEvents } from "@/atmosphere/astronomy";
@@ -145,6 +146,7 @@ export function TimePanel() {
       </div>
       <p className="text-xs text-muted-foreground">{t.atmosphere.speedNote}</p>
       <p className="text-xs text-muted-foreground">{t.atmosphere.timeNote}</p>
+      <LifeControls />
     </div>
   );
 }

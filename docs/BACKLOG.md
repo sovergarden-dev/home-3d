@@ -42,3 +42,9 @@ Demo 1 chỉ là bản chơi thử hư cấu. Không coi checklist các pha chí
 - [ ] BLOCKED_MISSING_GEOREFERENCE: activation thời tiết khu thật cần georeference đã kiểm chứng, xử lý riêng; REAL_WORLD_NOT_VERIFIED giữ nguyên.
 - [ ] NOT_VERIFIED: GPU vật lý, native Safari/iOS/Android và nghiệm thu thực địa. Không chuyển việc benchmark trung gian cho Syringa.
 - H6/P7 accepted giữ nguyên; P9 (xe/người/âm thanh mới), GIS/intake, nhà mới, cloud/deploy ngoài scope P8.
+
+## P9 — Phạm vi đang nộp review
+
+Lớp sống có seed, giao thông/người/hàng rong/động vật, WebAudio tổng hợp + khe clip local, POV Đi bộ/xe ôm, kiểm chứng hiệu năng/lifecycle thuộc PRP9 hiện hành. Xem `docs/P9_RUNBOOK.md` và receipt scope; không suy trạng thái technical-review-passed từ code/docs.
+
+Ngoài P9 tiếp tục đóng: bản thu riêng chưa có; georeference/khu thật `BLOCKED_MISSING_GEOREFERENCE` / `REAL_WORLD_NOT_VERIFIED`; kiểm GPU vật lý/nativeSafari/iOS/Android NOT_VERIFIED. Không reintake, sửa nguồn H6, mở P10–P13, cloud/R2/Access, Publish/deploy hay Lovable sync/settings.

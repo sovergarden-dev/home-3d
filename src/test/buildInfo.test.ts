@@ -5,7 +5,7 @@ describe("public build identity", () => {
   it("does not invent an unavailable revision", () => {
     for (const value of [undefined, null, "", "HEAD", "07175b3", "private-file.json", "<script>"])
       expect(normalizeBuildSha(value)).toBeNull();
-    expect(PUBLIC_BUILD_VERSION).toBe("P8");
+    expect(PUBLIC_BUILD_VERSION).toBe("P9");
   });
   it("accepts only an explicitly provided full SHA", () => {
     expect(normalizeBuildSha("A".repeat(40))).toBe("a".repeat(40));
