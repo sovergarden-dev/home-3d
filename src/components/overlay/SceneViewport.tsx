@@ -40,6 +40,14 @@ function ViewportInner() {
   );
   const [attempt, setAttempt] = useState(0);
   const [failed, setFailed] = useState(false);
+  const [shortLandscape, setShortLandscape] = useState(false);
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 767px) and (max-height: 480px)");
+    const update = () => setShortLandscape(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
   // OrbitControls disconnects from canvas.getRootNode(). Dispose before React
   // detaches the host, otherwise its document key listener retains the old scene.
   useLayoutEffect(() => {
@@ -114,17 +122,24 @@ function ViewportInner() {
       </div>
       <PrivateWorldPanel enabled />
       {failed ? (
-        <div className="pointer-events-none absolute inset-0 z-40 grid place-items-center px-6">
-          <div className="pointer-events-auto glass max-w-sm p-6 text-center" role="status">
+        <div
+          className={`pointer-events-none absolute inset-0 z-40 grid px-6 ${shortLandscape ? "items-start justify-start" : "place-items-center"}`}
+        >
+          <div
+            className={`pointer-events-auto glass max-w-sm p-6 text-center ${shortLandscape ? "absolute right-4 top-20 w-[200px] max-w-[calc(100vw-3rem)] p-3 text-left" : ""}`}
+            role="status"
+          >
             <p className="font-serif text-xl italic text-primary">{t.fallbackTitle}</p>
-            <p className="mt-3 text-sm text-muted-foreground">{t.fallbackBody}</p>
+            <p className={`mt-3 text-sm text-muted-foreground ${shortLandscape ? "hidden" : ""}`}>
+              {t.fallbackBody}
+            </p>
             <button
               type="button"
+              className={`chip mt-4 ${shortLandscape ? "mt-2" : ""}`}
               onClick={() => {
                 setFailed(false);
                 setAttempt((n) => n + 1);
               }}
-              className="chip mt-4"
             >
               {t.retryScene}
             </button>

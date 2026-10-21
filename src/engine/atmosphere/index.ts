@@ -322,7 +322,7 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
       sky.multiplyScalar(0.8 + 0.2 * cloud);
       hemisphere.color.copy(sky);
       hemisphere.groundColor.set("#626b68");
-      hemisphere.intensity = 0.55 + daylight * 1.3 * cloud;
+      hemisphere.intensity = THREE.MathUtils.lerp(0.9, 0.55 + 1.3 * cloud, daylight);
       enu(solar.azimuthDeg, solar.elevationDeg, 100, sunPosition);
       sun.position.copy(sunPosition);
       if (anchor) {
@@ -341,6 +341,7 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
           moon.target.updateMatrixWorld();
         }
         moon.intensity = moonSolar.elevationDeg > 0 ? (1 - daylight) * 0.25 : 0;
+        moon.visible = moon.intensity > 0;
       }
       fog.color.copy(sky);
       fog.density = season === "wet" ? 0.0016 : 0.0007;
@@ -353,7 +354,10 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
       sun.intensity = 1;
       sun.color.set("#ffffff");
       sun.position.set(0, 100, 0);
-      if (moon) moon.intensity = 0;
+      if (moon) {
+        moon.intensity = 0;
+        moon.visible = false;
+      }
       scene.fog = null;
     }
     if (anchor) group.position.copy(anchor);
@@ -421,6 +425,7 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
       moon: moon
         ? {
             position: moon.position.clone(),
+            visible: moon.visible,
             color: moon.color.clone(),
             intensity: moon.intensity,
             target: moon.target.position.clone(),
@@ -462,10 +467,26 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
     group.visible = true;
     try {
       // Weather and festival choices are independently selectable; do not compile every combination.
-      const base = lastState ?? {
+      const base = {
+        ...(lastState ?? { weather: "sunny" as const, festival: "normal" as const }),
         timeOfDayMinutes: 720,
-        weather: "sunny" as const,
-        festival: "normal" as const,
+        astronomy: {
+          sunAzimuthDeg: 180,
+          sunElevationDeg: 55,
+          moonAzimuthDeg: 0,
+          moonElevationDeg: -55,
+        },
+      };
+      const night = {
+        ...base,
+        timeOfDayMinutes: 0,
+        moonPhase: 0.5,
+        astronomy: {
+          sunAzimuthDeg: 180,
+          sunElevationDeg: -30,
+          moonAzimuthDeg: 0,
+          moonElevationDeg: 40,
+        },
       };
       for (const weather of ["sunny", "cloudy", "rain", "storm"] as const)
         compile({ ...base, weather, festival: "normal", atmosphereEnabled: true, floodLevel: 0 });
@@ -479,13 +500,11 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
       ] as const)
         compile({ ...base, weather: "sunny", festival, atmosphereEnabled: true, floodLevel: 0 });
       compile({
-        ...base,
-        timeOfDayMinutes: 0,
-        weather: "sunny",
+        ...night,
+        weather: "rain",
         festival: "normal",
         atmosphereEnabled: true,
-        floodLevel: 0,
-        moonPhase: 0.5,
+        floodLevel: 1,
       });
       compile({
         ...base,
@@ -501,6 +520,15 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
         atmosphereEnabled: false,
         floodLevel: 0,
       });
+      // Only a second light topology is needed at night; reuse each real decorative material.
+      for (const festival of [
+        "tet",
+        "midautumn",
+        "christmas",
+        "reunification",
+        "national",
+      ] as const)
+        compile({ ...night, weather: "sunny", festival, atmosphereEnabled: true, floodLevel: 0 });
     } finally {
       scene.fog = previous.fog;
       fog.color.copy(previous.ownedFog.color);
@@ -517,6 +545,7 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
       sun.target.updateMatrixWorld();
       if (moon && previous.moon) {
         moon.position.copy(previous.moon.position);
+        moon.visible = previous.moon.visible;
         moon.color.copy(previous.moon.color);
         moon.intensity = previous.moon.intensity;
         moon.target.position.copy(previous.moon.target);

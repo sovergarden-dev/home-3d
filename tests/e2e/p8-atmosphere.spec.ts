@@ -209,6 +209,32 @@ test.describe("P8 synthetic atmosphere integration", () => {
     await page.setViewportSize(P8_VIEWPORT);
     await expect(page.locator("#scene-root")).toBeVisible();
   });
+  test("forced fallback short landscape keeps native weather-time tabs and retry reachable", async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      const original = HTMLCanvasElement.prototype.getContext;
+      HTMLCanvasElement.prototype.getContext = function (type: string, ...args: unknown[]) {
+        if (type === "webgl2") return null;
+        return Reflect.apply(original, this, [type, ...args]);
+      };
+    });
+    await page.setViewportSize({ width: 740, height: 390 });
+    await open(page);
+    await expect(page.getByRole("button", { name: "Thử lại 3D", exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "Thử lại 3D", exact: true }).click();
+    await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "fallback");
+
+    await page.getByRole("button", { name: "Thu gọn bảng riêng", exact: true }).click();
+    await page.getByRole("tab", { name: "Thời tiết", exact: true }).click();
+    await page.getByRole("tab", { name: "Thời gian", exact: true }).click();
+    await expect(page.getByRole("tab", { name: "Thời gian", exact: true })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    await page.getByRole("button", { name: "Thử lại 3D", exact: true }).click();
+    await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "fallback");
+  });
   test("GPU canvas pixels change for weather, seasons, festival, flood and layer off; plan stays neutral", async ({
     page,
   }) => {

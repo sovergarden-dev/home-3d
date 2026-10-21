@@ -834,6 +834,8 @@ export function createDemoScene(
     mountWorld();
     applyEnvironment();
     updateLayerVisibility();
+    // Rebuilt bundles own new label/material program maps, not the disposed demo's cache.
+    atmosphere.warm(renderer, activeCamera);
     render();
     if (atmosphere.rainVisible) scheduleFrame();
   });

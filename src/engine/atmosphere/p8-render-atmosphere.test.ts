@@ -19,7 +19,7 @@ function layer() {
     onRoadWet: (v) => wet.push(v),
     tier: "low",
   });
-  return { scene, atmosphere, wet, sky, sun };
+  return { scene, atmosphere, wet, sky, sun, moon, hemisphere };
 }
 
 const state = (
@@ -37,6 +37,23 @@ describe("P8 atmosphere rendering contract", () => {
     expect(solarPosition({ timeOfDayMinutes: 0 }).elevationDeg).toBeLessThan(0);
     expect(solarPosition({ timeOfDayMinutes: 360 }).azimuthDeg).toBeGreaterThan(0);
     expect(solarPosition({ timeOfDayMinutes: 360 }).azimuthDeg).toBeLessThan(180);
+  });
+
+  it("removes an unlit moon from daytime light work and retains readable night ambient", () => {
+    const { atmosphere, moon, hemisphere } = layer();
+    atmosphere.update(state(), true);
+    const daylightAmbient = hemisphere.intensity;
+    expect(moon.intensity).toBe(0);
+    expect(moon.visible).toBe(false);
+    atmosphere.update(state({ timeOfDayMinutes: 1380 }), true);
+    expect(moon.visible).toBe(true);
+    expect(hemisphere.intensity).toBeGreaterThanOrEqual(0.85);
+    expect(hemisphere.intensity).toBeLessThan(daylightAmbient);
+    atmosphere.update(state(), true);
+    expect(moon.visible).toBe(false);
+    atmosphere.update(state({ timeOfDayMinutes: 1380, atmosphereEnabled: false }), true);
+    expect(moon.visible).toBe(false);
+    atmosphere.dispose();
   });
 
   it("keeps one rain buffer/material and applies dry-wet-dry without mutating world geometry", () => {
@@ -159,10 +176,11 @@ describe("P8 atmosphere rendering contract", () => {
     } as unknown as THREE.WebGLRenderer;
     const cameraBefore = before.camera.matrixWorld.clone();
     atmosphere.warm(renderer, before.camera);
-    expect(compileStates).toHaveLength(13);
+    expect(compileStates).toHaveLength(18);
     expect(compileStates.slice(0, 12).every(({ fog }) => fog instanceof THREE.FogExp2)).toBe(true);
     expect(compileStates[12]!.fog).toBeNull();
     expect(compileStates.filter(({ rain }) => rain).map(({ festival }) => festival)).toEqual([
+      "normal",
       "normal",
       "normal",
     ]);
