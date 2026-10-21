@@ -43,6 +43,7 @@ export const vi = {
     privacy:
       "Không lưu, log hoặc gửi gói riêng; cache chỉ ở phiên này và sẽ xóa khi đổi/reset gói.",
     confirm: "Cho phép thời tiết hiện tại",
+    retry: "Thử lại thời tiết hiện tại",
     loading: "Đang tải thời tiết hiện tại…",
     off: "Dùng thời tiết mô phỏng",
     missingGeoreference: "Bị chặn: gói chưa có tham chiếu địa lý hợp lệ.",

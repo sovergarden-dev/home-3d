@@ -8,6 +8,7 @@ import {
 } from "@/atmosphere/weatherOpenMeteo";
 import { WeatherConnection } from "@/components/overlay/WeatherConnection";
 import { WeatherPanel } from "@/components/overlay/DockPanels";
+import { TopInfo } from "@/components/overlay/TopInfo";
 import { useAppStore } from "@/state/appStore";
 import { SYNTHETIC_NEIGHBORHOOD } from "@/world/fixtures/syntheticNeighborhood";
 import { createWorldDataProvider, worldDataProvider } from "@/world/privateWorldSession";
@@ -260,6 +261,96 @@ describe("P8 weather lifecycle against a real provider", () => {
 });
 
 describe("WeatherConnection", () => {
+  it("turns stale at the 15-minute cache timer without fetching, and restores manual weather in TopInfo", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(now());
+    const provider = await realProvider();
+    const fetchImpl = vi.fn(async () => response(payload));
+    const adapter = createOpenMeteoWeatherAdapter({ provider, fetchImpl, now });
+    useAppStore.setState({ weather: "rain" });
+    const view = render(
+      <>
+        <WeatherConnection provider={provider} adapter={adapter} selectedDate={TODAY} />
+        <TopInfo />
+      </>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /thời tiết thật/i }));
+    const dialog = screen.getByRole("dialog");
+    fireEvent.click(within(dialog).getByRole("button", { name: /cho phép thời tiết/i }));
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(adapter.getSnapshot().status).toBe("ready");
+    expect(screen.getAllByText(/Current weather|Thời tiết hiện tại/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Nắng nhẹ|Light sun/i).length).toBeGreaterThan(0);
+
+    await act(async () => {
+      vi.advanceTimersByTime(15 * 60 * 1000 + 1);
+    });
+    expect(adapter.getSnapshot()).toMatchObject({
+      status: "stale",
+      reading: { timestamp: `${TODAY}T12:00`, temperatureC: 29, weatherCode: 1 },
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    expect(useAppStore.getState()).toMatchObject({
+      realWeatherEnabled: false,
+      realWeatherKind: null,
+      weather: "rain",
+    });
+    expect(screen.queryByText(/Current weather|Thời tiết hiện tại/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/Mưa|Rain/i)).toBeInTheDocument();
+    view.unmount();
+    adapter.dispose();
+  });
+
+  it("does not auto-fetch when a 10:31 reading reaches the 90-minute age at 12:02", async () => {
+    vi.useFakeTimers();
+    const start = new Date("2026-10-21T05:00:00.000Z");
+    vi.setSystemTime(start);
+    const provider = await realProvider();
+    const agedPayload = {
+      ...payload,
+      current: { ...payload.current, time: `${TODAY}T10:31` },
+    };
+    const fetchImpl = vi.fn(async () => response(agedPayload));
+    const adapter = createOpenMeteoWeatherAdapter({
+      provider,
+      fetchImpl,
+      now: () => new Date(),
+      retries: 0,
+    });
+    adapter.setDisclosureConfirmed(true);
+    await adapter.load(TODAY);
+    expect(adapter.getSnapshot().status).toBe("ready");
+    await act(async () => {
+      vi.advanceTimersByTime(2 * 60 * 1000);
+    });
+    expect(adapter.getSnapshot().status).toBe("stale");
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    adapter.dispose();
+  });
+
+  it("clears its expiry timer on dispose and does not publish after cleanup", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(now());
+    const provider = await realProvider();
+    const fetchImpl = vi.fn(async () => response(payload));
+    const adapter = createOpenMeteoWeatherAdapter({ provider, fetchImpl, now });
+    const clearTimeoutSpy = vi.spyOn(globalThis, "clearTimeout");
+    adapter.setDisclosureConfirmed(true);
+    await adapter.load(TODAY);
+    const beforeDispose = clearTimeoutSpy.mock.calls.length;
+    adapter.dispose();
+    expect(clearTimeoutSpy.mock.calls.length).toBeGreaterThan(beforeDispose);
+    await act(async () => {
+      vi.advanceTimersByTime(15 * 60 * 1000 + 1);
+    });
+    expect(adapter.getSnapshot().status).toBe("off");
+    clearTimeoutSpy.mockRestore();
+    adapter.dispose();
+  });
+
   it("consents, fetches, renders live weather, turns off to restore simulation, and cancel does not request", async () => {
     const provider = await realProvider();
     const fetchImpl = vi.fn(async () => response(payload));

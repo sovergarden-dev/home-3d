@@ -6,6 +6,8 @@ export const WEATHER_TIMEZONE = "Asia/Ho_Chi_Minh";
 export const WEATHER_UTC_OFFSET_SECONDS = 25200;
 export const CURRENT_WEATHER_VARIABLES = ["temperature_2m", "weather_code"] as const;
 export const WEATHER_CACHE_TTL_MS = 15 * 60 * 1000;
+export const WEATHER_MAX_READING_AGE_MS = 90 * 60 * 1000;
+export const WEATHER_FUTURE_TOLERANCE_MS = 15 * 60 * 1000;
 
 export type WeatherKind = "sunny" | "cloudy" | "rain" | "storm";
 export type WeatherStatus = "off" | "loading" | "ready" | "stale" | "error" | "timeout" | "offline";
@@ -181,6 +183,7 @@ export class OpenMeteoWeatherAdapter {
   private consent = false;
   private requestId = 0;
   private disposed = false;
+  private expiryTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly epoch: number;
   private readonly refKey: string;
   private unsubscribe: () => void;
@@ -216,10 +219,55 @@ export class OpenMeteoWeatherAdapter {
     this.snapshot = next;
     this.listeners.forEach((listener) => listener());
   }
+  private clearExpiryTimer() {
+    if (this.expiryTimer !== null) {
+      clearTimeout(this.expiryTimer);
+      this.expiryTimer = null;
+    }
+  }
+  private readingTime(reading: WeatherReading) {
+    return Date.parse(
+      `${reading.timestamp.length === 16 ? `${reading.timestamp}:00` : reading.timestamp}+07:00`,
+    );
+  }
+  private isFresh(entry: CacheEntry, nowMs: number) {
+    const cacheAge = nowMs - entry.fetchedAt;
+    const age = nowMs - this.readingTime(entry.reading);
+    return (
+      localDate(new Date(this.readingTime(entry.reading))) === localDate(new Date(nowMs)) &&
+      cacheAge >= 0 &&
+      cacheAge <= WEATHER_CACHE_TTL_MS &&
+      age <= WEATHER_MAX_READING_AGE_MS &&
+      age >= -WEATHER_FUTURE_TOLERANCE_MS
+    );
+  }
+  private scheduleExpiry(cacheKey: string, entry: CacheEntry) {
+    this.clearExpiryTimer();
+    const readingExpiry = this.readingTime(entry.reading) + WEATHER_MAX_READING_AGE_MS;
+    const cacheExpiry = entry.fetchedAt + WEATHER_CACHE_TTL_MS;
+    const midnightExpiry = Date.parse(`${localDate(this.options.now())}T24:00:00+07:00`);
+    const delay = Math.max(
+      0,
+      Math.min(readingExpiry + 1, cacheExpiry + 1, midnightExpiry) - this.options.now().getTime(),
+    );
+    this.expiryTimer = setTimeout(() => {
+      this.expiryTimer = null;
+      if (this.disposed || this.cache.get(cacheKey) !== entry) return;
+      if (this.snapshot.status === "ready") {
+        this.publish({
+          status: "stale",
+          reading: entry.reading,
+          packageEpoch: this.snapshot.packageEpoch,
+          consented: this.consent,
+        });
+      }
+    }, delay);
+  }
   private invalidate() {
     this.requestId += 1;
     this.controller?.abort();
     this.controller = null;
+    this.clearExpiryTimer();
     this.cache.clear();
     this.consent = false;
     this.publish({
@@ -237,6 +285,7 @@ export class OpenMeteoWeatherAdapter {
     this.requestId += 1;
     this.controller?.abort();
     this.controller = null;
+    this.clearExpiryTimer();
     this.cache.clear();
     this.consent = false;
     this.unsubscribe();
@@ -272,6 +321,11 @@ export class OpenMeteoWeatherAdapter {
     return `${OPEN_METEO_ENDPOINT}?${params.toString()}`;
   }
   async load(selectedDate?: string): Promise<WeatherSnapshot> {
+    if (this.disposed) return this.snapshot;
+    const id = ++this.requestId;
+    this.controller?.abort();
+    this.controller = null;
+    this.clearExpiryTimer();
     const provider = this.options.provider;
     const binding = provider.getSnapshot();
     const reference = provider.getGeoreference();
@@ -307,7 +361,8 @@ export class OpenMeteoWeatherAdapter {
     const cacheKey = `${provider.getPackageEpoch()}:${referenceKey(reference)}:${today}`;
     const cached = this.cache.get(cacheKey);
     const nowMs = this.options.now().getTime();
-    if (cached && nowMs - cached.fetchedAt <= WEATHER_CACHE_TTL_MS) {
+    if (cached && this.isFresh(cached, nowMs)) {
+      this.scheduleExpiry(cacheKey, cached);
       this.publish({
         status: "ready",
         reading: cached.reading,
@@ -316,8 +371,6 @@ export class OpenMeteoWeatherAdapter {
       });
       return this.snapshot;
     }
-    const id = ++this.requestId;
-    this.controller?.abort();
     this.publish({
       status: "loading",
       packageEpoch: provider.getPackageEpoch(),
@@ -340,19 +393,10 @@ export class OpenMeteoWeatherAdapter {
         });
         if (!response.ok) throw new Error("HTTP_ERROR");
         const reading = parseOpenMeteoCurrent(await response.json());
-        if (
-          localDate(
-            new Date(
-              `${reading.timestamp.length === 16 ? `${reading.timestamp}:00` : reading.timestamp}+07:00`,
-            ),
-          ) !== today
-        )
+        const receivedAt = this.options.now().getTime();
+        const entry = { reading, fetchedAt: receivedAt };
+        if (localDate(new Date(receivedAt)) !== today || !this.isFresh(entry, receivedAt))
           throw new Error("MALFORMED_RESPONSE");
-        const readingMs = new Date(
-          `${reading.timestamp.length === 16 ? `${reading.timestamp}:00` : reading.timestamp}+07:00`,
-        ).getTime();
-        const age = this.options.now().getTime() - readingMs;
-        if (age > 90 * 60000 || age < -15 * 60000) throw new Error("MALFORMED_RESPONSE");
         if (controller.signal.aborted) throw new DOMException("Aborted", "AbortError");
         if (
           id !== this.requestId ||
@@ -360,7 +404,8 @@ export class OpenMeteoWeatherAdapter {
           referenceKey(provider.getGeoreference()) !== referenceKey(reference)
         )
           return this.snapshot;
-        this.cache.set(cacheKey, { reading, fetchedAt: this.options.now().getTime() });
+        this.cache.set(cacheKey, entry);
+        this.scheduleExpiry(cacheKey, entry);
         this.publish({
           status: "ready",
           reading,

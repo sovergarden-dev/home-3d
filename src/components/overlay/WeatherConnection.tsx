@@ -95,6 +95,11 @@ function ConnectedWeather({
     setRealWeatherEnabled(false);
   };
   const reading = state.status === "ready" || state.status === "stale" ? state.reading : undefined;
+  const retrying =
+    state.status === "error" ||
+    state.status === "timeout" ||
+    state.status === "offline" ||
+    state.status === "stale";
   const statusText =
     state.status === "ready" && reading
       ? `${label("live", "Live weather")} · ${t.weather[reading.kind]}`
@@ -135,7 +140,7 @@ function ConnectedWeather({
       </p>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/60" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border bg-background p-5 text-foreground shadow-xl">
+        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 max-h-[calc(100dvh-1rem)] w-[calc(100vw-1rem)] max-w-md -translate-x-1/2 -translate-y-1/2 overflow-y-auto overscroll-contain rounded-xl border border-border bg-background p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] text-foreground shadow-xl sm:w-[calc(100vw-2rem)] sm:p-5 sm:pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
           <Dialog.Title className="text-lg font-semibold">{t.realWeather}</Dialog.Title>
           <Dialog.Description className="mt-2 text-sm">
             {label("disclosure", t.realStreet.disclosure)}
@@ -157,9 +162,12 @@ function ConnectedWeather({
               Open-Meteo
             </a>
           </p>
-          <div className="mt-4 flex justify-end gap-2">
+          <div className="mt-4 flex flex-col items-stretch gap-2 sm:flex-row sm:justify-end">
             <Dialog.Close asChild>
-              <button type="button" className="chip min-h-11">
+              <button
+                type="button"
+                className="chip min-h-11 w-full min-w-0 whitespace-normal break-words sm:w-auto"
+              >
                 {t.realStreet.cancel}
               </button>
             </Dialog.Close>
@@ -167,16 +175,22 @@ function ConnectedWeather({
               <button
                 type="button"
                 disabled={!eligible || state.status === "loading"}
-                className="chip min-h-11 bg-primary text-primary-foreground disabled:opacity-40"
+                className="chip min-h-11 w-full min-w-0 whitespace-normal break-words bg-primary text-primary-foreground disabled:opacity-40 sm:w-auto"
                 onClick={request}
               >
-                {label("confirm", t.realWeather)}
+                {label(retrying ? "retry" : "confirm", label("confirm", t.realWeather))}
               </button>
             </Dialog.Close>
             {(realWeatherEnabled || state.consented) && (
-              <button type="button" className="chip min-h-11" onClick={turnOff}>
-                {label("off", t.demoWeatherNote)}
-              </button>
+              <Dialog.Close asChild>
+                <button
+                  type="button"
+                  className="chip min-h-11 w-full min-w-0 whitespace-normal break-words sm:w-auto"
+                  onClick={turnOff}
+                >
+                  {label("off", t.demoWeatherNote)}
+                </button>
+              </Dialog.Close>
             )}
           </div>
         </Dialog.Content>

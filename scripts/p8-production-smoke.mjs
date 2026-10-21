@@ -5,6 +5,7 @@ import { resolve, relative, sep, join } from "node:path";
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { SYNTHETIC_NEIGHBORHOOD } from "../src/world/fixtures/syntheticNeighborhood.ts";
 import worker from "../.output/server/index.mjs";
+import { execFileSync } from "node:child_process";
 
 const output = resolve(process.env.P8_SMOKE_OUTPUT_DIR ?? "/tmp/p8-production-smoke");
 const publicDir = resolve(".output/public");
@@ -56,9 +57,22 @@ try {
   const attempts = [],
     errors = [],
     navigations = [];
+  let weatherRequests = 0;
   await context.route("**/*", async (route) => {
     const url = new URL(route.request().url());
     if (url.origin === "http://127.0.0.1:4179") return route.continue();
+    if (url.origin === "https://api.open-meteo.com" && url.pathname === "/v1/forecast") {
+      weatherRequests++;
+      return route.fulfill({
+        contentType: "application/json",
+        body: JSON.stringify({
+          timezone: "Asia/Ho_Chi_Minh",
+          utc_offset_seconds: 25200,
+          current: { time: "2026-10-21T12:00", temperature_2m: 29, weather_code: 1 },
+          current_units: { temperature_2m: "°C", weather_code: "wmo code" },
+        }),
+      });
+    }
     attempts.push(route.request().url());
     if (url.origin === "https://www.google.com" && url.pathname === "/maps/@") {
       navigations.push({ url: url.href, referrer: route.request().headers()["referer"] ?? null });
@@ -177,14 +191,106 @@ try {
   expect(errors).toEqual([]);
   await page.reload();
   await expect(trigger).toBeDisabled();
+  await page.clock.install({ time: new Date("2026-10-21T05:00:00Z") });
+  const weatherText = JSON.stringify({
+    manifest: source.manifest,
+    world: source,
+    centerConfirmation: {
+      status: "confirmed",
+      provenance: { source: "owner", method: "explicit-user-confirmation" },
+    },
+  });
+  await page.getByLabel("Mở gói world").setInputFiles({
+    name: "synthetic-weather-production.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(weatherText),
+  });
+  await page.getByLabel("Mở tham chiếu địa lý").setInputFiles({
+    name: "synthetic-weather-reference.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(
+      JSON.stringify({
+        schemaVersion: "1.0",
+        packageSha256: createHash("sha256").update(weatherText).digest("hex"),
+        origin,
+      }),
+    ),
+  });
+  await page.getByLabel("Ngày đang xem").fill("2026-10-21");
+  await page.getByRole("tab", { name: "Thời tiết", exact: true }).click();
+  await page.getByRole("radio", { name: "Mưa", exact: true }).click();
+  const weatherTrigger = page.getByRole("button", { name: "Thời tiết thật", exact: true });
+  await weatherTrigger.click();
+  await page.getByRole("dialog").getByRole("button", { name: "Hủy", exact: true }).click();
+  expect(weatherRequests).toBe(0);
+  await weatherTrigger.click();
+  await page.getByRole("button", { name: "Cho phép thời tiết hiện tại", exact: true }).click();
+  await expect(page.locator(".h6-top-info")).toContainText("Thời tiết hiện tại");
+  expect(weatherRequests).toBe(1);
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 740, height: 390 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.getByRole("tab", { name: "Thời tiết", exact: true }).click();
+    if (!(await page.locator(".h6-top-info").innerText()).includes("Thời tiết hiện tại")) {
+      await weatherTrigger.click();
+      await page.getByRole("button", { name: "Cho phép thời tiết hiện tại", exact: true }).click();
+      await expect(page.locator(".h6-top-info")).toContainText("Thời tiết hiện tại");
+    }
+    await weatherTrigger.click();
+    const dialog = page.getByRole("dialog");
+    const actions = dialog.getByRole("button");
+    await expect(actions).toHaveCount(3);
+    const box = await dialog.boundingBox();
+    expect(box).not.toBeNull();
+    for (const action of await actions.all()) {
+      await action.scrollIntoViewIfNeeded();
+      await action.focus();
+      await expect(action).toBeFocused();
+      const rect = await action.boundingBox();
+      expect(rect).not.toBeNull();
+      expect(rect.x).toBeGreaterThanOrEqual(Math.max(0, box.x));
+      expect(rect.x + rect.width).toBeLessThanOrEqual(
+        Math.min(viewport.width, box.x + box.width) + 1,
+      );
+      expect(rect.y).toBeGreaterThanOrEqual(0);
+      expect(rect.y + rect.height).toBeLessThanOrEqual(viewport.height + 1);
+      expect(rect.height).toBeGreaterThanOrEqual(44);
+    }
+    await page.screenshot({
+      path: join(output, `weather-ready-${viewport.width}x${viewport.height}.png`),
+    });
+    await dialog.getByRole("button", { name: "Hủy", exact: true }).click();
+  }
+  const readyRequestCount = weatherRequests;
+  await page.clock.fastForward(3 * 60 * 60 * 1000);
+  await expect(page.locator(".h6-top-info")).not.toContainText("Thời tiết hiện tại");
+  await expect(page.locator(".h6-top-info")).toContainText("Mưa");
+  expect(weatherRequests).toBe(readyRequestCount);
+  await weatherTrigger.click();
+  await expect(page.getByRole("dialog").getByRole("status")).toContainText(/cũ|hết hạn/i);
+  await page.screenshot({ path: join(output, "weather-stale-production.png") });
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Dùng thời tiết mô phỏng", exact: true })
+    .click();
+  expect(weatherRequests).toBe(readyRequestCount);
+  expect(errors).toEqual([]);
+  checks.push(
+    "weather cancel zero requests; synthetic ready; responsive 44px actions; expiry restores manual rain without refetch",
+  );
   await writeFile(
     join(output, "report.json"),
     JSON.stringify(
       {
         status: "PASS",
         syntheticOnly: true,
-        checks: 17,
+        head: execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
+        checks: 18,
         p8Checks: checks,
+        weatherRequests,
+        weatherNetworkRequests: 0,
         googleNetworkRequests: 0,
         interceptedNavigations: 2,
         openerNull: true,
@@ -196,7 +302,7 @@ try {
     ) + "\n",
   );
   console.log(
-    "P8 production smoke PASS: 17 checks; 2 intercepted synthetic navigations; 0 Google network requests",
+    "P8 production smoke PASS: 18 check groups including weather revision; intercepted weather and Google only",
   );
 } finally {
   await browser?.close();

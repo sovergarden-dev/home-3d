@@ -46,6 +46,7 @@ export const en: Dict = {
     privacy:
       "No package, IDs, file names or tokens are sent. Cache stays in this tab and is cleared when the package changes or resets.",
     confirm: "Allow current weather",
+    retry: "Retry current weather",
     loading: "Loading current weather…",
     off: "Use simulated weather",
     missingGeoreference:

@@ -21,6 +21,12 @@ Tham chiếu P7 phải khớp đúng SHA nội dung gói hiện hành và chỉ 
 
 Nguồn/license và giới hạn: [lịch/thiên văn](./p8-calendar-sources.md), [22 golden Việt](./P8_CALENDAR_GOLDENS.md), [Open-Meteo](./P8_WEATHER_SOURCES.md). Không gọi API bằng tọa độ nhà trong QA.
 
+### Sửa review P8-R1/P8-R2
+
+Freshness của response và cache dùng chung giới hạn: cache phiên 15 phút, tuổi reading không quá 90 phút, tương lai không quá 15 phút và đúng ngày UTC+7. Khi ready hết hạn, một timeout cục bộ chuyển sang stale, giữ timestamp để tham khảo nhưng tắt live ở store/TopInfo/engine và khôi phục lựa chọn mô phỏng. Timeout không tải lại hoặc gửi lại vị trí; chỉ thao tác xác nhận/retry hợp lệ mới có thể yêu cầu mạng. Tắt/ẩn tab/đổi gói/reference/ngày/dispose phải dọn timeout và abort response đang chờ. Không nâng giới hạn 90 phút để chữa nhãn hiện tại.
+
+Dialog vẫn nằm trong panel thời tiết hiện có: action xuống hàng/xếp cột, nhãn đầy đủ, vùng chạm tối thiểu 44px, chiều cao có giới hạn và cuộn trong safe area. Regression VI/EN kiểm 390×844 và 740×390 trước consent, sau ready/error/stale, cả bounding boxes và thao tác focus/click. Hủy không request; off không làm mất phiên chỉnh sửa.
+
 ## Cổng kiểm thử cùng mã cuối
 
 ```sh
@@ -48,3 +54,5 @@ Không chạy benchmark đồng thời với test/build khác trong cùng máy. 
 Bộ ảnh gồm ngày/hoàng hôn/đêm, bốn thời tiết, khô→ướt→khô, hai mùa, ngập, các lễ, tắt lớp, topdown trung tính, eye-level, mobile portrait/landscape. Tối thiểu 20 vòng đổi hiệu ứng/mode/gói/route/capture và soak 20 phút, raw GC/CDP samples dùng helper H6 với ngưỡng giữ nguyên. Đây là **ước lượng retained JS/DOM**, không phải GPU-memory certification. Mục tiêu <100ms option và không frame >50ms phải báo đúng trên môi trường đo; SwiftShader không chứng minh hiệu năng GPU vật lý.
 
 Receipt cuối duy nhất trên trang Notion P8 ghi full head, PR/base, exact workflow_dispatch run + bốn jobs, counts/skip, production smoke và đường bằng chứng. Trạng thái chỉ `SUBMITTED_FOR_TECHNICAL_REVIEW`; Notion AI mới đặt `SOFTWARE_TECHNICAL_REVIEW_PASSED`.
+
+Batch sửa review chỉ làm mới weather/dialog/cleanup/soak bị ảnh hưởng; album và benchmark render của head `1ef66a3426bc5357d7415a2de5f8a77cd7b5a2f0` vẫn là bằng chứng lịch sử của head đó, không đổi nhãn thành head sửa. Chạy full local check/ba browser/production smoke đến ổn định trước khi push head cuối và dispatch đúng full SHA một lần; không rerun CI xanh của head cũ. Soak weather riêng ghi raw samples và ngưỡng retained-memory như trên, không phải benchmark GPU. Giữ giới hạn SwiftShader 50ms chưa đạt và native Safari/GPU vật lý chưa xác minh.
