@@ -167,6 +167,11 @@ async function cycle(index) {
   await page.getByRole("button", { name: "Giữ khoảnh khắc", exact: true }).click();
   await expect(page.getByText("Đã giữ lại khoảnh khắc này", { exact: true }).last()).toBeVisible();
   report.weather.capture = (report.weather.capture ?? 0) + 1;
+  await page.mouse.move(2, 842);
+  await page.clock.runFor(100);
+  await page.clock.fastForward(10_000);
+  await page.clock.runFor(500);
+  await expect(page.getByText("Đã giữ lại khoảnh khắc này", { exact: true })).toHaveCount(0);
   await page.getByRole("link", { name: "Giới thiệu", exact: true }).click();
   await page.getByRole("link", { name: "Về phố", exact: true }).click();
   await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "ready");
