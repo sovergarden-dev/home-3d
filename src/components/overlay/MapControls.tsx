@@ -1,6 +1,7 @@
 import {
   Compass,
   Footprints,
+  Bike,
   Box,
   Minus,
   Plus,
@@ -17,6 +18,7 @@ const modes: { id: ViewMode; Icon: typeof Box }[] = [
   { id: "diorama", Icon: Box },
   { id: "topdown", Icon: MapIcon },
   { id: "walk", Icon: Footprints },
+  { id: "ride", Icon: Bike },
 ];
 
 export function MapControls() {

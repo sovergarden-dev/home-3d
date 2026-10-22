@@ -1,3 +1,5 @@
+import { createLifeRuntime } from "./life/runtime";
+import { bindLifeCommands, resetLifeSession, updateLifeStatus } from "./life/session";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { bindCapture } from "./capture";
@@ -218,6 +220,18 @@ export function createDemoScene(
   let renderRevision = 0;
   let lastWorldRevision = -1;
   const audio = createDemoAudio();
+  let life: ReturnType<typeof createLifeRuntime> | null = null;
+  let lastLifeMetricsAt = 0;
+  let lastPassbyAt = 0;
+  const passbyPosition: [number, number, number] = [0, 0, 0];
+  const passbyEvent = {
+    sourceId: "fixture-scooter-1",
+    position: passbyPosition,
+    kind: "scooter" as const,
+    level: 0.025,
+    durationMs: 250,
+  };
+  let restorePovCamera = false;
   const frameMetrics = createFrameMetrics();
   let frameSnapshot = frameMetrics.snapshot();
   let lastMetricsSnapshotAt = 0;
@@ -233,6 +247,10 @@ export function createDemoScene(
     const snapshot = worldDataProvider.getSnapshot();
     currentWorld = snapshot;
     if (!("world" in snapshot)) return;
+    life?.dispose();
+    life = null;
+    audio.notifyPackageReplaced();
+    if (useAppStore.getState().soundOn) useAppStore.setState({ soundOn: false });
     worldBundle?.dispose();
     const meshBuildStartedAt = performance.now();
     worldBundle = buildWorldMeshes(snapshot.world, materialFactory);
@@ -248,6 +266,15 @@ export function createDemoScene(
       snapshot.mode === "private" ? derivePrivateWorldPlanFrame(snapshot.world) : null;
     resetPlanCentre();
     span = frame.span;
+    life = createLifeRuntime({
+      world: snapshot.world,
+      camera: perspectiveCamera,
+      canvas,
+      target: controls.target,
+      reducedMotion: motion.matches,
+      invalidate: scheduleFrame,
+    });
+    scene.add(life.group);
     planPanRevision = 0;
     lastWorldRevision = snapshot.revision;
     if (snapshot.packageEpoch !== lastPackageEpoch) selectFeature(null);
@@ -258,6 +285,10 @@ export function createDemoScene(
   }
 
   function disposeWorld() {
+    life?.dispose();
+    life = null;
+    audio.notifyPackageReplaced();
+    if (useAppStore.getState().soundOn) useAppStore.setState({ soundOn: false });
     worldBundle?.dispose();
     worldBundle = null;
   }
@@ -293,7 +324,30 @@ export function createDemoScene(
 
   function applyPerspective(state = useAppStore.getState()) {
     const theta = THREE.MathUtils.degToRad(state.heading);
-    const walk = state.viewMode === "walk";
+    const povMode = state.viewMode === "walk" || state.viewMode === "ride" ? state.viewMode : null;
+    const wasPov = life?.pov.diagnostics().mode != null;
+    if (povMode) {
+      controls.enabled = false;
+      activeCamera = perspectiveCamera;
+      scene.fog = null;
+      delete host.dataset["planZenith"];
+      useAppStore.getState().setPlanMeasurement(null);
+      life?.setMode(povMode);
+      if (!motion.matches) scheduleFrame();
+      return;
+    }
+    if (wasPov) {
+      life?.setMode(null);
+      restorePovCamera = true;
+    }
+    if (restorePovCamera) {
+      restorePovCamera = false;
+      controls.enabled = true;
+      activeCamera = perspectiveCamera;
+      // Do not reconstruct the orbit pose after POV; the controller restored its exact snapshot.
+      return;
+    }
+    const walk = false;
     const distance = (walk ? 22 : span * 1.15) / state.zoom;
     const height = walk ? 2.5 : distance * 0.66;
     const radius = walk ? distance : distance * 0.77;
@@ -332,8 +386,10 @@ export function createDemoScene(
   function applyView(force = false) {
     if (disposed || !host.clientWidth || !host.clientHeight) return;
     const state = useAppStore.getState();
-    if (state.viewMode === "topdown") applyPlan(state);
-    else applyPerspective(state);
+    if (state.viewMode === "topdown") {
+      life?.setMode(null);
+      applyPlan(state);
+    } else applyPerspective(state);
     if (force) render();
   }
 
@@ -394,9 +450,19 @@ export function createDemoScene(
       homeCentre,
     );
     audio.set(
-      state.soundOn && !document.hidden,
+      state.soundOn && !document.hidden && worldRenderable(),
       effectiveWeather === "rain" || effectiveWeather === "storm",
+      {
+        minutes: state.timeOfDayMinutes,
+        weather: effectiveWeather,
+        fixture:
+          currentWorld.mode === "fixture" ||
+          ("world" in currentWorld && currentWorld.world.manifest.isSynthetic),
+      },
     );
+    life?.configure();
+    life?.update(0);
+    lastLifeMetricsAt = 0;
     host.dataset["weather"] = effectiveWeather;
     host.dataset["selectedDate"] = selectedDate;
     host.dataset["timeMinutes"] = String(state.timeOfDayMinutes);
@@ -459,10 +525,35 @@ export function createDemoScene(
     host.dataset["worldRevision"] = String(currentWorld.revision);
     host.dataset["activeWorlds"] = worldBundle ? "1" : "0";
     host.dataset["cameraType"] = activeCamera.type;
+    if (life && (lastLifeMetricsAt === 0 || renderedAt - lastLifeMetricsAt >= 250)) {
+      const m = life.metrics();
+      host.dataset["lifeAgents"] = String(m.agentCount);
+      host.dataset["lifeClock"] = String(m.simulatedSeconds);
+      host.dataset["lifeVisible"] = String(life.group.visible);
+      host.dataset["lifeCpuP50Ms"] = String(m.cpuP50Ms);
+      host.dataset["lifeCpuP95Ms"] = String(m.cpuP95Ms);
+      host.dataset["lifeCpuSamples"] = String(m.cpuSamples);
+      host.dataset["lifeGraphReady"] = String(m.graphEnabled);
+      host.dataset["lifeTier"] = m.tier;
+      host.dataset["povMode"] = life.pov.diagnostics().mode ?? "none";
+      host.dataset["audioContexts"] = String(Number(audio.getDiagnostics().contextCreated));
+      const audioMetrics = audio.getDiagnostics();
+      host.dataset["audioVoices"] = String(audioMetrics.activeVoices);
+      host.dataset["audioNodes"] = String(audioMetrics.nodeCount);
+      host.dataset["audioTotalNodes"] = String(audioMetrics.totalNodeCount);
+      host.dataset["audioState"] = audioMetrics.contextState;
+      host.dataset["audioListeners"] = String(audioMetrics.listenerCount);
+      lastLifeMetricsAt = renderedAt;
+    }
+  }
+
+  function lifeActive() {
+    return life?.active() ?? false;
   }
 
   function scheduleFrame() {
-    if (disposed || document.hidden || motion.matches || animationFrame !== 0) return;
+    if (disposed || document.hidden || (motion.matches && !lifeActive()) || animationFrame !== 0)
+      return;
     animationFrame = requestAnimationFrame(tick);
   }
 
@@ -477,14 +568,28 @@ export function createDemoScene(
 
   function tick(now: number) {
     animationFrame = 0;
-    if (disposed || document.hidden || motion.matches) return;
+    if (disposed || document.hidden || (motion.matches && !lifeActive())) return;
     const delta = lastFrame === 0 ? 0.016 : Math.min(0.1, (now - lastFrame) / 1000);
     lastFrame = now;
 
     atmosphere.tick(delta);
+    // Input can dirty a stationary POV without requiring another moving frame.
+    // Keep that final draw even when update() consumes the pending pose change.
+    const lifeFrameRequested = lifeActive();
+    life?.update(delta, frameSnapshot.p50Ms ? 1000 / frameSnapshot.p50Ms : 60);
+    if (life && now - lastPassbyAt > 1000 && useAppStore.getState().soundOn) {
+      lastPassbyAt = now;
+      const agent = life.simulation.agents.find((a) => a.active && a.kind === "motorbike");
+      if (agent) {
+        passbyPosition[0] = agent.x - perspectiveCamera.position.x;
+        passbyPosition[1] = agent.y - perspectiveCamera.position.y;
+        passbyPosition[2] = agent.z - perspectiveCamera.position.z;
+        if (Math.hypot(passbyPosition[0], passbyPosition[2]) < 35) audio.passby(passbyEvent);
+      }
+    }
 
     const controlsChanged = controls.enabled ? updateControls() : false;
-    if (controlsChanged || atmosphere.rainVisible) {
+    if (controlsChanged || atmosphere.rainVisible || lifeFrameRequested || lifeActive()) {
       render(true);
       scheduleFrame();
     }
@@ -607,6 +712,7 @@ export function createDemoScene(
       start &&
       planPointers.size === 1 &&
       worldBundle &&
+      !["walk", "ride"].includes(useAppStore.getState().viewMode) &&
       !pointerGestureWasMultiTouch &&
       event.type !== "pointercancel" &&
       isTap(start, new THREE.Vector2(event.clientX, event.clientY))
@@ -646,6 +752,7 @@ export function createDemoScene(
     lastFrame = 0;
     frameMetrics.reset();
     applyEnvironment();
+    if (document.hidden) audio.suspend();
     if (!document.hidden && !disposed) {
       render();
       scheduleFrame();
@@ -665,6 +772,7 @@ export function createDemoScene(
     if (!worldRenderable()) return;
     if (event.target !== canvas) return;
     const state = useAppStore.getState();
+    if (state.viewMode === "walk" || state.viewMode === "ride") return;
     transientInteraction();
     if (state.viewMode === "topdown") {
       const key = event.key.toLowerCase();
@@ -744,6 +852,20 @@ export function createDemoScene(
 
   const unsubscribeStore = useAppStore.subscribe((state, previous) => {
     if (disposed) return;
+    if (
+      state.lifeEnabled !== previous.lifeEnabled ||
+      state.lifeDensity !== previous.lifeDensity ||
+      state.ridePaused !== previous.ridePaused ||
+      state.timeSpeed !== previous.timeSpeed ||
+      state.realTimeEnabled !== previous.realTimeEnabled
+    ) {
+      life?.configure();
+      life?.update(0);
+      render();
+      if (lifeActive()) scheduleFrame();
+    }
+    if (["walk", "ride"].includes(previous.viewMode) && !["walk", "ride"].includes(state.viewMode))
+      restorePovCamera = true;
     if (state.viewReset !== previous.viewReset) {
       resetPlanCentre();
       planPanRevision += 1;
@@ -794,7 +916,7 @@ export function createDemoScene(
     ) {
       applyEnvironment();
       render();
-      if (atmosphere.rainVisible) scheduleFrame();
+      if (atmosphere.rainVisible || lifeActive()) scheduleFrame();
     }
   });
 
@@ -837,9 +959,44 @@ export function createDemoScene(
     // Rebuilt bundles own new label/material program maps, not the disposed demo's cache.
     atmosphere.warm(renderer, activeCamera);
     render();
-    if (atmosphere.rainVisible) scheduleFrame();
+    if (atmosphere.rainVisible || lifeActive()) scheduleFrame();
   });
 
+  bindLifeCommands((command) => {
+    if (!life || disposed) return;
+    if (command.kind === "soundGesture") audio.gesture();
+    if (command.kind === "move") {
+      life.pov.move({ x: command.right, z: command.forward });
+      scheduleFrame();
+    }
+    if (command.kind === "pause")
+      useAppStore.getState().setRidePaused(!useAppStore.getState().ridePaused);
+    if (command.kind === "pointerLock") {
+      try {
+        const result = canvas.requestPointerLock?.();
+        if (result && "catch" in result) void result.catch(() => {});
+      } catch {
+        /* Unsupported/denied: dragging remains available. */
+      }
+    }
+    if (command.kind === "orientation")
+      void life.pov
+        .requestOrientationPermission()
+        .then((orientation) => updateLifeStatus({ orientation }));
+    if (command.kind === "audio") {
+      audio.gesture();
+      void (async () => {
+        try {
+          if (command.manifest.size > 4096) throw Error("MANIFEST_TOO_LARGE");
+          const manifest: unknown = JSON.parse(await command.manifest.text());
+          const result = await audio.importFile(command.file, manifest);
+          updateLifeStatus({ audio: result.ok ? "local" : "error" });
+        } catch {
+          updateLifeStatus({ audio: "error" });
+        }
+      })();
+    }
+  });
   mountWorld();
   updateLayerVisibility();
   applyEnvironment();
@@ -850,12 +1007,17 @@ export function createDemoScene(
     if (disposed || !worldRenderable()) return null;
     const mode = useAppStore.getState().viewMode;
     if (mode === "real") return null;
-    const target = mode === "topdown" ? planCentre : controls.target;
+    const target =
+      mode === "topdown"
+        ? planCentre
+        : mode === "walk" || mode === "ride"
+          ? perspectiveCamera.position
+          : controls.target;
     const direction = activeCamera.getWorldDirection(new THREE.Vector3());
     return {
       target: { x: target.x, y: target.y, z: target.z },
       direction: { x: direction.x, y: direction.y, z: direction.z },
-      mode,
+      mode: mode === "ride" ? "walk" : mode,
       zoom: 19,
     };
   });
@@ -867,7 +1029,7 @@ export function createDemoScene(
     host.dataset["captureLatencyMs"] = String(performance.now() - captureStartedAt);
     return image;
   });
-  if (atmosphere.rainVisible) scheduleFrame();
+  if (atmosphere.rainVisible || lifeActive()) scheduleFrame();
 
   return {
     setLabel(label) {
@@ -888,6 +1050,7 @@ export function createDemoScene(
       controls.removeEventListener("end", onControlEnd);
       controls.dispose();
       audio.dispose();
+      resetLifeSession();
       document.removeEventListener("visibilitychange", onVisibility);
       motion.removeEventListener("change", onMotion);
       canvas.removeEventListener("keydown", onKey);

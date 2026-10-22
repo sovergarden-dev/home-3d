@@ -6,7 +6,7 @@ export type TimeSpeed = 0 | 1 | 4;
 export type Weather = "sunny" | "cloudy" | "rain" | "storm";
 export type Festival = "normal" | "tet" | "midautumn" | "christmas" | "reunification" | "national";
 export type Season = "auto" | "dry" | "wet";
-export type ViewMode = "diorama" | "walk" | "topdown" | "real";
+export type ViewMode = "diorama" | "walk" | "topdown" | "real" | "ride";
 export type Language = "vi" | "en";
 
 export interface PlanMeasurement {
@@ -37,6 +37,9 @@ export interface AppState {
   heading: number;
   zoom: number;
   soundOn: boolean;
+  lifeEnabled: boolean;
+  lifeDensity: number;
+  ridePaused: boolean;
   language: Language;
   loadingProgress: number;
   sceneStatus: "loading" | "ready" | "fallback";
@@ -69,6 +72,9 @@ export interface AppState {
   resetView: () => void;
   requestCameraFrame: (kind: CameraFrame) => void;
   toggleSound: () => void;
+  setLifeEnabled: (enabled: boolean) => void;
+  setLifeDensity: (density: number) => void;
+  setRidePaused: (paused: boolean) => void;
   toggleTrees: () => void;
   toggleLabels: () => void;
   setPlanMeasurement: (measurement: PlanMeasurement | null) => void;
@@ -95,6 +101,9 @@ export const useAppStore = create<AppState>((set) => ({
   heading: 28,
   zoom: 1,
   soundOn: false,
+  lifeEnabled: true,
+  lifeDensity: 0.65,
+  ridePaused: false,
   language: "vi",
   loadingProgress: 0,
   sceneStatus: "loading",
@@ -143,6 +152,10 @@ export const useAppStore = create<AppState>((set) => ({
   requestCameraFrame: (kind) =>
     set((s) => ({ cameraFrame: { kind, request: s.cameraFrame.request + 1 } })),
   toggleSound: () => set((s) => ({ soundOn: !s.soundOn })),
+  setLifeEnabled: (lifeEnabled) => set({ lifeEnabled }),
+  setLifeDensity: (density) =>
+    set({ lifeDensity: Math.max(0, Math.min(1, Number.isFinite(density) ? density : 0)) }),
+  setRidePaused: (ridePaused) => set({ ridePaused }),
   toggleTrees: () => set((s) => ({ showTrees: !s.showTrees })),
   toggleLabels: () => set((s) => ({ showLabels: !s.showLabels })),
   setPlanMeasurement: (planMeasurement) => set({ planMeasurement }),

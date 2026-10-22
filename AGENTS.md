@@ -21,7 +21,15 @@ Web app bản đồ 3D khu phố quanh nhà Syringa, nhà làm tâm. Kế hoạc
 
 Khối LOVABLE ở đầu file do Lovable quản lý: giữ nguyên. Quy tắc state phía trên đã đồng bộ cho H6; không dùng mô tả Demo 1 lịch sử để đưa world riêng trở lại store SSR.
 
-## Chỉ đạo hiện hành — P8 không khí (stacked trên P7)
+## Chỉ đạo hiện hành — P9 sự sống và âm thanh
+
+- Scope: [P9](https://app.notion.com/p/e26beb96a134464fa5f46303ff86e64e); runbook `docs/P9_RUNBOOK.md`. Nhánh `feat/p9-life-sound` từ full main `7221b0c416633d2bd4273afdbd77b894b9ac5f23`; PR thường vào main, không stacked. H6/P7/P8 đã merged/accepted; không sửa nhánh/head cũ hay chạy lại CI chúng.
+- Lớp sống/âm thanh/POV chỉ là presentation client-only có seed trên world đang hiển thị, không sửa nguồn, world/store SSR, hình học, tâm, consent, selection/undo/provenance. Trần tổng theo tier 60/200/800/2000; Mặt bằng ẩn tác nhân. Một canvas/vòng RAF; không timer song song.
+- Chỉ fixture tổng hợp; không giao thông/API ngoài, dữ liệu thật, micro hay kích hoạt georeference. Giữ `BLOCKED_MISSING_GEOREFERENCE` / `REAL_WORLD_NOT_VERIFIED`. Audio synthetic, clip local tối đa 1 MB + manifest hash chỉ phiên/ignored slot; không commit audio riêng, không upload/network/storage.
+- Cue tự kiểm trọn gói, một receipt cuối cho Notion AI review, không giao QA lẻ cho owner. Một workflow_dispatch cuối full stable head với bốn job hiện hữu; không đổi workflow/guard để xanh.
+- Không merge/auto-merge/Publish/deploy, Lovable sync/settings, xóa nhánh, rewrite pushed history hoặc mở P10–P13. Nhánh H6 remote hiện còn và không động tới.
+
+## Lịch sử chỉ đạo — P8 không khí (stacked trên P7)
 
 - Scope: Notion “Home 3D — P8: Không khí, Cue làm trọn gói”. Runbook: `docs/P8_RUNBOOK.md`. Giữ Three.js trực tiếp, một world/canvas và UI dock; không rewrite app.
 - H6 accepted tại `70967c003c0b39e74c7196665ca37e54c1ad0cf8`; P7 accepted phần mềm tại `957e4fcff9395c46a55a2927b8728ccb1ad051e0`. Không sửa nhánh/PR #3/#4 hoặc chạy lại CI hai head này. P8 nhánh/PR riêng, stacked trên P7 khi #4 còn mở.

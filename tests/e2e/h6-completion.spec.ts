@@ -323,7 +323,7 @@ test.describe("H6 completion synthetic integration", () => {
     );
     for (let i = 0; i < 20; i++) {
       await openPackage(page, cyclePackage);
-      for (const name of ["Mặt bằng", "Tầm mắt (demo)", "Diorama"])
+      for (const name of ["Mặt bằng", "Đi bộ", "Diorama"])
         await page.getByRole("radio", { name, exact: true }).click();
       await page.getByRole("button", { name: "Giữ khoảnh khắc", exact: true }).click();
       await page.getByRole("link", { name: "Giới thiệu", exact: true }).click();

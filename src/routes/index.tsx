@@ -1,3 +1,4 @@
+import { PovControls } from "@/components/overlay/LifeControls";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SceneViewport } from "@/components/overlay/SceneViewport";
@@ -84,6 +85,7 @@ function Home() {
         )}
       </div>
       {mobile && <Dock mobile onExpandedChange={setSheetExpanded} />}
+      <PovControls />
       <Splash />
     </main>
   );

@@ -53,6 +53,9 @@ export function TopInfo() {
             ? t.atmosphere.localReference
             : t.atmosphere.simulation}
       </p>
+      <p className="mt-1 text-[10px] text-muted-foreground">
+        {t.life.label} · {t.life.audio}
+      </p>
       <p className="mt-1 text-[10px] text-muted-foreground" data-testid="build-info">
         {PUBLIC_BUILD_VERSION} · SHA {BUILD_SHA ?? t.localPreview.buildUnknown}
       </p>

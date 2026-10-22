@@ -125,7 +125,7 @@ test.describe("P8 synthetic atmosphere integration", () => {
     });
     const ready = (await page.locator("#scene-root").getAttribute("data-scene-state")) === "ready";
     if (process.env["REQUIRE_WEBGL2"] === "1") expect(ready).toBe(true);
-    for (const name of ["Mặt bằng", "Tầm mắt (demo)", "Diorama"]) {
+    for (const name of ["Mặt bằng", "Đi bộ", "Diorama"]) {
       const mode = page.getByRole("radio", { name, exact: true });
       if (ready) await mode.click();
       else await expect(mode).toBeDisabled();
@@ -152,7 +152,7 @@ test.describe("P8 synthetic atmosphere integration", () => {
     await open(page);
     const sceneState = await page.locator("#scene-root").getAttribute("data-scene-state");
     expect(sceneState === "ready" || sceneState === "fallback").toBe(true);
-    const modes = ["Mặt bằng", "Tầm mắt (demo)", "Diorama"].map((name) =>
+    const modes = ["Mặt bằng", "Đi bộ", "Diorama"].map((name) =>
       page.getByRole("radio", { name, exact: true }),
     );
     if (sceneState === "ready") {
