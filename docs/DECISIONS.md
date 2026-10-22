@@ -68,3 +68,13 @@ Notion AI tạo và kiểm patch. Hermes áp nguyên patch, chạy frozen instal
 - Graph không dùng được không thể sinh tác nhân: giữ simulation/status và POV/BVH, nhưng không cấp phát geometry/material/instance tác nhân rỗng để renderer warm shader vô ích mỗi lần mở gói/route. World mới tạo runtime mới; graph hợp lệ giữ đủ tác nhân, không giảm chất lượng hay trần tier.
 - Runtime presentation trả mọi InstancedMesh đã tạo, gồm batch đèn riêng, và tháo group khỏi scene khi thay gói/dispose. Việc này khép ownership của lớp sống, không tự chứng minh nguyên nhân cảnh báo context WebKit hoặc việc driver đã thu hồi bộ nhớ GPU.
 - BVH va chạm là mã riêng tại `src/engine/life/collision.ts`, không phải dependency `three-mesh-bvh`; không thêm dependency/đổi lock trong batch này.
+
+## P10 — Kỷ niệm, tour, nhật ký và bưu thiếp
+
+- Base main `72dd2bed1d58c558018538a51aae02f74304bc7d`; không phụ thuộc G1. Không suy tham chiếu địa lý, merge/Publish/deploy hoặc đổi đồng bộ.
+- Nội dung/ảnh/audio/ENU kỷ niệm ở session ngoài zustand và SSR; SHA-256 của world chỉ làm khoá cục bộ. RAM mặc định, explicit opt-in mới mở `pnm-p10/worlds` v1. Thành công ở transaction completion; đóng connection cả lỗi/abort. Thiếu Web Crypto chỉ RAM theo epoch. Quota/blocked giữ RAM. Nhập JSON nghiêm/có trần, reprocess mọi ảnh và audio; ảnh import private, reviewed=false. Xoá tất cả có xác nhận và dọn mọi world của kho P10.
+- Không dependency mới: canvas/createImageBitmap áp orientation, re-encode 1600/320 và placeholder nhỏ, pixelation thủ công, quét metadata sau encode. Không bản gốc/tên file. ML mặt/biển số là NOT_DONE có chủ ý, không ML/mạng. Audio chỉ qua thao tác, HTMLAudioElement kiểm dung lượng/duration; không AudioContext mới/micro, dừng hidden/world/route.
+- Pin InstancedMesh theo tier; tour Catmull–Rom trong tham số camera, shortest yaw/cao độ an toàn trên RAF hiện hữu. Reduced-motion nhảy điểm, pause/hidden không catch-up; exit khôi phục raw camera/plan centre. Không sửa world/selection/undo.
+- Hash versioned/whitelist chỉ camera/time/ID, không nội dung/tên/world hash/lat-lng. replaceState sau control-end; Clipboard chỉ nút bấm. Public/guest là preview/xuất file, không đăng mạng; nhật ký/marker luôn private.
+- Bưu thiếp dùng WebGLRenderTarget offscreen 3840×2160/2048×1152 và fallback 1080×608; finally trả camera/renderer, dispose target/clear canvas. Không đổi canvas/DPR thật. Encode mới/quét metadata; Web Share chỉ nếu canShare(files), còn lại download.
+- Telemetry lỗi chỉ mã tĩnh, không serialize Error/context riêng. Bỏ request Google Fonts tự động, giữ fallback hệ thống; không thay consent weather/Google P7/P8. TopInfo dùng hydration snapshot để ngày UTC+7 không lệch SSR.

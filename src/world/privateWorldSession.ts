@@ -75,6 +75,7 @@ export interface WorldDataProvider {
   markExported: () => boolean;
   toggleTemporaryLotIllustration: () => void;
   resetFixture: () => void;
+  getMemoryWorldKey: () => Promise<string | null>;
 }
 
 export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
@@ -345,7 +346,21 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
         georeferenceReady: false,
       });
     },
+    async getMemoryWorldKey() {
+      if (snapshot.loading || snapshot.mode === "private-error") return null;
+      if (snapshot.mode === "fixture") return "synthetic-fixture-p10";
+      if (!packageText || typeof globalThis.crypto?.subtle?.digest !== "function") return null;
+      try {
+        return await sha256Text(packageText);
+      } catch {
+        return null;
+      }
+    },
   };
 }
 
 export const worldDataProvider = createWorldDataProvider(SYNTHETIC_NEIGHBORHOOD);
+
+export async function getMemoryWorldKey(): Promise<string | null> {
+  return worldDataProvider.getMemoryWorldKey();
+}

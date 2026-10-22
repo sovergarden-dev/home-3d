@@ -21,7 +21,15 @@ Web app bản đồ 3D khu phố quanh nhà Syringa, nhà làm tâm. Kế hoạc
 
 Khối LOVABLE ở đầu file do Lovable quản lý: giữ nguyên. Quy tắc state phía trên đã đồng bộ cho H6; không dùng mô tả Demo 1 lịch sử để đưa world riêng trở lại store SSR.
 
-## Chỉ đạo hiện hành — P9 sự sống và âm thanh
+## Chỉ đạo hiện hành — P10 kỷ niệm
+
+- Nguồn scope: [P10](https://app.notion.com/p/7592ff65db1f411db4d7cc8e36c2b691); runbook `docs/P10_RUNBOOK.md`. Nhánh `feat/p10-memories` từ main `72dd2bed1d58c558018538a51aae02f74304bc7d`, PR nháp thường vào main, không stacked. G1 không chặn P10; vẫn `BLOCKED_MISSING_GEOREFERENCE` / `REAL_WORLD_NOT_VERIFIED`.
+- `src/memories` giữ nội dung/ảnh/âm thanh trong client-session riêng; RAM mặc định. Chỉ công tắc lưu chủ động mới mở IndexedDB `pnm-p10/worlds`; khoá SHA world nội bộ không đi vào URL, log, export hoặc SSR. Không nới privacy guard cho world/georeference.
+- Ảnh giải mã-vẽ-mã hoá lại và quét byte, chỉ tổng hợp trong repo/test. Soát thủ công và xác nhận từng ảnh trước public; ML nhận diện là NOT_DONE có chủ ý. Không dependency/asset bên ngoài mới.
+- Tour/pins/capture tái dùng engine và một vòng RAF; không sửa world/undo/selection/hình học lô. Nhật ký luôn private và chỉ UI; public là bản xem trước/xuất file, không phải xuất bản mạng.
+- Một receipt cuối trên trang P10 và một workflow_dispatch ở full final head; giữ nguyên workflow/capability/assertion/timeout. Không merge, Publish, deploy, đổi Lovable, mở P11–P13 hoặc sửa lịch sử đã push.
+
+## Lịch sử chỉ đạo — P9 sự sống và âm thanh
 
 - Scope: [P9](https://app.notion.com/p/e26beb96a134464fa5f46303ff86e64e); runbook `docs/P9_RUNBOOK.md`. Nhánh `feat/p9-life-sound` từ full main `7221b0c416633d2bd4273afdbd77b894b9ac5f23`; PR thường vào main, không stacked. H6/P7/P8 đã merged/accepted; không sửa nhánh/head cũ hay chạy lại CI chúng.
 - Lớp sống/âm thanh/POV chỉ là presentation client-only có seed trên world đang hiển thị, không sửa nguồn, world/store SSR, hình học, tâm, consent, selection/undo/provenance. Trần tổng theo tier 60/200/800/2000; Mặt bằng ẩn tác nhân. Một canvas/vòng RAF; không timer song song.

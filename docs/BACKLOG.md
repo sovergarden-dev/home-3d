@@ -50,3 +50,9 @@ Lớp sống có seed, giao thông/người/hàng rong/động vật, WebAudio t
 Review vòng 1 là `CHANGES_REQUESTED`: batch P9-R1…R4 giữ cùng PR #6, đo pha matched và năm lượt H6 WebKit nguyên bài, context ledger, split first-sound, đính chính BVH project-owned. Receipt mới là nơi ghi kết quả; cảnh báo context tồn tại ở P8, giới hạn SwiftShader và heap estimate không được tự đánh dấu đã khép. Chỉ một dispatch mới sau đủ local gate; nếu đỏ thì dừng và nộp trace/bảng pha.
 
 Ngoài P9 tiếp tục đóng: bản thu riêng chưa có; georeference/khu thật `BLOCKED_MISSING_GEOREFERENCE` / `REAL_WORLD_NOT_VERIFIED`; kiểm GPU vật lý/nativeSafari/iOS/Android NOT_VERIFIED. Không reintake, sửa nguồn H6, mở P10–P13, cloud/R2/Access, Publish/deploy hay Lovable sync/settings.
+
+## P10 — giới hạn và việc ngoài lượt
+
+P10 mở riêng từ main P9; G1 vẫn `BLOCKED_MISSING_GEOREFERENCE`, khu thật vẫn `REAL_WORLD_NOT_VERIFIED`. Runbook `docs/P10_RUNBOOK.md`; kết quả thực chạy nằm ở receipt cuối P10. Code không tự đồng nghĩa technical-review-passed.
+
+NOT_DONE có chủ ý: ML mặt/biển số, sharp/blurhash, upload/R2/cloud/đăng mạng, micro, khảo sát/địa chỉ thật và nhà/công trường trên lô. Không chuyển test phần mềm trong scope sang owner. GPU vật lý, native Safari và điện thoại thật là NOT_VERIFIED khi thiếu thiết bị; SwiftShader chỉ chứng minh software WebGL2. P11–P13 chưa mở. Các mục P8/P9 ở trên là lịch sử, không đóng P10 vừa được chỉ đạo.

@@ -35,6 +35,18 @@ import {
   selectFeature,
   subscribeFeatureSelection,
 } from "@/world/featureSelection";
+import { memorySession } from "@/memories/session";
+import { bindMemoryCamera } from "@/memories/bridge";
+import { createMemoryPinLayer, type MemoryPin } from "@/memories/pins";
+import {
+  clampCameraPose,
+  DEFAULT_CAMERA_POSE,
+  catmullCameraPose,
+  poseToOrbit,
+  type CameraPose,
+} from "@/memories/camera";
+import { buildMemoryHash, parseMemoryHash } from "@/memories/deepLink";
+import { bindPostcardCapture } from "@/memories/postcard";
 
 export interface SceneRuntime {
   setLabel: (label: string) => void;
@@ -237,11 +249,299 @@ export function createDemoScene(
   let lastMetricsSnapshotAt = 0;
   let updatingControls = false;
   let syncingControlsState = false;
+  let syncingMemoryPose = false;
   let interactionActive = false;
   let interactionTimer = 0;
   let pointerGestureWasMultiTouch = false;
   let lastPackageEpoch = currentWorld.packageEpoch;
   const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const pinTier =
+    window.innerWidth < 768 || renderer.capabilities.maxTextureSize <= 4096
+      ? "low"
+      : window.innerWidth < 1100
+        ? "mid"
+        : "high";
+  const memoryPins = createMemoryPinLayer(pinTier);
+  scene.add(memoryPins.group);
+  const memoryPose = {
+    ...DEFAULT_CAMERA_POSE,
+    target: [...DEFAULT_CAMERA_POSE.target] as [number, number, number],
+  } as CameraPose;
+  let memorySessionSnapshot = memorySession.getSnapshot();
+  let memoryTour: {
+    memories: readonly MemoryPin[];
+    index: number;
+    from: CameraPose;
+    to: CameraPose;
+    started: number;
+    holdUntil: number;
+    paused: boolean;
+    saved: CameraPose;
+    savedMode: ReturnType<typeof useAppStore.getState>["viewMode"];
+    savedHeading: number;
+    savedZoom: number;
+    savedRaw: ReturnType<typeof saveMemoryCamera>;
+  } | null = null;
+  let memoryFlight: {
+    from: CameraPose;
+    to: CameraPose;
+    started: number;
+    duration: number;
+    onDone?: () => void;
+  } | null = null;
+  let memoryRenderTargets = 0;
+  let memoryLastPinSignature = "";
+  let memoryPinsDirty = false;
+  let memoryLinkError: string | undefined;
+  const memoryListeners = new Set<() => void>();
+  const notifyMemory = () => memoryListeners.forEach((listener) => listener());
+  const memorySnapshot = () => ({
+    ...(memoryLinkError ? { error: memoryLinkError } : {}),
+    active: Boolean(memoryTour || memoryFlight),
+    paused: Boolean(memoryTour?.paused),
+    index: memoryTour?.index ?? -1,
+    memoryId: memoryTour ? (memoryTour.memories[memoryTour.index]?.id ?? null) : null,
+  });
+  const currentMemoryPose = (): CameraPose => {
+    if (useAppStore.getState().viewMode === "topdown")
+      return clampCameraPose({
+        ...memoryPose,
+        mode: "topdown",
+        target: [planCentre.x, 0, planCentre.z],
+        zoom: useAppStore.getState().zoom,
+        distance: span,
+      });
+    const target = controls.target;
+    const distance = perspectiveCamera.position.distanceTo(target);
+    return clampCameraPose({
+      mode: "diorama",
+      target: [target.x, Math.max(0, target.y), target.z],
+      yaw: Math.atan2(
+        perspectiveCamera.position.x - target.x,
+        perspectiveCamera.position.z - target.z,
+      ),
+      pitch: Math.atan2(
+        perspectiveCamera.position.y - target.y,
+        Math.max(
+          0.001,
+          Math.hypot(
+            perspectiveCamera.position.x - target.x,
+            perspectiveCamera.position.z - target.z,
+          ),
+        ),
+      ),
+      distance,
+      zoom: (span * 1.15) / Math.max(distance, 1),
+    });
+  };
+  const saveMemoryCamera = () => ({
+    position: perspectiveCamera.position.clone(),
+    quaternion: perspectiveCamera.quaternion.clone(),
+    planCentre: planCentre.clone(),
+    planPosition: planCamera.position.clone(),
+    planQuaternion: planCamera.quaternion.clone(),
+    planProjection: planCamera.projectionMatrix.clone(),
+    target: controls.target.clone(),
+    aspect: perspectiveCamera.aspect,
+    projection: perspectiveCamera.projectionMatrix.elements.slice(),
+  });
+  const applyMemoryPose = (pose: CameraPose) => {
+    const next = clampCameraPose(pose);
+    Object.assign(memoryPose, next);
+    syncingMemoryPose = true;
+    try {
+      if (next.mode === "topdown") {
+        useAppStore.setState({ viewMode: "topdown", zoom: next.zoom });
+        planCentre.set(next.target[0], 0, next.target[2]);
+        applyPlan();
+      } else {
+        useAppStore.setState({
+          viewMode: "diorama",
+          heading: savedHeadingSafe(next.yaw),
+          zoom: next.zoom,
+        });
+        controls.target.set(next.target[0], next.target[1], next.target[2]);
+        poseToOrbit(next, perspectiveCamera.position);
+        perspectiveCamera.lookAt(controls.target);
+        activeCamera = perspectiveCamera;
+        controls.update();
+      }
+    } finally {
+      syncingMemoryPose = false;
+    }
+    render(true);
+  };
+  const beginMemoryFlight = (to: CameraPose, onDone?: () => void) => {
+    const from = currentMemoryPose();
+    const target = clampCameraPose(to);
+    if (motion.matches) {
+      applyMemoryPose(target);
+      onDone?.();
+      if (memoryTour) scheduleFrame();
+      return;
+    }
+    memoryFlight = {
+      from,
+      to: target,
+      started: performance.now(),
+      duration: 1200,
+      ...(onDone ? { onDone } : {}),
+    };
+    controls.enabled = false;
+    scheduleFrame();
+  };
+  const restoreMemoryCamera = () => {
+    if (!memoryTour) return;
+    const tour = memoryTour;
+    memoryTour = null;
+    memoryFlight = null;
+    syncingMemoryPose = true;
+    perspectiveCamera.position.copy(tour.savedRaw.position);
+    perspectiveCamera.quaternion.copy(tour.savedRaw.quaternion);
+    planCentre.copy(tour.savedRaw.planCentre);
+    planCamera.position.copy(tour.savedRaw.planPosition);
+    planCamera.quaternion.copy(tour.savedRaw.planQuaternion);
+    planCamera.projectionMatrix.copy(tour.savedRaw.planProjection);
+    planCamera.projectionMatrixInverse.copy(planCamera.projectionMatrix).invert();
+    controls.target.copy(tour.savedRaw.target);
+    perspectiveCamera.aspect = tour.savedRaw.aspect;
+    perspectiveCamera.updateProjectionMatrix();
+    perspectiveCamera.projectionMatrix.fromArray(tour.savedRaw.projection);
+    activeCamera = tour.savedMode === "topdown" ? planCamera : perspectiveCamera;
+    useAppStore.setState({
+      viewMode: tour.savedMode,
+      heading: tour.savedHeading,
+      zoom: tour.savedZoom,
+    });
+    syncingMemoryPose = false;
+    controls.enabled = tour.savedMode === "diorama";
+    render(true);
+    notifyMemory();
+  };
+  const savedHeadingSafe = (yaw: number) => ((yaw * 180) / Math.PI + 360) % 360;
+  const makeMemoryTour = (memories: readonly MemoryPin[], saved: CameraPose) => ({
+    memories,
+    index: 0,
+    from: saved,
+    to: clampCameraPose(memories[0]!.camera),
+    started: performance.now(),
+    holdUntil: 0,
+    paused: false,
+    saved,
+    savedMode: useAppStore.getState().viewMode,
+    savedHeading: useAppStore.getState().heading,
+    savedZoom: useAppStore.getState().zoom,
+    savedRaw: saveMemoryCamera(),
+  });
+  const startMemoryTour = (memories: readonly MemoryPin[]) => {
+    const visible = memories.filter(
+      (m) => !memorySessionSnapshot.guest || m.visibility !== "private",
+    );
+    const mode = useAppStore.getState().viewMode;
+    if (!visible.length || (mode !== "diorama" && mode !== "topdown")) return;
+    const saved = currentMemoryPose();
+    memoryTour = makeMemoryTour(visible, saved);
+    controls.enabled = false;
+    notifyMemory();
+    beginMemoryFlight(memoryTour.to, () => {
+      if (memoryTour) {
+        memoryTour.holdUntil = performance.now() + 5000;
+        notifyMemory();
+      }
+    });
+  };
+  const flyMemory = (memory: MemoryPin) => {
+    if (memorySessionSnapshot.guest && memory.visibility === "private") return;
+    if (!memoryTour && !memoryFlight) {
+      const mode = useAppStore.getState().viewMode;
+      if (mode !== "diorama" && mode !== "topdown") return;
+      memoryTour = makeMemoryTour([memory], currentMemoryPose());
+      controls.enabled = false;
+      notifyMemory();
+    } else if (memoryTour) {
+      memoryTour.memories = [memory];
+      memoryTour.index = 0;
+      memoryTour.to = clampCameraPose(memory.camera);
+      memoryTour.holdUntil = 0;
+      memoryTour.paused = false;
+      notifyMemory();
+    }
+    beginMemoryFlight(memory.camera);
+  };
+  const unsubscribeMemoryBinding = bindMemoryCamera({
+    getPose: currentMemoryPose,
+    flyTo: flyMemory,
+    startTour: startMemoryTour,
+    previous: () => {
+      if (memoryTour) {
+        memoryTour.index = Math.max(0, memoryTour.index - 1);
+        memoryTour.to = clampCameraPose(memoryTour.memories[memoryTour.index]!.camera);
+        notifyMemory();
+        memoryTour.holdUntil = 0;
+        beginMemoryFlight(memoryTour.to, () => {
+          if (memoryTour && memoryTour.memories.length > 1)
+            memoryTour.holdUntil = performance.now() + 5000;
+        });
+      }
+    },
+    next: () => {
+      if (memoryTour) {
+        if (memoryTour.index + 1 < memoryTour.memories.length) {
+          memoryTour.index += 1;
+          memoryTour.to = clampCameraPose(memoryTour.memories[memoryTour.index]!.camera);
+          notifyMemory();
+          memoryTour.holdUntil = 0;
+          beginMemoryFlight(memoryTour.to, () => {
+            if (memoryTour) memoryTour.holdUntil = performance.now() + 5000;
+          });
+        } else restoreMemoryCamera();
+      }
+    },
+    pause: () => {
+      if (memoryTour) {
+        memoryTour.paused = !memoryTour.paused;
+        notifyMemory();
+      }
+    },
+    exit: restoreMemoryCamera,
+    getSnapshot: memorySnapshot,
+    subscribe: (listener) => {
+      memoryListeners.add(listener);
+      return () => memoryListeners.delete(listener);
+    },
+  });
+  const unsubscribeMemorySession = memorySession.subscribe(() => {
+    const wasGuest = memorySessionSnapshot.guest;
+    memorySessionSnapshot = memorySession.getSnapshot();
+    if (
+      !memorySessionSnapshot.ready ||
+      wasGuest !== memorySessionSnapshot.guest ||
+      (memoryTour &&
+        memoryTour.memories.some(
+          (m) => !memorySessionSnapshot.memories.some((current) => current.id === m.id),
+        ))
+    )
+      restoreMemoryCamera();
+    const sig =
+      memorySessionSnapshot.memories
+        .map((m) => `${m.id}:${m.position.join(",")}:${m.visibility}`)
+        .join("|") + `:${memorySessionSnapshot.guest}`;
+    if (sig !== memoryLastPinSignature) {
+      memoryLastPinSignature = sig;
+      memoryPins.update(memorySessionSnapshot.memories, memorySessionSnapshot.guest);
+      host.dataset["memoryPins"] = String(memoryPins.mesh.count);
+      memoryPinsDirty = true;
+      scheduleFrame();
+      if (!memoryTour && !memoryFlight) {
+        const link = parseMemoryHash(window.location.hash);
+        if (link.state?.id) applyLink(link);
+      }
+    }
+  });
+  memorySessionSnapshot = memorySession.getSnapshot();
+  memoryPins.update(memorySessionSnapshot.memories, memorySessionSnapshot.guest);
+  host.dataset["memoryPinMeshes"] = "1";
+  host.dataset["memoryPins"] = String(memoryPins.mesh.count);
 
   function mountWorld() {
     const snapshot = worldDataProvider.getSnapshot();
@@ -492,6 +792,11 @@ export function createDemoScene(
       return;
     }
     renderer.render(scene, activeCamera);
+    host.dataset["memoryRenderTargets"] = String(memoryRenderTargets);
+    host.dataset["memoryTextures"] = String(renderer.info.memory.textures);
+    host.dataset["memoryGeometries"] = String(renderer.info.memory.geometries);
+    host.dataset["memoryTourActive"] = String(Boolean(memoryTour));
+    host.dataset["memoryPins"] = String(memoryPins.mesh.count);
     const renderedAt = performance.now();
     frameMetrics.record(
       renderedAt,
@@ -512,7 +817,11 @@ export function createDemoScene(
     }
     const projected = projectMarkerAndCull(activeCamera, markerPosition, -0.06);
     marker.style.transform = `translate(-50%, -100%) translate(${projected.x * host.clientWidth}px, ${projected.y * host.clientHeight - 10}px)`;
-    marker.style.visibility = projected.visible ? "visible" : "hidden";
+    marker.style.visibility = memorySessionSnapshot.guest
+      ? "hidden"
+      : projected.visible
+        ? "visible"
+        : "hidden";
     host.dataset["drawCalls"] = String(renderer.info.render.calls);
     host.dataset["triangles"] = String(renderer.info.render.triangles);
     host.dataset["renderedFrames"] = String(frameSnapshot.renderedFrames);
@@ -552,7 +861,12 @@ export function createDemoScene(
   }
 
   function scheduleFrame() {
-    if (disposed || document.hidden || (motion.matches && !lifeActive()) || animationFrame !== 0)
+    if (
+      disposed ||
+      document.hidden ||
+      (motion.matches && !lifeActive() && !memoryTour && !memoryFlight && !memoryPinsDirty) ||
+      animationFrame !== 0
+    )
       return;
     animationFrame = requestAnimationFrame(tick);
   }
@@ -568,9 +882,49 @@ export function createDemoScene(
 
   function tick(now: number) {
     animationFrame = 0;
-    if (disposed || document.hidden || (motion.matches && !lifeActive())) return;
+    if (
+      disposed ||
+      document.hidden ||
+      (motion.matches && !lifeActive() && !memoryTour && !memoryFlight && !memoryPinsDirty)
+    )
+      return;
     const delta = lastFrame === 0 ? 0.016 : Math.min(0.1, (now - lastFrame) / 1000);
     lastFrame = now;
+    if (memoryFlight && !memoryTour?.paused) {
+      const t = Math.min(1, (now - memoryFlight.started) / memoryFlight.duration);
+      const prev =
+        memoryTour?.memories[Math.max(0, (memoryTour.index ?? 0) - 1)]?.camera ?? memoryFlight.from;
+      const next = memoryTour?.memories[(memoryTour.index ?? 0) + 1]?.camera ?? memoryFlight.to;
+      const eased = t * t * (3 - 2 * t);
+      applyMemoryPose(catmullCameraPose(prev, memoryFlight.from, memoryFlight.to, next, eased));
+      if (t >= 1) {
+        const done = memoryFlight.onDone;
+        memoryFlight = null;
+        notifyMemory();
+        done?.();
+      }
+    }
+    if (
+      memoryTour &&
+      !memoryTour.paused &&
+      !memoryFlight &&
+      memoryTour.holdUntil &&
+      now >= memoryTour.holdUntil
+    ) {
+      if (memoryTour.index + 1 < memoryTour.memories.length) {
+        memoryTour.index += 1;
+        memoryTour.to = clampCameraPose(memoryTour.memories[memoryTour.index]!.camera);
+        notifyMemory();
+        beginMemoryFlight(memoryTour.to, () => {
+          if (memoryTour) {
+            memoryTour.holdUntil = performance.now() + 5000;
+            notifyMemory();
+          }
+        });
+      } else restoreMemoryCamera();
+    }
+    host.dataset["memoryTourActive"] = String(Boolean(memoryTour));
+    host.dataset["memoryPins"] = String(memoryPins.mesh.count);
 
     atmosphere.tick(delta);
     // Input can dirty a stationary POV without requiring another moving frame.
@@ -589,7 +943,14 @@ export function createDemoScene(
     }
 
     const controlsChanged = controls.enabled ? updateControls() : false;
-    if (controlsChanged || atmosphere.rainVisible || lifeFrameRequested || lifeActive()) {
+    if (
+      controlsChanged ||
+      atmosphere.rainVisible ||
+      lifeFrameRequested ||
+      lifeActive() ||
+      memoryFlight ||
+      (memoryTour && !memoryTour.paused)
+    ) {
       render(true);
       scheduleFrame();
     }
@@ -631,11 +992,21 @@ export function createDemoScene(
   }
 
   function onControlStart() {
+    if (memoryTour || memoryFlight) restoreMemoryCamera();
     interactionActive = true;
   }
   function onControlEnd() {
     interactionActive = false;
     frameMetrics.reset();
+    window.clearTimeout(interactionTimer);
+    interactionTimer = window.setTimeout(() => {
+      if (!disposed)
+        window.history.replaceState(
+          null,
+          "",
+          `${window.location.pathname}${window.location.search}${buildMemoryHash({ pose: currentMemoryPose(), time: useAppStore.getState().timeOfDayMinutes })}`,
+        );
+    }, 120);
   }
 
   function transientInteraction() {
@@ -725,9 +1096,23 @@ export function createDemoScene(
       const hiddenLayers = new Set<string>();
       if (!worldBundle.layers.trees.visible) hiddenLayers.add("trees");
       if (!worldBundle.layers.labels.visible) hiddenLayers.add("labels");
-      selectFeature(
-        pickFeature(new THREE.Raycaster(), pointer, activeCamera, worldBundle.group, hiddenLayers),
-      );
+      const pinHit = new THREE.Raycaster();
+      pinHit.setFromCamera(pointer, activeCamera);
+      const pinIntersections = pinHit.intersectObject(memoryPins.mesh, false);
+      const pin = pinIntersections[0];
+      if (pin && Number.isInteger(pin.instanceId)) {
+        const memory = memoryPins.memories[pin.instanceId ?? -1];
+        if (memory) flyMemory(memory);
+      } else
+        selectFeature(
+          pickFeature(
+            new THREE.Raycaster(),
+            pointer,
+            activeCamera,
+            worldBundle.group,
+            hiddenLayers,
+          ),
+        );
     }
     planPointers.delete(event.pointerId);
     planPointerStarts.delete(event.pointerId);
@@ -746,14 +1131,31 @@ export function createDemoScene(
     state.setZoom(state.zoom * (event.deltaY < 0 ? 1.12 : 0.89));
   }
 
+  let memoryPausedAt = 0;
+  let memoryVisibilityPaused = false;
   function onVisibility() {
+    if (document.hidden) memoryPausedAt = performance.now();
     cancelAnimationFrame(animationFrame);
     animationFrame = 0;
     lastFrame = 0;
     frameMetrics.reset();
+    if (document.hidden && memoryTour && !memoryTour.paused) {
+      memoryVisibilityPaused = true;
+      memoryTour.paused = true;
+      notifyMemory();
+    }
     applyEnvironment();
     if (document.hidden) audio.suspend();
     if (!document.hidden && !disposed) {
+      const resumedAt = performance.now();
+      const pausedFor = memoryPausedAt ? resumedAt - memoryPausedAt : 0;
+      if (memoryFlight) memoryFlight.started += pausedFor;
+      if (memoryTour?.holdUntil) memoryTour.holdUntil += pausedFor;
+      if (memoryTour && memoryVisibilityPaused) {
+        memoryTour.paused = false;
+        memoryVisibilityPaused = false;
+        notifyMemory();
+      }
       render();
       scheduleFrame();
     }
@@ -833,6 +1235,67 @@ export function createDemoScene(
     onContextLost();
   }
 
+  bindPostcardCapture(async (width, height) => {
+    if (width * height > renderer.capabilities.maxTextureSize ** 2)
+      throw new Error("POSTCARD_TOO_LARGE");
+    const target = new THREE.WebGLRenderTarget(width, height, { depthBuffer: true });
+    memoryRenderTargets += 1;
+    const previous = renderer.getRenderTarget();
+    const oldViewport = renderer.getViewport(new THREE.Vector4());
+    const oldScissor = renderer.getScissor(new THREE.Vector4());
+    const oldScissorTest = renderer.getScissorTest();
+    const oldAutoClear = renderer.autoClear;
+    const oldCamera = activeCamera;
+    const oldPerspectiveAspect = perspectiveCamera.aspect;
+    const oldPerspectiveProjection = perspectiveCamera.projectionMatrix.elements.slice();
+    const oldPlanProjection = planCamera.projectionMatrix.elements.slice();
+    let canvas2d: HTMLCanvasElement | null = null;
+    try {
+      const camera = oldCamera;
+      if (camera instanceof THREE.PerspectiveCamera) {
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+      }
+      renderer.setRenderTarget(target);
+      renderer.setViewport(0, 0, width, height);
+      renderer.setScissorTest(false);
+      renderer.render(scene, camera);
+      const pixels = new Uint8Array(width * height * 4);
+      renderer.readRenderTargetPixels(target, 0, 0, width, height, pixels);
+      canvas2d = document.createElement("canvas");
+      canvas2d.width = width;
+      canvas2d.height = height;
+      const ctx = canvas2d.getContext("2d");
+      if (!ctx) throw new Error("CANVAS_UNAVAILABLE");
+      const image = ctx.createImageData(width, height);
+      for (let y = 0; y < height; y++)
+        image.data.set(
+          pixels.subarray(y * width * 4, (y + 1) * width * 4),
+          (height - y - 1) * width * 4,
+        );
+      ctx.putImageData(image, 0, 0);
+      return await new Promise<Blob>((resolve, reject) =>
+        canvas2d!.toBlob((b) => (b ? resolve(b) : reject(new Error("ENCODE_FAILED"))), "image/png"),
+      );
+    } finally {
+      perspectiveCamera.aspect = oldPerspectiveAspect;
+      perspectiveCamera.updateProjectionMatrix();
+      perspectiveCamera.projectionMatrix.fromArray(oldPerspectiveProjection);
+      planCamera.projectionMatrix.fromArray(oldPlanProjection);
+      renderer.autoClear = oldAutoClear;
+      renderer.setRenderTarget(previous);
+      renderer.setViewport(oldViewport);
+      renderer.setScissor(oldScissor);
+      renderer.setScissorTest(oldScissorTest);
+      target.dispose();
+      memoryRenderTargets = 0;
+      host.dataset["memoryRenderTargets"] = "0";
+      if (canvas2d) {
+        canvas2d.width = 0;
+        canvas2d.height = 0;
+      }
+    }
+  });
   const resizeObserver = new ResizeObserver(resize);
   resizeObserver.observe(host);
   controls.addEventListener("change", onControlChange);
@@ -852,6 +1315,15 @@ export function createDemoScene(
 
   const unsubscribeStore = useAppStore.subscribe((state, previous) => {
     if (disposed) return;
+    if (syncingMemoryPose) return;
+    if ((memoryTour || memoryFlight) && state.viewMode !== previous.viewMode) {
+      const requestedMode = state.viewMode;
+      restoreMemoryCamera();
+      useAppStore.setState({ viewMode: requestedMode });
+      return;
+    }
+    if ((memoryTour || memoryFlight) && state.viewReset !== previous.viewReset)
+      restoreMemoryCamera();
     if (
       state.lifeEnabled !== previous.lifeEnabled ||
       state.lifeDensity !== previous.lifeDensity ||
@@ -861,6 +1333,8 @@ export function createDemoScene(
     ) {
       life?.configure();
       life?.update(0);
+      // Publish the paused/configured clock now, not a throttled pre-pause snapshot.
+      lastLifeMetricsAt = 0;
       render();
       if (lifeActive()) scheduleFrame();
     }
@@ -929,6 +1403,12 @@ export function createDemoScene(
   const unsubscribeWorld = worldDataProvider.subscribe((snapshot) => {
     if (disposed) return;
     currentWorld = snapshot;
+    if (memoryTour || memoryFlight) {
+      memoryTour = null;
+      memoryFlight = null;
+      controls.enabled = true;
+      notifyMemory();
+    }
     if (snapshot.packageEpoch !== lastPackageEpoch) {
       selectFeature(null);
       lastPackageEpoch = snapshot.packageEpoch;
@@ -997,12 +1477,33 @@ export function createDemoScene(
       })();
     }
   });
+  const applyLink = (link: ReturnType<typeof parseMemoryHash>) => {
+    if (!link.valid) {
+      memoryLinkError = link.reason ?? "invalid";
+      notifyMemory();
+      return;
+    }
+    memoryLinkError = undefined;
+    if (link.state?.time !== undefined) useAppStore.getState().setTimeOfDayMinutes(link.state.time);
+    if (link.state?.pose) applyMemoryPose(link.state.pose);
+    if (link.state?.id) {
+      const memory = memorySessionSnapshot.memories.find(
+        (candidate) => candidate.id === link.state?.id,
+      );
+      if (memory && (!memorySessionSnapshot.guest || memory.visibility === "public"))
+        flyMemory(memory);
+    }
+  };
+  const initialLink = parseMemoryHash(window.location.hash);
+  const onHashChange = () => applyLink(parseMemoryHash(window.location.hash));
+  window.addEventListener("hashchange", onHashChange);
   mountWorld();
   updateLayerVisibility();
   applyEnvironment();
   resize();
   atmosphere.warm(renderer, activeCamera);
   render();
+  applyLink(initialLink);
   bindRealStreetView(() => {
     if (disposed || !worldRenderable()) return null;
     const mode = useAppStore.getState().viewMode;
@@ -1043,6 +1544,10 @@ export function createDemoScene(
       window.clearTimeout(interactionTimer);
       cancelAnimationFrame(animationFrame);
       unsubscribeStore();
+      unsubscribeMemorySession();
+      unsubscribeMemoryBinding();
+      bindPostcardCapture(null);
+      memoryPins.dispose();
       unsubscribeWorld();
       unsubscribeConfidence();
       resizeObserver.disconnect();
@@ -1051,6 +1556,7 @@ export function createDemoScene(
       controls.dispose();
       audio.dispose();
       resetLifeSession();
+      window.removeEventListener("hashchange", onHashChange);
       document.removeEventListener("visibilitychange", onVisibility);
       motion.removeEventListener("change", onMotion);
       canvas.removeEventListener("keydown", onKey);

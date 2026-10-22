@@ -1,0 +1,25 @@
+{
+  "syntheticOnly": true,
+  "fixture": "built-in synthetic demo + generated stripes",
+  "date": "2026-06-21",
+  "minutes": 420,
+  "heading": 28,
+  "zoom": 1,
+  "dpr": 1,
+  "renderer": "Chromium SwiftShader, not physical GPU",
+  "postcard": {
+    "width": 2048,
+    "height": 1152,
+    "type": "image/png"
+  },
+  "files": [
+    "diorama-pins.png",
+    "topdown-pins.png",
+    "editor-390x844.png",
+    "editor-740x390.png",
+    "tour-card.png",
+    "journal-before-after.png",
+    "postcard-2k.png",
+    "guest.png"
+  ]
+}

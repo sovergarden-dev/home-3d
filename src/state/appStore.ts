@@ -1,6 +1,7 @@
 import { parseIsoDate } from "@/atmosphere/calendar";
 import { vietnamDateTime } from "@/atmosphere/clock";
 import { create } from "zustand";
+import { keepMoment, releaseMoment, clearMomentBlobs } from "@/memories/moments";
 
 export type TimeSpeed = 0 | 1 | 4;
 export type Weather = "sunny" | "cloudy" | "rain" | "storm";
@@ -48,7 +49,7 @@ export interface AppState {
   showTrees: boolean;
   showLabels: boolean;
   planMeasurement: PlanMeasurement | null;
-  moments: { id: number; image: string; minutes: number }[];
+  moments: { id: number; minutes: number }[];
   addMoment: (image: string) => void;
   clearMoments: () => void;
   setSelectedDate: (date: string) => void;
@@ -113,11 +114,18 @@ export const useAppStore = create<AppState>((set) => ({
   showLabels: true,
   planMeasurement: null,
   moments: [],
-  addMoment: (image) =>
-    set((s) => ({
-      moments: [{ id: Date.now(), image, minutes: s.timeOfDayMinutes }, ...s.moments].slice(0, 4),
-    })),
-  clearMoments: () => set({ moments: [] }),
+  addMoment: (image) => {
+    const id = keepMoment(image);
+    if (id === null) return;
+    set((s) => {
+      s.moments.slice(3).forEach((moment) => releaseMoment(moment.id));
+      return { moments: [{ id, minutes: s.timeOfDayMinutes }, ...s.moments].slice(0, 4) };
+    });
+  },
+  clearMoments: () => {
+    clearMomentBlobs();
+    set({ moments: [] });
+  },
   setSelectedDate: (selectedDate) => {
     if (parseIsoDate(selectedDate)) set({ selectedDate });
   },
