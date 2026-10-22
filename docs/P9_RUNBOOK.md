@@ -47,3 +47,11 @@ Kết quả chạy, counts, skips, raw artifacts và giới hạn được ghi t
 ## Ranh giới bàn giao
 
 Nhánh `feat/p9-life-sound`, PR thường vào `main`, không stacked. Chỉ `SUBMITTED_FOR_TECHNICAL_REVIEW`; Notion AI quyết định review. Không merge/auto-merge/Publish/deploy, đổi Lovable sync/settings, viết lại lịch sử đã push, xóa nhánh hoặc mở P10–P13. Không giao checklist QA lẻ cho chủ dự án. GPU vật lý, native Safari/iOS/Android và khu thật chưa chạy ghi NOT_VERIFIED, không suy từ headless.
+
+## Batch review vòng 1 — P9-R1…R4
+
+Đối chứng WebKit H6 20 vòng trên main `7221b0c` và P9 cũ `9c6893c`, cùng máy ba lượt: tách mở gói, Mặt bằng/Đi bộ/Diorama, capture, Giới thiệu/Về phố/ready; ghi mountWorld/createLifeRuntime, enter/exit POV và frame. Probe bên ngoài dùng weak references để không tự giữ renderer/canvas; số context logic đã lost không phải bằng chứng driver đã thu hồi VRAM. So với bảng từng bài CI P8 `d93b908`, không quy chậm do hạ tầng nếu chưa có bằng chứng.
+
+Bản sửa dùng demand render cho Walk đứng yên, vẫn đánh thức bằng input/pose và giữ frame cuối. Dispose mọi batch instance, kể cả đèn, và detach group cũ. Tách constructor/resume AudioContext, tổng hợp buffer/node và draw đầu; context vẫn chỉ tạo trong gesture. Nếu phần first-draw còn vượt 100 ms trên SwiftShader thì giữ NOT_MET, không đổi ngưỡng. BVH là mã riêng `src/engine/life/collision.ts`; `three-mesh-bvh` không cài, không thêm dependency.
+
+Trước nộp: ít nhất năm lượt WebKit H6 liên tiếp nguyên bài; frozen install/full check/pipeline dry-run/ba browser/production smoke cùng mã cuối. Mục tiêu H6 WebKit CI ≤70 giây, test timeout vẫn 90 giây. Chỉ một workflow_dispatch mới tại head mới; nếu đỏ thì dừng, giữ trace + bảng pha cho reviewer, không dispatch lại hoặc rerun run cũ `39654782393`. Kết quả thực ở receipt, không lấy hướng dẫn này làm bằng chứng đã đạt.

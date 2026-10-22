@@ -27,6 +27,7 @@ export interface PovControllerOptions {
   eyeHeight?: number;
   reducedMotion?: boolean;
   onStateChange?: (mode: PovMode) => void;
+  onInvalidate?: () => void;
 }
 export interface PovDiagnostics {
   mode: PovMode;
@@ -41,6 +42,7 @@ export interface PovDiagnostics {
 }
 export interface PovController {
   setMode(mode: PovMode): void;
+  active(): boolean;
   update(dt: number): void;
   move(intent: { x: number; z: number }): void;
   look(input: { yaw?: number; pitch?: number; dx?: number; dy?: number }): void;
@@ -213,6 +215,12 @@ export function createPovController(options: PovControllerOptions): PovControlle
   let pointerId: number | null = null;
   let lastX = 0,
     lastY = 0;
+  let poseDirty = false;
+  const invalidate = () => {
+    if (disposed) return;
+    poseDirty = true;
+    options.onInvalidate?.();
+  };
   const syncAngles = () => {
     const e = new THREE.Euler().setFromQuaternion(camera.quaternion, "YXZ");
     yaw = e.y;
@@ -235,6 +243,7 @@ export function createPovController(options: PovControllerOptions): PovControlle
       yaw += deltaYaw;
       pitch = clamp(pitch + deltaPitch, -1.35, 1.35);
     }
+    invalidate();
   }
   const clearKeys = () => {
     keys.clear();
@@ -264,6 +273,7 @@ export function createPovController(options: PovControllerOptions): PovControlle
       rideLabel = null;
       releasePointer();
       orient.stop();
+      invalidate();
       options.onStateChange?.(null);
       return;
     }
@@ -283,6 +293,7 @@ export function createPovController(options: PovControllerOptions): PovControlle
       pitch = 0;
       applyPose();
     }
+    invalidate();
     options.onStateChange?.(mode);
     if (next === "ride") {
       rideIndex = 0;
@@ -302,27 +313,55 @@ export function createPovController(options: PovControllerOptions): PovControlle
   function move(value: { x: number; z: number }) {
     if (!Number.isFinite(value.x) || !Number.isFinite(value.z)) return;
     const length = Math.hypot(value.x, value.z);
-    inputX = length > 1 ? value.x / length : value.x;
-    inputZ = length > 1 ? value.z / length : value.z;
+    const nextX = length > 1 ? value.x / length : value.x;
+    const nextZ = length > 1 ? value.z / length : value.z;
+    if (nextX === inputX && nextZ === inputZ) return;
+    inputX = nextX;
+    inputZ = nextZ;
+    invalidate();
   }
   function look(value: { yaw?: number; pitch?: number; dx?: number; dy?: number }) {
-    if (value.yaw !== undefined) yaw = value.yaw;
-    if (value.pitch !== undefined) pitch = clamp(value.pitch, -1.35, 1.35);
+    let changed = false;
+    if (value.yaw !== undefined && value.yaw !== yaw) {
+      yaw = value.yaw;
+      changed = true;
+    }
+    if (value.pitch !== undefined) {
+      const nextPitch = clamp(value.pitch, -1.35, 1.35);
+      if (nextPitch !== pitch) {
+        pitch = nextPitch;
+        changed = true;
+      }
+    }
     if (value.dx !== undefined) {
       yaw -= value.dx * 0.002;
       if (mode === "ride") rideLookYaw -= value.dx * 0.002;
+      changed ||= value.dx !== 0;
     }
     if (value.dy !== undefined) {
       pitch = clamp(pitch - value.dy * 0.002, -1.35, 1.35);
       if (mode === "ride") rideLookPitch = clamp(rideLookPitch - value.dy * 0.002, -1.35, 1.35);
+      changed ||= value.dy !== 0;
     }
-    if (mode) applyPose();
+    if (mode && changed) {
+      applyPose();
+      invalidate();
+    }
   }
   const collisionFrom = { x: 0, z: 0 };
   const collisionDelta = { x: 0, z: 0 };
   const collisionResult = { position: { x: 0, z: 0 }, collisions: 0 };
   function update(dt: number) {
-    if (disposed || !mode || paused) return;
+    if (disposed) return;
+    if (!mode) {
+      poseDirty = false;
+      return;
+    }
+    if (paused) {
+      poseDirty = false;
+      return;
+    }
+    poseDirty = false;
     const elapsed = clamp(Number.isFinite(dt) ? dt : 0, 0, 0.1);
     if (mode === "ride") {
       if (rideEnded) {
@@ -464,6 +503,7 @@ export function createPovController(options: PovControllerOptions): PovControlle
     lastX = event.clientX;
     lastY = event.clientY;
     canvas.setPointerCapture?.(event.pointerId);
+    invalidate();
   };
   const pointerMove = (event: PointerEvent) => {
     const locked = typeof document !== "undefined" && document.pointerLockElement === canvas;
@@ -483,11 +523,14 @@ export function createPovController(options: PovControllerOptions): PovControlle
     pointerId = null;
   };
   const blur = () => {
+    if (!mode) return;
     clearKeys();
     releasePointer();
+    invalidate();
   };
   const pointerLockChange = () => {
     if (typeof document !== "undefined" && document.pointerLockElement !== canvas) dragging = false;
+    if (mode) invalidate();
   };
   canvas.addEventListener("pointerdown", pointerDown);
   canvas.addEventListener("pointermove", pointerMove);
@@ -515,6 +558,14 @@ export function createPovController(options: PovControllerOptions): PovControlle
   };
   return {
     setMode: enter,
+    active() {
+      if (disposed) return false;
+      if (poseDirty) return true;
+      if (paused) return false;
+      if (!mode) return false;
+      if (mode === "ride") return !rideEnded;
+      return Math.hypot(inputX, inputZ) > 0.001 || Math.hypot(velocityX, velocityZ) > 0.001;
+    },
     update,
     move,
     look,

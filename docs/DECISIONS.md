@@ -61,3 +61,10 @@ Notion AI tạo và kiểm patch. Hermes áp nguyên patch, chạy frozen instal
 - Đồ thị/làn/lối đi suy ra là bộ nhớ trình bày, không ghi vào roads/footprints. BVH CPU tường footprint bảo thủ (thiếu chiều cao dùng3m), mặt đất/biên gói, vật cản xe buffer tái dùng; không dependency vật lý/audio mới. Xe ôm chỉ một tuyến đồ thị hữu hạn nối liên tục từ tâm tới nút hợp lệ; fixture có nhãn đích giả; không chỉ đường thật.
 - Nút tắt nhanh lớp sống luôn thấy; Mặt bằng trung tính không tác nhân. AudioContext chỉ tạo bằng thao tác âm thanh thực, một context trong scene; tổng hợp/clip local manifestSHA256≤1.000.000byte. Không fetch/micro/storage/upload. Thư mục audio-local gitignored; asset procedural tự tạo.
 - Ngưỡng CPU update tiermid đặt trước ≤4ms p95; latency mục tiêu<100ms. So sánh perf phải cùng fixture/time/camera/DPR, rawslowframe không lọc; JS heap estimate không phải GPUmemory. Thiết bị/GPU vật lý/nativeSafari/khu thật chưa đo ghi NOT_VERIFIED. Chi tiết và giới hạn trong runbook/receipt, không đổi ngưỡng để gọi đạt.
+
+## P9 review vòng 1 — demand render và ownership
+
+- Walk đứng yên không phải hoạt ảnh: dùng dirty pose/input/vận tốc còn lại để yêu cầu frame trên RAF hiện hữu; phím, kéo, pointer-lock, touch và orientation đánh thức frame. Khi cập nhật tiêu thụ dirty flag, scene vẫn vẽ frame cuối; Ride chạy/dừng/kết thúc và tác nhân theo đồng hồ giữ hành vi cũ. Không giảm chất lượng, cắt số vòng hay sửa timeout/test/workflow để che chi phí.
+- Graph không dùng được không thể sinh tác nhân: giữ simulation/status và POV/BVH, nhưng không cấp phát geometry/material/instance tác nhân rỗng để renderer warm shader vô ích mỗi lần mở gói/route. World mới tạo runtime mới; graph hợp lệ giữ đủ tác nhân, không giảm chất lượng hay trần tier.
+- Runtime presentation trả mọi InstancedMesh đã tạo, gồm batch đèn riêng, và tháo group khỏi scene khi thay gói/dispose. Việc này khép ownership của lớp sống, không tự chứng minh nguyên nhân cảnh báo context WebKit hoặc việc driver đã thu hồi bộ nhớ GPU.
+- BVH va chạm là mã riêng tại `src/engine/life/collision.ts`, không phải dependency `three-mesh-bvh`; không thêm dependency/đổi lock trong batch này.

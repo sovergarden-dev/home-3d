@@ -47,4 +47,6 @@ Demo 1 chỉ là bản chơi thử hư cấu. Không coi checklist các pha chí
 
 Lớp sống có seed, giao thông/người/hàng rong/động vật, WebAudio tổng hợp + khe clip local, POV Đi bộ/xe ôm, kiểm chứng hiệu năng/lifecycle thuộc PRP9 hiện hành. Xem `docs/P9_RUNBOOK.md` và receipt scope; không suy trạng thái technical-review-passed từ code/docs.
 
+Review vòng 1 là `CHANGES_REQUESTED`: batch P9-R1…R4 giữ cùng PR #6, đo pha matched và năm lượt H6 WebKit nguyên bài, context ledger, split first-sound, đính chính BVH project-owned. Receipt mới là nơi ghi kết quả; cảnh báo context tồn tại ở P8, giới hạn SwiftShader và heap estimate không được tự đánh dấu đã khép. Chỉ một dispatch mới sau đủ local gate; nếu đỏ thì dừng và nộp trace/bảng pha.
+
 Ngoài P9 tiếp tục đóng: bản thu riêng chưa có; georeference/khu thật `BLOCKED_MISSING_GEOREFERENCE` / `REAL_WORLD_NOT_VERIFIED`; kiểm GPU vật lý/nativeSafari/iOS/Android NOT_VERIFIED. Không reintake, sửa nguồn H6, mở P10–P13, cloud/R2/Access, Publish/deploy hay Lovable sync/settings.

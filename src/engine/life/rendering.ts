@@ -93,6 +93,28 @@ export function createLifeRenderer(sim: LifeSimulation): LifeRenderer {
   const group = new THREE.Group();
   group.name = "life-renderer";
   group.userData["nonPickable"] = true;
+  // An unusable road graph cannot produce actors. Keep its simulation/status
+  // contract, but do not allocate instance buffers or compile empty materials
+  // during every package/route mount. A replacement world gets a new runtime.
+  if (!sim.graph.enabled) {
+    let disposed = false;
+    group.visible = false;
+    return {
+      group,
+      update(dt, settings = {}) {
+        if (!disposed) sim.update(dt, settings);
+      },
+      setVisible() {
+        group.visible = false;
+      },
+      dispose() {
+        if (disposed) return;
+        disposed = true;
+        group.removeFromParent();
+        group.clear();
+      },
+    };
+  }
   const meshes = new Map<LifeKind, THREE.InstancedMesh>(),
     geometries: THREE.BufferGeometry[] = [],
     materials: THREE.Material[] = [],
@@ -210,8 +232,10 @@ export function createLifeRenderer(sim: LifeSimulation): LifeRenderer {
       if (disposed) return;
       disposed = true;
       for (const mesh of meshes.values()) mesh.dispose();
+      lamps.dispose();
       for (const geometry of geometries) geometry.dispose();
       for (const material of materials) material.dispose();
+      group.removeFromParent();
       group.clear();
     },
   };

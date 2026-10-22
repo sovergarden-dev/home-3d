@@ -34,6 +34,7 @@ export function createLifeRuntime(options: {
     world: options.world,
     orbitTarget: options.target,
     reducedMotion: options.reducedMotion,
+    onInvalidate: options.invalidate,
     onStateChange(mode) {
       if (
         !mode &&
@@ -133,8 +134,7 @@ export function createLifeRuntime(options: {
         ((state.lifeEnabled &&
           state.viewMode !== "topdown" &&
           (state.realTimeEnabled || state.timeSpeed !== 0)) ||
-          state.viewMode === "walk" ||
-          (state.viewMode === "ride" && !state.ridePaused && state.timeSpeed !== 0))
+          ((state.viewMode === "walk" || state.viewMode === "ride") && pov.active()))
       );
     },
     metrics() {

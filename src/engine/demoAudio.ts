@@ -49,6 +49,9 @@ export function createDemoAudio(options: DemoAudioOptions = {}): DemoAudio {
   let activeVoices = 0;
   let activeNodeCount = 0;
   let totalNodeCount = 0;
+  let layersReady = false;
+  let resumePromise: Promise<void> | null = null;
+  let suspendedByApp = false;
   let imported: AudioManifest | null = null;
   let importRevision = 0;
   let lifeSources = [...(options.lifeSources ?? DEFAULT_LIFE_SOURCES)];
@@ -76,15 +79,34 @@ export function createDemoAudio(options: DemoAudioOptions = {}): DemoAudio {
   };
   const pause = () => {
     if (context && master) master.gain.setTargetAtTime(0, context.currentTime, 0.02);
-    if (context && context.state === "running") void context.suspend().catch(() => {});
+    if (context) {
+      suspendedByApp = true;
+      if (context.state === "running") void context.suspend().catch(() => {});
+    }
     stopVoices();
   };
   const onVisibility = () => {
     if (document.hidden) pause();
+    else if (enabled) {
+      const current = ensureContext();
+      if (current) {
+        master?.gain.setTargetAtTime(0.22, current.currentTime, 0.05);
+        scheduleLayers(current);
+      }
+    }
   };
   const onPageHide = () => pause();
+  const onPageShow = () => {
+    if (!enabled) return;
+    const current = ensureContext();
+    if (current && !(typeof document !== "undefined" && document.hidden)) {
+      master?.gain.setTargetAtTime(0.22, current.currentTime, 0.05);
+      scheduleLayers(current);
+    }
+  };
   if (typeof document !== "undefined") addListener(document, "visibilitychange", onVisibility);
   if (typeof window !== "undefined") addListener(window, "pagehide", onPageHide);
+  if (typeof window !== "undefined") addListener(window, "pageshow", onPageShow);
 
   const track = <T>(node: T): T => {
     totalNodeCount += 1;
@@ -108,7 +130,24 @@ export function createDemoAudio(options: DemoAudioOptions = {}): DemoAudio {
       compressor.release.value = 0.15;
       master.connect(compressor);
       compressor.connect(context.destination);
+      return context;
+    } catch {
+      if (context) void context.close().catch(() => {});
+      context = null;
+      master = null;
+      return null;
+    }
+  }
 
+  /**
+   * Build the synthetic clips after the trusted gesture has resumed the context.
+   * AudioContext construction/resume stays on the gesture path, while the
+   * application-owned sample generation and node graph do not block that handler.
+   */
+  function initializeLayers() {
+    if (disposed || layersReady || !context || !master) return;
+    layersReady = true;
+    try {
       ambience = track(context.createBufferSource());
       ambience.buffer = createSyntheticBuffer(context, weather, layerMinutes);
       ambience.loop = true;
@@ -126,13 +165,81 @@ export function createDemoAudio(options: DemoAudioOptions = {}): DemoAudio {
       rain.connect(rainGain);
       rainGain.connect(master);
       rain.start();
-      return context;
     } catch {
-      if (context) void context.close().catch(() => {});
-      context = null;
-      master = null;
-      return null;
+      layersReady = false;
     }
+  }
+
+  function scheduleLayers(current: AudioContext) {
+    if (
+      disposed ||
+      context !== current ||
+      !enabled ||
+      (typeof document !== "undefined" && document.hidden)
+    )
+      return;
+    if (current.state === "running" && !suspendedByApp) {
+      if (!layersReady)
+        void Promise.resolve().then(() => {
+          if (
+            !disposed &&
+            context === current &&
+            enabled &&
+            !(typeof document !== "undefined" && document.hidden) &&
+            current.state === "running"
+          )
+            initializeLayers();
+        });
+      return;
+    }
+    // One in-flight resume is enough, but a completed suspend must always be
+    // allowed to resume again even when the layers were already built.
+    if (resumePromise) return;
+    let pending: Promise<void>;
+    try {
+      pending = Promise.resolve(current.resume());
+    } catch {
+      return;
+    }
+    resumePromise = pending;
+    void pending.then(
+      () => {
+        if (resumePromise === pending) resumePromise = null;
+        if (
+          !disposed &&
+          context === current &&
+          (!enabled || (typeof document !== "undefined" && document.hidden))
+        ) {
+          pause();
+          return;
+        }
+        if (
+          !disposed &&
+          context === current &&
+          enabled &&
+          suspendedByApp &&
+          current.state !== "running"
+        ) {
+          // A suspend queued behind the old resume may have won while off/on
+          // reused its promise. Reconcile once, not an autoplay retry loop.
+          suspendedByApp = false;
+          scheduleLayers(current);
+          return;
+        }
+        if (context === current && current.state === "running") suspendedByApp = false;
+        if (
+          !disposed &&
+          context === current &&
+          enabled &&
+          !(typeof document !== "undefined" && document.hidden) &&
+          current.state === "running"
+        )
+          initializeLayers();
+      },
+      () => {
+        if (resumePromise === pending) resumePromise = null;
+      },
+    );
   }
 
   function rainLevel(value: AudioWeather): number {
@@ -175,7 +282,7 @@ export function createDemoAudio(options: DemoAudioOptions = {}): DemoAudio {
     const current = ensureContext();
     if (current && !(typeof document !== "undefined" && document.hidden)) {
       master?.gain.setTargetAtTime(0.22, current.currentTime, 0.05);
-      if (current.state !== "running") void current.resume().catch(() => {});
+      scheduleLayers(current);
     }
   }
 
@@ -184,12 +291,7 @@ export function createDemoAudio(options: DemoAudioOptions = {}): DemoAudio {
     gestureSeen = true;
     const current = ensureContext();
     if (!current) return false;
-    if (
-      enabled &&
-      !(typeof document !== "undefined" && document.hidden) &&
-      current.state !== "running"
-    )
-      void current.resume().catch(() => {});
+    if (enabled) scheduleLayers(current);
     return true;
   }
 

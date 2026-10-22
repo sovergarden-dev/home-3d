@@ -272,7 +272,7 @@ export function createDemoScene(
       canvas,
       target: controls.target,
       reducedMotion: motion.matches,
-      invalidate: () => {},
+      invalidate: scheduleFrame,
     });
     scene.add(life.group);
     planPanRevision = 0;
@@ -573,6 +573,9 @@ export function createDemoScene(
     lastFrame = now;
 
     atmosphere.tick(delta);
+    // Input can dirty a stationary POV without requiring another moving frame.
+    // Keep that final draw even when update() consumes the pending pose change.
+    const lifeFrameRequested = lifeActive();
     life?.update(delta, frameSnapshot.p50Ms ? 1000 / frameSnapshot.p50Ms : 60);
     if (life && now - lastPassbyAt > 1000 && useAppStore.getState().soundOn) {
       lastPassbyAt = now;
@@ -586,7 +589,7 @@ export function createDemoScene(
     }
 
     const controlsChanged = controls.enabled ? updateControls() : false;
-    if (controlsChanged || atmosphere.rainVisible || lifeActive()) {
+    if (controlsChanged || atmosphere.rainVisible || lifeFrameRequested || lifeActive()) {
       render(true);
       scheduleFrame();
     }
