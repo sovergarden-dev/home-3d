@@ -454,7 +454,10 @@ test("P10 tour uses actual camera, restores pose, mode interruption, strict deep
     const d = await window.__p10Import("/src/memories/deepLink.ts");
     const old = c.getPose();
     c.startTour(s.getSnapshot().memories);
-    await new Promise((r) => setTimeout(r, 80));
+    // Await actual camera progress, not an 80 ms assumption about software WebKit.
+    const deadline = performance.now() + 5000;
+    while (JSON.stringify(c.getPose()) === JSON.stringify(old) && performance.now() < deadline)
+      await new Promise((r) => requestAnimationFrame(r));
     const active = c.getSnapshot().active;
     const moved = c.getPose();
     c.exit();
