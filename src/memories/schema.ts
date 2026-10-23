@@ -81,7 +81,8 @@ export type MemoryDocument = z.infer<typeof DocumentSchema>;
 export function parseMemoryDocument(value: unknown): MemoryDocument {
   const parsed = typeof value === "string" ? JSON.parse(value) : value;
   const result = DocumentSchema.parse(parsed);
-  if (JSON.stringify(result).length > MAX_DOCUMENT_BYTES) throw new Error("DOCUMENT_TOO_LARGE");
+  if (new TextEncoder().encode(JSON.stringify(result)).byteLength > MAX_DOCUMENT_BYTES)
+    throw new Error("DOCUMENT_TOO_LARGE");
   return result;
 }
 export function publicDocument(document: MemoryDocument): MemoryDocument {
@@ -92,13 +93,20 @@ export function publicDocument(document: MemoryDocument): MemoryDocument {
         (memory) =>
           memory.visibility === "public" && memory.photos.every((photo) => photo.reviewed),
       )
-      .map((memory) => ({ ...memory, photos: memory.photos.filter((photo) => photo.reviewed) })),
+      .map((memory) => {
+        const { audio: _privateAudio, ...publicMemory } = memory;
+        return {
+          ...publicMemory,
+          photos: memory.photos.filter((photo) => photo.reviewed),
+        };
+      }),
     journal: [],
   };
 }
 export function serializeDocument(document: MemoryDocument, publicOnly = false): string {
   const value = publicOnly ? publicDocument(document) : document;
   const text = JSON.stringify(value);
-  if (text.length > MAX_DOCUMENT_BYTES) throw new Error("DOCUMENT_TOO_LARGE");
+  if (new TextEncoder().encode(text).byteLength > MAX_DOCUMENT_BYTES)
+    throw new Error("DOCUMENT_TOO_LARGE");
   return text;
 }

@@ -1,0 +1,6 @@
+{
+  "src/memories/session.ts": "ad8c5b1a35b3f9ebd424786f0dc70b3e2155a8def0cd40074a6f8dac87d16156",
+  "src/memories/persistence.ts": "034087171b0fb5f56f435a2164ba8ea0511dccfd40e364ba20cf2b388ddb8b4b",
+  "src/engine/demoScene.ts": "b50059b9e282c74c9e006348922a07d339fe32f15dfdb6a7cafc280d9c45d2dc",
+  "src/components/overlay/MemoriesPanel.tsx": "7db8e3bb551bb7bd064cf4260b03b79ec2d5f8f45d99ea045959f8b8b240e390"
+}

@@ -21,8 +21,16 @@ function abort(signal?: AbortSignal) {
   if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
 }
 export function isAddressLike(value: string) {
-  return /\d{1,5}\s|\b(street|st\.?|road|rd\.?|avenue|ave\.?|lane|ln\.?|đường|phố|ngõ|ngách|hẻm|số)\b/i.test(
-    value,
+  const normalized = value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/gi, "d")
+    .toLocaleLowerCase("vi");
+  const streetToken =
+    /(?:^|[^\p{L}\p{N}_])(street|st\.?|road|rd\.?|avenue|ave\.?|lane|ln\.?|duong|pho|ngo|ngach|hem|so)(?![\p{L}\p{N}_])/u;
+  return (
+    streetToken.test(normalized) ||
+    /(?:^|[^\p{L}\p{N}_])\d{1,5}\s+[a-z]+(?![\p{L}\p{N}_])/u.test(normalized)
   );
 }
 export function wardWarning(ward: string) {
@@ -115,7 +123,11 @@ export async function createPostcard(options: PostcardOptions): Promise<Postcard
       height = Math.round((width * 9) / 16);
     try {
       abort(options.signal);
-      const scene = await capture(width, height);
+      // Render to the actual photo area, not the full postcard aspect ratio.
+      // Otherwise fitting the footer compresses the scene to ~70% of the width.
+      const pad = Math.round(width * 0.04);
+      const footer = Math.round(height * 0.16);
+      const scene = await capture(width - 2 * pad, height - footer - 2 * pad);
       if (!(scene instanceof Blob) || scene.size <= 0) throw new Error("CAPTURE_INVALID");
       const blob = await compose(scene, width, height, options, ward);
       abort(options.signal);

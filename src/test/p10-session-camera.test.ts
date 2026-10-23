@@ -1,5 +1,5 @@
 import type { WorldDataProvider } from "@/world/privateWorldSession";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 import {
   MemorySchema,
@@ -226,6 +226,8 @@ describe("camera, deep links, and bridge", () => {
 });
 
 describe("memory session persistence and lifecycle", () => {
+  beforeEach(() => localStorage.clear());
+
   it("has stable repeated snapshots and default persistent=false with no persistence calls", async () => {
     const p = persistence();
     const s = createMemorySession({ persistence: p });

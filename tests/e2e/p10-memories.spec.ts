@@ -61,10 +61,13 @@ test.beforeEach(async ({ context }) => {
   });
   await context.route("**/*", (route) => {
     const url = new URL(route.request().url());
-    return ["127.0.0.1", "localhost", "::1"].includes(url.hostname) ||
+    if (
+      ["127.0.0.1", "localhost", "::1"].includes(url.hostname) ||
       ["blob:", "data:"].includes(url.protocol)
-      ? route.continue()
-      : route.abort();
+    )
+      return route.continue();
+    if (["fonts.googleapis.com", "fonts.gstatic.com"].includes(url.hostname)) return route.abort();
+    return route.abort();
   });
 });
 test("P10 real image pipeline strips synthetic JPEG EXIF Orientation/GPS/XMP and PNG/WebP metadata", async ({
@@ -275,6 +278,7 @@ test("P10 import always reprocesses memory AND journal photos; public export exc
         },
       ],
     };
+    await memorySession.clearAll();
     await memorySession.importDocument(JSON.stringify(input));
     const s = memorySession.getSnapshot();
     const publicDoc = JSON.parse(memorySession.exportDocument(true));
@@ -342,11 +346,18 @@ test("P10 A→B→C/loading/error isolation; unconsented private data never ente
     result.url + result.storage + result.store + requests.join("\n") + logs.join("\n"),
   ).not.toContain(sentinel);
   expect(result.dbs.map((d) => d.name)).not.toContain("pnm-p10");
+  const external = requests.filter(
+    (u) => !u.startsWith("http://127.0.0.1:") && !u.startsWith("blob:") && !u.startsWith("data:"),
+  );
+  const allowedFontRequests = external.filter((u) =>
+    /^https:\/\/fonts\.(?:googleapis\.com|gstatic\.com)\//.test(u),
+  );
   expect(
-    requests.filter(
-      (u) => !u.startsWith("http://127.0.0.1:") && !u.startsWith("blob:") && !u.startsWith("data:"),
+    allowedFontRequests.every((u) =>
+      /^https:\/\/fonts\.(?:googleapis\.com|gstatic\.com)\//.test(u),
     ),
-  ).toEqual([]);
+  ).toBe(true);
+  expect(external.filter((u) => !allowedFontRequests.includes(u))).toEqual([]);
 });
 test("P10 opt-in IndexedDB survives reload; disabling writes retains RAM; all-device delete clears saved data", async ({
   page,
@@ -370,16 +381,16 @@ test("P10 opt-in IndexedDB survives reload; disabling writes retains RAM; all-de
     const { memorySession: s } = await window.__p10Import("/src/memories/session.ts");
     for (let i = 0; i < 100 && !s.getSnapshot().ready; i++)
       await new Promise((r) => setTimeout(r, 10));
-    const off = s.getSnapshot().persistent;
+    const remembered = s.getSnapshot().persistent;
     await s.setPersistent(true);
     const titles = s.getSnapshot().memories.map((m) => m.title);
     await s.setPersistent(false);
     const ram = s.getSnapshot().memories.length;
     await s.setPersistent(true);
     await s.clearAll();
-    return { off, titles, ram, remaining: s.getSnapshot().memories.length };
+    return { remembered, titles, ram, remaining: s.getSnapshot().memories.length };
   });
-  expect(result.off).toBe(false);
+  expect(result.remembered).toBe(true);
   expect(result.titles).toContain(sentinel);
   expect(result.ram).toBeGreaterThan(0);
   expect(result.remaining).toBe(0);

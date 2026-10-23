@@ -21,7 +21,13 @@ import { processPhoto, type PixelRect } from "@/memories/imagePipeline";
 import { processAudio, playMemoryAudio, stopMemoryAudio } from "@/memories/audio";
 import { memorySession } from "@/memories/session";
 import { memoryCamera } from "@/memories/bridge";
-import { MAX_DOCUMENT_BYTES, type Memory, type Photo } from "@/memories/schema";
+import {
+  MAX_DOCUMENT_BYTES,
+  publicDocument,
+  serializeDocument,
+  type Memory,
+  type Photo,
+} from "@/memories/schema";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { MemoryJournal } from "./MemoryJournal";
 import { MemoryPostcard } from "./MemoryPostcard";
@@ -312,9 +318,9 @@ export function MemoriesPanel() {
     },
     [],
   );
-  const visible = snapshot.memories.filter(
-    (m) => !snapshot.guest || (m.visibility === "public" && m.photos.every((p) => p.reviewed)),
-  );
+  const visible = snapshot.guest
+    ? publicDocument({ schemaVersion: 1, memories: snapshot.memories, journal: [] }).memories
+    : snapshot.memories;
   const tourAllowed = sceneReady && (mode === "diorama" || mode === "topdown");
   const selected = visible.find((m) => m.id === camera.memoryId);
   function newMemory() {
@@ -343,8 +349,19 @@ export function MemoriesPanel() {
       const photos: Photo[] = [];
       for (const file of Array.from(files).slice(0, 6 - current.photos.length))
         photos.push(await processPhoto(file));
-      if (token === generation.current)
-        setEditing({ ...current, photos: [...current.photos, ...photos] });
+      if (token === generation.current) {
+        try {
+          const next = { ...current, photos: [...current.photos, ...photos] };
+          serializeDocument({
+            schemaVersion: 1,
+            memories: [...snapshot.memories.filter((item) => item.id !== next.id), next],
+            journal: snapshot.journal,
+          });
+          setEditing(next);
+        } catch {
+          setMessage(u.storageLimit);
+        }
+      }
     } catch {
       if (token === generation.current) setMessage(u.imageError);
     } finally {
@@ -387,6 +404,7 @@ export function MemoriesPanel() {
     const token = generation.current;
     try {
       if (file.size > MAX_DOCUMENT_BYTES) throw new Error("LIMIT");
+      if (!window.confirm(u.confirmImport)) return;
       await memorySession.importDocument(await file.text(), {
         isCancelled: () => token !== generation.current,
       });
@@ -440,7 +458,11 @@ export function MemoriesPanel() {
       )}
       {snapshot.error && (
         <p role="alert" className="text-xs text-destructive">
-          {snapshot.error === "CRYPTO_UNAVAILABLE_RAM_ONLY" ? u.storageUnavailable : u.storageError}
+          {snapshot.error === "CRYPTO_UNAVAILABLE_RAM_ONLY"
+            ? u.storageUnavailable
+            : snapshot.error === "PERSISTENCE_CORRUPT" || snapshot.error === "PERSISTENCE_OVERSIZED"
+              ? u.storageReadonly
+              : u.storageError}
         </p>
       )}
       {message && (
@@ -539,7 +561,7 @@ export function MemoriesPanel() {
               >
                 {u.copy}
               </Button>
-              {memory.audio && (
+              {!snapshot.guest && memory.audio && (
                 <Button
                   onClick={() => {
                     void playMemoryAudio(memory.audio!).catch(() => setMessage(u.audioError));

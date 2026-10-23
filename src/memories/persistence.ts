@@ -3,11 +3,12 @@ export const MEMORY_DB_NAME = "pnm-p10";
 export const MEMORY_STORE_NAME = "worlds";
 const DB_VERSION = 1;
 type WorldRecord = { worldKey: string; document: MemoryDocument; updatedAt: number };
-function validDocument(value: unknown): MemoryDocument | null {
+function validDocument(value: unknown): MemoryDocument {
   const result = DocumentSchema.safeParse(value);
-  return result.success && JSON.stringify(result.data).length <= MAX_DOCUMENT_BYTES
-    ? result.data
-    : null;
+  if (!result.success) throw new Error("PERSISTENCE_CORRUPT");
+  if (new TextEncoder().encode(JSON.stringify(result.data)).byteLength > MAX_DOCUMENT_BYTES)
+    throw new Error("PERSISTENCE_OVERSIZED");
+  return result.data;
 }
 export interface MemoryPersistence {
   read(worldKey: string): Promise<MemoryDocument | null>;
@@ -65,7 +66,11 @@ export function createIndexedDbPersistence(): MemoryPersistence {
     });
   const transaction = async <T>(
     mode: IDBTransactionMode,
-    action: (store: IDBObjectStore, set: (value: T) => void) => void,
+    action: (
+      store: IDBObjectStore,
+      set: (value: T) => void,
+      fail: (error: unknown) => void,
+    ) => void,
   ): Promise<T | undefined> => {
     const db = await getDb();
     try {
@@ -75,13 +80,24 @@ export function createIndexedDbPersistence(): MemoryPersistence {
         tx.oncomplete = () => resolve(value);
         tx.onerror = () => reject(new Error("INDEXEDDB_TRANSACTION_FAILED"));
         tx.onabort = () => reject(new Error("INDEXEDDB_TRANSACTION_ABORTED"));
+        const fail = (error: unknown) => {
+          reject(error instanceof Error ? error : new Error("INDEXEDDB_ACTION_FAILED"));
+          try {
+            tx.abort();
+          } catch {
+            /* transaction may already be complete */
+          }
+        };
         try {
-          action(tx.objectStore(MEMORY_STORE_NAME), (v) => {
-            value = v;
-          });
-        } catch {
-          tx.abort();
-          reject(new Error("INDEXEDDB_ACTION_FAILED"));
+          action(
+            tx.objectStore(MEMORY_STORE_NAME),
+            (v) => {
+              value = v;
+            },
+            fail,
+          );
+        } catch (error) {
+          fail(error);
         }
       });
     } finally {
@@ -91,16 +107,27 @@ export function createIndexedDbPersistence(): MemoryPersistence {
   return {
     async read(worldKey) {
       return (
-        (await transaction<MemoryDocument | null>("readonly", (store, set) => {
+        (await transaction<MemoryDocument | null>("readonly", (store, set, fail) => {
           const request = store.get(worldKey);
-          request.onsuccess = () =>
-            set(validDocument((request.result as WorldRecord | undefined)?.document));
+          request.onsuccess = () => {
+            const record = request.result as WorldRecord | undefined;
+            if (!record) {
+              set(null);
+              return;
+            }
+            try {
+              set(validDocument(record.document));
+            } catch (error) {
+              fail(error);
+            }
+          };
         })) ?? null
       );
     },
     async write(worldKey, document) {
+      const validated = validDocument(document);
       await transaction("readwrite", (store) => {
-        store.put({ worldKey, document, updatedAt: Date.now() } satisfies WorldRecord);
+        store.put({ worldKey, document: validated, updatedAt: Date.now() } satisfies WorldRecord);
       });
     },
     async remove(worldKey) {

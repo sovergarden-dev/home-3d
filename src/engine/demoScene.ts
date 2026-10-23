@@ -2,6 +2,7 @@ import { createLifeRuntime } from "./life/runtime";
 import { bindLifeCommands, resetLifeSession, updateLifeStatus } from "./life/session";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { bindCapture } from "./capture";
 import { bindRealStreetView } from "./view/externalMapView";
 import { createDemoAudio } from "./demoAudio";
@@ -137,6 +138,8 @@ export function createDemoScene(
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.08;
+  // Keep offscreen postcard pixels on the same display-referred path as the canvas.
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
   canvas.style.width = "100%";
   canvas.style.height = "100%";
   canvas.style.display = "block";
@@ -787,11 +790,14 @@ export function createDemoScene(
       useAppStore.getState().setPlanMeasurement(null);
       renderer.clear();
       renderer.render(scene, activeCamera);
+      memoryPinsDirty = false;
       host.dataset["activeWorlds"] = "0";
       host.dataset["worldMode"] = currentWorld.mode;
       return;
     }
     renderer.render(scene, activeCamera);
+    // A pin update is a one-shot invalidation; do not let reduced-motion RAF spin.
+    memoryPinsDirty = false;
     host.dataset["memoryRenderTargets"] = String(memoryRenderTargets);
     host.dataset["memoryTextures"] = String(renderer.info.memory.textures);
     host.dataset["memoryGeometries"] = String(renderer.info.memory.geometries);
@@ -949,6 +955,7 @@ export function createDemoScene(
       lifeFrameRequested ||
       lifeActive() ||
       memoryFlight ||
+      memoryPinsDirty ||
       (memoryTour && !memoryTour.paused)
     ) {
       render(true);
@@ -1238,8 +1245,15 @@ export function createDemoScene(
   bindPostcardCapture(async (width, height) => {
     if (width * height > renderer.capabilities.maxTextureSize ** 2)
       throw new Error("POSTCARD_TOO_LARGE");
-    const target = new THREE.WebGLRenderTarget(width, height, { depthBuffer: true });
-    memoryRenderTargets += 1;
+    // Scene targets are linear/HDR in Three r180. Merely setting outputColorSpace
+    // on the renderer does not apply screen tone mapping to an offscreen target.
+    const sceneTarget = new THREE.WebGLRenderTarget(width, height, {
+      depthBuffer: true,
+      type: THREE.HalfFloatType,
+    });
+    const target = new THREE.WebGLRenderTarget(width, height, { depthBuffer: false });
+    const output = new OutputPass();
+    memoryRenderTargets += 2;
     const previous = renderer.getRenderTarget();
     const oldViewport = renderer.getViewport(new THREE.Vector4());
     const oldScissor = renderer.getScissor(new THREE.Vector4());
@@ -1256,10 +1270,13 @@ export function createDemoScene(
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
       }
-      renderer.setRenderTarget(target);
+      renderer.setRenderTarget(sceneTarget);
       renderer.setViewport(0, 0, width, height);
       renderer.setScissorTest(false);
       renderer.render(scene, camera);
+      // OutputPass uses the renderer's ACES exposure and sRGB transfer exactly
+      // as the visible canvas does, then writes display bytes to the readback RT.
+      output.render(renderer, target, sceneTarget, 0, false);
       const pixels = new Uint8Array(width * height * 4);
       renderer.readRenderTargetPixels(target, 0, 0, width, height, pixels);
       canvas2d = document.createElement("canvas");
@@ -1287,6 +1304,8 @@ export function createDemoScene(
       renderer.setViewport(oldViewport);
       renderer.setScissor(oldScissor);
       renderer.setScissorTest(oldScissorTest);
+      output.dispose();
+      sceneTarget.dispose();
       target.dispose();
       memoryRenderTargets = 0;
       host.dataset["memoryRenderTargets"] = "0";

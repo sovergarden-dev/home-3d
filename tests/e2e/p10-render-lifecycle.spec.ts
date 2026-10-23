@@ -25,11 +25,12 @@ test.beforeEach(async ({ context }) => {
       return import(/* @vite-ignore */ e?.name ?? path);
     };
   });
-  await context.route("**/*", (route) =>
-    ["127.0.0.1", "localhost", "::1"].includes(new URL(route.request().url()).hostname)
-      ? route.continue()
-      : route.abort(),
-  );
+  await context.route("**/*", (route) => {
+    const url = new URL(route.request().url());
+    if (["127.0.0.1", "localhost", "::1"].includes(url.hostname)) return route.continue();
+    if (["fonts.googleapis.com", "fonts.gstatic.com"].includes(url.hostname)) return route.abort();
+    return route.abort();
+  });
 });
 test("P10 pins alter real captured pixels without world rebuild", async ({ page }) => {
   const ready = await open(page);
@@ -43,7 +44,7 @@ test("P10 pins alter real captured pixels without world rebuild", async ({ page 
     const { captureDemoFrame } = await window.__p10Import("/src/engine/capture.ts");
     state.setState({ lifeEnabled: false, timeSpeed: 0 });
     c.exit();
-    await s.importDocument(JSON.stringify({ schemaVersion: 1, memories: [], journal: [] }));
+    await s.clearAll();
     const epoch = w.getPackageEpoch(),
       revision = w.getSnapshot().revision;
     const before = captureDemoFrame();

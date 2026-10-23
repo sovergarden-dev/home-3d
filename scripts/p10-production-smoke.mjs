@@ -43,6 +43,7 @@ try {
   });
   const errors = [],
     external = [],
+    allowedFontAborts = [],
     sentinel = "P10_PRODUCTION_SYNTHETIC_PRIVATE_581";
   page.on("pageerror", (e) => errors.push(e.message));
   page.on("console", (m) => {
@@ -52,6 +53,10 @@ try {
     const url = new URL(route.request().url());
     if (url.hostname === "127.0.0.1" || ["blob:", "data:"].includes(url.protocol))
       return route.continue();
+    if (["fonts.googleapis.com", "fonts.gstatic.com"].includes(url.hostname)) {
+      allowedFontAborts.push(url.origin);
+      return route.abort();
+    }
     external.push(url.origin);
     return route.abort();
   });
@@ -98,6 +103,11 @@ try {
   await scan(resolve(".output"));
   await expect(page.locator("#scene-root canvas")).toHaveCount(1);
   expect(external).toEqual([]);
+  expect(
+    allowedFontAborts.every((origin) =>
+      ["https://fonts.googleapis.com", "https://fonts.gstatic.com"].includes(origin),
+    ),
+  ).toBe(true);
   expect(errors).toEqual([]);
   await page.screenshot({ path: join(output, "production-p10-synthetic.png") });
   const head = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
@@ -116,6 +126,7 @@ try {
         scannedFiles: scanned,
         errors,
         externalRequests: external.length,
+        allowedFontAborts: allowedFontAborts.length,
         checks: [
           "ready WebGL2 SwiftShader",
           "synthetic add/save/guest/tour/exit UI",

@@ -17,7 +17,11 @@ export const p10UI = {
     export: "Xuất gói kỷ niệm",
     publicExport: "Xuất bản công khai",
     import: "Nhập gói kỷ niệm",
-    imported: "Đã nhập gói; ảnh đã được xử lý lại và cần soát riêng tư lại.",
+    imported: "Đã nhập và gộp gói; ảnh đã được xử lý lại và cần soát riêng tư lại.",
+    confirmImport: "Gộp gói này vào kỷ niệm hiện tại theo id? Bản cùng id sẽ được thay thế.",
+    storageLimit: "Gói kỷ niệm vượt giới hạn lưu trữ; ảnh chưa được thêm.",
+    storageReadonly:
+      "Bản lưu trên thiết bị bị hỏng hoặc quá lớn; chỉ đọc để bảo toàn dữ liệu. Hãy xác nhận Xoá tất cả để bắt đầu lại.",
     clear: "Xoá tất cả kỷ niệm trên máy này",
     confirmClear:
       "Xoá toàn bộ kỷ niệm và nhật ký đã lưu trên trình duyệt này? Không thể hoàn tác. Hãy xuất sao lưu trước.",
@@ -68,7 +72,11 @@ export const p10UI = {
     export: "Export memories",
     publicExport: "Export public copy",
     import: "Import memories",
-    imported: "Imported; photos were reprocessed and need another privacy review.",
+    imported: "Imported and merged; photos were reprocessed and need another privacy review.",
+    confirmImport: "Merge this package into current memories by id? Matching ids will be replaced.",
+    storageLimit: "The memory package exceeds the storage limit; the photo was not added.",
+    storageReadonly:
+      "The saved device copy is corrupt or oversized; it is read-only to protect it. Confirm Delete all to start over.",
     clear: "Delete all memories on this device",
     confirmClear:
       "Delete all saved memories and construction journal data in this browser? This cannot be undone. Export a backup first.",

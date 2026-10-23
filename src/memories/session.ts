@@ -144,7 +144,13 @@ export function createMemorySession(
   const initial = provider.getSnapshot();
   let current: MemoryDocument = initial.mode === "fixture" ? structuredClone(fixture) : empty();
   let worldKey: string | null = initial.mode === "fixture" ? "synthetic-fixture-p10" : null;
-  let persistent = false,
+  let persistent = (() => {
+      try {
+        return localStorage.getItem("pnm-p10-persistence-opt-in") === "1";
+      } catch {
+        return false;
+      }
+    })(),
     guest = false,
     ready = false,
     references = 0,
@@ -160,7 +166,12 @@ export function createMemorySession(
   let worldUnsubscribe: (() => void) | null = null;
   const ram = new Map<string, MemoryDocument>();
   const modified = new Set<string>();
-  let ramOnly = false;
+  let ramOnly = false,
+    persistenceReadonly = false;
+  const edits = new Map<
+    string,
+    { memories: Map<string, Memory | null>; journal: Map<string, JournalEntry | null> }
+  >();
   const listeners = new Set<() => void>();
   let cached: MemorySessionSnapshot = {
     memories: current.memories,
@@ -185,6 +196,27 @@ export function createMemorySession(
     current = empty();
     ready = nextReady;
     emit();
+  };
+  const mergePersisted = (stored: MemoryDocument, key: string): MemoryDocument => {
+    const changes = edits.get(key);
+    if (!changes) return parseMemoryDocument(stored);
+    const memories = new Map(stored.memories.map((item) => [item.id, item]));
+    changes.memories.forEach((item, id) => (item ? memories.set(id, item) : memories.delete(id)));
+    const journal = new Map(stored.journal.map((item) => [item.id, item]));
+    changes.journal.forEach((item, id) => (item ? journal.set(id, item) : journal.delete(id)));
+    return parseMemoryDocument({
+      schemaVersion: 1,
+      memories: [...memories.values()],
+      journal: [...journal.values()],
+    });
+  };
+  const track = (key: string) => {
+    let value = edits.get(key);
+    if (!value) {
+      value = { memories: new Map(), journal: new Map() };
+      edits.set(key, value);
+    }
+    return value;
   };
   const load = async () => {
     const token = ++generation;
@@ -224,10 +256,15 @@ export function createMemorySession(
     try {
       const stored = await persistence.read(key);
       if (token !== generation) return;
-      current =
-        inMemory && modified.has(key)
+      current = stored
+        ? inMemory && modified.has(key)
+          ? mergePersisted(stored, key)
+          : parseMemoryDocument(stored)
+        : inMemory && modified.has(key)
           ? structuredClone(inMemory)
-          : (stored ?? (key === "synthetic-fixture-p10" ? structuredClone(fixture) : empty()));
+          : key === "synthetic-fixture-p10"
+            ? structuredClone(fixture)
+            : empty();
       current.memories = current.memories.map((m) =>
         m.visibility === "public" && m.photos.some((p) => !p.reviewed)
           ? { ...m, visibility: "private" }
@@ -236,12 +273,23 @@ export function createMemorySession(
       ram.set(key, structuredClone(current));
       ready = true;
       emit();
-    } catch {
+    } catch (caught) {
       if (token === generation) {
         current =
           inMemory ?? (key === "synthetic-fixture-p10" ? structuredClone(fixture) : empty());
         ram.set(key, structuredClone(current));
-        error = "PERSISTENCE_UNAVAILABLE";
+        const code = caught instanceof Error ? caught.message : "";
+        persistenceReadonly =
+          code === "PERSISTENCE_CORRUPT" ||
+          code === "PERSISTENCE_OVERSIZED" ||
+          code === "DOCUMENT_TOO_LARGE" ||
+          (caught instanceof Error && caught.name === "ZodError");
+        error = persistenceReadonly
+          ? code === "PERSISTENCE_OVERSIZED" || code === "DOCUMENT_TOO_LARGE"
+            ? code
+            : "PERSISTENCE_CORRUPT"
+          : "PERSISTENCE_UNAVAILABLE";
+        persistent = false;
         ready = true;
         emit();
       }
@@ -278,10 +326,10 @@ export function createMemorySession(
   const write = async () => {
     if (!ready || !worldKey) return;
     const key = worldKey;
-    const document = structuredClone(current);
+    const document = current;
     ram.set(key, document);
     modified.add(key);
-    if (!persistent || ramOnly) return;
+    if (!persistent || ramOnly || persistenceReadonly) return;
     const token = generation;
     try {
       await enqueuePersistence(() => persistence.write(key, document));
@@ -322,12 +370,18 @@ export function createMemorySession(
       const value = clampMemory(MemorySchema.parse(memory), provider.getSnapshot());
       if (current.memories.length >= 300 && !current.memories.some((m) => m.id === value.id))
         throw new Error("MEMORY_LIMIT");
+      serializeDocument({
+        schemaVersion: 1,
+        memories: [...current.memories.filter((item) => item.id !== value.id), value],
+        journal: current.journal,
+      });
       if (value.visibility === "public" && value.photos.some((photo) => !photo.reviewed))
         throw new Error("PUBLIC_PHOTOS_MUST_BE_REVIEWED");
       current = {
         ...current,
         memories: [...current.memories.filter((x) => x.id !== value.id), value],
       };
+      track(worldKey!).memories.set(value.id, value);
       undo = null;
       emit();
       void write();
@@ -339,6 +393,7 @@ export function createMemorySession(
       if (!found) return false;
       undo = { memory: found, at: Date.now() };
       current = { ...current, memories: current.memories.filter((x) => x.id !== memoryId) };
+      track(worldKey!).memories.set(memoryId, null);
       emit();
       void write();
       return true;
@@ -350,7 +405,10 @@ export function createMemorySession(
         return false;
       }
       if (current.memories.length >= 300) return false;
-      current = { ...current, memories: [...current.memories, undo.memory] };
+      const candidate = { ...current, memories: [...current.memories, undo.memory] };
+      serializeDocument(candidate);
+      current = candidate;
+      track(worldKey!).memories.set(undo.memory.id, undo.memory);
       undo = null;
       emit();
       void write();
@@ -361,10 +419,13 @@ export function createMemorySession(
       const value = JournalEntrySchema.parse(entry);
       if (current.journal.length >= 300 && !current.journal.some((m) => m.id === value.id))
         throw new Error("JOURNAL_LIMIT");
-      current = {
+      const candidate = {
         ...current,
         journal: [...current.journal.filter((x) => x.id !== value.id), value],
       };
+      serializeDocument(candidate);
+      current = candidate;
+      track(worldKey!).journal.set(value.id, value);
       emit();
       void write();
       return value.id;
@@ -372,6 +433,7 @@ export function createMemorySession(
     deleteJournal(entryId: string) {
       ensureReady();
       current = { ...current, journal: current.journal.filter((x) => x.id !== entryId) };
+      track(worldKey!).journal.set(entryId, null);
       emit();
       void write();
     },
@@ -380,17 +442,26 @@ export function createMemorySession(
       emit();
     },
     async setPersistent(value: boolean) {
-      if (value && ramOnly) {
-        error = "CRYPTO_UNAVAILABLE_RAM_ONLY";
+      if (value && (ramOnly || persistenceReadonly)) {
+        error = ramOnly
+          ? "CRYPTO_UNAVAILABLE_RAM_ONLY"
+          : error === "PERSISTENCE_OVERSIZED" || error === "DOCUMENT_TOO_LARGE"
+            ? error
+            : "PERSISTENCE_CORRUPT";
         persistent = false;
         emit();
         return;
       }
       persistent = value;
+      try {
+        localStorage.setItem("pnm-p10-persistence-opt-in", value ? "1" : "0");
+      } catch {
+        /* unavailable */
+      }
       emit();
       if (value) {
         await load();
-        await write();
+        if (!persistenceReadonly) await write();
       }
     },
     async clearAll() {
@@ -399,6 +470,7 @@ export function createMemorySession(
       current = empty();
       ram.clear();
       modified.clear();
+      edits.clear();
       if (worldKey) ram.set(worldKey, structuredClone(current));
       undo = null;
       emit();
@@ -408,6 +480,9 @@ export function createMemorySession(
           if (persistence.clear) await persistence.clear();
           else if (key) await persistence.remove(key);
         });
+        persistenceReadonly = false;
+        error = null;
+        emit();
       } catch {
         error = "PERSISTENCE_UNAVAILABLE";
         emit();
@@ -449,10 +524,30 @@ export function createMemorySession(
         next.journal.push({ ...entry, photos });
       }
       if (cancelled()) return;
-      current = parseMemoryDocument(next);
-      current.memories = current.memories.map((m) =>
+      const imported = parseMemoryDocument(next);
+      const candidate: MemoryDocument = {
+        schemaVersion: 1,
+        memories: [
+          ...imported.memories,
+          ...current.memories.filter(
+            (item) => !imported.memories.some((nextItem) => nextItem.id === item.id),
+          ),
+        ],
+        journal: [
+          ...imported.journal,
+          ...current.journal.filter(
+            (item) => !imported.journal.some((nextItem) => nextItem.id === item.id),
+          ),
+        ],
+      };
+      candidate.memories = candidate.memories.map((m) =>
         m.photos.some((p) => !p.reviewed) ? { ...m, visibility: "private" } : m,
       );
+      serializeDocument(candidate);
+      current = parseMemoryDocument(candidate);
+      const changes = track(worldKey!);
+      imported.memories.forEach((item) => changes.memories.set(item.id, item));
+      imported.journal.forEach((item) => changes.journal.set(item.id, item));
       error = null;
       emit();
       await write();

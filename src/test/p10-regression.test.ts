@@ -49,6 +49,34 @@ describe("P10 final review regressions", () => {
     const m = { ...memory(), visibility: "public" as const, photos: [photo] };
     expect(publicDocument({ schemaVersion: 1, memories: [m], journal: [] }).memories).toEqual([]);
   });
+  it("public projection omits audio while private documents retain it", () => {
+    const audio = {
+      dataUrl: "data:audio/wav;base64,AA==",
+      duration: 1,
+      mime: "audio/wav" as const,
+    };
+    const publicMemory = { ...memory(), visibility: "public" as const, audio };
+    const privateMemory = { ...memory(), audio };
+    expect(
+      publicDocument({ schemaVersion: 1, memories: [publicMemory], journal: [] }).memories[0],
+    ).not.toHaveProperty("audio");
+    expect(privateMemory.audio).toEqual(audio);
+  });
+  it("guest export has no audio key or audio sentinel", async () => {
+    const audio = {
+      dataUrl: "data:audio/wav;base64,AA==",
+      duration: 1,
+      mime: "audio/wav" as const,
+    };
+    const s = createMemorySession();
+    await ready(s);
+    s.saveMemory({ ...memory(), visibility: "public", audio });
+    s.setGuest(true);
+    const exported = s.exportDocument();
+    expect(exported).not.toContain("data:audio");
+    expect(JSON.parse(exported).memories[0]).not.toHaveProperty("audio");
+    s.stop();
+  });
   it("normalizes unchecked persisted public item to private before guest reads", async () => {
     const doc: MemoryDocument = {
       schemaVersion: 1,

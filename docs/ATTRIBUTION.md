@@ -14,4 +14,4 @@ Mọi hình tác nhân (xe máy/ô tô/bus/ba gác/xe đạp/người/hàng rong
 
 Ba ghim mẫu, nhật ký demo, ảnh metadata/12 MP và UI bằng chứng được tạo bằng mã từ hình/màu giả lập, không dựa khu thật/ảnh cá nhân. Sentinel đều tổng hợp. Pin dùng hình học Three.js hiện hữu; không ảnh Google, nhạc/model/asset tải về hay dependency mới; giữ giấy phép thư viện sẵn có.
 
-P10 bỏ liên kết Google Fonts trong HTML để không tự gọi dịch vụ ngoài; tên font và fallback hệ thống trong CSS giữ nguyên, không đóng gói/copy tệp font. Mô tả Google Fonts lịch sử phía trên không còn là hành vi tải mạng của P10.
+P10 giữ đúng ba liên kết Google Fonts của main cho Be Vietnam Pro và Lora; các harness P10 chỉ abort request tới `fonts.googleapis.com`/`fonts.gstatic.com`, không cho phép host ngoài. Không đóng gói/copy tệp font; Google Fonts không phải Google Maps và không phải nguồn model.

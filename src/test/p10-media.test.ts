@@ -267,6 +267,13 @@ describe("postcard capture and sharing", () => {
   it("soft-detects address-like ward names", () => {
     expect(isAddressLike("12 Nguyen Trai")).toBe(true);
     expect(isAddressLike("Oak Avenue")).toBe(true);
+    expect(isAddressLike("đường Láng")).toBe(true);
+    expect(isAddressLike("PHỐ HUẾ")).toBe(true);
+    expect(isAddressLike("ngõ 12")).toBe(true);
+    expect(isAddressLike("số nhà 7")).toBe(true);
+    expect(isAddressLike("HẺM 4 / NGÁCH 2")).toBe(true);
+    expect(isAddressLike("Phường Dịch Vọng")).toBe(false);
+    expect(isAddressLike("Đống Đa")).toBe(false);
     expect(isAddressLike("Ward 7")).toBe(false);
     expect(wardWarning("12 Nguyen Trai")).toBe("WARD_LOOKS_LIKE_ADDRESS");
     expect(wardWarning("Ward 7")).toBeNull();
@@ -290,7 +297,7 @@ describe("postcard capture and sharing", () => {
     vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:scene");
     vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
     const capture = vi.fn(async (width: number, height: number) => {
-      expect([width, height]).toEqual([3840, 2160]);
+      expect([width, height]).toEqual([3532, 1506]);
       return asBlob(cleanPng(), "image/png");
     });
     bindPostcardCapture(capture);
@@ -316,7 +323,7 @@ describe("postcard capture and sharing", () => {
     vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:scene");
     vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
     const capture = vi.fn(async (width: number, height: number) => {
-      expect([width, height]).toEqual([2048, 1152]);
+      expect([width, height]).toEqual([1884, 804]);
       return asBlob(cleanPng(), "image/png");
     });
     bindPostcardCapture(capture);
