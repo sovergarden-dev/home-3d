@@ -7,7 +7,9 @@ import { useAppStore, type Festival, type TimeSpeed, type Weather } from "@/stat
 import { getEffectiveFestival } from "@/atmosphere/calendar";
 import { WeatherConnection } from "./WeatherConnection";
 import { formatMinutes, useT } from "@/i18n";
-import { Download, Trash2, Cloud, CloudRain, CloudLightning, Sun, Sparkles } from "lucide-react";
+import { Cloud, CloudRain, CloudLightning, Sun } from "lucide-react";
+import { MemoriesPanel } from "./MemoriesPanel";
+export { MemoriesPanel };
 
 function Toggle({
   label,
@@ -278,49 +280,6 @@ export function FestivalPanel() {
       </div>
       <p className="text-xs text-muted-foreground">{t.atmosphere.festivalNote}</p>
       <p className="text-xs text-muted-foreground">{t.atmosphere.illustrationNote}</p>
-    </div>
-  );
-}
-
-export function MemoriesPanel() {
-  const t = useT();
-  const moments = useAppStore((s) => s.moments);
-  const clearMoments = useAppStore((s) => s.clearMoments);
-  if (moments.length)
-    return (
-      <div className="space-y-3">
-        <p className="text-xs text-muted-foreground">{t.momentsNote}</p>
-        <div className="grid grid-cols-2 gap-3">
-          {moments.map((moment) => (
-            <div key={moment.id} className="overflow-hidden rounded-xl bg-secondary">
-              <img
-                src={moment.image}
-                alt={`${t.capture} · ${formatMinutes(moment.minutes)}`}
-                className="aspect-video w-full object-cover"
-              />
-              <a
-                href={moment.image}
-                download={`pho-demo-${moment.id}.png`}
-                className="ctl w-full gap-2 px-3"
-              >
-                <Download className="h-4 w-4" />
-                {formatMinutes(moment.minutes)}
-              </a>
-            </div>
-          ))}
-        </div>
-        <button type="button" onClick={clearMoments} className="ctl gap-2 px-2 text-sm">
-          <Trash2 className="h-4 w-4" />
-          {t.clearMoments}
-        </button>
-      </div>
-    );
-  return (
-    <div className="flex flex-col items-center py-4 text-center">
-      <Sparkles className="h-6 w-6 text-accent" aria-hidden />
-      <p className="mt-2 font-serif text-lg italic text-primary">{t.memoriesEmptyTitle}</p>
-      <p className="mt-1 max-w-xs text-sm text-muted-foreground">{t.memoriesEmptyBody}</p>
-      <p className="mt-2 max-w-xs text-xs text-muted-foreground">{t.momentsNote}</p>
     </div>
   );
 }

@@ -1,0 +1,244 @@
+{
+  "syntheticOnly": true,
+  "baselineFullHead": "0eb8967d3770dd2b37c55299ed51fb0c1b049b65",
+  "r7": {
+    "before": {
+      "all": {
+        "samples": 30,
+        "totalMutationCpuMs": {
+          "p50": 3.35,
+          "p95": 6.34
+        },
+        "structuredCloneCpuMs": {
+          "p50": 2.05,
+          "p95": 3.355
+        },
+        "memoryDocumentMapSetCpuMs": {
+          "p50": 0.0,
+          "p95": 0.0
+        },
+        "reactDomMutationMs": {
+          "p50": 127.05,
+          "p95": 521.42
+        },
+        "rebuildPinInstanceCpuMs": {
+          "p50": 0.2,
+          "p95": 0.4
+        },
+        "raf1UpperBoundMs": {
+          "p50": 136.95,
+          "p95": 527.315
+        },
+        "raf2UpperBoundMs": {
+          "p50": 144.65,
+          "p95": 534.16
+        },
+        "compositorResidueMs": {
+          "p50": 9.0,
+          "p95": 16.055
+        }
+      },
+      "add": {
+        "samples": 15,
+        "totalMutationCpuMs": {
+          "p50": 4.2,
+          "p95": 6.85
+        },
+        "structuredCloneCpuMs": {
+          "p50": 2.7,
+          "p95": 3.64
+        },
+        "memoryDocumentMapSetCpuMs": {
+          "p50": 0.0,
+          "p95": 0.0
+        },
+        "reactDomMutationMs": {
+          "p50": 145.2,
+          "p95": 505.77
+        },
+        "rebuildPinInstanceCpuMs": {
+          "p50": 0.3,
+          "p95": 0.46
+        },
+        "raf1UpperBoundMs": {
+          "p50": 156.6,
+          "p95": 506.74
+        },
+        "raf2UpperBoundMs": {
+          "p50": 166.3,
+          "p95": 520.86
+        },
+        "compositorResidueMs": {
+          "p50": 13.4,
+          "p95": 16.03
+        }
+      },
+      "delete": {
+        "samples": 15,
+        "totalMutationCpuMs": {
+          "p50": 2.5,
+          "p95": 4.28
+        },
+        "structuredCloneCpuMs": {
+          "p50": 1.6,
+          "p95": 2.55
+        },
+        "memoryDocumentMapSetCpuMs": {
+          "p50": 0.0,
+          "p95": 0.03
+        },
+        "reactDomMutationMs": {
+          "p50": 115.9,
+          "p95": 514.45
+        },
+        "rebuildPinInstanceCpuMs": {
+          "p50": 0.2,
+          "p95": 0.33
+        },
+        "raf1UpperBoundMs": {
+          "p50": 129.0,
+          "p95": 525.76
+        },
+        "raf2UpperBoundMs": {
+          "p50": 136.3,
+          "p95": 529.69
+        },
+        "compositorResidueMs": {
+          "p50": 6.4,
+          "p95": 15.92
+        }
+      }
+    },
+    "after": {
+      "all": {
+        "samples": 30,
+        "totalMutationCpuMs": {
+          "p50": 1.85,
+          "p95": 3.675
+        },
+        "structuredCloneCpuMs": {
+          "p50": 0.0,
+          "p95": 0.0
+        },
+        "memoryDocumentMapSetCpuMs": {
+          "p50": 0.0,
+          "p95": 0.0
+        },
+        "reactDomMutationMs": {
+          "p50": 104.05,
+          "p95": 450.905
+        },
+        "rebuildPinInstanceCpuMs": {
+          "p50": 0.2,
+          "p95": 0.3
+        },
+        "raf1UpperBoundMs": {
+          "p50": 114.05,
+          "p95": 461.67
+        },
+        "raf2UpperBoundMs": {
+          "p50": 223.85,
+          "p95": 566.595
+        },
+        "compositorResidueMs": {
+          "p50": 106.5,
+          "p95": 118.585
+        }
+      },
+      "add": {
+        "samples": 15,
+        "totalMutationCpuMs": {
+          "p50": 2.7,
+          "p95": 4.2
+        },
+        "structuredCloneCpuMs": {
+          "p50": 0.0,
+          "p95": 0.0
+        },
+        "memoryDocumentMapSetCpuMs": {
+          "p50": 0.0,
+          "p95": 0.0
+        },
+        "reactDomMutationMs": {
+          "p50": 379.8,
+          "p95": 458.39
+        },
+        "rebuildPinInstanceCpuMs": {
+          "p50": 0.2,
+          "p95": 0.3
+        },
+        "raf1UpperBoundMs": {
+          "p50": 386.2,
+          "p95": 473.07
+        },
+        "raf2UpperBoundMs": {
+          "p50": 503.9,
+          "p95": 586.35
+        },
+        "compositorResidueMs": {
+          "p50": 112.1,
+          "p95": 123.85
+        }
+      },
+      "delete": {
+        "samples": 15,
+        "totalMutationCpuMs": {
+          "p50": 0.9,
+          "p95": 1.53
+        },
+        "structuredCloneCpuMs": {
+          "p50": 0.0,
+          "p95": 0.0
+        },
+        "memoryDocumentMapSetCpuMs": {
+          "p50": 0.0,
+          "p95": 0.0
+        },
+        "reactDomMutationMs": {
+          "p50": 96.9,
+          "p95": 225.24
+        },
+        "rebuildPinInstanceCpuMs": {
+          "p50": 0.2,
+          "p95": 0.36
+        },
+        "raf1UpperBoundMs": {
+          "p50": 108.8,
+          "p95": 237.27
+        },
+        "raf2UpperBoundMs": {
+          "p50": 216.3,
+          "p95": 333.98
+        },
+        "compositorResidueMs": {
+          "p50": 106.3,
+          "p95": 116.94
+        }
+      }
+    }
+  },
+  "soak": {
+    "complete": true,
+    "elapsedMs": 1200000,
+    "cycles": 21,
+    "pageErrors": 0,
+    "countRanges": {
+      "urls": [0, 0],
+      "bitmap": [0, 0],
+      "idb": [0, 0],
+      "raf": [1, 1],
+      "audio": [0, 0]
+    },
+    "canvasRange": [1, 1],
+    "heapUsedRangeBytes": [72200000, 72200000],
+    "lastHeapBytes": 72200000,
+    "rendererCounterRanges": {
+      "memoryRenderTargets": [0, 0],
+      "memoryTextures": [3, 3],
+      "memoryGeometries": [42, 42],
+      "activeWorlds": [1, 1]
+    }
+  },
+  "status": "H_BLOCKED",
+  "reason": "RAF2 p50 exceeds 100 ms; CPU improvement is not an end-to-end latency pass."
+}

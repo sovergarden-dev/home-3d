@@ -4,9 +4,22 @@ import { formatMinutes, useT } from "@/i18n";
 import { MapPin } from "lucide-react";
 import { worldDataProvider } from "@/world/privateWorldSession";
 import { BUILD_SHA, PUBLIC_BUILD_VERSION } from "@/config/buildInfo";
+import { memorySession } from "@/memories/session";
+
+const subscribeHydration = () => () => {};
 
 export function TopInfo() {
   const t = useT();
+  const hydrated = useSyncExternalStore(
+    subscribeHydration,
+    () => true,
+    () => false,
+  );
+  const memories = useSyncExternalStore(
+    memorySession.subscribe,
+    memorySession.getSnapshot,
+    memorySession.getSnapshot,
+  );
   const worldSnapshot = useSyncExternalStore(
     worldDataProvider.subscribe,
     worldDataProvider.getSnapshot,
@@ -29,7 +42,7 @@ export function TopInfo() {
         {formatMinutes(minutes)}
       </div>
       <div className="mt-1 text-sm text-muted-foreground">
-        {weekday} · {selectedDate} · {t.weather[weather]}
+        {hydrated ? `${weekday} · ${selectedDate}` : "—"} · {t.weather[weather]}
       </div>
       <p className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
         {worldSnapshot.mode === "private-error"
@@ -40,12 +53,14 @@ export function TopInfo() {
               : t.privatePackageBadge
             : t.demoBadge}
       </p>
-      <div className="mt-1 flex items-center gap-1.5 text-sm font-medium text-foreground">
-        <MapPin className="h-3.5 w-3.5 shrink-0 text-accent" aria-hidden />
-        <span className="truncate">
-          {worldSnapshot.mode === "fixture" ? t.home : t.referencePoint}
-        </span>
-      </div>
+      {!memories.guest && (
+        <div className="mt-1 flex items-center gap-1.5 text-sm font-medium text-foreground">
+          <MapPin className="h-3.5 w-3.5 shrink-0 text-accent" aria-hidden />
+          <span className="truncate">
+            {worldSnapshot.mode === "fixture" ? t.home : t.referencePoint}
+          </span>
+        </div>
+      )}
       <p className="mt-1 max-w-xs text-[10px] text-muted-foreground">
         {live
           ? t.weatherConnection.live

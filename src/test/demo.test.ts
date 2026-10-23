@@ -64,9 +64,11 @@ describe("demo captures and reset", () => {
       .mockReturnValueOnce(3)
       .mockReturnValueOnce(4)
       .mockReturnValueOnce(5);
-    for (let i = 0; i < 5; i++) useAppStore.getState().addMoment(`image-${i}`);
+    for (let i = 0; i < 5; i++)
+      useAppStore.getState().addMoment(`data:image/png;base64,${btoa(`image-${i}`)}`);
     expect(useAppStore.getState().moments).toHaveLength(4);
-    expect(useAppStore.getState().moments[0]?.image).toBe("image-4");
+    expect(useAppStore.getState().moments[0]).not.toHaveProperty("image");
+    expect(JSON.stringify(useAppStore.getState().moments)).not.toContain("image-");
     useAppStore.getState().clearMoments();
     expect(useAppStore.getState().moments).toEqual([]);
     vi.restoreAllMocks();

@@ -1,0 +1,22 @@
+{
+  "syntheticOnly": true,
+  "renderer": "Chromium SwiftShader (not physical GPU)",
+  "scene": "2026-06-21 07:00 Asia/Ho_Chi_Minh",
+  "camera": {
+    "heading": 28,
+    "zoom": 1
+  },
+  "viewport": [1884, 804],
+  "dpr": 1,
+  "cardSize": [2048, 1152],
+  "photoROI": [82, 82, 1884, 804],
+  "thresholdPct": 15,
+  "screenMeanRGB": [119.36513755532317, 117.72959380380476, 98.11418689461398],
+  "postcardSceneMeanRGB": [122.33117388112515, 122.13503871301666, 105.50372936274044],
+  "relativeDeltaPct": [2.48484305095136, 3.742002980621445, 7.53157387530887],
+  "meanAbsoluteError": [2.9973460721868364, 4.422649227324102, 7.395921137412724],
+  "screenMeanBrightness": 111.73630608458063,
+  "postcardSceneMeanBrightness": 116.65664731896076,
+  "brightnessDeltaPct": 4.403529530191913,
+  "errors": []
+}
