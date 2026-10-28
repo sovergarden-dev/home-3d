@@ -616,7 +616,7 @@ for (const width of [3840, 2048, 1920]) {
     ]) {
       test(`postcard caption ink boxes stay separated at ${width}px in ${language} with ${fixture.name}`, async ({
         page,
-      }) => {
+      }, info) => {
         await page.goto("/gioi-thieu");
         const measured = await page.evaluate(
           async ({ width, language, ward }) => {
@@ -732,6 +732,15 @@ for (const width of [3840, 2048, 1920]) {
           expect(line.top).toBeGreaterThan(0);
           expect(line.bottom).toBeLessThanOrEqual(measured.height - 24);
         }
+        await info.attach("postcard-caption-boxes", {
+          contentType: "application/json",
+          body: JSON.stringify({
+            syntheticOnly: true,
+            language,
+            fixture: fixture.name,
+            ...measured,
+          }),
+        });
       });
     }
   }

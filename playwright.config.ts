@@ -8,7 +8,7 @@ export default defineConfig({
   timeout: 90000,
   fullyParallel: false,
   workers: 1,
-  reporter: [["list"], ["html", { open: "never" }]],
+  reporter: [["list"], ["html", { open: "never" }], ["./scripts/h6-budget-reporter.mjs"]],
   use: {
     baseURL: localURL ?? "http://127.0.0.1:4178",
     trace: "retain-on-failure",

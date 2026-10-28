@@ -44,6 +44,8 @@ try {
     });
   });
   const pinFiles = [];
+  if (process.env.P10_VISUAL_PIN_TAB === "time")
+    await page.getByRole("tab", { name: "Thời gian", exact: true }).click();
   for (const viewport of [
     { width: 1440, height: 900 },
     { width: 390, height: 844 },
@@ -181,6 +183,7 @@ try {
       {
         syntheticOnly: true,
         fixture: "built-in synthetic demo + generated stripes",
+        pinGalleryTab: process.env.P10_VISUAL_PIN_TAB === "time" ? "time" : "memories",
         date: "2026-06-21",
         minutes: 420,
         heading: 28,
