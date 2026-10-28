@@ -23,6 +23,24 @@ export default class H6BudgetReporter {
       `H6_DURATION ${JSON.stringify({ project, status: result.status, durationMs: result.duration, limitMs: project === "webkit" ? 70000 : null, enforced: this.enforce && project === "webkit" })}`,
     );
     if (project !== "webkit") return;
+    if (this.enforce) {
+      try {
+        const baseline = JSON.parse(readFileSync(".qa-ci/h6-baseline.json", "utf8"));
+        const comparable =
+          baseline.sourceSha === "de7173261a8a3928685555252c2b479f76a713fe" &&
+          baseline.status === "passed" &&
+          Number.isFinite(baseline.durationMs) &&
+          baseline.durationMs > 0;
+        const changePct = comparable ? 100 * (result.duration / baseline.durationMs - 1) : null;
+        console.log(
+          `H6_COMPARISON ${JSON.stringify({ baselineStatus: baseline.status, baselineDurationMs: baseline.durationMs, currentDurationMs: result.duration, changePct, limitPct: 10 })}`,
+        );
+        if (!comparable || result.duration > baseline.durationMs * 1.1) this.failed = true;
+      } catch {
+        console.error("H6_BASELINE_NOT_VERIFIED: same-runner comparison is missing.");
+        this.failed = true;
+      }
+    }
     this.observed.add(test.id);
     if (result.status !== "passed" || !Number.isFinite(result.duration) || result.duration >= 70000)
       this.failed = true;
@@ -39,3 +57,4 @@ export default class H6BudgetReporter {
     }
   }
 }
+import { readFileSync } from "node:fs";
