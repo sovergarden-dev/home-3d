@@ -1,14 +1,15 @@
-import { chromium, expect } from "@playwright/test";
+import { launchBenchmark } from "./benchmark-browser.mjs";
+import { expect } from "@playwright/test";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-const output = path.resolve(process.argv[2] ?? "/tmp/p10-visuals"),
+const output = path.resolve(process.argv[2] ?? "test-results/p10-visuals"),
   port = process.env.P10_PORT ?? "4178";
 await mkdir(output, { recursive: true });
-const browser = await chromium.launch({ args: ["--enable-unsafe-swiftshader"] });
+const { browser, dpr, environment } = await launchBenchmark();
 try {
   const page = await browser.newPage({
     viewport: { width: 1440, height: 900 },
-    deviceScaleFactor: 1,
+    deviceScaleFactor: dpr,
     reducedMotion: "reduce",
     locale: "vi-VN",
   });
@@ -17,7 +18,7 @@ try {
       const e = [...performance.getEntriesByType("resource")]
         .reverse()
         .find((e) => new URL(e.name).pathname === p);
-      return import(e?.name ?? p);
+      return import(e?.name ?? new URL(p, location.href).href);
     };
   });
   await page.route("**/*", (r) =>
@@ -27,6 +28,7 @@ try {
   await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "ready", {
     timeout: 30000,
   });
+  const observed = await environment(page);
   await page.getByRole("button", { name: "Thu gọn bảng riêng", exact: true }).click();
   await page.getByRole("tab", { name: "Kỷ niệm", exact: true }).click();
   await expect(page.getByTestId("memory-card")).toHaveCount(3);
@@ -41,6 +43,38 @@ try {
       zoom: 1,
     });
   });
+  const pinFiles = [];
+  for (const viewport of [
+    { width: 1440, height: 900 },
+    { width: 390, height: 844 },
+    { width: 740, height: 390 },
+  ]) {
+    await page.setViewportSize(viewport);
+    for (const viewMode of ["diorama", "topdown"])
+      for (const zoom of [0.25, 4]) {
+        await page.evaluate(
+          async ({ viewMode, zoom }) => {
+            (await window.__p10Import("/src/state/appStore.ts")).useAppStore.setState({
+              viewMode,
+              zoom,
+            });
+          },
+          { viewMode, zoom },
+        );
+        await page.waitForTimeout(500);
+        const file = `pins-${viewMode}-${viewport.width}x${viewport.height}-zoom${zoom}.png`;
+        await page.screenshot({ path: path.join(output, file) });
+        pinFiles.push(file);
+      }
+  }
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.evaluate(async () => {
+    (await window.__p10Import("/src/state/appStore.ts")).useAppStore.setState({
+      viewMode: "diorama",
+      zoom: 1,
+    });
+  });
+  await page.waitForTimeout(500);
   await page.screenshot({ path: path.join(output, "diorama-pins.png") });
   await page.getByRole("radio", { name: "Mặt bằng", exact: true }).click();
   await page.screenshot({ path: path.join(output, "topdown-pins.png") });
@@ -114,6 +148,28 @@ try {
     .evaluate((el) => el.parentElement.previousElementSibling.scrollIntoView({ block: "start" }));
   await page.screenshot({ path: path.join(output, "journal-before-after.png") });
   await writeFile(path.join(output, "postcard-2k.png"), Buffer.from(card.base64, "base64"));
+  const card4k = await page.evaluate(async () => {
+    const result = await (
+      await window.__p10Import("/src/memories/postcard.ts")
+    ).createPostcard({ ward: "", date: "2026-06-21", minutes: 420, mobile: false });
+    return {
+      width: result.width,
+      height: result.height,
+      degraded: result.degraded,
+      base64: await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(",")[1]);
+        reader.readAsDataURL(result.blob);
+      }),
+    };
+  });
+  expect(card4k.width).toBe(3840);
+  expect(card4k.height).toBe(2160);
+  expect(card4k.degraded).toBe(false);
+  await writeFile(
+    path.join(output, "postcard-4k-empty-ward.png"),
+    Buffer.from(card4k.base64, "base64"),
+  );
   await page.evaluate(async () => {
     (await window.__p10Import("/src/memories/session.ts")).memorySession.setGuest(true);
   });
@@ -129,10 +185,13 @@ try {
         minutes: 420,
         heading: 28,
         zoom: 1,
-        dpr: 1,
-        renderer: "Chromium SwiftShader, not physical GPU",
+        dpr,
+        environment: observed,
+        renderer: observed.renderer,
         postcard: { width: card.width, height: card.height, type: card.type },
         files: [
+          ...pinFiles,
+          "postcard-4k-empty-ward.png",
           "diorama-pins.png",
           "topdown-pins.png",
           "editor-390x844.png",

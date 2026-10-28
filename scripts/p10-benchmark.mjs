@@ -25,7 +25,7 @@ await page.addInitScript(() => {
     const e = [...performance.getEntriesByType("resource")]
       .reverse()
       .find((e) => new URL(e.name).pathname === path);
-    return import(e?.name ?? path);
+    return import(e?.name ?? new URL(path, location.href).href);
   };
   const state = {
     urls: 0,
@@ -257,7 +257,7 @@ try {
             if (n)
               await page.getByRole("link", { name: "Phố Nhà Mình", exact: true }).first().click();
           });
-        await page.goto(`http://127.0.0.1:${port}/about`);
+        await page.goto(`http://127.0.0.1:${port}/gioi-thieu`);
         await open();
         await page.getByRole("button", { name: "Thu gọn bảng riêng", exact: true }).click();
         await page.getByRole("tab", { name: "Kỷ niệm", exact: true }).click();
