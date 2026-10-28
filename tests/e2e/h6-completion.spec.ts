@@ -310,11 +310,43 @@ test.describe("H6 completion synthetic integration", () => {
   });
   test("20 mode/route/package/capture cycles keep one ready canvas and no page errors", async ({
     page,
+    browser,
   }) => {
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(e.message));
     await openRoot(page);
     await requireRender(page);
+    if (process.env["BENCH_GPU"] === "real") {
+      const gpu = await page.locator("#scene-root canvas").evaluate((canvas: HTMLCanvasElement) => {
+        const gl = canvas.getContext("webgl2");
+        const info = gl?.getExtension("WEBGL_debug_renderer_info");
+        if (!gl || !info) throw Error("UNMASKED_RENDERER_UNAVAILABLE");
+        return {
+          renderer: String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL)),
+          vendor: String(gl.getParameter(info.UNMASKED_VENDOR_WEBGL)),
+          dpr: window.devicePixelRatio,
+        };
+      });
+      expect(test.info().project.use.headless).toBe(false);
+      expect(gpu.renderer).toMatch(/intel|nvidia|amd|radeon|geforce/i);
+      expect(gpu.renderer).not.toMatch(/swiftshader|llvmpipe|software|basic render/i);
+      const buildInfo = await page.getByTestId("build-info").innerText();
+      const sourceSha = buildInfo.match(/\b[a-f0-9]{40}\b/i)?.[0]?.toLowerCase();
+      expect(sourceSha).toMatch(/^[a-f0-9]{40}$/);
+      expect(sourceSha).toBe(process.env["BENCH_SOURCE_SHA"]);
+      await test.info().attach("real-gpu-environment", {
+        contentType: "application/json",
+        body: JSON.stringify({
+          syntheticOnly: true,
+          sourceSha,
+          browserVersion: browser.version(),
+          driverVersion: process.env["BENCH_GPU_DRIVER"] ?? "NOT_VERIFIED",
+          viewport: page.viewportSize(),
+          headed: true,
+          ...gpu,
+        }),
+      });
+    }
     const cyclePackage = Buffer.from(
       JSON.stringify({
         manifest,

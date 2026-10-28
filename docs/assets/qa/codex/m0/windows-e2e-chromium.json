@@ -1,0 +1,3520 @@
+{
+  "config": {
+    "configFile": "playwright.config.ts",
+    "rootDir": "tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 1,
+    "webServer": {
+      "command": "bun run dev --host [loopback] --port 4178",
+      "url": "http://[loopback]:4178",
+      "reuseExistingServer": true,
+      "timeout": 60000
+    }
+  },
+  "suites": [
+    {
+      "title": "demo.spec.ts",
+      "file": "demo.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "demo labels, privacy, noindex and graceful 3D capability branch",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8404,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:24:05.820Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-47830e10f334f0072a4b",
+          "file": "demo.spec.ts",
+          "line": 43,
+          "column": 1
+        },
+        {
+          "title": "diorama keeps the synthetic streets visually legible",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5624,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:24:14.478Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-c6ea24644358f2d2dfe3",
+          "file": "demo.spec.ts",
+          "line": 58,
+          "column": 1
+        },
+        {
+          "title": "time, weather, festivals, camera, capture and clear work in a rendered scene",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 43221,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:24:20.144Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-1204a4432209cea0ff19",
+          "file": "demo.spec.ts",
+          "line": 66,
+          "column": 1
+        },
+        {
+          "title": "mobile controls hide immediately during drag and return at peek",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5786,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:25:03.396Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-75788d2a68b49c183e58",
+          "file": "demo.spec.ts",
+          "line": 112,
+          "column": 1
+        },
+        {
+          "title": "WebGL unavailable cannot trap the user behind loading or claim capture success",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4290,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:25:09.221Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-e115480476b302934bcb",
+          "file": "demo.spec.ts",
+          "line": 135,
+          "column": 1
+        },
+        {
+          "title": "route roundtrip recreates exactly one canvas and context loss has a recovery UI",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9461,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:25:13.542Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-1ce718d50da4d3157a3c",
+          "file": "demo.spec.ts",
+          "line": 150,
+          "column": 1
+        },
+        {
+          "title": "Mặt bằng renders one orthographic world, measures from its camera and applies layer toggles",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8251,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:25:23.036Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-188b1c08028c0ef14045",
+          "file": "demo.spec.ts",
+          "line": 169,
+          "column": 1
+        },
+        {
+          "title": "explicit local preview refuses malformed package instead of silently returning to fixture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7707,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:25:31.322Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-0ef38d05336e50ef1a56",
+          "file": "demo.spec.ts",
+          "line": 212,
+          "column": 1
+        },
+        {
+          "title": "explicit local preview opens a valid synthetic package as one in-memory world",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5722,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:25:39.052Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-c08de21fc303f104a4aa",
+          "file": "demo.spec.ts",
+          "line": 239,
+          "column": 1
+        },
+        {
+          "title": "private diorama keeps the supplied ENU origin in frame when source geometry is offset",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9431,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:25:44.802Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-22ece80e7ee7dec7b6bc",
+          "file": "demo.spec.ts",
+          "line": 293,
+          "column": 1
+        },
+        {
+          "title": "static scene stops drawing when idle",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5399,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:25:54.258Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-b0032231cfccf8a8111a",
+          "file": "demo.spec.ts",
+          "line": 389,
+          "column": 1
+        },
+        {
+          "title": "private preview labels a no-level class-prior height as unknown",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5475,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:25:59.687Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-b3be33e74420f56e6a0c",
+          "file": "demo.spec.ts",
+          "line": 406,
+          "column": 1
+        },
+        {
+          "title": "local preview editor: edit, geometry gate, undo/redo, road edit, export and reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11490,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:26:05.183Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-14f817c06f2e0539d604",
+          "file": "demo.spec.ts",
+          "line": 468,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "h6-completion.spec.ts",
+      "file": "h6-completion.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "H6 completion synthetic integration",
+          "file": "h6-completion.spec.ts",
+          "line": 182,
+          "column": 6,
+          "specs": [
+            {
+              "title": "root and legacy query expose local file action with noindex and neutral fiction",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8159,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:26:16.754Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-5d859660608414d63ff0",
+              "file": "h6-completion.spec.ts",
+              "line": 183,
+              "column": 3
+            },
+            {
+              "title": "sentinel open/edit/capture/export/reload never reaches request attempts, console, storage or SSR",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16379,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:26:24.941Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-a21cf29b15c112f4858e",
+              "file": "h6-completion.spec.ts",
+              "line": 198,
+              "column": 5
+            },
+            {
+              "title": "sentinel unavailable renderer retains edit/export/privacy and never claims capture",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [
+                    {
+                      "type": "capability",
+                      "description": "WebGL2 intentionally unavailable: disabled capture asserted; no rendered-capture claim."
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10614,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:26:41.347Z",
+                      "annotations": [
+                        {
+                          "type": "capability",
+                          "description": "WebGL2 intentionally unavailable: disabled capture asserted; no rendered-capture claim."
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-fdeea8219e4862debce6",
+              "file": "h6-completion.spec.ts",
+              "line": 198,
+              "column": 5
+            },
+            {
+              "title": "portrait/landscape keyboard and VI/EN retain a reachable compact panel",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9537,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:26:51.997Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-d8a844f6ca0d797d9c4b",
+              "file": "h6-completion.spec.ts",
+              "line": 288,
+              "column": 3
+            },
+            {
+              "title": "20 mode/route/package/capture cycles keep one ready canvas and no page errors",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 96836,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:27:01.615Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\h6-completion-H6-completio-8fc74-y-canvas-and-no-page-errors-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\h6-completion-H6-completio-8fc74-y-canvas-and-no-page-errors-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\h6-completion-H6-completio-8fc74-y-canvas-and-no-page-errors-chromium\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-443759995552f51e1e41",
+              "file": "h6-completion.spec.ts",
+              "line": 311,
+              "column": 3
+            },
+            {
+              "title": "canvas part picking, hidden layers and camera framing preserve the package",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12431,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:28:48.625Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-c70862e52ebc4b1c1d07",
+              "file": "h6-completion.spec.ts",
+              "line": 336,
+              "column": 3
+            },
+            {
+              "title": "context loss then real retry preserves the loaded package and one world",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9242,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:29:01.356Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-d2be77f4c1b3ed44fb5d",
+              "file": "h6-completion.spec.ts",
+              "line": 475,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "h6-review23.spec.ts",
+      "file": "h6-review23.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Review 23 synthetic file regressions",
+          "file": "h6-review23.spec.ts",
+          "line": 8,
+          "column": 6,
+          "specs": [
+            {
+              "title": "R23-1 missing coverage is rejected without crash and valid file recovers",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6787,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:29:10.718Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09399f6d05f31fae0ef1-c56c345d7d55124299fb",
+              "file": "h6-review23.spec.ts",
+              "line": 17,
+              "column": 5
+            },
+            {
+              "title": "R23-1 null coverage is rejected without crash and valid file recovers",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6761,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:29:17.540Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09399f6d05f31fae0ef1-c904724d166303bc13fb",
+              "file": "h6-review23.spec.ts",
+              "line": 17,
+              "column": 5
+            },
+            {
+              "title": "R23-1 object coverage is rejected without crash and valid file recovers",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6517,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:29:24.344Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09399f6d05f31fae0ef1-f87a8c2e94625c9b5985",
+              "file": "h6-review23.spec.ts",
+              "line": 17,
+              "column": 5
+            },
+            {
+              "title": "R23-2 road field provenance survives override and export/reopen in VI/EN",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9035,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:29:30.899Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09399f6d05f31fae0ef1-3a2f4b95002ef4b158a1",
+              "file": "h6-review23.spec.ts",
+              "line": 23,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "h6-roundtrip.spec.ts",
+      "file": "h6-roundtrip.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "H6 synthetic source → build → editor → export → source rebuild → reload preserves part edits",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16131,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:29:40.079Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a23ffc33b9b219756cb1-9ae1191940fd3ad90dc5",
+          "file": "h6-roundtrip.spec.ts",
+          "line": 112,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "p10-memories.spec.ts",
+      "file": "p10-memories.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "P10 real image pipeline strips synthetic JPEG EXIF Orientation/GPS/XMP and PNG/WebP metadata",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5157,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:29:56.286Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-5ffa98c3abc76d986a0b",
+          "file": "p10-memories.spec.ts",
+          "line": 73,
+          "column": 1
+        },
+        {
+          "title": "P10 import always reprocesses memory AND journal photos; public export excludes private data",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9306,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:30:01.474Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-b4bdeceb3ed240da90ea",
+          "file": "p10-memories.spec.ts",
+          "line": 253,
+          "column": 1
+        },
+        {
+          "title": "P10 A→B→C/loading/error isolation; unconsented private data never enters network, URL or storage",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17567,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:30:10.812Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-83ff9010bd03bbbc31d8",
+          "file": "p10-memories.spec.ts",
+          "line": 298,
+          "column": 1
+        },
+        {
+          "title": "P10 opt-in IndexedDB survives reload; disabling writes retains RAM; all-device delete clears saved data",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17881,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:30:28.410Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-511dd27b40a60c042c88",
+          "file": "p10-memories.spec.ts",
+          "line": 362,
+          "column": 1
+        },
+        {
+          "title": "P10 blocked/quota storage keeps RAM and reports only neutral code",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8735,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:30:46.321Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-d847bf4e04d0199074b7",
+          "file": "p10-memories.spec.ts",
+          "line": 398,
+          "column": 1
+        },
+        {
+          "title": "P10 guest hides private memories, home label, marker/lot and construction diary",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5411,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:30:55.082Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-4fd2cb9f2eaaa1dccad6",
+          "file": "p10-memories.spec.ts",
+          "line": 442,
+          "column": 1
+        },
+        {
+          "title": "P10 tour uses actual camera, restores pose, mode interruption, strict deep-link round trip",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6471,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:31:00.520Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-bf2f663042bc99205d8a",
+          "file": "p10-memories.spec.ts",
+          "line": 456,
+          "column": 1
+        },
+        {
+          "title": "P10 postcard renders actual scene at desktop 4K and mobile 2K, cancels and restores canvas",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6939,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:31:07.022Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-b0e3bfef27a052a06b70",
+          "file": "p10-memories.spec.ts",
+          "line": 498,
+          "column": 1
+        },
+        {
+          "title": "P10 editor photo <=6 actions, keyboard focus/Escape, XSS text at 1440x900",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10425,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:31:13.984Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-0c8ccb22f0d8fed96c58",
+          "file": "p10-memories.spec.ts",
+          "line": 552,
+          "column": 3
+        },
+        {
+          "title": "P10 editor photo <=6 actions, keyboard focus/Escape, XSS text at 390x844",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9220,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:31:24.438Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-917edf65ccfd1766f284",
+          "file": "p10-memories.spec.ts",
+          "line": 552,
+          "column": 3
+        },
+        {
+          "title": "P10 editor photo <=6 actions, keyboard focus/Escape, XSS text at 740x390",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9469,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:31:33.680Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-a84b3bc82f94cadee310",
+          "file": "p10-memories.spec.ts",
+          "line": 552,
+          "column": 3
+        }
+      ]
+    },
+    {
+      "title": "p10-render-lifecycle.spec.ts",
+      "file": "p10-render-lifecycle.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "P10 pins alter real captured pixels without world rebuild",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5824,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:31:43.205Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7bd0e625a2c7fe9ace03-1afce8406574a71f1eb6",
+          "file": "p10-render-lifecycle.spec.ts",
+          "line": 35,
+          "column": 1
+        },
+        {
+          "title": "P10 journal before/after keyboard slider and VI/EN stay private",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5967,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:31:49.053Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7bd0e625a2c7fe9ace03-f5a3243f37408a042751",
+          "file": "p10-render-lifecycle.spec.ts",
+          "line": 101,
+          "column": 1
+        },
+        {
+          "title": "P10 actual flight freezes for pause/hidden and reduced motion jumps",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9022,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:31:55.053Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7bd0e625a2c7fe9ace03-14dd547cc0f17e3daca9",
+          "file": "p10-render-lifecycle.spec.ts",
+          "line": 141,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "p10-storage-r2.spec.ts",
+      "file": "p10-storage-r2.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "P10 R2 storage",
+          "file": "p10-storage-r2.spec.ts",
+          "line": 32,
+          "column": 6,
+          "specs": [
+            {
+              "title": "opt-in reload remembers content and flag-off never reads IDB",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14039,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:32:04.167Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0455143dd613f9060688-642962317a77f434d76b",
+              "file": "p10-storage-r2.spec.ts",
+              "line": 68,
+              "column": 3
+            },
+            {
+              "title": "import cancel is atomic and accept merges by id",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4968,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:32:18.228Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0455143dd613f9060688-eed649093e68f80388a4",
+              "file": "p10-storage-r2.spec.ts",
+              "line": 116,
+              "column": 3
+            },
+            {
+              "title": "missing/corrupt IDB is readonly without pageerror; confirmed clear recovers",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4651,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:32:23.226Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0455143dd613f9060688-1671e98911a532530f85",
+              "file": "p10-storage-r2.spec.ts",
+              "line": 143,
+              "column": 3
+            },
+            {
+              "title": "UI import dismisses atomically, then accepts an id merge while retaining other ids",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5147,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:32:27.904Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0455143dd613f9060688-54fdf852732df2e4d709",
+              "file": "p10-storage-r2.spec.ts",
+              "line": 174,
+              "column": 3
+            },
+            {
+              "title": "corrupt IndexedDB remains readonly and exact until confirmed UI clear",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10582,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:32:33.081Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0455143dd613f9060688-856e601bbd49567248b1",
+              "file": "p10-storage-r2.spec.ts",
+              "line": 215,
+              "column": 3
+            },
+            {
+              "title": "valid oversized IndexedDB remains exact and readonly until confirmed UI clear",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12166,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:32:43.695Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0455143dd613f9060688-cb6ec4c4ad47fb7c0aa2",
+              "file": "p10-storage-r2.spec.ts",
+              "line": 346,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "p7-real-street.spec.ts",
+      "file": "p7-real-street.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "P7 synthetic real-street handoff",
+          "file": "p7-real-street.spec.ts",
+          "line": 201,
+          "column": 6,
+          "specs": [
+            {
+              "title": "private package/reference gating is hash-bound and hidden input is attached",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7197,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:32:55.943Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-7174497542e8aa258c05",
+              "file": "p7-real-street.spec.ts",
+              "line": 202,
+              "column": 3
+            },
+            {
+              "title": "fixture, WebGL2 fallback, and loading states keep real street disabled",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11184,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:33:03.166Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-a1732023d60712fd9f85",
+              "file": "p7-real-street.spec.ts",
+              "line": 218,
+              "column": 3
+            },
+            {
+              "title": "package switch and UI reset invalidate references without rebuilding the scene host",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8497,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:33:14.375Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-673ab646b7fd3a787d8c",
+              "file": "p7-real-street.spec.ts",
+              "line": 254,
+              "column": 3
+            },
+            {
+              "title": "cancel intentionally focuses first and leaves no privacy side effect",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7540,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:33:22.900Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-14f6d0e5a5eec0ea8306",
+              "file": "p7-real-street.spec.ts",
+              "line": 286,
+              "column": 3
+            },
+            {
+              "title": "Street View confirmation uses synthetic popup, no real Google contact, no referrer, and minimal encoded params",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12155,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:33:30.469Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-da611be519f379544698",
+              "file": "p7-real-street.spec.ts",
+              "line": 325,
+              "column": 3
+            },
+            {
+              "title": "Satellite confirmation sends only its documented minimal parameters",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13593,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:33:42.663Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-22ae8b606a943f6892cb",
+              "file": "p7-real-street.spec.ts",
+              "line": 383,
+              "column": 3
+            },
+            {
+              "title": "blocked popup preserves the session and keeps the control usable",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16639,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:33:56.327Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-27a661050b0d1b444035",
+              "file": "p7-real-street.spec.ts",
+              "line": 417,
+              "column": 3
+            },
+            {
+              "title": "language and portrait/landscape keep the dialog reachable",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15974,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:34:13.030Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-ff0728ea61a074aa64ee",
+              "file": "p7-real-street.spec.ts",
+              "line": 430,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "p8-atmosphere.spec.ts",
+      "file": "p8-atmosphere.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "P8 synthetic atmosphere integration",
+          "file": "p8-atmosphere.spec.ts",
+          "line": 45,
+          "column": 6,
+          "specs": [
+            {
+              "title": "weather and date controls attempt no external location request and keep true activation blocked",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 6852,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:69:5",
+                        "location": {
+                          "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                          "column": 45,
+                          "line": 5
+                        },
+                        "snippet": "  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\","
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                            "column": 45,
+                            "line": 5
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\",\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:69:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:34:29.123Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-a57a0-eep-true-activation-blocked-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-a57a0-eep-true-activation-blocked-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-a57a0-eep-true-activation-blocked-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                        "column": 45,
+                        "line": 5
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4ed503a418e41032d45d-70c6adda5d29b2ede41d",
+              "file": "p8-atmosphere.spec.ts",
+              "line": 55,
+              "column": 3
+            },
+            {
+              "title": "date drives Vietnamese auto festival; manual normal disables auto; VI/EN remains usable",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7463,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:83:5",
+                        "location": {
+                          "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                          "column": 45,
+                          "line": 5
+                        },
+                        "snippet": "  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\","
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                            "column": 45,
+                            "line": 5
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\",\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:83:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:34:42.241Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-5b9f0-s-auto-VI-EN-remains-usable-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-5b9f0-s-auto-VI-EN-remains-usable-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-5b9f0-s-auto-VI-EN-remains-usable-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                        "column": 45,
+                        "line": 5
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4ed503a418e41032d45d-35d993928d37baeaeed3",
+              "file": "p8-atmosphere.spec.ts",
+              "line": 80,
+              "column": 3
+            },
+            {
+              "title": "all presentation controls preserve exported geometry, provenance and package state byte-for-byte",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7787,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:115:5",
+                        "location": {
+                          "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                          "column": 45,
+                          "line": 5
+                        },
+                        "snippet": "  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\","
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                            "column": 45,
+                            "line": 5
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\",\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:115:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:34:56.183Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-b408a-package-state-byte-for-byte-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-b408a-package-state-byte-for-byte-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-b408a-package-state-byte-for-byte-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                        "column": 45,
+                        "line": 5
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4ed503a418e41032d45d-7b97f3810e38a8071564",
+              "file": "p8-atmosphere.spec.ts",
+              "line": 112,
+              "column": 3
+            },
+            {
+              "title": "export invariant survives disabled presentation controls in Firefox fallback",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7557,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:152:5",
+                        "location": {
+                          "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                          "column": 45,
+                          "line": 5
+                        },
+                        "snippet": "  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\","
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                            "column": 45,
+                            "line": 5
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\",\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:152:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:35:10.778Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-c2f43-ontrols-in-Firefox-fallback-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-c2f43-ontrols-in-Firefox-fallback-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-c2f43-ontrols-in-Firefox-fallback-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                        "column": 45,
+                        "line": 5
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4ed503a418e41032d45d-c2b93510092d4964d65d",
+              "file": "p8-atmosphere.spec.ts",
+              "line": 139,
+              "column": 3
+            },
+            {
+              "title": "keyboard focus, touch targets, reduced-motion and portrait/landscape sheet stay usable",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 9086,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:189:5",
+                        "location": {
+                          "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                          "column": 45,
+                          "line": 5
+                        },
+                        "snippet": "  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\","
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                            "column": 45,
+                            "line": 5
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\",\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:189:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:35:25.237Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-5f98a-landscape-sheet-stay-usable-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-5f98a-landscape-sheet-stay-usable-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-5f98a-landscape-sheet-stay-usable-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                        "column": 45,
+                        "line": 5
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4ed503a418e41032d45d-68f2d0b294cc1f0f9d22",
+              "file": "p8-atmosphere.spec.ts",
+              "line": 185,
+              "column": 3
+            },
+            {
+              "title": "forced fallback short landscape keeps native weather-time tabs and retry reachable",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 10092,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:223:5",
+                        "location": {
+                          "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                          "column": 45,
+                          "line": 5
+                        },
+                        "snippet": "  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\","
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                            "column": 45,
+                            "line": 5
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\",\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:223:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:35:46.750Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-6264d-me-tabs-and-retry-reachable-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-6264d-me-tabs-and-retry-reachable-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-6264d-me-tabs-and-retry-reachable-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                        "column": 45,
+                        "line": 5
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4ed503a418e41032d45d-7101a1795824f6454adb",
+              "file": "p8-atmosphere.spec.ts",
+              "line": 212,
+              "column": 3
+            },
+            {
+              "title": "GPU canvas pixels change for weather, seasons, festival, flood and layer off; plan stays neutral",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 8388,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:241:5",
+                        "location": {
+                          "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                          "column": 45,
+                          "line": 5
+                        },
+                        "snippet": "  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\","
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                            "column": 45,
+                            "line": 5
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\",\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:241:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:36:06.396Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-0c45b-ayer-off-plan-stays-neutral-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-0c45b-ayer-off-plan-stays-neutral-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-0c45b-ayer-off-plan-stays-neutral-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                        "column": 45,
+                        "line": 5
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4ed503a418e41032d45d-ce6d35f640302cb4dbaa",
+              "file": "p8-atmosphere.spec.ts",
+              "line": 238,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "p8-weather.spec.ts",
+      "file": "p8-weather.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "P8 weather consent and responsive lifecycle",
+          "file": "p8-weather.spec.ts",
+          "line": 164,
+          "column": 6,
+          "specs": [
+            {
+              "title": "vi phone covers consent, ready, stale, and error actions",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 9383,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at tests\\e2e\\p8-weather.spec.ts:185:51",
+                        "location": {
+                          "file": "tests\\e2e\\p8-weather.spec.ts",
+                          "column": 51,
+                          "line": 185
+                        },
+                        "snippet": "  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-weather.spec.ts",
+                            "column": 51,
+                            "line": 185
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );\n    at tests\\e2e\\p8-weather.spec.ts:185:51"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:36:24.324Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-weather-P8-weather-cons-37b74-ady-stale-and-error-actions-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-weather-P8-weather-cons-37b74-ady-stale-and-error-actions-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-weather-P8-weather-cons-37b74-ady-stale-and-error-actions-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-weather.spec.ts",
+                        "column": 51,
+                        "line": 185
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-8484a382ddc902495a50",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            },
+            {
+              "title": "vi landscape covers consent, ready, stale, and error actions",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 8584,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at tests\\e2e\\p8-weather.spec.ts:185:51",
+                        "location": {
+                          "file": "tests\\e2e\\p8-weather.spec.ts",
+                          "column": 51,
+                          "line": 185
+                        },
+                        "snippet": "  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-weather.spec.ts",
+                            "column": 51,
+                            "line": 185
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );\n    at tests\\e2e\\p8-weather.spec.ts:185:51"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:36:45.043Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-weather-P8-weather-cons-4e3cf-ady-stale-and-error-actions-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-weather-P8-weather-cons-4e3cf-ady-stale-and-error-actions-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-weather-P8-weather-cons-4e3cf-ady-stale-and-error-actions-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-weather.spec.ts",
+                        "column": 51,
+                        "line": 185
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-727c8da5d05075012f63",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            },
+            {
+              "title": "forced fallback vi phone covers consent, ready, stale, and error actions",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 8415,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at tests\\e2e\\p8-weather.spec.ts:185:51",
+                        "location": {
+                          "file": "tests\\e2e\\p8-weather.spec.ts",
+                          "column": 51,
+                          "line": 185
+                        },
+                        "snippet": "  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-weather.spec.ts",
+                            "column": 51,
+                            "line": 185
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );\n    at tests\\e2e\\p8-weather.spec.ts:185:51"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:37:03.156Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-weather-P8-weather-cons-bd958-ady-stale-and-error-actions-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-weather-P8-weather-cons-bd958-ady-stale-and-error-actions-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-weather-P8-weather-cons-bd958-ady-stale-and-error-actions-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-weather.spec.ts",
+                        "column": 51,
+                        "line": 185
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-2a88fd1cdd637acb21e3",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            },
+            {
+              "title": "forced fallback vi landscape covers consent, ready, stale, and error actions",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 9460,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at tests\\e2e\\p8-weather.spec.ts:185:51",
+                        "location": {
+                          "file": "tests\\e2e\\p8-weather.spec.ts",
+                          "column": 51,
+                          "line": 185
+                        },
+                        "snippet": "  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-weather.spec.ts",
+                            "column": 51,
+                            "line": 185
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );\n    at tests\\e2e\\p8-weather.spec.ts:185:51"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:37:20.808Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-weather-P8-weather-cons-b2a84-ady-stale-and-error-actions-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-weather-P8-weather-cons-b2a84-ady-stale-and-error-actions-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-weather-P8-weather-cons-b2a84-ady-stale-and-error-actions-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-weather.spec.ts",
+                        "column": 51,
+                        "line": 185
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-3a02a3fa8b60f57eb3fb",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            },
+            {
+              "title": "en phone covers consent, ready, stale, and error actions",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 8221,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at tests\\e2e\\p8-weather.spec.ts:185:51",
+                        "location": {
+                          "file": "tests\\e2e\\p8-weather.spec.ts",
+                          "column": 51,
+                          "line": 185
+                        },
+                        "snippet": "  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-weather.spec.ts",
+                            "column": 51,
+                            "line": 185
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );\n    at tests\\e2e\\p8-weather.spec.ts:185:51"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:37:39.961Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-weather-P8-weather-cons-dfde7-ady-stale-and-error-actions-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-weather-P8-weather-cons-dfde7-ady-stale-and-error-actions-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-weather-P8-weather-cons-dfde7-ady-stale-and-error-actions-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-weather.spec.ts",
+                        "column": 51,
+                        "line": 185
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-51276559e1ad4ced77ea",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            },
+            {
+              "title": "en landscape covers consent, ready, stale, and error actions",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 8638,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at tests\\e2e\\p8-weather.spec.ts:185:51",
+                        "location": {
+                          "file": "tests\\e2e\\p8-weather.spec.ts",
+                          "column": 51,
+                          "line": 185
+                        },
+                        "snippet": "  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-weather.spec.ts",
+                            "column": 51,
+                            "line": 185
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );\n    at tests\\e2e\\p8-weather.spec.ts:185:51"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:37:59.026Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-weather-P8-weather-cons-835ed-ady-stale-and-error-actions-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-weather-P8-weather-cons-835ed-ady-stale-and-error-actions-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-weather-P8-weather-cons-835ed-ady-stale-and-error-actions-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-weather.spec.ts",
+                        "column": 51,
+                        "line": 185
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-f83d96e3161aeb399bf8",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            },
+            {
+              "title": "forced fallback en phone covers consent, ready, stale, and error actions",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 14,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 10165,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at tests\\e2e\\p8-weather.spec.ts:185:51",
+                        "location": {
+                          "file": "tests\\e2e\\p8-weather.spec.ts",
+                          "column": 51,
+                          "line": 185
+                        },
+                        "snippet": "  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-weather.spec.ts",
+                            "column": 51,
+                            "line": 185
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );\n    at tests\\e2e\\p8-weather.spec.ts:185:51"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:38:19.191Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-weather-P8-weather-cons-536cf-ady-stale-and-error-actions-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-weather-P8-weather-cons-536cf-ady-stale-and-error-actions-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-weather-P8-weather-cons-536cf-ady-stale-and-error-actions-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-weather.spec.ts",
+                        "column": 51,
+                        "line": 185
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-bbc024043d3945496dcb",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            },
+            {
+              "title": "forced fallback en landscape covers consent, ready, stale, and error actions",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 15,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7472,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at tests\\e2e\\p8-weather.spec.ts:185:51",
+                        "location": {
+                          "file": "tests\\e2e\\p8-weather.spec.ts",
+                          "column": 51,
+                          "line": 185
+                        },
+                        "snippet": "  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-weather.spec.ts",
+                            "column": 51,
+                            "line": 185
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );\n    at tests\\e2e\\p8-weather.spec.ts:185:51"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:38:41.616Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-weather-P8-weather-cons-c8db0-ady-stale-and-error-actions-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-weather-P8-weather-cons-c8db0-ady-stale-and-error-actions-chromium\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-weather-P8-weather-cons-c8db0-ady-stale-and-error-actions-chromium\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-weather.spec.ts",
+                        "column": 51,
+                        "line": 185
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-b3f66a1004cde5dd496a",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "P8 weather consent and request boundary",
+          "file": "p8-weather.spec.ts",
+          "line": 341,
+          "column": 6,
+          "specs": [
+            {
+              "title": "demo starts with weather disabled and no external requests",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 16,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12938,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:38:56.047Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-1a699b85ca4f9d884e86",
+              "file": "p8-weather.spec.ts",
+              "line": 362,
+              "column": 3
+            },
+            {
+              "title": "native package/reference import enables consent, one request, success, and off",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 16,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 18491,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:39:09.432Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-8ec229ddb1a30dfd4344",
+              "file": "p8-weather.spec.ts",
+              "line": 374,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "p9-life-sound.spec.ts",
+      "file": "p9-life-sound.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "P9 OfflineAudioContext measures the actual eight-voice storm mix below the peak limit",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 16,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5756,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:41:54.293Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "offline-mix-measurement",
+                      "contentType": "application/json",
+                      "body": "eyJwZWFrIjowLjEyMjk3NDIwOTQ4NzQzODIsImxhcmdlc3RTdGVwIjowLjAwMTMzNzM0OTQxNDgyNTQzOTUsInNhbXBsZUNvdW50Ijo5NjAwMCwiY2hhbm5lbHMiOjJ9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1dcc5fbf546365ca8b59-bc2cc1ef816d84c077db",
+          "file": "p9-life-sound.spec.ts",
+          "line": 240,
+          "column": 1
+        }
+      ],
+      "suites": [
+        {
+          "title": "P9 synthetic life and sound",
+          "file": "p9-life-sound.spec.ts",
+          "line": 49,
+          "column": 6,
+          "specs": [
+            {
+              "title": "local fixture, life toggle, walk, ride and sound send no data; real activation stays blocked",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 16,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 22242,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:39:28.116Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1dcc5fbf546365ca8b59-885d35927f630fc033b9",
+              "file": "p9-life-sound.spec.ts",
+              "line": 59,
+              "column": 3
+            },
+            {
+              "title": "life is visible in real pixels, Plan hides it and Pause does not advance simulation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 16,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 36620,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:39:50.420Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1dcc5fbf546365ca8b59-38ae68658aca41f85914",
+              "file": "p9-life-sound.spec.ts",
+              "line": 99,
+              "column": 3
+            },
+            {
+              "title": "POV is eye level, exit keeps package and camera, keyboard releases; ride pause and tilt remain optional",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 16,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 30082,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:40:27.103Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1dcc5fbf546365ca8b59-9678b97a3a4eb8453d4e",
+              "file": "p9-life-sound.spec.ts",
+              "line": 124,
+              "column": 3
+            },
+            {
+              "title": "sound context is gesture-only, one per scene, local clip manifest stays in session and off releases voices",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 16,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 19744,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:40:57.250Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1dcc5fbf546365ca8b59-c657ca01e6a7271737b3",
+              "file": "p9-life-sound.spec.ts",
+              "line": 162,
+              "column": 3
+            },
+            {
+              "title": "VI/EN touch and exit controls at 390x844",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 16,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 17478,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:41:17.053Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1dcc5fbf546365ca8b59-3ab0502c2597fca3df1b",
+              "file": "p9-life-sound.spec.ts",
+              "line": 217,
+              "column": 5
+            },
+            {
+              "title": "VI/EN touch and exit controls at 740x390",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 16,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 19601,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:41:34.599Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1dcc5fbf546365ca8b59-39b056e63d544e17d246",
+              "file": "p9-life-sound.spec.ts",
+              "line": 217,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-28T13:24:01.255Z",
+    "duration": 1079338.384,
+    "expected": 61,
+    "skipped": 0,
+    "unexpected": 16,
+    "flaky": 0
+  }
+}

@@ -8,7 +8,7 @@ from pathlib import Path
 root = Path(sys.argv[1])
 
 def load(name):
-    return json.loads((root / name).read_text())
+    return json.loads((root / name).read_text(encoding="utf-8"))
 
 def stats(values):
     ordered = sorted(values)
@@ -21,6 +21,17 @@ def stats(values):
 before, after, soak = load("before-raw.json"), load("after-raw.json"), load("soak-raw.json")
 rows = after["raw"]
 latency = load("latency-raw.json")
+environments = {name: data.get("environment") for name, data in
+                [("before", before), ("after", after), ("latency", latency), ("soak", soak)]}
+observed = [value for value in environments.values() if value]
+comparison_keys = ["renderer", "rendererClass", "driverVersion", "browserVersion", "dpr", "viewport", "headed"]
+if observed and any(any(row.get(key) != observed[0].get(key) for key in comparison_keys)
+                    for row in observed[1:]):
+    raise ValueError("BENCHMARK_ENVIRONMENT_MISMATCH")
+complete_environment = len(observed) == len(environments)
+physical_gpu = complete_environment and all(
+    row.get("rendererClass") == "REAL_GPU" and row.get("headed") is True
+    and row.get("driverVersion") not in [None, "NOT_VERIFIED"] for row in observed)
 mutations = [item for row in latency["raw"] for item in row["samples"]]
 captures = [item for row in rows for item in row["captures"]]
 frames = {
@@ -45,8 +56,12 @@ for key in ["documents", "nodes", "jsEventListeners"]:
 heap = [row["heap"]["used"] for row in cycles if row.get("heap")]
 summary = {
     "syntheticOnly": True,
-    "measuredRenderer": "Chromium SwiftShader (software), NOT physical GPU",
-    "fixture": "same main/after local-preview synthetic demo, heading28 zoom1, 2026-06-21 07:00, 1440x900 DPR1, warmup5s, samples10s x3",
+    "measuredRenderer": (after.get("environment") or {}).get("renderer", after.get("renderer", "NOT_VERIFIED")),
+    "environments": environments,
+    "environmentComparison": "MATCHED" if complete_environment else "NOT_VERIFIED_LEGACY_OR_INCOMPLETE",
+    "viewport": after.get("viewport"),
+    "dpr": after.get("dpr"),
+    "fixture": "local-preview synthetic demo; source revisions, camera, time, viewport, DPR and warm-up are recorded in the raw inputs",
     "framesMs": frames,
     "frameMeaning": "requestAnimationFrame intervals, all slow frames retained; idle/demand cadence is NOT a physical-GPU FPS claim. Tour300 is a different active phase, not a matched main comparison.",
     "beforeScene": [{key: row["scene"].get(key) for key in ["drawCalls", "triangles", "worldMode", "lifeAgents"]} for row in before["results"]],
@@ -62,7 +77,7 @@ summary = {
     "memoryMeaning": "width*height*16 estimates four RGBA CPU pixel buffers only; heap and texture counters are NOT GPU memory measurements.",
     "soak": {"complete": soak.get("complete", False), "elapsedMs": soak["elapsedMs"], "cycles": soak["cycles"], "meetsDuration": soak["elapsedMs"] >= 1200000, "meetsCycles": soak["cycles"] >= 20, "resources": resources, "heapBytes": {"first": heap[0], "last": heap[-1], "min": min(heap), "max": max(heap)} if heap else None, "errors": soak["errors"]},
     "benchmarkErrors": after["errors"],
-    "notVerified": ["physical GPU", "native Safari", "real iOS/Android device", "real-world geometry/location"],
+    "notVerified": ([] if physical_gpu else ["physical GPU"]) + ["physical GPU memory", "native Safari", "real iOS/Android device", "real-world geometry/location"],
 }
-(root / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n")
-print(json.dumps(summary, ensure_ascii=False, indent=2))
+(root / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+print(json.dumps(summary, ensure_ascii=True, indent=2))
