@@ -56,7 +56,7 @@ test.beforeEach(async ({ context }) => {
       const entry = [...performance.getEntriesByType("resource")]
         .reverse()
         .find((e) => new URL(e.name).pathname === path);
-      return import(/* @vite-ignore */ entry?.name ?? path);
+      return import(/* @vite-ignore */ entry?.name ?? new URL(path, location.href).href);
     };
   });
   await context.route("**/*", (route) => {
@@ -606,3 +606,133 @@ for (const viewport of [
       true,
     );
   });
+
+for (const width of [3840, 2048, 1920]) {
+  for (const language of ["vi", "en"] as const) {
+    for (const fixture of [
+      { name: "empty", ward: "" },
+      { name: "maximum width", ward: "W".repeat(40) },
+      { name: "Vietnamese accents", ward: "Khu Mẫu Tổng Hợp Có Dấu" },
+    ]) {
+      test(`postcard caption ink boxes stay separated at ${width}px in ${language} with ${fixture.name}`, async ({
+        page,
+      }) => {
+        await page.goto("/gioi-thieu");
+        const measured = await page.evaluate(
+          async ({ width, language, ward }) => {
+            const height = Math.round((width * 9) / 16);
+            const importer = window.__p10Import;
+            const { useAppStore } = await importer("/src/state/appStore.ts");
+            useAppStore.getState().setLanguage(language);
+            const lines: {
+              text: string;
+              left: number;
+              top: number;
+              right: number;
+              bottom: number;
+              lineHeight: number;
+            }[] = [];
+            const original = CanvasRenderingContext2D.prototype.fillText;
+            CanvasRenderingContext2D.prototype.fillText = function (text, x, y, maxWidth) {
+              if (this.canvas.width === width && this.canvas.height === height) {
+                const m = this.measureText(text);
+                lines.push({
+                  text,
+                  left: x - m.actualBoundingBoxLeft,
+                  top: y - m.actualBoundingBoxAscent,
+                  right: x + m.actualBoundingBoxRight,
+                  bottom: y + m.actualBoundingBoxDescent,
+                  lineHeight: Number(this.font.match(/([\d.]+)px/)?.[1]) * 1.2,
+                });
+              }
+              if (maxWidth === undefined) return original.call(this, text, x, y);
+              return original.call(this, text, x, y, maxWidth);
+            };
+            let actualWidth = width,
+              actualHeight = height;
+            try {
+              if (width === 1920) {
+                const { drawPostcardCaption, postcardFrame } = await importer(
+                  "/src/memories/postcardLayout.ts",
+                );
+                const canvas = document.createElement("canvas");
+                canvas.width = width;
+                canvas.height = height;
+                try {
+                  drawPostcardCaption(
+                    canvas.getContext("2d")!,
+                    postcardFrame(width, height),
+                    `${ward} · 2026-06-21 · 07:00`,
+                  );
+                } finally {
+                  canvas.width = canvas.height = 0;
+                }
+              } else {
+                const { bindPostcardCapture, createPostcard } = await importer(
+                  "/src/memories/postcard.ts",
+                );
+                bindPostcardCapture(async (w: number, h: number) => {
+                  const canvas = document.createElement("canvas");
+                  canvas.width = w;
+                  canvas.height = h;
+                  try {
+                    const ctx = canvas.getContext("2d")!;
+                    ctx.fillStyle = "#98b5a0";
+                    ctx.fillRect(0, 0, w, h);
+                    return await new Promise<Blob>((resolve, reject) =>
+                      canvas.toBlob(
+                        (blob) =>
+                          blob ? resolve(blob) : reject(Error("SYNTHETIC_SCENE_ENCODE_FAILED")),
+                        "image/png",
+                      ),
+                    );
+                  } finally {
+                    canvas.width = canvas.height = 0;
+                  }
+                });
+                try {
+                  const result = await createPostcard({
+                    ward,
+                    date: "2026-06-21",
+                    minutes: 420,
+                    mobile: width === 2048,
+                  });
+                  actualWidth = result.width;
+                  actualHeight = result.height;
+                  const { assertNoMetadata } = await importer("/src/memories/metadata.ts");
+                  assertNoMetadata(new Uint8Array(await result.blob.arrayBuffer()));
+                } finally {
+                  bindPostcardCapture(null);
+                }
+              }
+            } finally {
+              CanvasRenderingContext2D.prototype.fillText = original;
+            }
+            return { width: actualWidth, height: actualHeight, lines };
+          },
+          { width, language, ward: fixture.ward },
+        );
+        expect(measured.width).toBe(width);
+        expect(measured.height).toBe(Math.round((width * 9) / 16));
+        expect(measured.lines).toHaveLength(2);
+        const title = measured.lines.find(
+          (line) => line.text === "Phố Nhà Mình · ảnh dựng 3D mô phỏng",
+        )!;
+        const date = measured.lines.find((line) => line.text.includes("2026-06-21"))!;
+        expect(title).toBeDefined();
+        expect(date).toBeDefined();
+        expect(Number.isFinite(title.lineHeight) && title.lineHeight > 0).toBe(true);
+        expect(Number.isFinite(date.lineHeight) && date.lineHeight > 0).toBe(true);
+        expect(date.top - title.bottom).toBeGreaterThanOrEqual(
+          Math.min(title.lineHeight, date.lineHeight) / 2,
+        );
+        for (const line of measured.lines) {
+          expect(line.left).toBeGreaterThanOrEqual(24);
+          expect(line.right).toBeLessThanOrEqual(width - 24);
+          expect(line.top).toBeGreaterThan(0);
+          expect(line.bottom).toBeLessThanOrEqual(measured.height - 24);
+        }
+      });
+    }
+  }
+}
