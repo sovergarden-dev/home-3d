@@ -51,7 +51,7 @@ export default class H6BudgetReporter {
       this.failed = true;
     if (this.failed) {
       console.error(
-        "H6_WEBKIT_BUDGET_NOT_MET: a completed, passing 20-cycle test below 70000 ms is required.",
+        "H6_WEBKIT_GATE_NOT_MET: require a passing 20-cycle test below 70000 ms and a verified same-runner baseline within the 10% regression limit.",
       );
       return { status: "failed" };
     }

@@ -39,7 +39,7 @@ try {
   const launcher = path.join(temporary, "serve-baseline.mjs");
   await writeFile(
     launcher,
-    `import { createServer } from ${JSON.stringify(pathToFileURL(path.join(root, "node_modules/vite/dist/node/index.js")).href)};\nconst server = await createServer(${JSON.stringify({ root: checkout, configFile: path.join(checkout, "vite.config.ts"), cacheDir: path.join(temporary, "vite-cache"), server: { host: "127.0.0.1", port, strictPort: true } })});\nawait server.listen();\nserver.printUrls();\n`,
+    `import { createServer } from ${JSON.stringify(pathToFileURL(path.join(root, "node_modules/vite/dist/node/index.js")).href)};\nconst server = await createServer(${JSON.stringify({ root: checkout, configFile: path.join(checkout, "vite.config.ts"), cacheDir: path.join(temporary, "vite-cache"), server: { host: "127.0.0.1", port, strictPort: true } })});\nawait server.listen();\nconst address = server.httpServer.address();\nif (!address || typeof address === "string" || address.port !== ${port}) throw Error("BASELINE_BOUND_PORT_MISMATCH");\nconsole.log("HOME3D_BASELINE_READY:" + address.port);\n`,
   );
   server = spawn(process.execPath, [launcher], {
     cwd: checkout,
@@ -55,7 +55,7 @@ try {
   });
   server.stdout.on("data", (chunk) => {
     outputTail = (outputTail + String(chunk)).slice(-1024);
-    if (outputTail.includes(`${baseURL}/`)) announced = true;
+    if (outputTail.includes(`HOME3D_BASELINE_READY:${port}`)) announced = true;
   });
   server.stderr.on("data", () => {});
   const deadline = Date.now() + 60000;
