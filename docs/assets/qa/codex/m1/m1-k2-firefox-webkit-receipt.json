@@ -1,0 +1,715 @@
+{
+  "syntheticOnly": true,
+  "sourceReport": "m1-k2-firefox-webkit.json",
+  "scope": "Renderer pixels/ink boxes; no physical performance certification implied. Every result retained, including previous setup failures.",
+  "rows": [
+    {
+      "test": "rendered memory pin stays readable in diorama at 1440x900 zoom 0.25",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 16859,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "mode": "diorama",
+            "zoom": 0.25,
+            "id": "a00c82de-5b1f-4c67-b7f4-ad28356906d5",
+            "pixelWidth": 22,
+            "pixelHeight": 28,
+            "centreX": 716.5,
+            "centreY": 413,
+            "dpr": 1,
+            "baseCalls": 30,
+            "calls": 31
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in diorama at 1440x900 zoom 4",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 12247,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "mode": "diorama",
+            "zoom": 4,
+            "id": "8ea91710-0f36-4f3c-8b6f-935749b317ac",
+            "pixelWidth": 21,
+            "pixelHeight": 28,
+            "centreX": 701,
+            "centreY": 319.5,
+            "dpr": 1,
+            "baseCalls": 28,
+            "calls": 29
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in topdown at 1440x900 zoom 0.25",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 14713,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "mode": "topdown",
+            "zoom": 0.25,
+            "id": "2fc9b0ca-76da-4353-9143-a096392150ab",
+            "pixelWidth": 20,
+            "pixelHeight": 28,
+            "centreX": 719.5,
+            "centreY": 427.5,
+            "dpr": 1,
+            "baseCalls": 30,
+            "calls": 31
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in topdown at 1440x900 zoom 4",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 10071,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "mode": "topdown",
+            "zoom": 4,
+            "id": "c32a1c38-81b9-4d00-8296-fed7421b2eb7",
+            "pixelWidth": 20,
+            "pixelHeight": 28,
+            "centreX": 719.5,
+            "centreY": 366,
+            "dpr": 1,
+            "baseCalls": 28,
+            "calls": 29
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in diorama at 390x844 zoom 0.25",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 10566,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "mode": "diorama",
+            "zoom": 0.25,
+            "id": "4a756263-53f1-4d58-8816-2f07255628c4",
+            "pixelWidth": 21,
+            "pixelHeight": 28,
+            "centreX": 192,
+            "centreY": 386,
+            "dpr": 1,
+            "baseCalls": 30,
+            "calls": 31
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in diorama at 390x844 zoom 4",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 12797,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "mode": "diorama",
+            "zoom": 4,
+            "id": "2915e116-3379-43df-83a7-94ded6c3800f",
+            "pixelWidth": 21,
+            "pixelHeight": 28,
+            "centreX": 177,
+            "centreY": 299,
+            "dpr": 1,
+            "baseCalls": 18,
+            "calls": 19
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in topdown at 390x844 zoom 0.25",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 13170,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "mode": "topdown",
+            "zoom": 0.25,
+            "id": "ab2bbe9c-fa68-47a5-907f-f68a2deb82fd",
+            "pixelWidth": 20,
+            "pixelHeight": 28,
+            "centreX": 194.5,
+            "centreY": 400,
+            "dpr": 1,
+            "baseCalls": 30,
+            "calls": 31
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in topdown at 390x844 zoom 4",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 10821,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "mode": "topdown",
+            "zoom": 4,
+            "id": "f52ea441-e177-49ff-bb15-ec814d1615e1",
+            "pixelWidth": 20,
+            "pixelHeight": 28,
+            "centreX": 194.5,
+            "centreY": 342,
+            "dpr": 1,
+            "baseCalls": 17,
+            "calls": 18
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in diorama at 740x390 zoom 0.25",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 11780,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 740,
+              "height": 390
+            },
+            "mode": "diorama",
+            "zoom": 0.25,
+            "id": "37df1751-2f99-4c68-a5bd-13d65858421b",
+            "pixelWidth": 21,
+            "pixelHeight": 28,
+            "centreX": 368,
+            "centreY": 168.5,
+            "dpr": 1,
+            "baseCalls": 30,
+            "calls": 31
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in diorama at 740x390 zoom 4",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 11256,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 740,
+              "height": 390
+            },
+            "mode": "diorama",
+            "zoom": 4,
+            "id": "c37c0e3a-bd8d-4640-b4be-4d20c26710a4",
+            "pixelWidth": 21,
+            "pixelHeight": 28,
+            "centreX": 362,
+            "centreY": 128,
+            "dpr": 1,
+            "baseCalls": 28,
+            "calls": 29
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in topdown at 740x390 zoom 0.25",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 13883,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 740,
+              "height": 390
+            },
+            "mode": "topdown",
+            "zoom": 0.25,
+            "id": "01489425-10a3-4add-90fd-55977514252e",
+            "pixelWidth": 20,
+            "pixelHeight": 28,
+            "centreX": 369.5,
+            "centreY": 175,
+            "dpr": 1,
+            "baseCalls": 30,
+            "calls": 31
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in topdown at 740x390 zoom 4",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 13586,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 740,
+              "height": 390
+            },
+            "mode": "topdown",
+            "zoom": 4,
+            "id": "4dc39486-4cdb-4c15-9186-6bd69138e782",
+            "pixelWidth": 20,
+            "pixelHeight": 29,
+            "centreX": 369.5,
+            "centreY": 148.5,
+            "dpr": 1,
+            "baseCalls": 29,
+            "calls": 30
+          }
+        }
+      ]
+    },
+    {
+      "test": "memory pin hit tolerance and overlap selection work in diorama",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 11966,
+      "measurements": []
+    },
+    {
+      "test": "memory pin hit tolerance and overlap selection work in topdown",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 12155,
+      "measurements": []
+    },
+    {
+      "test": "rendered memory pin stays readable in diorama at 1440x900 zoom 0.25",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 14931,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "mode": "diorama",
+            "zoom": 0.25,
+            "id": "99dc695c-3fd6-499e-8dee-7e1f60a4a86e",
+            "pixelWidth": 20.666666666666668,
+            "pixelHeight": 28,
+            "centreX": 716.6666666666666,
+            "centreY": 413,
+            "dpr": 1.5,
+            "baseCalls": 30,
+            "calls": 31
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in diorama at 1440x900 zoom 4",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 15532,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "mode": "diorama",
+            "zoom": 4,
+            "id": "001452ce-067f-4aae-a449-f777491363c6",
+            "pixelWidth": 20.666666666666668,
+            "pixelHeight": 28,
+            "centreX": 701.3333333333334,
+            "centreY": 320,
+            "dpr": 1.5,
+            "baseCalls": 28,
+            "calls": 29
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in topdown at 1440x900 zoom 0.25",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 13346,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "mode": "topdown",
+            "zoom": 0.25,
+            "id": "cb811f2a-0b43-418f-baa7-07e84862da63",
+            "pixelWidth": 20,
+            "pixelHeight": 28,
+            "centreX": 719.6666666666666,
+            "centreY": 427.6666666666667,
+            "dpr": 1.5,
+            "baseCalls": 30,
+            "calls": 31
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in topdown at 1440x900 zoom 4",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 15231,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "mode": "topdown",
+            "zoom": 4,
+            "id": "5e21816a-e6af-493b-ac5b-59e58e221b68",
+            "pixelWidth": 20,
+            "pixelHeight": 28,
+            "centreX": 719.6666666666666,
+            "centreY": 366.3333333333333,
+            "dpr": 1.5,
+            "baseCalls": 28,
+            "calls": 29
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in diorama at 390x844 zoom 0.25",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 13026,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "mode": "diorama",
+            "zoom": 0.25,
+            "id": "3f76d907-bae3-47bd-b088-26c2ad943550",
+            "pixelWidth": 21,
+            "pixelHeight": 28,
+            "centreX": 192,
+            "centreY": 386,
+            "dpr": 1,
+            "baseCalls": 30,
+            "calls": 31
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in diorama at 390x844 zoom 4",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 10214,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "mode": "diorama",
+            "zoom": 4,
+            "id": "02e5df8f-73e2-49a1-8f87-c8da18c76110",
+            "pixelWidth": 21,
+            "pixelHeight": 28,
+            "centreX": 177,
+            "centreY": 299,
+            "dpr": 1,
+            "baseCalls": 18,
+            "calls": 19
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in topdown at 390x844 zoom 0.25",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 13404,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "mode": "topdown",
+            "zoom": 0.25,
+            "id": "d3bfaaba-34e1-4f3d-a803-4379dce9ce08",
+            "pixelWidth": 20,
+            "pixelHeight": 28,
+            "centreX": 194.5,
+            "centreY": 400,
+            "dpr": 1,
+            "baseCalls": 30,
+            "calls": 31
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in topdown at 390x844 zoom 4",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 9519,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "mode": "topdown",
+            "zoom": 4,
+            "id": "b16dd1bf-4483-47a2-8ad8-51e54789c491",
+            "pixelWidth": 20,
+            "pixelHeight": 28,
+            "centreX": 194.5,
+            "centreY": 342,
+            "dpr": 1,
+            "baseCalls": 17,
+            "calls": 18
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in diorama at 740x390 zoom 0.25",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 9148,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 740,
+              "height": 390
+            },
+            "mode": "diorama",
+            "zoom": 0.25,
+            "id": "d3a36ab8-954c-4b19-9820-df888c2af616",
+            "pixelWidth": 21,
+            "pixelHeight": 28,
+            "centreX": 368,
+            "centreY": 168.5,
+            "dpr": 1,
+            "baseCalls": 30,
+            "calls": 31
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in diorama at 740x390 zoom 4",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 8725,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 740,
+              "height": 390
+            },
+            "mode": "diorama",
+            "zoom": 4,
+            "id": "b6bda875-ed55-4e23-91c7-98ec2e5f32cd",
+            "pixelWidth": 21,
+            "pixelHeight": 28,
+            "centreX": 362,
+            "centreY": 128,
+            "dpr": 1,
+            "baseCalls": 28,
+            "calls": 29
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in topdown at 740x390 zoom 0.25",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 9339,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 740,
+              "height": 390
+            },
+            "mode": "topdown",
+            "zoom": 0.25,
+            "id": "3344cfc2-d41a-4ce9-8c5c-361a12b82f5e",
+            "pixelWidth": 20,
+            "pixelHeight": 28,
+            "centreX": 369.5,
+            "centreY": 175,
+            "dpr": 1,
+            "baseCalls": 30,
+            "calls": 31
+          }
+        }
+      ]
+    },
+    {
+      "test": "rendered memory pin stays readable in topdown at 740x390 zoom 4",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 9626,
+      "measurements": [
+        {
+          "name": "pin-pixel-measurement",
+          "data": {
+            "syntheticOnly": true,
+            "viewport": {
+              "width": 740,
+              "height": 390
+            },
+            "mode": "topdown",
+            "zoom": 4,
+            "id": "063fd1e1-f9c3-4adc-a242-88d85ef0a0e6",
+            "pixelWidth": 20,
+            "pixelHeight": 29,
+            "centreX": 369.5,
+            "centreY": 148.5,
+            "dpr": 1,
+            "baseCalls": 29,
+            "calls": 30
+          }
+        }
+      ]
+    },
+    {
+      "test": "memory pin hit tolerance and overlap selection work in diorama",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 14538,
+      "measurements": []
+    },
+    {
+      "test": "memory pin hit tolerance and overlap selection work in topdown",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 17787,
+      "measurements": []
+    }
+  ],
+  "stats": {
+    "startTime": "2026-10-28T19:01:41.933Z",
+    "duration": 362769.954,
+    "expected": 28,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

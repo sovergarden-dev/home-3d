@@ -1,32 +1,67 @@
 # P10.1 — Kỷ niệm, ghim và bưu thiếp
 
-`PARTIAL` — M0 đã merge, nhánh M1 đã nhận main bằng merge; chưa mở PR M1. Phạm vi hiện hành từ CODEX_HANDOFF (M1).
+`PARTIAL` — mã và các phép đo chính đã đạt; PR #9 còn chờ receipt cuối, CI đúng head cuối, merge commit và CI main. Chỉ đạo: [CODEX_HANDOFF.md](CODEX_HANDOFF.md). Không Publish/deploy.
 
-## K3 — Chú thích bưu thiếp
+## Nguồn kiểm chứng
 
-- Giữ nguyên câu tiêu đề cố định, kích thước xuất/hạ bậc, vùng cảnh, quét metadata, Hủy và chia sẻ.
-- Dùng TextMetrics của canvas thật để đặt hai hộp chữ. Gap bằng 0,6 lần line-height nhỏ hơn; line-height là 1,2 lần cỡ chữ, không dựa vào việc có hay không tên phường. Chiều cao mực chữ đo được chỉ dùng để đặt baseline và tránh chồng lấn.
-- Căn chữ theo lề ảnh; co cỡ chữ theo chiều rộng thực khi cần, không dùng `fillText(maxWidth)` làm lệch bounding box. Hình học frame/ROI được dùng chung cho capture, compose và caption để giữ vùng cảnh R1.
-- Cần kiểm: canvas thật tại 3840×2160, 2048×1152, 1920×1080; VI/EN; tên phường rỗng, 40 ký tự và có dấu; ảnh 4K/2K; R1 chênh màu dưới 15%; regression P10. Chưa gọi DONE từ code hoặc mock.
+Runtime cuối của M1: `59f6d6881261a542e1f1b52b4d0d2d6e86f4834a`. Các commit sau chỉ sửa harness/receipt. Baseline app: `de7173261a8a3928685555252c2b479f76a713fe`. Evidence ở `docs/assets/qa/codex/m1/`; mỗi file dưới 1 MB, chỉ fixture tổng hợp. Số dưới đây do Codex đo, không chép receipt P10 cũ.
 
-## K1 và K2
+## K1 — 300 ghim
 
-K1: profile 10 cặp có tracing chỉ ra react-dom là phần chậm; memo card và guest-only viewport subscription giảm DOM p50 83,35 → 22,95 ms và RAF2 100,9 → 35,5 ms. 26 regression unit đạt; không sửa validator, quota hay persistence. Vẫn cần ma trận A/B đủ mẫu trước khi chốt H.
+`H_MET_REAL_GPU` trên Chrome 152.0.7977.76 headed, Intel UHD / ANGLE D3D11, driver 32.0.101.7082, DPR 1. Harness `scripts/p10-1-latency.mjs`: bốn điều kiện, sáu batch xen kẽ AB/BA, mỗi nguồn/điều kiện 60 thêm + 60 xoá. Cùng fixture/camera/giờ khởi đầu và warm-up; không lọc mẫu chậm. Tất cả batch của matrix `latency-real-empty-layer` complete, không page error.
 
-K2: pin billboard 20 CSS px, vùng chọn tròn 44 CSS px, một InstancedMesh; gần điểm chạm nhất thắng, exact tie theo ID ổn định. Pin active vẽ cuối trong cùng batch để outline không bị pin trùng che; nhãn/marker nhà giữ ưu tiên. Chỉ hiện ở Diorama/Mặt bằng. Tám unit về tier/privacy/picking/highlight đạt; pixel QA, touch/overlap và regression H6 đang kiểm. Chưa DONE.
+| Điều kiện                    | Add p50 / p95 (ms) | Delete p50 / p95 (ms) | Kết luận                   |
+| ---------------------------- | ------------------ | --------------------- | -------------------------- |
+| Active · 300 ghim · 1440×900 | 86,90 / 104,90     | 85,90 / 100,70        | Ngưỡng primary p50<100 đạt |
+| Static · 300 ghim · 1440×900 | 67,90 / 71,00      | 67,55 / 69,10         | Ngưỡng primary đạt         |
+| Active · 300 ghim · 960×600  | 81,85 / 91,20      | 81,10 / 87,70         | Diagnostic                 |
+| Active · 0↔1 ghim · 1440×900 | 103,55 / 118,70    | 101,85 / 123,00       | Diagnostic NOT_MET 100 ms  |
 
-K2 đã kiểm Chromium: 12 ca pixel ở ba viewport × hai mode × gần/xa; hai ca hit/overlap, rồi hai ca touch CDP và regression picking/geometry H6 đều đạt. Các phép đo dùng ảnh canvas thật so với background cùng scene, không đo hình giả lập bằng CSS. Vẫn cần các browser còn lại, ảnh và lifecycle chung.
+Frame được ghi sau DOM đúng số thẻ, actual pin render hoặc layer 0-count đã detached trong một main render thật, GPU fence hoàn tất và RAF tiếp theo. Đây là cận trên cơ hội trình bày, không phải GPU execution time hoặc cam kết mọi p95<100. Raw ghi CPU/DOM/RAF1/RAF2/render-end/fence riêng. Viewport nhỏ khởi tạo ở cùng tier 300 rồi resize trước warm-up; xác nhận số pin thật.
 
-## Ma trận độ trễ nghiệm thu
+Trace chẩn đoán R7 giữ Long Task, Long Animation Frame và Event Timing. Profile chỉ ra React DOM tốn nhiều hơn mutation/matrix writes; M1 memo card/subtree và thu hẹp subscription. Không đổi validator, quota, public projection hoặc persistence. Profile 10 cặp có tracing không phải mẫu nghiệm thu.
 
-`scripts/p10-1-latency.mjs` chạy AB rồi BA xen kẽ, sáu batch × mười cặp add/delete cho mỗi nguồn/điều kiện. Hai nguồn phải khai báo full SHA và được đối chiếu với server. Có active-300 (như baseline M0), static-300 (như R7), smaller-300 và active-empty. Primary phải đạt cả active và static, giữ trần 100 ms. Frame phản ánh chỉ được ghi sau khi DOM có đúng số thẻ, mesh thật có đúng số instance, GPU fence đã hoàn tất và qua một RAF kế tiếp; vẫn ghi RAF1/RAF2 riêng. Đây là cận trên cơ hội trình bày, không phải thời gian GPU. Timeout/censored giữ trong raw và không được coi là complete. Trace R7 là chẩn đoán riêng, không trộn vào số nghiệm thu.
+SwiftShader: `H_BLOCKED` ở matrix đối chứng source 0265a53. Static và viewport nhỏ đủ 60 thêm + 60 xoá; các ca continuous/full viewport bị censored khi fence chưa được xác nhận, nên không dùng median của phần còn lại làm verdict. Static sau sửa p50 add/delete 199,75/198,75 ms vẫn NOT_MET; nhỏ hơn nhưng active sau sửa 2525,60/2551,05 ms không được gọi cải thiện. Standalone GL clear xác nhận API fence hoạt động dưới tải nhẹ. Sau vòng sửa lifecycle rỗng, chưa tái đo SwiftShader toàn bộ; không gắn các số cũ thành số mới. Giữ trạng thái tham khảo bị chặn theo quy tắc giới hạn vòng thử; H của P10 khép bằng GPU thật theo bàn giao.
 
-### Lượt đo K1 bị dừng do setup tier
+Các lượt trước đều giữ: setup viewport tạo mid 120 pin bị dừng; source 1331034 đủ mẫu nhưng active add 102,10 ms chưa đạt; source 0265a53 đạt 86,50/84,75 ms; source 59f6 đo lại sau sửa lifecycle và đạt như bảng. Không thay nhãn hoặc xoá outlier cũ.
 
-Lượt `latency-real` đầu đã hoàn tất active/static nhưng condition 960×600 khởi tạo scene tier mid chỉ có 120 pin. Probe yêu cầu draw 300 nên timeout; đây là lỗi protocol, không là lỗi app. Dừng ngay sau phát hiện, giữ nguyên toàn bộ raw kể cả censored. Harness sửa bằng khởi tạo cùng 1440×900/high, sau đó resize viewport trước warm-up và xác nhận số pin thực bằng dataset. Không đổi cap app hay ngưỡng. Ma trận đủ mẫu của harness đã sửa mới dùng để chốt nhãn.
+## K2 — Ghim hiển thị và chọn
 
-### K1 GPU thật đã đủ mẫu
+Một InstancedMesh, caps 40/120/300/300. Vòng tròn danh nghĩa20 CSS px, hit target44 CSS px; gần điểm chạm nhất thắng, tie theo ID ổn định. Hover/selection có viền trắng, active instance được vẽ cuối trong cùng batch. Chỉ hiện ở Diorama/Mặt bằng; marker nhà và nhãn giữ ưu tiên. Không sửa geometry canonical.
 
-`latency-real-final` tại `0265a53b9e8b571b18fd19ad496e0c9ccdad181d` kết thúc `H_MET_REAL_GPU`, Chrome 152.0.7977.76 / Intel UHD ANGLE D3D11 / driver 32.0.101.7082 / DPR 1. Đủ 60 add và 60 delete cho mỗi condition/source; môi trường A/B đối chiếu, mọi sample REFLECTED, không page error. Active-300 add p50/p95 86,50/103,30 ms; delete 84,75/98,80 ms. Static-300 add 66,25/68,40 ms; delete 51,30/66,60 ms. Không tuyên bố p95 dưới 100 ms. Smaller và zero giữ trong raw/summary. Đây là cận trên cơ hội trình bày sau GPU fence, không GPU execution time. SwiftShader, H6/soak và gallery/R1 vẫn chưa hoàn tất; M1 chưa DONE.
+Pixel renderer thật: ba viewport1440×900/390×844/740×390 ×hai mode ×gần/xa, đủ ba browser. Chromium 14 ca, Firefox/WebKit 28 ca đạt; touch CDP và picking H6 đạt riêng. Gallery `visuals-time` đã được xem ở 12 góc; chọn tab Thời gian bằng UI thật để lộ scene. Overlay có thể che phần scene ở zoom gần; mật độ UI landscape là việc M2, không phải pixel-size pass. `visual-review.json` phân biệt xem ảnh và đo số.
 
-SwiftShader khởi động cùng lúc quét privacy/gitleaks; đã dừng để không trộn tải CPU kiểm tra vào đối chứng renderer phần mềm. Giữ dữ liệu nếu đã có, chạy lại khi các scan đã kết thúc. Không dùng lượt startup bị dừng để chốt nhãn.
+Empty-layer probe ghi4 shader pin khi0 pin trước sửa; sau sửa cả ba browser ghi 0. Three compile duyệt cả mesh invisible, nên layer rỗng tháo mesh khỏi group và tái dùng cùng mesh khi có dữ liệu. Unit 9/9 và browser 3/3 đạt; không hạ caps hoặc tắt test. Primary K1 được đo lại ở runtime mới.
+
+## K3 — Bưu thiếp
+
+Giữ tiêu đề cố định, photo ROI, kích thước4K/2K/fallback, cancel/share và metadata guard. Caption dùng TextMetrics ở đúng output size; gap 0,6×line-height nhỏ hơn, line-height 1,2×font-size. Test thật ở 3840×2160/2048×1152/1920×1080 × VI/EN ×tên rỗng/40 ký tự/có dấu:54 ca đạt. Lượt WebKit đầu lỗi import harness được giữ riêng; đã sửa URL import tuyệt đối và18 ca WebKit chạy lại đạt.
+
+Đã xem PNG 4K không tên phường và PNG 2K. R1 trên GPU thật: chênh độ sáng 4,38%, từng kênh 2,47/3,72/7,50%, dưới 15%; không page error. Nguồn `color-real/brightness-evidence.json`. Tệp ảnh chứa cảnh tổng hợp; không có ảnh khu thật.
+
+## H6, soak và hồi quy
+
+- H6 native GPU 20 vòng: 41,481 giây so baseline Windows 44,351 giây (−6,47%). Driver và renderer xác minh. Baseline/candidate WebKit Windows đều timeout; không gọi đó là pass hoặc delta hợp lệ.
+- CI 40777137757 tại ddc3246: baselineWebKit cùng runner 58,262 giây, candidate 57,605 giây (−1,13%), dưới 70 giây và trong 10%. Chromium 50,658 giây; đây là runner khác receipt lịch sử 39,8 giây, không suy delta đồng máy từ hai số đó. CI 4/4: Chromium/WebKit 110 pass; Firefox 66 pass/44 skip (không cóWebGL2),371 unit / 39 pipeline.
+- Reporter giữ H6 timeout 90 giây và mọi assertion/capability guard; CI WebKit còn bắt buộc baseline cùng runner hợp lệ, không skip và không vượt 70 giây / 10%. Lỗi ANSI readiness đã được independent review phát hiện và đóng bằng marker ASCII+bound-port+SHA check; các run lỗi vẫn ghi đúng trạng thái.
+- Soak 59f6: 600,002 giây, 11 vòng; không page error. URL/bitmap/IDB/audio đang mở đều 0; RAF 1 / world 1; texture 3 / geometry 42 ổn định; render target tạm 0. Heap 70.999.896 → 56.226.348 byte (−20,81%) sau yêu cầuGC. Không dùng heap/counter làm chứng nhận GPU memory.
+- Stationary-camera/active-life snapshots ở 299 pin: median engine p50 17,10→17,15ms (+0,29%);41 draw call không đổi, triangles 9028 → 4842. Đây là aggregate rolling snapshots, raw nguồn vẫn giữ; không gọi là GPU execution time.
+- Windows full run cũ bị dừng để xử lý H6 budget:126 kết quả đã quan sát, 4 fail P8; không gọi327 ca đã chạy. CI Linux là cổng ba browser; Windows là bổ sung. Test liên quan và production smoke cuối được ghi tiếp trong CODEX_LOG, không che thất bại baseline/setup.
+
+## Tái lập
+
+Chạy riêng từng benchmark, không đồng thời build/test nặng hoặc browser GPU khác. Khởi động baseline và candidate từ các commit đã chốt, đặt `VITE_BUILD_SHA` đúng commit; kiểm UI SHA trước đo. Dùng Bun 1.4.3, Playwright đã khoá, fixture tổng hợp.
+
+```powershell
+$env:BENCH_GPU='real'
+$env:BENCH_BROWSER='chrome'
+$env:BENCH_DPR='1'
+$env:BENCH_GPU_DRIVER='<driver đã đọc từ máy>'
+$env:K1_BEFORE_SHA='<full baseline SHA>'
+$env:K1_AFTER_SHA='<full candidate SHA>'
+node scripts/p10-1-latency.mjs test-results/k1
+```
+
+Mặc định before4184/after4186,6batch×10 cặp. `K1_BEFORE_PORT/K1_AFTER_PORT` đổi port. `BENCH_GPU=software` đo riêng và giữ nhãn khác. `playwright.hardware.config.ts` dùng Chrome/Edge headed, không ép SwiftShader. `scripts/p10-benchmark.mjs soak` dùng `P10_SOAK_MS=600000`, `P10_MIN_CYCLES=10` cho M1. Bản production phải build lại với đúng HEAD trước smoke; assertion SHA không được nới để nhận build cũ.
+
+Trước push: gitleaks source/evidence và trace đã giải nén; loại đường dẫn máy, loopback/HMR query token. Giữ nguyên timing events khi redaction và cập nhật checksum. Không đưa artifact raw chứa đường dẫn cá nhân của Playwright vào repo.
