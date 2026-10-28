@@ -17,6 +17,22 @@ const memory = (index: number, position: Memory["position"] = [0, 0, 0]): Memory
 });
 
 describe("memory pin presentation and picking", () => {
+  it("keeps an empty layer out of shader warmup and reuses its mesh when content returns", () => {
+    const layer = createMemoryPinLayer();
+    const mesh = layer.mesh;
+    expect(mesh.count).toBe(0);
+    expect(layer.group.children).toEqual([]);
+    layer.update([memory(1)], false);
+    expect(layer.group.children).toEqual([mesh]);
+    layer.update([], false);
+    expect(layer.group.children).toEqual([]);
+    expect(mesh.visible).toBe(false);
+    layer.update([memory(2)], false);
+    expect(layer.group.children).toEqual([mesh]);
+    expect(mesh.visible).toBe(true);
+    expect(layer.mesh).toBe(mesh);
+    layer.dispose();
+  });
   it.each<[PinTier, number]>([
     ["low", 40],
     ["mid", 120],

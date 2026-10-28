@@ -103,10 +103,15 @@ async function setup(page, condition) {
       if (this.name === "memory-pins-instanced" && renderer.getRenderTarget() === null) {
         if (!wrapped.has(renderer)) {
           wrapped.add(renderer);
+          const pins = this;
           gl = renderer.getContext();
           const originalRender = renderer.render;
           renderer.render = function (...renderArgs) {
             const result = originalRender.apply(this, renderArgs);
+            if (active?.expected === 0 && pins.count === 0 && pins.parent === null) {
+              active.sawExpected = true;
+              active.pinEvidence = "detached-empty-layer";
+            }
             if (active?.sawExpected && !fence && this.getRenderTarget() === null) {
               fence = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
               if (!fence) throw Error("GPU_FENCE_UNAVAILABLE");
@@ -116,7 +121,10 @@ async function setup(page, condition) {
             return result;
           };
         }
-        if (active && this.count === active.expected) active.sawExpected = true;
+        if (active && this.count === active.expected) {
+          active.sawExpected = true;
+          active.pinEvidence = "actual-pin-draw";
+        }
       }
       return originalAfter.call(this, renderer, ...args);
     };
@@ -137,6 +145,7 @@ async function setup(page, condition) {
           expected,
           start,
           sawExpected: false,
+          pinEvidence: null,
           dom: null,
           renderEnd: null,
           gpuReady: null,
@@ -252,6 +261,7 @@ async function measure(page, condition) {
             kind,
             expected,
             count: session.getSnapshot().memories.length,
+            pinEvidence: observation?.pinEvidence ?? null,
             cpuMs,
             raf1Ms,
             raf2Ms,
@@ -326,7 +336,7 @@ try {
             postPopulationWarmupMs: 5000,
             initialViewport: { width: 1440, height: 900 },
             method:
-              "DOM count + actual pin draw + completed GPU fence + following RAF; conservative presentation opportunity, not GPU execution time",
+              "DOM count + expected pin draw (or detached zero-count layer) in an actual main render + completed GPU fence + following RAF; conservative presentation opportunity, not GPU execution time",
             samples,
             startScene,
             endScene,

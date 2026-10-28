@@ -82,6 +82,8 @@ export function createMemoryPinLayer(tier: PinTier = "mid"): MemoryPinLayer {
   });
   const mesh = new THREE.InstancedMesh(geometry, material, cap);
   mesh.name = "memory-pins-instanced";
+  mesh.count = 0;
+  mesh.visible = false;
   mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
   mesh.frustumCulled = false;
   // DOM home markers and the existing transparent label layer retain priority.
@@ -96,7 +98,6 @@ export function createMemoryPinLayer(tier: PinTier = "mid"): MemoryPinLayer {
       cssHeight,
     );
   };
-  group.add(mesh);
   const position = new THREE.Vector3(),
     quaternion = new THREE.Quaternion(),
     scale = new THREE.Vector3(1, 1, 1),
@@ -150,6 +151,11 @@ export function createMemoryPinLayer(tier: PinTier = "mid"): MemoryPinLayer {
       mesh.setMatrixAt(visibleMemories.length - 1, matrix.compose(position, quaternion, scale));
     }
     mesh.count = visibleMemories.length;
+    mesh.visible = mesh.count > 0;
+    // compile() traverses invisible meshes too; detach the empty layer until it has content.
+    if (mesh.visible) {
+      if (mesh.parent !== group) group.add(mesh);
+    } else mesh.removeFromParent();
     mesh.instanceMatrix.needsUpdate = true;
     raiseActive();
     refreshHighlight();
