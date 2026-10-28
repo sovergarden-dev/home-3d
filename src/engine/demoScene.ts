@@ -785,6 +785,10 @@ export function createDemoScene(
 
   function render(activeAnimation = false) {
     if (disposed || document.hidden || !host.clientWidth || !host.clientHeight) return;
+    const pinMode = useAppStore.getState().viewMode;
+    memoryPins.group.visible =
+      worldRenderable() && (pinMode === "diorama" || pinMode === "topdown");
+    memoryPins.setSelected(memoryTour?.memories[memoryTour.index]?.id ?? null);
     if (currentWorld.mode === "private-error" || !worldBundle) {
       marker.style.visibility = "hidden";
       useAppStore.getState().setPlanMeasurement(null);
@@ -1027,6 +1031,7 @@ export function createDemoScene(
 
   function onPlanPointerDown(event: PointerEvent) {
     if (!worldRenderable()) return;
+    if (memoryPins.setHovered(null)) render();
     const isPlan = useAppStore.getState().viewMode === "topdown";
     if (isPlan) canvas.setPointerCapture(event.pointerId);
     if (planPointers.size === 0) pointerGestureWasMultiTouch = false;
@@ -1065,6 +1070,17 @@ export function createDemoScene(
 
   function onPlanPointerMove(event: PointerEvent) {
     if (!worldRenderable()) return;
+    if (planPointers.size === 0) {
+      const rect = canvas.getBoundingClientRect();
+      const hovered = memoryPins.pick(
+        event.clientX - rect.left,
+        event.clientY - rect.top,
+        activeCamera,
+        rect.width,
+        rect.height,
+      );
+      if (memoryPins.setHovered(hovered)) render();
+    }
     if (useAppStore.getState().viewMode !== "topdown") return;
     const previous = planPointers.get(event.pointerId);
     if (!previous) return;
@@ -1103,14 +1119,18 @@ export function createDemoScene(
       const hiddenLayers = new Set<string>();
       if (!worldBundle.layers.trees.visible) hiddenLayers.add("trees");
       if (!worldBundle.layers.labels.visible) hiddenLayers.add("labels");
-      const pinHit = new THREE.Raycaster();
-      pinHit.setFromCamera(pointer, activeCamera);
-      const pinIntersections = pinHit.intersectObject(memoryPins.mesh, false);
-      const pin = pinIntersections[0];
-      if (pin && Number.isInteger(pin.instanceId)) {
-        const memory = memoryPins.memories[pin.instanceId ?? -1];
-        if (memory) flyMemory(memory);
-      } else
+      const pinId = memoryPins.pick(
+        event.clientX - rect.left,
+        event.clientY - rect.top,
+        activeCamera,
+        rect.width,
+        rect.height,
+      );
+      const memory = pinId
+        ? memorySessionSnapshot.memories.find((item) => item.id === pinId)
+        : null;
+      if (memory) flyMemory(memory);
+      else
         selectFeature(
           pickFeature(
             new THREE.Raycaster(),
@@ -1136,6 +1156,10 @@ export function createDemoScene(
     transientInteraction();
     const state = useAppStore.getState();
     state.setZoom(state.zoom * (event.deltaY < 0 ? 1.12 : 0.89));
+  }
+
+  function onPinPointerLeave() {
+    if (memoryPins.setHovered(null)) render();
   }
 
   let memoryPausedAt = 0;
@@ -1325,6 +1349,7 @@ export function createDemoScene(
   canvas.addEventListener("keydown", onKey);
   canvas.addEventListener("pointerdown", onPlanPointerDown);
   canvas.addEventListener("pointermove", onPlanPointerMove);
+  canvas.addEventListener("pointerleave", onPinPointerLeave);
   canvas.addEventListener("pointerup", onPlanPointerEnd);
   canvas.addEventListener("pointercancel", onPlanPointerEnd);
   canvas.addEventListener("wheel", onPlanWheel, { passive: false });
@@ -1581,6 +1606,7 @@ export function createDemoScene(
       canvas.removeEventListener("keydown", onKey);
       canvas.removeEventListener("pointerdown", onPlanPointerDown);
       canvas.removeEventListener("pointermove", onPlanPointerMove);
+      canvas.removeEventListener("pointerleave", onPinPointerLeave);
       canvas.removeEventListener("pointerup", onPlanPointerEnd);
       canvas.removeEventListener("pointercancel", onPlanPointerEnd);
       canvas.removeEventListener("wheel", onPlanWheel);

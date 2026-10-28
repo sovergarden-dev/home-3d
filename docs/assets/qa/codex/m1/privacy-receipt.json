@@ -1,0 +1,13 @@
+{
+  "syntheticOnly": true,
+  "sourceGitleaks": "PASS_CODE_AND_PRIOR_EVIDENCE_COMMITS; final receipt commit scanned after creation",
+  "evidenceGitleaks": "PASS_FINAL_DIRECTORY",
+  "pathAndURLScan": "PASS_INCLUDING_DECOMPRESSED_TRACES",
+  "maxFileBytesExclusive": 1000000,
+  "redaction": "Two loopback WebSocket query strings containing ephemeral Vite HMR tokens were removed before any push. Event counts and ts/dur/tts/tdur values were verified unchanged; compressed checksums updated. Originals retained only in local QA storage.",
+  "remaining": "Final receipt commit/source scan and exact-head CI before merge; post-merge main CI still required. Independent reviews completed and P1 closed.",
+  "decompressedTraceGitleaks": "PASS_68_930_129_BYTES",
+  "finalDirectoryFiles": 323,
+  "finalDirectoryBytes": 13447454,
+  "largestFileBytes": 809943
+}

@@ -1,0 +1,43 @@
+{
+  "syntheticOnly": true,
+  "status": "PASS_3_BROWSERS",
+  "source": "Working tree patch after b1d9bb; candidate commit to be recorded after checks",
+  "rows": [
+    {
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 8854,
+      "data": [
+        {
+          "syntheticOnly": true,
+          "initialPinSources": 4,
+          "emptyRemountPinSources": 0
+        }
+      ]
+    },
+    {
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 19814,
+      "data": [
+        {
+          "syntheticOnly": true,
+          "initialPinSources": 4,
+          "emptyRemountPinSources": 0
+        }
+      ]
+    },
+    {
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 16295,
+      "data": [
+        {
+          "syntheticOnly": true,
+          "initialPinSources": 4,
+          "emptyRemountPinSources": 0
+        }
+      ]
+    }
+  ]
+}

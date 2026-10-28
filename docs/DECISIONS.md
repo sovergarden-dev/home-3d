@@ -1,5 +1,11 @@
 # Quyết định — Codex hiện hành, các pha trước giữ làm lịch sử
 
+## M1 — Sửa theo phép đo, giữ hợp đồng dữ liệu
+
+- K3 dùng TextMetrics ở đúng độ phân giải xuất; gap = 0,6 × line-height nhỏ hơn, line-height = 1,2 × cỡ chữ. Giữ nguyên câu tiêu đề, vùng ảnh R1, kích thước/hạ bậc và metadata guard. Frame geometry dùng chung cho capture/compose/caption để không lệch ROI.
+- K1 profile đầu dùng fixture R7 đóng băng ngày/giờ, tắt lớp sống như receipt R7; có Chromium trace, Long Task, Long Animation Frame và Event Timing. GPU thật: mutation p50 1,3 ms, ghi instance 0,1 ms, DOM commit 83,35 ms; không cộng các khoảng chồng nhau. Bước đầu chỉ memo các thẻ có props ổn định và thu hẹp subscription của viewport về guest bit. Giữ serialize/validate/quota, public projection, IndexedDB và world state nguyên vẹn. Chưa gọi H_MET từ profile 10 cặp có tracing; ma trận A/B đủ mẫu vẫn bắt buộc.
+- Profile sau UI (vẫn 10 cặp có tracing) cho DOM p50 22,95 ms, RAF2 35,5 ms; các lát FunctionCall lớn trước sửa thuộc react-dom. Không tối ưu việc ghi matrix 0,1 ms vì chưa là nút thắt. K2 chọn đường kính tròn 20 CSS px, hit target tròn đường kính 44 CSS px, nearest-centre và tie theo ID ổn định. Billboard dùng một InstancedMesh và shader, không thay hình học world; marker nhà DOM và nhãn giữ ưu tiên. Cần pixel QA và regression trước khi kết luận đạt.
+
 ## M0 — Tiếp quản và đo baseline (28/10/2026)
 
 - Chủ dự án giao Codex M0–M5, quyền PR/merge commit theo §5.2 của `CODEX_HANDOFF.md`; chỉ Notion audit cuối khi chủ dự án yêu cầu. Không Publish/deploy hoặc đổi dịch vụ. Các phân vai/cổng cũ bên dưới là lịch sử.
@@ -89,3 +95,19 @@ Notion AI tạo và kiểm patch. Hermes áp nguyên patch, chạy frozen instal
 - Hash versioned/whitelist chỉ camera/time/ID, không nội dung/tên/world hash/lat-lng. replaceState sau control-end; Clipboard chỉ nút bấm. Public/guest là preview/xuất file, không đăng mạng; nhật ký/marker luôn private.
 - Bưu thiếp 3840×2160/2048×1152 (fallback 1080×608) render đúng vùng ảnh: target HalfFloat tuyến tính → OutputPass ACES/exposure/sRGB → target byte để readback. Three r180 không tone-map offscreen như canvas; chỉ đặt outputColorSpace không đủ. Vùng ảnh chiếm 92% bề ngang. Finally trả camera/renderer, dispose cả hai target/output pass/clear canvas; không đổi canvas/DPR thật. Encode mới/quét metadata; Web Share chỉ nếu canShare(files), còn lại download.
 - Telemetry lỗi chỉ mã tĩnh, không serialize Error/context riêng; giữ mã `CLIENT_RENDER_FAILURE`. Khôi phục đúng ba Google Fonts links của main cho Be Vietnam Pro/Lora; P10 network harness chỉ abort các host `fonts.googleapis.com`/`fonts.gstatic.com` và yêu cầu 0 request ngoài hai host này. Không thay consent weather/Google P7/P8. TopInfo dùng hydration snapshot để ngày UTC+7 không lệch SSR.
+
+### M1 — Lượt tối ưu UI cuối của K1
+
+Ma trận đủ mẫu ở `1331034…` kết thúc `H_NOT_MET_REAL_GPU`: active 300 add/delete p50 102,10/99,95 ms; static 65,45/67,90 ms; smaller 84,30/84,80 ms; zero 85,25/83,85 ms. Trước sửa active là 169,45/165,10 ms. Mỗi condition/source đủ 60 thêm + 60 xoá, không lọc outlier và không lỗi page. Trần 100 ms giữ nguyên.
+
+Trace chỉ ra React DOM; sau memo card, HUD/journal/postcard vẫn subscribe toàn snapshot và render lại khi chỉ thêm/xoá memory. Lượt cuối chỉ thu hẹp subscription về guest/journal/ready/error thực dùng và memo các subtree không đổi props. Không thêm cache giữ tài liệu riêng, không xoá node khỏi DOM hay virtualize để tránh đổi hợp đồng đo. World/persistence/quota/validation giữ nguyên. Kiểm type/unit/E2E và ma trận đủ mẫu mới trước khi chốt H; nếu vẫn vượt thì ghi NOT_MET và chuyển tiếp theo quy tắc ba vòng.
+
+### M1 — Cổng H6 WebKit tách khỏi test success
+
+CI draft 4/4 nhưng H6 WebKit log 1,4 phút, nên budget NOT_MET và chưa merge. Các ca WebKit trước H6 cũng tăng khoảng 1,5 lần, gồm forced-WebGL fallback; đây là dấu hiệu runner/load khác, chưa phải chứng minh hồi quy shader. Không sửa runtime theo phỏng đoán. Thêm reporter ghi duration ms chính xác và làm CI WebKit fail nếu H6 thiếu/skip/fail hoặc ≥70.000 ms; giữ nguyên test/assertion/capability guard và timeout 90 s. Reporter không áp ngưỡng CI WebKit lên Windows/hardware hoặc Firefox không có WebGL2. Kiểm boundary 69.999/70.000, skip, timeout, missing case và scope Chromium đều đúng. Lượt CI tiếp theo chỉ ở head mới có QA receipts/harness, không dispatch lặp cùng head.
+
+### M1 — Bỏ compile shader khi lớp ghim rỗng
+
+Probe WebKit thật trên source 0265a53 đếm 4 lần shaderSource có pinViewport ở scene đầu và vẫn 4 lần sau route remount với 0 ghim; assertion kỳ vọng 0 đỏ đúng cơ chế. Three r180 compile duyệt scene.traverse kể cả mesh invisible, nên chỉ tắt visible không đủ. Giữ một InstancedMesh để tái dùng, chỉ gắn vào group khi có ghim; zero count tháo khỏi group. Không đổi caps, viewport, H6 cycle/assertion/timeout hoặc hình ghim có nội dung.
+
+Đây là vòng sửa budget H6 riêng, không phải nới mục tiêu K1. Probe K1 bổ sung chứng cứ trạng thái rỗng: sau actual main render, mesh count=0 và detached, DOM count=0, rồi vẫn yêu cầu GPU fence và RAF tiếp theo. Dữ liệu ghim dương vẫn phải qua actual draw. Vì runtime/probe đã đổi, cần requalification GPU và related tests ở SHA mới; dữ liệu 0265a53 vẫn giữ với nguồn đúng, không đổi nhãn lịch sử.
