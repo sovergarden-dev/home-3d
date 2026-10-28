@@ -90,7 +90,7 @@ export const vi = {
     label: "Mô phỏng",
     layer: "Lớp sống",
     density: "Mật độ mô phỏng",
-    note: "Xe, người, hàng rong và động vật minh họa · làn và lối đi suy ra, không phải dữ liệu thực địa.",
+    note: "Xe, người, hàng rong và động vật minh họa; Diorama phóng đại để dễ nhìn. Làn và lối đi suy ra, không phải dữ liệu thực địa.",
     audio: "Âm thanh tổng hợp",
     localAudio: "Âm thanh cục bộ · chỉ trong phiên",
     audioError: "Không đọc được clip; dùng âm thanh tổng hợp",

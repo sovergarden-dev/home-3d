@@ -96,7 +96,7 @@ export const en: Dict = {
     label: "Simulation",
     layer: "Life layer",
     density: "Simulation density",
-    note: "Illustrative traffic, people, vendors and animals · inferred lanes and paths, not surveyed data.",
+    note: "Illustrative traffic, people, vendors and animals, enlarged in Diorama for readability; inferred lanes and paths, not surveyed data.",
     audio: "Synthesized audio",
     localAudio: "Local audio · session only",
     audioError: "Clip unavailable; synthesized fallback",

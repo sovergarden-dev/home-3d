@@ -68,7 +68,11 @@ export function TopInfo() {
       <p className="mt-1 text-[10px] text-muted-foreground">
         {t.life.label} · {t.life.audio}
       </p>
-      <p className="mt-1 text-[10px] text-muted-foreground" data-testid="build-info">
+      <p
+        className="mt-1 text-[10px] text-muted-foreground"
+        data-testid="build-info"
+        title={`${PUBLIC_BUILD_VERSION} · SHA ${BUILD_SHA ?? t.localPreview.buildUnknown}`}
+      >
         {PUBLIC_BUILD_VERSION} · SHA {BUILD_SHA ?? t.localPreview.buildUnknown}
       </p>
     </div>

@@ -13,7 +13,7 @@ export default defineConfig({
     baseURL: localURL ?? "http://127.0.0.1:4178",
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
-    reducedMotion: "reduce",
+    contextOptions: { reducedMotion: "no-preference" },
   },
   projects: [
     {

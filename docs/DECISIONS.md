@@ -153,3 +153,11 @@ Lượt coverage V8 đầu: 365 test pass, một bài CPU 200 tác nhân đỏ �
 ### Tích hợp M1/M2 khi cổng WebKit tuyệt đối chưa đạt
 
 CI `40781481203` tại M1 `b6620382f389545850bb025dbd1d4fff7452ec99`: quality/Chromium/Firefox đạt; 110 ca chức năng WebKit đạt nhưng H6 mất 87.777 ms, vượt ngân sách giữ nguyên 70.000 ms. Baseline cùng runner 88.233 ms (ứng viên −0,52%). Cùng runtime từng đạt ở runner khác không làm head này xanh. Giữ PR #9 draft, không rerun cùng head; merge M1 vào worktree M2 để tiếp tục việc độc lập. M1 còn PARTIAL tới khi đủ cổng, không merge dựa vào suy luận runner chậm.
+
+### M2 — PCM, trạng thái audio, đọc tác nhân và landscape
+
+Profile trên source 0b56c49 cho thấy AudioContext constructor và synthSample/createSyntheticBuffer chiếm phần lớn lần bật đầu; profiler có overhead, không dùng làm số nghiệm thu. Chuẩn bị PCM tổng hợp công khai 48 kHz/6 giây theo lát 2.048 mẫu, nhường event loop giữa các lát; cache tối đa bốn kiểu thời tiết, không có dữ liệu người dùng. Không tạo AudioContext trước gesture. Copy PCM vào AudioBuffer sau gesture, giữ đường fallback gốc khi chưa chuẩn bị. Khi scene cuối gỡ, huỷ timer chuẩn bị; dữ liệu PCM công khai bất biến được dùng lại qua route. Test so toàn bộ mẫu với phép tổng hợp gốc đạt.
+
+AudioContext statechange chủ động render một khung và cập nhật diagnostics, không mở RAF liên tục. Probe trước sửa cho context thật running nhưng dataset vẫn suspended trong cảnh dừng; không gọi timeout của dataset là âm thanh thực bị hỏng. Diorama phóng đại tác nhân 1,6×, người đi bộ 2×; POV trở về tỉ lệ cũ, simulation/collision/graph và số mesh/tam giác giữ nguyên. Landscape chuyển panel local đã thu gọn sang bên phải; SHA vẫn đầy đủ trong text/title, chỉ cắt hiển thị; hàng tilt/status không đè HUD.
+
+Playwright 1.58 Test không hỗ trợ use.reducedMotion trực tiếp: trace xác nhận field bị bỏ qua. Cấu hình chung chuyển sang contextOptions no-preference để giữ đúng điều kiện thực tế cũ của H6; không dùng thay đổi chế độ chuyển động để giảm thời gian benchmark. Ca reduced-motion bật page.emulateMedia rõ ràng và assert media trước khi kiểm chiều cao ổn định qua hai RAF. Đây là sửa harness, không nới timeout, assertion H6 hay ngưỡng hiệu năng.

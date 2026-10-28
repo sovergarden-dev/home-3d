@@ -307,3 +307,34 @@
     grid-template-columns: repeat(3, 44px);
   }
 }
+
+@media (max-width: 767px) and (max-height: 480px) {
+  .h6-top-info [data-testid="build-info"] {
+    max-width: 200px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .private-world-panel[data-collapsed="true"] {
+    top: calc(max(1rem, env(safe-area-inset-top)) + 4rem);
+    right: max(1rem, env(safe-area-inset-right));
+    left: auto;
+    max-width: 222px;
+  }
+  .p9-pov-controls .p9-style-label {
+    display: none;
+  }
+  .p9-orientation-row {
+    flex-wrap: nowrap;
+  }
+  .p9-orientation-row > button {
+    max-width: 148px;
+    flex-shrink: 1;
+    white-space: normal;
+    text-align: left;
+  }
+  .p9-orientation-row [role="status"] {
+    flex: 1;
+    min-width: 0;
+  }
+}

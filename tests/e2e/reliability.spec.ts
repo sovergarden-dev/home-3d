@@ -43,6 +43,10 @@ for (const viewport of [
   test(`sheet hides controls during drag, restores on cancel, and supports keyboard at ${viewport.width}`, async ({
     page,
   }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    expect(await page.evaluate(() => matchMedia("(prefers-reduced-motion: reduce)").matches)).toBe(
+      true,
+    );
     await page.setViewportSize(viewport);
     await page.goto("/?local-preview=1");
     await expect(page.locator("#scene-root")).toHaveAttribute(
@@ -79,10 +83,15 @@ for (const viewport of [
     await handle.press("ArrowDown");
     await expect(controls).toBeVisible();
     await expect(handle).toBeFocused();
-    expect(
-      await handle.evaluate(
-        (element) => getComputedStyle(element.parentElement!).transitionDuration,
-      ),
-    ).toBe("0s");
+    await handle.press("Enter");
+    await expect(handle).toHaveAttribute("aria-expanded", "true");
+    const motion = await handle.evaluate(async (element) => {
+      const sheet = element.parentElement!;
+      const before = sheet.getBoundingClientRect().height;
+      await new Promise(requestAnimationFrame);
+      await new Promise(requestAnimationFrame);
+      return { before, after: sheet.getBoundingClientRect().height };
+    });
+    expect(motion.after).toBe(motion.before);
   });
 }

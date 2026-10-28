@@ -234,7 +234,12 @@ export function createDemoScene(
   let lastFrame = 0;
   let renderRevision = 0;
   let lastWorldRevision = -1;
-  const audio = createDemoAudio();
+  const audio = createDemoAudio({
+    onStateChange: () => {
+      lastLifeMetricsAt = 0;
+      render();
+    },
+  });
   let life: ReturnType<typeof createLifeRuntime> | null = null;
   let lastLifeMetricsAt = 0;
   let lastPassbyAt = 0;
