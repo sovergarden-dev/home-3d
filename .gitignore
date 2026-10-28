@@ -35,6 +35,7 @@ dist-ssr
 playwright-report/
 test-results/
 coverage/
+.qa-ci/
 pipeline/out/
 pipeline/dist/
 pipeline/cache/

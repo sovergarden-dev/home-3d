@@ -80,6 +80,7 @@ jobs:
           bun-version: 1.4.3
       - run: bun install --frozen-lockfile
       - run: bun x playwright install --with-deps webkit
+      - run: node scripts/h6-ci-baseline.mjs
       - run: bun run test:e2e --project=webkit
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: failure()

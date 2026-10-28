@@ -1,0 +1,122 @@
+{
+  "syntheticOnly": true,
+  "runtimeSha": "59f6d6881261a542e1f1b52b4d0d2d6e86f4834a",
+  "harnessSha": "ddc3246b38fea900c3e9413d146061fbaa2a7861",
+  "platform": "WINDOWS_LOCAL",
+  "pass": 12,
+  "fail": 0,
+  "skip": 0,
+  "rows": [
+    {
+      "test": "an empty memory layer does not compile pin shaders on route remount",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 9687,
+      "measurements": [
+        {
+          "name": "empty-pin-shader-compilation",
+          "data": {
+            "syntheticOnly": true,
+            "initialPinSources": 4,
+            "emptyRemountPinSources": 0
+          }
+        }
+      ]
+    },
+    {
+      "test": "P10 pins alter real captured pixels without world rebuild",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 6710,
+      "measurements": []
+    },
+    {
+      "test": "P10 journal before/after keyboard slider and VI/EN stay private",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 7746,
+      "measurements": []
+    },
+    {
+      "test": "P10 actual flight freezes for pause/hidden and reduced motion jumps",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 10003,
+      "measurements": []
+    },
+    {
+      "test": "an empty memory layer does not compile pin shaders on route remount",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 24460,
+      "measurements": [
+        {
+          "name": "empty-pin-shader-compilation",
+          "data": {
+            "syntheticOnly": true,
+            "initialPinSources": 4,
+            "emptyRemountPinSources": 0
+          }
+        }
+      ]
+    },
+    {
+      "test": "P10 pins alter real captured pixels without world rebuild",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 10530,
+      "measurements": []
+    },
+    {
+      "test": "P10 journal before/after keyboard slider and VI/EN stay private",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 12491,
+      "measurements": []
+    },
+    {
+      "test": "P10 actual flight freezes for pause/hidden and reduced motion jumps",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 15174,
+      "measurements": []
+    },
+    {
+      "test": "an empty memory layer does not compile pin shaders on route remount",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 15880,
+      "measurements": [
+        {
+          "name": "empty-pin-shader-compilation",
+          "data": {
+            "syntheticOnly": true,
+            "initialPinSources": 4,
+            "emptyRemountPinSources": 0
+          }
+        }
+      ]
+    },
+    {
+      "test": "P10 pins alter real captured pixels without world rebuild",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 15860,
+      "measurements": []
+    },
+    {
+      "test": "P10 journal before/after keyboard slider and VI/EN stay private",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 13615,
+      "measurements": []
+    },
+    {
+      "test": "P10 actual flight freezes for pause/hidden and reduced motion jumps",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 13362,
+      "measurements": []
+    }
+  ]
+}

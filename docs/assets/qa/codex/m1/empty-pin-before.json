@@ -1,0 +1,20 @@
+{
+  "syntheticOnly": true,
+  "sourceSha": "0265a53b9e8b571b18fd19ad496e0c9ccdad181d",
+  "status": "EXPECTED_RED",
+  "rows": [
+    {
+      "title": "an empty memory layer does not compile pin shaders on route remount",
+      "browser": "webkit",
+      "status": "failed",
+      "durationMs": 17400,
+      "data": [
+        {
+          "syntheticOnly": true,
+          "initialPinSources": 4,
+          "emptyRemountPinSources": 4
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 import { memoryId } from "@/memories/id";
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { memo, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { ImagePlus, Pencil, Plus, Save, Trash2, X } from "lucide-react";
 import { useAppStore } from "@/state/appStore";
 import { p10Extras } from "@/i18n/p10Extras";
@@ -7,6 +7,11 @@ import { memorySession, type MemorySessionSnapshot } from "@/memories/session";
 import { processPhoto } from "@/memories/imagePipeline";
 import type { JournalEntry, Photo } from "@/memories/schema";
 import { worldDataProvider } from "@/world/privateWorldSession";
+
+const readJournal = () => memorySession.getSnapshot().journal;
+const readGuest = () => memorySession.getSnapshot().guest;
+const readReady = () => memorySession.getSnapshot().ready;
+const readError = () => memorySession.getSnapshot().error;
 
 const stages: JournalEntry["stage"][] = [
   "land",
@@ -70,15 +75,14 @@ export interface MemoryJournalProps {
   memorySnapshot?: MemorySessionSnapshot;
 }
 
-export function MemoryJournal({ memorySnapshot }: MemoryJournalProps = {}) {
+function MemoryJournalView({ memorySnapshot }: MemoryJournalProps = {}) {
   const language = useAppStore((s) => s.language);
   const t = p10Extras[language].journal;
-  const sessionSnapshot = useSyncExternalStore(
-    memorySession.subscribe,
-    memorySession.getSnapshot,
-    memorySession.getSnapshot,
-  );
-  const snapshot = memorySnapshot ?? sessionSnapshot;
+  const journal = useSyncExternalStore(memorySession.subscribe, readJournal, readJournal);
+  const guest = useSyncExternalStore(memorySession.subscribe, readGuest, readGuest);
+  const ready = useSyncExternalStore(memorySession.subscribe, readReady, readReady);
+  const sessionError = useSyncExternalStore(memorySession.subscribe, readError, readError);
+  const snapshot = memorySnapshot ?? { journal, guest, ready, error: sessionError };
   const world = useSyncExternalStore(
     worldDataProvider.subscribe,
     worldDataProvider.getSnapshot,
@@ -437,4 +441,5 @@ function Compare({ photos, t }: { photos: Photo[]; t: JournalTranslations }) {
   );
 }
 
+export const MemoryJournal = memo(MemoryJournalView);
 export default MemoryJournal;
