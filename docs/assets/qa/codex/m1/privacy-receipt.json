@@ -1,0 +1,10 @@
+{
+  "syntheticOnly": true,
+  "sourceGitleaks": "PASS_5_COMMITS_BEFORE_DOC_EVIDENCE",
+  "evidenceGitleaks": "PASS",
+  "pathAndURLScan": "PASS_INCLUDING_DECOMPRESSED_TRACES",
+  "maxFileBytesExclusive": 1000000,
+  "redaction": "Two loopback WebSocket query strings containing ephemeral Vite HMR tokens were removed before any push. Event counts and ts/dur/tts/tdur values were verified unchanged; compressed checksums updated. Originals retained only in local QA storage.",
+  "remaining": "Final PR head/CI and independent self-review pending; no merge approval implied.",
+  "decompressedTraceGitleaks": "PASS_68_930_129_BYTES"
+}

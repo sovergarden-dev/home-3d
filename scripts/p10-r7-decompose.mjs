@@ -37,6 +37,7 @@ function scrub(value) {
     return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, scrub(item)]));
   if (typeof value !== "string") return value;
   let text = value.replace(/https?:\/\/(?:127\.0\.0\.1|localhost):\d+/g, "[loopback]");
+  text = text.replace(/wss?:\/\/(?:127\.0\.0\.1|localhost):\d+[^\s"<>]*/g, "[loopback-websocket]");
   text = text.replace(
     /(?:file:\/\/\/)?[A-Za-z]:[\\/][^\s"<>]*?(?=[\\/](?:src|node_modules|scripts|tests)[\\/])/g,
     "[source]",
