@@ -30,11 +30,17 @@ export async function launchBenchmark(extraArgs = []) {
       }
     }
     if (!Number.isFinite(dpr) || dpr <= 0 || dpr > 4) throw Error("INVALID_BENCH_DPR");
-    const sourceSha = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+    const harnessSha = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
     return {
       browser,
       dpr,
       async environment(page) {
+        const buildInfo = await page.getByTestId("build-info").innerText();
+        const sourceSha = buildInfo.match(/\b[a-f0-9]{40}\b/i)?.[0]?.toLowerCase() ?? null;
+        const expectedSha = process.env.BENCH_SOURCE_SHA?.toLowerCase();
+        if (expectedSha && (!/^[a-f0-9]{40}$/.test(expectedSha) || sourceSha !== expectedSha))
+          throw Error("MEASURED_SERVER_SHA_MISMATCH");
+        if (mode !== "auto" && !sourceSha) throw Error("MEASURED_SERVER_SHA_REQUIRED");
         const gpu = await page.evaluate(() => {
           const canvas = document.querySelector('[data-testid="demo-scene"] canvas');
           const gl = canvas?.getContext("webgl2");
@@ -53,6 +59,7 @@ export async function launchBenchmark(extraArgs = []) {
           throw Error("SWIFTSHADER_REQUIRED");
         return {
           sourceSha,
+          harnessSha,
           platform: process.platform === "win32" ? "WINDOWS_LOCAL" : process.platform,
           syntheticOnly: true,
           rendererClass: software ? "SWIFTSHADER" : headed ? "REAL_GPU" : "HARDWARE_HEADLESS",
