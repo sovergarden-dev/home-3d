@@ -195,7 +195,7 @@ function RedactionPhoto({
     </div>
   );
 }
-function MomentGallery() {
+const MomentGallery = memo(function MomentGallery() {
   const t = useT();
   const moments = useAppStore((s) => s.moments);
   const clear = useAppStore((s) => s.clearMoments);
@@ -273,7 +273,7 @@ function MomentGallery() {
       )}
     </div>
   );
-}
+});
 const MemoryCard = memo(function MemoryCard({
   memory,
   guest,
