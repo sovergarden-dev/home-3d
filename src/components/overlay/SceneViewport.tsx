@@ -8,6 +8,7 @@ import { memorySession } from "@/memories/session";
 import { worldDataProvider } from "@/world/privateWorldSession";
 import { startMomentLifecycle } from "@/memories/moments";
 import { stopMemoryAudio } from "@/memories/audio";
+const readGuestMode = () => memorySession.getSnapshot().guest;
 function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
   const t = useT();
   useBlocker({
@@ -22,11 +23,7 @@ function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
       );
     },
   });
-  const memorySnapshot = useSyncExternalStore(
-    memorySession.subscribe,
-    memorySession.getSnapshot,
-    memorySession.getSnapshot,
-  );
+  const guest = useSyncExternalStore(memorySession.subscribe, readGuestMode, readGuestMode);
   const sceneStatus = useAppStore((s) => s.sceneStatus);
   const viewMode = useAppStore((s) => s.viewMode);
   const worldSnapshot = useSyncExternalStore(
@@ -120,7 +117,7 @@ function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
         ref={marker}
         data-testid="world-center-marker"
         className={`pointer-events-none absolute left-0 top-0 z-10 ${failed ? "hidden" : ""}`}
-        style={{ visibility: "hidden", display: memorySnapshot.guest ? "none" : undefined }}
+        style={{ visibility: "hidden", display: guest ? "none" : undefined }}
       >
         <div className="rounded-xl border border-white/70 bg-primary px-3 py-2 text-center text-xs text-primary-foreground shadow-lg">
           <span className="block font-medium">{markerLabels.title}</span>
