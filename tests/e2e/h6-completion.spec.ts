@@ -330,11 +330,15 @@ test.describe("H6 completion synthetic integration", () => {
       expect(test.info().project.use.headless).toBe(false);
       expect(gpu.renderer).toMatch(/intel|nvidia|amd|radeon|geforce/i);
       expect(gpu.renderer).not.toMatch(/swiftshader|llvmpipe|software|basic render/i);
+      const buildInfo = await page.getByTestId("build-info").innerText();
+      const sourceSha = buildInfo.match(/\b[a-f0-9]{40}\b/i)?.[0]?.toLowerCase();
+      expect(sourceSha).toMatch(/^[a-f0-9]{40}$/);
+      expect(sourceSha).toBe(process.env["BENCH_SOURCE_SHA"]);
       await test.info().attach("real-gpu-environment", {
         contentType: "application/json",
         body: JSON.stringify({
           syntheticOnly: true,
-          sourceSha: process.env["BENCH_SOURCE_SHA"] ?? "NOT_VERIFIED",
+          sourceSha,
           browserVersion: browser.version(),
           driverVersion: process.env["BENCH_GPU_DRIVER"] ?? "NOT_VERIFIED",
           viewport: page.viewportSize(),

@@ -1,0 +1,36 @@
+{
+  "environment": "WINDOWS_LOCAL",
+  "syntheticOnly": true,
+  "command": "bun run check",
+  "exitCode": 0,
+  "unit": {
+    "files": 58,
+    "pass": 362,
+    "fail": 0,
+    "skip": 0,
+    "durationSeconds": 149.73
+  },
+  "pipeline": {
+    "pass": 39,
+    "fail": 0
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 7
+  },
+  "typecheck": "PASS",
+  "build": "PASS",
+  "windowsPool": "threads",
+  "workers": 1,
+  "sourceFingerprints": {
+    "vitest.config.ts": "ea20388fc184b969fda2c6dbc2aee583f3b63b53cfb4d6ce060a559dc36383c3",
+    "scripts/benchmark-browser.mjs": "7e7af8e7de953fc48eccdfd91815fc6fb5df3d5c836bb5c142816549bd773266",
+    "scripts/p10-baseline.mjs": "b16232052b5bbc1c570c72628ccb9f6e219230b8cada32207f201217ddf16499",
+    "scripts/p10-benchmark.mjs": "a27b26d25b64752599924d9f326d8cf28b1ad374b5478fae6f68f44a7c1dea40",
+    "scripts/p10-latency.mjs": "72df0ea3dfcfc6d4f2dac4ee269359978c81751f8a488526640495f2027a52c1",
+    "scripts/p10-summarize.py": "d4eb57b17e84d193489b67b690363dce201327c13457e8d82e73a3718d0d5c5f",
+    "tests/e2e/h6-completion.spec.ts": "5824f378c32d24437cb220d6d838b26d0938537f1ccbbf63aa7a774a27e10f58",
+    "playwright.hardware.config.ts": "41f6de10196f29e380d6f9a067e16d389a45232fd1f713537c1bf1b2d8f3c103"
+  },
+  "scope": "Candidate harness/config; application source remains equal to published baseline. Fingerprints identify pre-commit tested content."
+}

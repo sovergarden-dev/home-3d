@@ -1,0 +1,3322 @@
+{
+  "config": {
+    "configFile": "playwright.config.ts",
+    "rootDir": "tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 1,
+    "webServer": {
+      "command": "bun run dev --host [loopback] --port 4178",
+      "url": "http://[loopback]:4178",
+      "reuseExistingServer": true,
+      "timeout": 60000
+    }
+  },
+  "suites": [
+    {
+      "title": "demo.spec.ts",
+      "file": "demo.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "demo labels, privacy, noindex and graceful 3D capability branch",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9388,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:03:37.591Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-371829921d33304fce91",
+          "file": "demo.spec.ts",
+          "line": 43,
+          "column": 1
+        },
+        {
+          "title": "diorama keeps the synthetic streets visually legible",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12153,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:03:47.417Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-f31b55b94245a665f6b4",
+          "file": "demo.spec.ts",
+          "line": 58,
+          "column": 1
+        },
+        {
+          "title": "time, weather, festivals, camera, capture and clear work in a rendered scene",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 32612,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:03:59.605Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-88bf5beb06d3495d3502",
+          "file": "demo.spec.ts",
+          "line": 66,
+          "column": 1
+        },
+        {
+          "title": "mobile controls hide immediately during drag and return at peek",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7880,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:04:32.248Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-9446af3ad18446eca88c",
+          "file": "demo.spec.ts",
+          "line": 112,
+          "column": 1
+        },
+        {
+          "title": "WebGL unavailable cannot trap the user behind loading or claim capture success",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6003,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:04:40.159Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-11eb56888a5b881ed53b",
+          "file": "demo.spec.ts",
+          "line": 135,
+          "column": 1
+        },
+        {
+          "title": "route roundtrip recreates exactly one canvas and context loss has a recovery UI",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13219,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:04:46.191Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-e358eff644c845348694",
+          "file": "demo.spec.ts",
+          "line": 150,
+          "column": 1
+        },
+        {
+          "title": "Mặt bằng renders one orthographic world, measures from its camera and applies layer toggles",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11593,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:04:59.432Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-f11db03f555b2cfa40aa",
+          "file": "demo.spec.ts",
+          "line": 169,
+          "column": 1
+        },
+        {
+          "title": "explicit local preview refuses malformed package instead of silently returning to fixture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6936,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:05:11.058Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-5b4a7a8e571deae80d81",
+          "file": "demo.spec.ts",
+          "line": 212,
+          "column": 1
+        },
+        {
+          "title": "explicit local preview opens a valid synthetic package as one in-memory world",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6764,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:05:18.024Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-34b1106146a63069b98e",
+          "file": "demo.spec.ts",
+          "line": 239,
+          "column": 1
+        },
+        {
+          "title": "private diorama keeps the supplied ENU origin in frame when source geometry is offset",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11998,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:05:24.811Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-2f176189e7ec9ef625ac",
+          "file": "demo.spec.ts",
+          "line": 293,
+          "column": 1
+        },
+        {
+          "title": "static scene stops drawing when idle",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7455,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:05:36.835Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-62601be97bbc087dfaca",
+          "file": "demo.spec.ts",
+          "line": 389,
+          "column": 1
+        },
+        {
+          "title": "private preview labels a no-level class-prior height as unknown",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6990,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:05:44.313Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-23015bce4f19eeed668a",
+          "file": "demo.spec.ts",
+          "line": 406,
+          "column": 1
+        },
+        {
+          "title": "local preview editor: edit, geometry gate, undo/redo, road edit, export and reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14952,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:05:51.327Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-22cdb201c9eb40d275f2",
+          "file": "demo.spec.ts",
+          "line": 468,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "h6-completion.spec.ts",
+      "file": "h6-completion.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "H6 completion synthetic integration",
+          "file": "h6-completion.spec.ts",
+          "line": 182,
+          "column": 6,
+          "specs": [
+            {
+              "title": "root and legacy query expose local file action with noindex and neutral fiction",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10959,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:06:06.373Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-5cadb584c3ce01f1f71d",
+              "file": "h6-completion.spec.ts",
+              "line": 183,
+              "column": 3
+            },
+            {
+              "title": "sentinel open/edit/capture/export/reload never reaches request attempts, console, storage or SSR",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 18622,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:06:17.362Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-0fe838561801008797fc",
+              "file": "h6-completion.spec.ts",
+              "line": 198,
+              "column": 5
+            },
+            {
+              "title": "sentinel unavailable renderer retains edit/export/privacy and never claims capture",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [
+                    {
+                      "type": "capability",
+                      "description": "WebGL2 intentionally unavailable: disabled capture asserted; no rendered-capture claim."
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10857,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:06:36.012Z",
+                      "annotations": [
+                        {
+                          "type": "capability",
+                          "description": "WebGL2 intentionally unavailable: disabled capture asserted; no rendered-capture claim."
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-1971eb0726b2bce97d05",
+              "file": "h6-completion.spec.ts",
+              "line": 198,
+              "column": 5
+            },
+            {
+              "title": "portrait/landscape keyboard and VI/EN retain a reachable compact panel",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6423,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:06:46.893Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-d6c5b5ca67bf3eb170c8",
+              "file": "h6-completion.spec.ts",
+              "line": 288,
+              "column": 3
+            },
+            {
+              "title": "20 mode/route/package/capture cycles keep one ready canvas and no page errors",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 93948,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\h6-completion.spec.ts",
+                            "column": 49,
+                            "line": 331
+                          },
+                          "message": "Error: locator._expect: Target page, context or browser has been closed\n\n  329 |       await page.getByRole(\"link\", { name: \"Giới thiệu\", exact: true }).click();\n  330 |       await page.getByRole(\"link\", { name: \"Về phố\", exact: true }).click();\n> 331 |       await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", \"ready\");\n      |                                                 ^\n  332 |       await expect(page.locator(\"#scene-root canvas\")).toHaveCount(1);\n  333 |     }\n  334 |     expect(errors).toEqual([]);\n    at tests\\e2e\\h6-completion.spec.ts:331:49"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:06:53.342Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\h6-completion-H6-completio-8fc74-y-canvas-and-no-page-errors-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\h6-completion-H6-completio-8fc74-y-canvas-and-no-page-errors-webkit\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\h6-completion-H6-completio-8fc74-y-canvas-and-no-page-errors-webkit\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-bb551c05a54ad4107187",
+              "file": "h6-completion.spec.ts",
+              "line": 311,
+              "column": 3
+            },
+            {
+              "title": "canvas part picking, hidden layers and camera framing preserve the package",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13024,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:08:32.645Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-fbd4f0ced578f0addfc0",
+              "file": "h6-completion.spec.ts",
+              "line": 336,
+              "column": 3
+            },
+            {
+              "title": "context loss then real retry preserves the loaded package and one world",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12062,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:08:45.815Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-9d4f65237607562117e6",
+              "file": "h6-completion.spec.ts",
+              "line": 475,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "h6-review23.spec.ts",
+      "file": "h6-review23.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Review 23 synthetic file regressions",
+          "file": "h6-review23.spec.ts",
+          "line": 8,
+          "column": 6,
+          "specs": [
+            {
+              "title": "R23-1 missing coverage is rejected without crash and valid file recovers",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8143,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:08:57.954Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09399f6d05f31fae0ef1-e538fa8bdc6a240b0a58",
+              "file": "h6-review23.spec.ts",
+              "line": 17,
+              "column": 5
+            },
+            {
+              "title": "R23-1 null coverage is rejected without crash and valid file recovers",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7341,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:09:06.122Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09399f6d05f31fae0ef1-fe459243f2d1cd24c3e7",
+              "file": "h6-review23.spec.ts",
+              "line": 17,
+              "column": 5
+            },
+            {
+              "title": "R23-1 object coverage is rejected without crash and valid file recovers",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7603,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:09:13.495Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09399f6d05f31fae0ef1-64f7d8e3ef1779c532fb",
+              "file": "h6-review23.spec.ts",
+              "line": 17,
+              "column": 5
+            },
+            {
+              "title": "R23-2 road field provenance survives override and export/reopen in VI/EN",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13352,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:09:21.133Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09399f6d05f31fae0ef1-ba7f60400dfbd4edcc74",
+              "file": "h6-review23.spec.ts",
+              "line": 23,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "h6-roundtrip.spec.ts",
+      "file": "h6-roundtrip.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "H6 synthetic source → build → editor → export → source rebuild → reload preserves part edits",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 27556,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:09:34.611Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a23ffc33b9b219756cb1-fb22d5a2f2b9add70c92",
+          "file": "h6-roundtrip.spec.ts",
+          "line": 112,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "p10-memories.spec.ts",
+      "file": "p10-memories.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "P10 real image pipeline strips synthetic JPEG EXIF Orientation/GPS/XMP and PNG/WebP metadata",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9296,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:10:02.248Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-f32bb0691849bc35dab7",
+          "file": "p10-memories.spec.ts",
+          "line": 73,
+          "column": 1
+        },
+        {
+          "title": "P10 import always reprocesses memory AND journal photos; public export excludes private data",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12572,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:10:11.573Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-9ff9239cadbf6ec524ca",
+          "file": "p10-memories.spec.ts",
+          "line": 253,
+          "column": 1
+        },
+        {
+          "title": "P10 A→B→C/loading/error isolation; unconsented private data never enters network, URL or storage",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 20647,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:10:24.173Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-47c5a52259fbec987014",
+          "file": "p10-memories.spec.ts",
+          "line": 298,
+          "column": 1
+        },
+        {
+          "title": "P10 opt-in IndexedDB survives reload; disabling writes retains RAM; all-device delete clears saved data",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 23174,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:10:44.847Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-6032653e7b98852528d1",
+          "file": "p10-memories.spec.ts",
+          "line": 362,
+          "column": 1
+        },
+        {
+          "title": "P10 blocked/quota storage keeps RAM and reports only neutral code",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10968,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:11:08.050Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-51e609afa9854dea4ac6",
+          "file": "p10-memories.spec.ts",
+          "line": 398,
+          "column": 1
+        },
+        {
+          "title": "P10 guest hides private memories, home label, marker/lot and construction diary",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10588,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:11:19.061Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-736cfd22f1705b5a57c8",
+          "file": "p10-memories.spec.ts",
+          "line": 442,
+          "column": 1
+        },
+        {
+          "title": "P10 tour uses actual camera, restores pose, mode interruption, strict deep-link round trip",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9303,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:11:29.677Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-4956f54b2e694c2b77cf",
+          "file": "p10-memories.spec.ts",
+          "line": 456,
+          "column": 1
+        },
+        {
+          "title": "P10 postcard renders actual scene at desktop 4K and mobile 2K, cancels and restores canvas",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11556,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:11:39.012Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-243cda2db641ecf440d5",
+          "file": "p10-memories.spec.ts",
+          "line": 498,
+          "column": 1
+        },
+        {
+          "title": "P10 editor photo <=6 actions, keyboard focus/Escape, XSS text at 1440x900",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17543,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:11:50.601Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-638742edf2326d1c82d9",
+          "file": "p10-memories.spec.ts",
+          "line": 552,
+          "column": 3
+        },
+        {
+          "title": "P10 editor photo <=6 actions, keyboard focus/Escape, XSS text at 390x844",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12473,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:12:08.171Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-6f5ab8b99ea446fb0797",
+          "file": "p10-memories.spec.ts",
+          "line": 552,
+          "column": 3
+        },
+        {
+          "title": "P10 editor photo <=6 actions, keyboard focus/Escape, XSS text at 740x390",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12264,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:12:20.672Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-ead1a9fb477038718c4e",
+          "file": "p10-memories.spec.ts",
+          "line": 552,
+          "column": 3
+        }
+      ]
+    },
+    {
+      "title": "p10-render-lifecycle.spec.ts",
+      "file": "p10-render-lifecycle.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "P10 pins alter real captured pixels without world rebuild",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9455,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:12:32.995Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7bd0e625a2c7fe9ace03-9b79c4de8815e0e958a8",
+          "file": "p10-render-lifecycle.spec.ts",
+          "line": 35,
+          "column": 1
+        },
+        {
+          "title": "P10 journal before/after keyboard slider and VI/EN stay private",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10323,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:12:42.475Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7bd0e625a2c7fe9ace03-cfa8579ba62cb54e217a",
+          "file": "p10-render-lifecycle.spec.ts",
+          "line": 101,
+          "column": 1
+        },
+        {
+          "title": "P10 actual flight freezes for pause/hidden and reduced motion jumps",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10149,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:12:52.828Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7bd0e625a2c7fe9ace03-eb23111aaecadb901da5",
+          "file": "p10-render-lifecycle.spec.ts",
+          "line": 141,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "p10-storage-r2.spec.ts",
+      "file": "p10-storage-r2.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "P10 R2 storage",
+          "file": "p10-storage-r2.spec.ts",
+          "line": 32,
+          "column": 6,
+          "specs": [
+            {
+              "title": "opt-in reload remembers content and flag-off never reads IDB",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 23855,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:13:03.063Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0455143dd613f9060688-9adf26acf1858b44549f",
+              "file": "p10-storage-r2.spec.ts",
+              "line": 68,
+              "column": 3
+            },
+            {
+              "title": "import cancel is atomic and accept merges by id",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8702,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:13:26.944Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0455143dd613f9060688-fb91e4aae056304928f6",
+              "file": "p10-storage-r2.spec.ts",
+              "line": 116,
+              "column": 3
+            },
+            {
+              "title": "missing/corrupt IDB is readonly without pageerror; confirmed clear recovers",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8852,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:13:35.676Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0455143dd613f9060688-9b74d82b411b2f087487",
+              "file": "p10-storage-r2.spec.ts",
+              "line": 143,
+              "column": 3
+            },
+            {
+              "title": "UI import dismisses atomically, then accepts an id merge while retaining other ids",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9646,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:13:44.555Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0455143dd613f9060688-18398d8b66d7fc264c6b",
+              "file": "p10-storage-r2.spec.ts",
+              "line": 174,
+              "column": 3
+            },
+            {
+              "title": "corrupt IndexedDB remains readonly and exact until confirmed UI clear",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 19755,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:13:54.233Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0455143dd613f9060688-f686d2d0ebcd6b89d149",
+              "file": "p10-storage-r2.spec.ts",
+              "line": 215,
+              "column": 3
+            },
+            {
+              "title": "valid oversized IndexedDB remains exact and readonly until confirmed UI clear",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 19594,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:14:14.089Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0455143dd613f9060688-11898f32ea8bcfbc4e15",
+              "file": "p10-storage-r2.spec.ts",
+              "line": 346,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "p7-real-street.spec.ts",
+      "file": "p7-real-street.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "P7 synthetic real-street handoff",
+          "file": "p7-real-street.spec.ts",
+          "line": 201,
+          "column": 6,
+          "specs": [
+            {
+              "title": "private package/reference gating is hash-bound and hidden input is attached",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7798,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:14:33.771Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-4ced29cc63b427f421ce",
+              "file": "p7-real-street.spec.ts",
+              "line": 202,
+              "column": 3
+            },
+            {
+              "title": "fixture, WebGL2 fallback, and loading states keep real street disabled",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14624,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:14:41.593Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-e9eaf9ac5c116df3f4af",
+              "file": "p7-real-street.spec.ts",
+              "line": 218,
+              "column": 3
+            },
+            {
+              "title": "package switch and UI reset invalidate references without rebuilding the scene host",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9801,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:14:56.247Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-dfb9f0ba49d67572e533",
+              "file": "p7-real-street.spec.ts",
+              "line": 254,
+              "column": 3
+            },
+            {
+              "title": "cancel intentionally focuses first and leaves no privacy side effect",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11160,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:15:06.074Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-4e242b7fc6117f4398b6",
+              "file": "p7-real-street.spec.ts",
+              "line": 286,
+              "column": 3
+            },
+            {
+              "title": "Street View confirmation uses synthetic popup, no real Google contact, no referrer, and minimal encoded params",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11853,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:15:17.260Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-96fe73833e1b5815af2e",
+              "file": "p7-real-street.spec.ts",
+              "line": 325,
+              "column": 3
+            },
+            {
+              "title": "Satellite confirmation sends only its documented minimal parameters",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10401,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:15:29.138Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-f7b524e0d30907155a0b",
+              "file": "p7-real-street.spec.ts",
+              "line": 383,
+              "column": 3
+            },
+            {
+              "title": "blocked popup preserves the session and keeps the control usable",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9960,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:15:39.567Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-f8baf928a8da3e322576",
+              "file": "p7-real-street.spec.ts",
+              "line": 417,
+              "column": 3
+            },
+            {
+              "title": "language and portrait/landscape keep the dialog reachable",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9246,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:15:49.552Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-a8754a83eab047496157",
+              "file": "p7-real-street.spec.ts",
+              "line": 430,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "p8-atmosphere.spec.ts",
+      "file": "p8-atmosphere.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "P8 synthetic atmosphere integration",
+          "file": "p8-atmosphere.spec.ts",
+          "line": 45,
+          "column": 6,
+          "specs": [
+            {
+              "title": "weather and date controls attempt no external location request and keep true activation blocked",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7309,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:69:5",
+                        "location": {
+                          "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                          "column": 45,
+                          "line": 5
+                        },
+                        "snippet": "  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\","
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                            "column": 45,
+                            "line": 5
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\",\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:69:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:15:58.866Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-a57a0-eep-true-activation-blocked-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-a57a0-eep-true-activation-blocked-webkit\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-a57a0-eep-true-activation-blocked-webkit\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                        "column": 45,
+                        "line": 5
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4ed503a418e41032d45d-5e7ad2cc2b1d51d278f3",
+              "file": "p8-atmosphere.spec.ts",
+              "line": 55,
+              "column": 3
+            },
+            {
+              "title": "date drives Vietnamese auto festival; manual normal disables auto; VI/EN remains usable",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 10634,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:83:5",
+                        "location": {
+                          "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                          "column": 45,
+                          "line": 5
+                        },
+                        "snippet": "  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\","
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                            "column": 45,
+                            "line": 5
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\",\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:83:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:16:11.299Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-5b9f0-s-auto-VI-EN-remains-usable-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-5b9f0-s-auto-VI-EN-remains-usable-webkit\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-5b9f0-s-auto-VI-EN-remains-usable-webkit\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                        "column": 45,
+                        "line": 5
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4ed503a418e41032d45d-28c01ec2b0301aa4a54a",
+              "file": "p8-atmosphere.spec.ts",
+              "line": 80,
+              "column": 3
+            },
+            {
+              "title": "all presentation controls preserve exported geometry, provenance and package state byte-for-byte",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 10813,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:115:5",
+                        "location": {
+                          "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                          "column": 45,
+                          "line": 5
+                        },
+                        "snippet": "  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\","
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                            "column": 45,
+                            "line": 5
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\",\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:115:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:16:26.444Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-b408a-package-state-byte-for-byte-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-b408a-package-state-byte-for-byte-webkit\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-b408a-package-state-byte-for-byte-webkit\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                        "column": 45,
+                        "line": 5
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4ed503a418e41032d45d-093c9ce1536f440e1ab4",
+              "file": "p8-atmosphere.spec.ts",
+              "line": 112,
+              "column": 3
+            },
+            {
+              "title": "export invariant survives disabled presentation controls in Firefox fallback",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 8122,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:152:5",
+                        "location": {
+                          "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                          "column": 45,
+                          "line": 5
+                        },
+                        "snippet": "  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\","
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                            "column": 45,
+                            "line": 5
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\",\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:152:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:16:40.084Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-c2f43-ontrols-in-Firefox-fallback-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-c2f43-ontrols-in-Firefox-fallback-webkit\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-c2f43-ontrols-in-Firefox-fallback-webkit\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                        "column": 45,
+                        "line": 5
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4ed503a418e41032d45d-c8a681a3490969a02a6c",
+              "file": "p8-atmosphere.spec.ts",
+              "line": 139,
+              "column": 3
+            },
+            {
+              "title": "keyboard focus, touch targets, reduced-motion and portrait/landscape sheet stay usable",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7501,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:189:5",
+                        "location": {
+                          "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                          "column": 45,
+                          "line": 5
+                        },
+                        "snippet": "  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\","
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                            "column": 45,
+                            "line": 5
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\",\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:189:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:16:51.083Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-5f98a-landscape-sheet-stay-usable-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-5f98a-landscape-sheet-stay-usable-webkit\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-5f98a-landscape-sheet-stay-usable-webkit\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                        "column": 45,
+                        "line": 5
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4ed503a418e41032d45d-ae62c4e0521e5287bcfe",
+              "file": "p8-atmosphere.spec.ts",
+              "line": 185,
+              "column": 3
+            },
+            {
+              "title": "forced fallback short landscape keeps native weather-time tabs and retry reachable",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7636,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:17:04.127Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ed503a418e41032d45d-9b2a491688a2eda26fbf",
+              "file": "p8-atmosphere.spec.ts",
+              "line": 212,
+              "column": 3
+            },
+            {
+              "title": "GPU canvas pixels change for weather, seasons, festival, flood and layer off; plan stays neutral",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7422,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:241:5",
+                        "location": {
+                          "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                          "column": 45,
+                          "line": 5
+                        },
+                        "snippet": "  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\","
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                            "column": 45,
+                            "line": 5
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\",\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:241:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:17:11.916Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-0c45b-ayer-off-plan-stays-neutral-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-0c45b-ayer-off-plan-stays-neutral-webkit\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-0c45b-ayer-off-plan-stays-neutral-webkit\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                        "column": 45,
+                        "line": 5
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4ed503a418e41032d45d-099461dad93eb9ca6a2a",
+              "file": "p8-atmosphere.spec.ts",
+              "line": 238,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "p8-weather.spec.ts",
+      "file": "p8-weather.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "P8 weather consent and responsive lifecycle",
+          "file": "p8-weather.spec.ts",
+          "line": 164,
+          "column": 6,
+          "specs": [
+            {
+              "title": "vi phone covers consent, ready, stale, and error actions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 59187,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:17:21.919Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-ff73cc11781f71d110be",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            },
+            {
+              "title": "vi landscape covers consent, ready, stale, and error actions",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 6559,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at tests\\e2e\\p8-weather.spec.ts:185:51",
+                        "location": {
+                          "file": "tests\\e2e\\p8-weather.spec.ts",
+                          "column": 51,
+                          "line": 185
+                        },
+                        "snippet": "  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-weather.spec.ts",
+                            "column": 51,
+                            "line": 185
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );\n    at tests\\e2e\\p8-weather.spec.ts:185:51"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:18:21.223Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-weather-P8-weather-cons-4e3cf-ady-stale-and-error-actions-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-weather-P8-weather-cons-4e3cf-ady-stale-and-error-actions-webkit\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-weather-P8-weather-cons-4e3cf-ady-stale-and-error-actions-webkit\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-weather.spec.ts",
+                        "column": 51,
+                        "line": 185
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-ffd989aa7ddedfea0c15",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            },
+            {
+              "title": "forced fallback vi phone covers consent, ready, stale, and error actions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 24889,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:18:30.448Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-5516f4da3bb2719ffaf7",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            },
+            {
+              "title": "forced fallback vi landscape covers consent, ready, stale, and error actions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 23343,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:18:55.468Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-6bca2eb50ad720364342",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            },
+            {
+              "title": "en phone covers consent, ready, stale, and error actions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 67282,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:19:18.834Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-0bd03ee6f029b442d33c",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            },
+            {
+              "title": "en landscape covers consent, ready, stale, and error actions",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 6086,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at tests\\e2e\\p8-weather.spec.ts:185:51",
+                        "location": {
+                          "file": "tests\\e2e\\p8-weather.spec.ts",
+                          "column": 51,
+                          "line": 185
+                        },
+                        "snippet": "  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-weather.spec.ts",
+                            "column": 51,
+                            "line": 185
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );\n    at tests\\e2e\\p8-weather.spec.ts:185:51"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:20:26.145Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-weather-P8-weather-cons-835ed-ady-stale-and-error-actions-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-weather-P8-weather-cons-835ed-ady-stale-and-error-actions-webkit\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-weather-P8-weather-cons-835ed-ady-stale-and-error-actions-webkit\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-weather.spec.ts",
+                        "column": 51,
+                        "line": 185
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-4d38081525415971690b",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            },
+            {
+              "title": "forced fallback en phone covers consent, ready, stale, and error actions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 25841,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:20:34.887Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-d222126fedf023849d72",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            },
+            {
+              "title": "forced fallback en landscape covers consent, ready, stale, and error actions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 23954,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:21:00.842Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-609e811068a57303d6ca",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "P8 weather consent and request boundary",
+          "file": "p8-weather.spec.ts",
+          "line": 341,
+          "column": 6,
+          "specs": [
+            {
+              "title": "demo starts with weather disabled and no external requests",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7680,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:21:24.854Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-e237c3bbe848af062ede",
+              "file": "p8-weather.spec.ts",
+              "line": 362,
+              "column": 3
+            },
+            {
+              "title": "native package/reference import enables consent, one request, success, and off",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13424,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:21:32.564Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-f90d95883926f10af9e8",
+              "file": "p8-weather.spec.ts",
+              "line": 374,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "p9-life-sound.spec.ts",
+      "file": "p9-life-sound.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "P9 OfflineAudioContext measures the actual eight-voice storm mix below the peak limit",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 10,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 3723,
+                  "error": {
+                    "message": "Error: page.evaluate: ReferenceError: Can't find variable: OfflineAudioContext",
+                    "stack": "Error: page.evaluate: ReferenceError: Can't find variable: OfflineAudioContext\n    at tests\\e2e\\p9-life-sound.spec.ts:244:29",
+                    "location": {
+                      "file": "tests\\e2e\\p9-life-sound.spec.ts",
+                      "column": 29,
+                      "line": 244
+                    },
+                    "snippet": "  242 | }) => {\n  243 |   await page.goto(\"/\");\n> 244 |   const result = await page.evaluate(async () => {\n      |                             ^\n  245 |     const { createDemoAudio } = await import(\"/src/engine/demoAudio.ts\");\n  246 |     const context = new OfflineAudioContext(2, 48000 * 2, 48000);\n  247 |     const audio = createDemoAudio({"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "tests\\e2e\\p9-life-sound.spec.ts",
+                        "column": 29,
+                        "line": 244
+                      },
+                      "message": "Error: page.evaluate: ReferenceError: Can't find variable: OfflineAudioContext\n\n  242 | }) => {\n  243 |   await page.goto(\"/\");\n> 244 |   const result = await page.evaluate(async () => {\n      |                             ^\n  245 |     const { createDemoAudio } = await import(\"/src/engine/demoAudio.ts\");\n  246 |     const context = new OfflineAudioContext(2, 48000 * 2, 48000);\n  247 |     const audio = createDemoAudio({\n    at tests\\e2e\\p9-life-sound.spec.ts:244:29"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:23:04.765Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "test-results\\p9-life-sound-P9-OfflineAu-556ec-rm-mix-below-the-peak-limit-webkit\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "test-results\\p9-life-sound-P9-OfflineAu-556ec-rm-mix-below-the-peak-limit-webkit\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "test-results\\p9-life-sound-P9-OfflineAu-556ec-rm-mix-below-the-peak-limit-webkit\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "tests\\e2e\\p9-life-sound.spec.ts",
+                    "column": 29,
+                    "line": 244
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "1dcc5fbf546365ca8b59-c944176e5afef3e3d70a",
+          "file": "p9-life-sound.spec.ts",
+          "line": 240,
+          "column": 1
+        }
+      ],
+      "suites": [
+        {
+          "title": "P9 synthetic life and sound",
+          "file": "p9-life-sound.spec.ts",
+          "line": 49,
+          "column": 6,
+          "specs": [
+            {
+              "title": "local fixture, life toggle, walk, ride and sound send no data; real activation stays blocked",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13781,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:21:46.066Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1dcc5fbf546365ca8b59-4ea31641b18dc1105974",
+              "file": "p9-life-sound.spec.ts",
+              "line": 59,
+              "column": 3
+            },
+            {
+              "title": "life is visible in real pixels, Plan hides it and Pause does not advance simulation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11394,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:21:59.871Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1dcc5fbf546365ca8b59-22b872014e0e9abb9347",
+              "file": "p9-life-sound.spec.ts",
+              "line": 99,
+              "column": 3
+            },
+            {
+              "title": "POV is eye level, exit keeps package and camera, keyboard releases; ride pause and tilt remain optional",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12684,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:22:11.290Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1dcc5fbf546365ca8b59-c62b8c766c178fb7b4f2",
+              "file": "p9-life-sound.spec.ts",
+              "line": 124,
+              "column": 3
+            },
+            {
+              "title": "sound context is gesture-only, one per scene, local clip manifest stays in session and off releases voices",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 16375,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n    at tests\\e2e\\p9-life-sound.spec.ts:170:5",
+                        "location": {
+                          "file": "tests\\e2e\\p9-life-sound.spec.ts",
+                          "column": 5,
+                          "line": 170
+                        },
+                        "snippet": "  168 |     await page.getByRole(\"button\", { name: \"Tiếng phố\", exact: true }).click();\n  169 |     await pixels(page);\n> 170 |     await expect\n      |     ^\n  171 |       .poll(async () => +((await scene(page).getAttribute(\"data-audio-contexts\")) ?? 0))\n  172 |       .toBe(1);\n  173 |     const wav = Buffer.alloc(44 + 1600);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p9-life-sound.spec.ts",
+                            "column": 5,
+                            "line": 170
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m1\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  168 |     await page.getByRole(\"button\", { name: \"Tiếng phố\", exact: true }).click();\n  169 |     await pixels(page);\n> 170 |     await expect\n      |     ^\n  171 |       .poll(async () => +((await scene(page).getAttribute(\"data-audio-contexts\")) ?? 0))\n  172 |       .toBe(1);\n  173 |     const wav = Buffer.alloc(44 + 1600);\n    at tests\\e2e\\p9-life-sound.spec.ts:170:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:22:24.002Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p9-life-sound-P9-synthetic-d7b85-ion-and-off-releases-voices-webkit\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p9-life-sound-P9-synthetic-d7b85-ion-and-off-releases-voices-webkit\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p9-life-sound-P9-synthetic-d7b85-ion-and-off-releases-voices-webkit\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p9-life-sound.spec.ts",
+                        "column": 5,
+                        "line": 170
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "1dcc5fbf546365ca8b59-b5b3eb6761f4afbfa1f7",
+              "file": "p9-life-sound.spec.ts",
+              "line": 162,
+              "column": 3
+            },
+            {
+              "title": "VI/EN touch and exit controls at 390x844",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10832,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:22:43.269Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1dcc5fbf546365ca8b59-df392bdd8133f6a29697",
+              "file": "p9-life-sound.spec.ts",
+              "line": 217,
+              "column": 5
+            },
+            {
+              "title": "VI/EN touch and exit controls at 740x390",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10518,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:22:54.221Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1dcc5fbf546365ca8b59-1d4231c7a350fe3043c1",
+              "file": "p9-life-sound.spec.ts",
+              "line": 217,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-28T14:03:34.647Z",
+    "duration": 1174124.8390000002,
+    "expected": 66,
+    "skipped": 0,
+    "unexpected": 11,
+    "flaky": 0
+  }
+}

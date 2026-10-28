@@ -1,0 +1,3248 @@
+{
+  "config": {
+    "configFile": "playwright.config.ts",
+    "rootDir": "tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 1,
+    "webServer": {
+      "command": "bun run dev --host [loopback] --port 4178",
+      "url": "http://[loopback]:4178",
+      "reuseExistingServer": true,
+      "timeout": 60000
+    }
+  },
+  "suites": [
+    {
+      "title": "demo.spec.ts",
+      "file": "demo.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "demo labels, privacy, noindex and graceful 3D capability branch",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 36668,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:42:14.794Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-7fdfb6f61ec91c8202c0",
+          "file": "demo.spec.ts",
+          "line": 43,
+          "column": 1
+        },
+        {
+          "title": "diorama keeps the synthetic streets visually legible",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22008,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:42:54.892Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-c1c657d9ee3c9e2177fe",
+          "file": "demo.spec.ts",
+          "line": 58,
+          "column": 1
+        },
+        {
+          "title": "time, weather, festivals, camera, capture and clear work in a rendered scene",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 45170,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:43:17.118Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-18d2e2082b25419a753e",
+          "file": "demo.spec.ts",
+          "line": 66,
+          "column": 1
+        },
+        {
+          "title": "mobile controls hide immediately during drag and return at peek",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22710,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:44:02.357Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-24bf367f72424416698b",
+          "file": "demo.spec.ts",
+          "line": 112,
+          "column": 1
+        },
+        {
+          "title": "WebGL unavailable cannot trap the user behind loading or claim capture success",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15420,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:44:25.133Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-9be2cf8b19973765f85f",
+          "file": "demo.spec.ts",
+          "line": 135,
+          "column": 1
+        },
+        {
+          "title": "route roundtrip recreates exactly one canvas and context loss has a recovery UI",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 44347,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:44:40.614Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-1a1672eeeeb322a13ee4",
+          "file": "demo.spec.ts",
+          "line": 150,
+          "column": 1
+        },
+        {
+          "title": "Mặt bằng renders one orthographic world, measures from its camera and applies layer toggles",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 28666,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:45:25.028Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-b79d09b2850ca5068aa8",
+          "file": "demo.spec.ts",
+          "line": 169,
+          "column": 1
+        },
+        {
+          "title": "explicit local preview refuses malformed package instead of silently returning to fixture",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 20914,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:45:53.771Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-162c232b190b848c2875",
+          "file": "demo.spec.ts",
+          "line": 212,
+          "column": 1
+        },
+        {
+          "title": "explicit local preview opens a valid synthetic package as one in-memory world",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 24122,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:46:14.756Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-9e48aa7b0f5fcd7cbd0c",
+          "file": "demo.spec.ts",
+          "line": 239,
+          "column": 1
+        },
+        {
+          "title": "private diorama keeps the supplied ENU origin in frame when source geometry is offset",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 18637,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:46:38.932Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-0281738973db313d9d20",
+          "file": "demo.spec.ts",
+          "line": 293,
+          "column": 1
+        },
+        {
+          "title": "static scene stops drawing when idle",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11536,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:46:57.609Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-2161a56a5321fcecd590",
+          "file": "demo.spec.ts",
+          "line": 389,
+          "column": 1
+        },
+        {
+          "title": "private preview labels a no-level class-prior height as unknown",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13429,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:47:09.177Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-bacb4dca93ff3dd3e5d1",
+          "file": "demo.spec.ts",
+          "line": 406,
+          "column": 1
+        },
+        {
+          "title": "local preview editor: edit, geometry gate, undo/redo, road edit, export and reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16033,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:47:22.634Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "05384557491ebd602dd7-a459e89e946a954c7742",
+          "file": "demo.spec.ts",
+          "line": 468,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "h6-completion.spec.ts",
+      "file": "h6-completion.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "H6 completion synthetic integration",
+          "file": "h6-completion.spec.ts",
+          "line": 182,
+          "column": 6,
+          "specs": [
+            {
+              "title": "root and legacy query expose local file action with noindex and neutral fiction",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 25501,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:47:38.789Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-f2a331b60674789c1015",
+              "file": "h6-completion.spec.ts",
+              "line": 183,
+              "column": 3
+            },
+            {
+              "title": "sentinel open/edit/capture/export/reload never reaches request attempts, console, storage or SSR",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 26196,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:48:04.324Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-38aae3de91dce48e07fb",
+              "file": "h6-completion.spec.ts",
+              "line": 198,
+              "column": 5
+            },
+            {
+              "title": "sentinel unavailable renderer retains edit/export/privacy and never claims capture",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [
+                    {
+                      "type": "capability",
+                      "description": "WebGL2 intentionally unavailable: disabled capture asserted; no rendered-capture claim."
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14523,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:48:30.555Z",
+                      "annotations": [
+                        {
+                          "type": "capability",
+                          "description": "WebGL2 intentionally unavailable: disabled capture asserted; no rendered-capture claim."
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-b18317b0239a5576309b",
+              "file": "h6-completion.spec.ts",
+              "line": 198,
+              "column": 5
+            },
+            {
+              "title": "portrait/landscape keyboard and VI/EN retain a reachable compact panel",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10446,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:48:45.113Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-08ffb131b4948d316614",
+              "file": "h6-completion.spec.ts",
+              "line": 288,
+              "column": 3
+            },
+            {
+              "title": "20 mode/route/package/capture cycles keep one ready canvas and no page errors",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 100472,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 90000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\h6-completion.spec.ts",
+                            "column": 49,
+                            "line": 331
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('#scene-root')\nExpected: \u001b[32m\"ready\"\u001b[39m\nReceived: \u001b[31m\"\"\u001b[39m\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  329 |       await page.getByRole(\"link\", { name: \"Giới thiệu\", exact: true }).click();\n  330 |       await page.getByRole(\"link\", { name: \"Về phố\", exact: true }).click();\n> 331 |       await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", \"ready\");\n      |                                                 ^\n  332 |       await expect(page.locator(\"#scene-root canvas\")).toHaveCount(1);\n  333 |     }\n  334 |     expect(errors).toEqual([]);\n    at tests\\e2e\\h6-completion.spec.ts:331:49"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:48:55.592Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\h6-completion-H6-completio-8fc74-y-canvas-and-no-page-errors-firefox\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\h6-completion-H6-completio-8fc74-y-canvas-and-no-page-errors-firefox\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\h6-completion-H6-completio-8fc74-y-canvas-and-no-page-errors-firefox\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-ee072a7b35c5c4444a71",
+              "file": "h6-completion.spec.ts",
+              "line": 311,
+              "column": 3
+            },
+            {
+              "title": "canvas part picking, hidden layers and camera framing preserve the package",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 16131,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:50:42.679Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-3a6df36a9690fc0bba5f",
+              "file": "h6-completion.spec.ts",
+              "line": 336,
+              "column": 3
+            },
+            {
+              "title": "context loss then real retry preserves the loaded package and one world",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 18843,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:51:00.948Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-14c102098d23caec1a6f",
+              "file": "h6-completion.spec.ts",
+              "line": 475,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "h6-review23.spec.ts",
+      "file": "h6-review23.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Review 23 synthetic file regressions",
+          "file": "h6-review23.spec.ts",
+          "line": 8,
+          "column": 6,
+          "specs": [
+            {
+              "title": "R23-1 missing coverage is rejected without crash and valid file recovers",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 10563,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeAttached\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByLabel('Mở gói world')\nExpected: attached\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeAttached\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByLabel('Mở gói world')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeAttached\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByLabel('Mở gói world')\nExpected: attached\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeAttached\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByLabel('Mở gói world')\u001b[22m\n\n    at tests\\e2e\\h6-review23.spec.ts:11:51",
+                        "location": {
+                          "file": "tests\\e2e\\h6-review23.spec.ts",
+                          "column": 51,
+                          "line": 11
+                        },
+                        "snippet": "   9 |   test.beforeEach(async ({ page }) => {\n  10 |     await page.goto(\"/\");\n> 11 |     await expect(page.getByLabel(\"Mở gói world\")).toBeAttached();\n     |                                                   ^\n  12 |     await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n  13 |     if (process.env[\"REQUIRE_WEBGL2\"] === \"1\")\n  14 |       await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", \"ready\");"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\h6-review23.spec.ts",
+                            "column": 51,
+                            "line": 11
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeAttached\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByLabel('Mở gói world')\nExpected: attached\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeAttached\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByLabel('Mở gói world')\u001b[22m\n\n\n   9 |   test.beforeEach(async ({ page }) => {\n  10 |     await page.goto(\"/\");\n> 11 |     await expect(page.getByLabel(\"Mở gói world\")).toBeAttached();\n     |                                                   ^\n  12 |     await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n  13 |     if (process.env[\"REQUIRE_WEBGL2\"] === \"1\")\n  14 |       await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", \"ready\");\n    at tests\\e2e\\h6-review23.spec.ts:11:51"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:51:19.912Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\h6-review23-Review-23-synt-f334a-ash-and-valid-file-recovers-firefox\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\h6-review23-Review-23-synt-f334a-ash-and-valid-file-recovers-firefox\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\h6-review23-Review-23-synt-f334a-ash-and-valid-file-recovers-firefox\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\h6-review23.spec.ts",
+                        "column": 51,
+                        "line": 11
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "09399f6d05f31fae0ef1-a27edf7da05a99a18e03",
+              "file": "h6-review23.spec.ts",
+              "line": 17,
+              "column": 5
+            },
+            {
+              "title": "R23-1 null coverage is rejected without crash and valid file recovers",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13143,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:51:34.376Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09399f6d05f31fae0ef1-0942aa30580cd52bb8f5",
+              "file": "h6-review23.spec.ts",
+              "line": 17,
+              "column": 5
+            },
+            {
+              "title": "R23-1 object coverage is rejected without crash and valid file recovers",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 10417,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeAttached\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByLabel('Mở gói world')\nExpected: attached\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeAttached\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByLabel('Mở gói world')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeAttached\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByLabel('Mở gói world')\nExpected: attached\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeAttached\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByLabel('Mở gói world')\u001b[22m\n\n    at tests\\e2e\\h6-review23.spec.ts:11:51",
+                        "location": {
+                          "file": "tests\\e2e\\h6-review23.spec.ts",
+                          "column": 51,
+                          "line": 11
+                        },
+                        "snippet": "   9 |   test.beforeEach(async ({ page }) => {\n  10 |     await page.goto(\"/\");\n> 11 |     await expect(page.getByLabel(\"Mở gói world\")).toBeAttached();\n     |                                                   ^\n  12 |     await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n  13 |     if (process.env[\"REQUIRE_WEBGL2\"] === \"1\")\n  14 |       await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", \"ready\");"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\h6-review23.spec.ts",
+                            "column": 51,
+                            "line": 11
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeAttached\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByLabel('Mở gói world')\nExpected: attached\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeAttached\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByLabel('Mở gói world')\u001b[22m\n\n\n   9 |   test.beforeEach(async ({ page }) => {\n  10 |     await page.goto(\"/\");\n> 11 |     await expect(page.getByLabel(\"Mở gói world\")).toBeAttached();\n     |                                                   ^\n  12 |     await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n  13 |     if (process.env[\"REQUIRE_WEBGL2\"] === \"1\")\n  14 |       await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", \"ready\");\n    at tests\\e2e\\h6-review23.spec.ts:11:51"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:51:48.323Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\h6-review23-Review-23-synt-407fa-ash-and-valid-file-recovers-firefox\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\h6-review23-Review-23-synt-407fa-ash-and-valid-file-recovers-firefox\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\h6-review23-Review-23-synt-407fa-ash-and-valid-file-recovers-firefox\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\h6-review23.spec.ts",
+                        "column": 51,
+                        "line": 11
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "09399f6d05f31fae0ef1-086ad951a9999c09ae5a",
+              "file": "h6-review23.spec.ts",
+              "line": 17,
+              "column": 5
+            },
+            {
+              "title": "R23-2 road field provenance survives override and export/reopen in VI/EN",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 12806,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeAttached\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByLabel('Mở gói world')\nExpected: attached\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeAttached\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByLabel('Mở gói world')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeAttached\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByLabel('Mở gói world')\nExpected: attached\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeAttached\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByLabel('Mở gói world')\u001b[22m\n\n    at tests\\e2e\\h6-review23.spec.ts:11:51",
+                        "location": {
+                          "file": "tests\\e2e\\h6-review23.spec.ts",
+                          "column": 51,
+                          "line": 11
+                        },
+                        "snippet": "   9 |   test.beforeEach(async ({ page }) => {\n  10 |     await page.goto(\"/\");\n> 11 |     await expect(page.getByLabel(\"Mở gói world\")).toBeAttached();\n     |                                                   ^\n  12 |     await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n  13 |     if (process.env[\"REQUIRE_WEBGL2\"] === \"1\")\n  14 |       await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", \"ready\");"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\h6-review23.spec.ts",
+                            "column": 51,
+                            "line": 11
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeAttached\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByLabel('Mở gói world')\nExpected: attached\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeAttached\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByLabel('Mở gói world')\u001b[22m\n\n\n   9 |   test.beforeEach(async ({ page }) => {\n  10 |     await page.goto(\"/\");\n> 11 |     await expect(page.getByLabel(\"Mở gói world\")).toBeAttached();\n     |                                                   ^\n  12 |     await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n  13 |     if (process.env[\"REQUIRE_WEBGL2\"] === \"1\")\n  14 |       await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", \"ready\");\n    at tests\\e2e\\h6-review23.spec.ts:11:51"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:52:02.287Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\h6-review23-Review-23-synt-b9ad3--and-export-reopen-in-VI-EN-firefox\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\h6-review23-Review-23-synt-b9ad3--and-export-reopen-in-VI-EN-firefox\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\h6-review23-Review-23-synt-b9ad3--and-export-reopen-in-VI-EN-firefox\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\h6-review23.spec.ts",
+                        "column": 51,
+                        "line": 11
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "09399f6d05f31fae0ef1-8c255ba93b6e71c27d46",
+              "file": "h6-review23.spec.ts",
+              "line": 23,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "h6-roundtrip.spec.ts",
+      "file": "h6-roundtrip.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "H6 synthetic source → build → editor → export → source rebuild → reload preserves part edits",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22528,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:52:19.507Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a23ffc33b9b219756cb1-0f1caac041e09dc69bab",
+          "file": "h6-roundtrip.spec.ts",
+          "line": 112,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "p10-memories.spec.ts",
+      "file": "p10-memories.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "P10 real image pipeline strips synthetic JPEG EXIF Orientation/GPS/XMP and PNG/WebP metadata",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8298,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:52:42.882Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-e5c541ff3b5708c4ff2a",
+          "file": "p10-memories.spec.ts",
+          "line": 73,
+          "column": 1
+        },
+        {
+          "title": "P10 import always reprocesses memory AND journal photos; public export excludes private data",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13918,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:52:51.206Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-54767c68b95df59ff800",
+          "file": "p10-memories.spec.ts",
+          "line": 253,
+          "column": 1
+        },
+        {
+          "title": "P10 A→B→C/loading/error isolation; unconsented private data never enters network, URL or storage",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 28893,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:53:05.160Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-6e2a98eeb2c5431bb85d",
+          "file": "p10-memories.spec.ts",
+          "line": 298,
+          "column": 1
+        },
+        {
+          "title": "P10 opt-in IndexedDB survives reload; disabling writes retains RAM; all-device delete clears saved data",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22019,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:53:34.106Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-f1ee3787dd7553f49ab6",
+          "file": "p10-memories.spec.ts",
+          "line": 362,
+          "column": 1
+        },
+        {
+          "title": "P10 blocked/quota storage keeps RAM and reports only neutral code",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 10055,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:53:56.157Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-5c71c7123700bfceb8ae",
+          "file": "p10-memories.spec.ts",
+          "line": 398,
+          "column": 1
+        },
+        {
+          "title": "P10 guest hides private memories, home label, marker/lot and construction diary",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8045,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:54:06.242Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-3dbb628d549e902ee254",
+          "file": "p10-memories.spec.ts",
+          "line": 442,
+          "column": 1
+        },
+        {
+          "title": "P10 tour uses actual camera, restores pose, mode interruption, strict deep-link round trip",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7611,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:54:14.317Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-cbe2370fad691df1c56d",
+          "file": "p10-memories.spec.ts",
+          "line": 456,
+          "column": 1
+        },
+        {
+          "title": "P10 postcard renders actual scene at desktop 4K and mobile 2K, cancels and restores canvas",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8472,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:54:21.955Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-18bd95f7281900a868d2",
+          "file": "p10-memories.spec.ts",
+          "line": 498,
+          "column": 1
+        },
+        {
+          "title": "P10 editor photo <=6 actions, keyboard focus/Escape, XSS text at 1440x900",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11972,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:54:30.454Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-fbbf86b1a267bc2a7ee5",
+          "file": "p10-memories.spec.ts",
+          "line": 552,
+          "column": 3
+        },
+        {
+          "title": "P10 editor photo <=6 actions, keyboard focus/Escape, XSS text at 390x844",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12064,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:54:42.454Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-8b52afe67c78e3ac92c1",
+          "file": "p10-memories.spec.ts",
+          "line": 552,
+          "column": 3
+        },
+        {
+          "title": "P10 editor photo <=6 actions, keyboard focus/Escape, XSS text at 740x390",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11837,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:54:54.544Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6bba6bd3e870f25cac06-d4d4b9535d324b30bd42",
+          "file": "p10-memories.spec.ts",
+          "line": 552,
+          "column": 3
+        }
+      ]
+    },
+    {
+      "title": "p10-render-lifecycle.spec.ts",
+      "file": "p10-render-lifecycle.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "P10 pins alter real captured pixels without world rebuild",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7788,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:55:06.445Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7bd0e625a2c7fe9ace03-601e20f87adf3e94c107",
+          "file": "p10-render-lifecycle.spec.ts",
+          "line": 35,
+          "column": 1
+        },
+        {
+          "title": "P10 journal before/after keyboard slider and VI/EN stay private",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8564,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:55:14.256Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7bd0e625a2c7fe9ace03-f7931a4e7267f80d3fce",
+          "file": "p10-render-lifecycle.spec.ts",
+          "line": 101,
+          "column": 1
+        },
+        {
+          "title": "P10 actual flight freezes for pause/hidden and reduced motion jumps",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9854,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T13:55:22.846Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7bd0e625a2c7fe9ace03-79953dc2ff88718a563c",
+          "file": "p10-render-lifecycle.spec.ts",
+          "line": 141,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "p10-storage-r2.spec.ts",
+      "file": "p10-storage-r2.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "P10 R2 storage",
+          "file": "p10-storage-r2.spec.ts",
+          "line": 32,
+          "column": 6,
+          "specs": [
+            {
+              "title": "opt-in reload remembers content and flag-off never reads IDB",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 25427,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:55:32.781Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0455143dd613f9060688-3d394780150b31ba0ae1",
+              "file": "p10-storage-r2.spec.ts",
+              "line": 68,
+              "column": 3
+            },
+            {
+              "title": "import cancel is atomic and accept merges by id",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7463,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:55:58.236Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0455143dd613f9060688-5db91c1d6515124fd0aa",
+              "file": "p10-storage-r2.spec.ts",
+              "line": 116,
+              "column": 3
+            },
+            {
+              "title": "missing/corrupt IDB is readonly without pageerror; confirmed clear recovers",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7493,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:56:05.734Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0455143dd613f9060688-d9f7ddc040897f85baff",
+              "file": "p10-storage-r2.spec.ts",
+              "line": 143,
+              "column": 3
+            },
+            {
+              "title": "UI import dismisses atomically, then accepts an id merge while retaining other ids",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8016,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:56:13.256Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0455143dd613f9060688-96965b324f31e60c0837",
+              "file": "p10-storage-r2.spec.ts",
+              "line": 174,
+              "column": 3
+            },
+            {
+              "title": "corrupt IndexedDB remains readonly and exact until confirmed UI clear",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15285,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:56:21.303Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0455143dd613f9060688-6cb9a91675a5f087fa57",
+              "file": "p10-storage-r2.spec.ts",
+              "line": 215,
+              "column": 3
+            },
+            {
+              "title": "valid oversized IndexedDB remains exact and readonly until confirmed UI clear",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 17161,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:56:36.616Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0455143dd613f9060688-59c64464c0823fab5fe8",
+              "file": "p10-storage-r2.spec.ts",
+              "line": 346,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "p7-real-street.spec.ts",
+      "file": "p7-real-street.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "P7 synthetic real-street handoff",
+          "file": "p7-real-street.spec.ts",
+          "line": 201,
+          "column": 6,
+          "specs": [
+            {
+              "title": "private package/reference gating is hash-bound and hidden input is attached",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7910,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:56:53.859Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-2e368bafd2ddc51e9baa",
+              "file": "p7-real-street.spec.ts",
+              "line": 202,
+              "column": 3
+            },
+            {
+              "title": "fixture, WebGL2 fallback, and loading states keep real street disabled",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15084,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:57:01.793Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-cc5d5f9dae373b133567",
+              "file": "p7-real-street.spec.ts",
+              "line": 218,
+              "column": 3
+            },
+            {
+              "title": "package switch and UI reset invalidate references without rebuilding the scene host",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9174,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:57:16.909Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-9dd582794c10b537cce8",
+              "file": "p7-real-street.spec.ts",
+              "line": 254,
+              "column": 3
+            },
+            {
+              "title": "cancel intentionally focuses first and leaves no privacy side effect",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8483,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:57:26.123Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-da60df69d66478d479a7",
+              "file": "p7-real-street.spec.ts",
+              "line": 286,
+              "column": 3
+            },
+            {
+              "title": "Street View confirmation uses synthetic popup, no real Google contact, no referrer, and minimal encoded params",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8796,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:57:34.632Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-0926c8e7fcb4055fd168",
+              "file": "p7-real-street.spec.ts",
+              "line": 325,
+              "column": 3
+            },
+            {
+              "title": "Satellite confirmation sends only its documented minimal parameters",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8630,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:57:43.455Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-1fe962cde6b46993158d",
+              "file": "p7-real-street.spec.ts",
+              "line": 383,
+              "column": 3
+            },
+            {
+              "title": "blocked popup preserves the session and keeps the control usable",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8208,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:57:52.109Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-e39e97b525e00e3a3566",
+              "file": "p7-real-street.spec.ts",
+              "line": 417,
+              "column": 3
+            },
+            {
+              "title": "language and portrait/landscape keep the dialog reachable",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8743,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:58:00.346Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "0aa23e55063d64c2ad51-3ccddd129592d224c737",
+              "file": "p7-real-street.spec.ts",
+              "line": 430,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "p8-atmosphere.spec.ts",
+      "file": "p8-atmosphere.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "P8 synthetic atmosphere integration",
+          "file": "p8-atmosphere.spec.ts",
+          "line": 45,
+          "column": 6,
+          "specs": [
+            {
+              "title": "weather and date controls attempt no external location request and keep true activation blocked",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11213,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:58:09.158Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ed503a418e41032d45d-32fae886ff315f875499",
+              "file": "p8-atmosphere.spec.ts",
+              "line": 55,
+              "column": 3
+            },
+            {
+              "title": "date drives Vietnamese auto festival; manual normal disables auto; VI/EN remains usable",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10796,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:58:20.402Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ed503a418e41032d45d-96916d4c746f3843018a",
+              "file": "p8-atmosphere.spec.ts",
+              "line": 80,
+              "column": 3
+            },
+            {
+              "title": "all presentation controls preserve exported geometry, provenance and package state byte-for-byte",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11583,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:58:31.227Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ed503a418e41032d45d-fe99508ddc6d24317665",
+              "file": "p8-atmosphere.spec.ts",
+              "line": 112,
+              "column": 3
+            },
+            {
+              "title": "export invariant survives disabled presentation controls in Firefox fallback",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5010,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:58:42.839Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ed503a418e41032d45d-448474212ed8dbcfd300",
+              "file": "p8-atmosphere.spec.ts",
+              "line": 139,
+              "column": 3
+            },
+            {
+              "title": "keyboard focus, touch targets, reduced-motion and portrait/landscape sheet stay usable",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10859,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:58:47.878Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ed503a418e41032d45d-8a48190ced16f361987c",
+              "file": "p8-atmosphere.spec.ts",
+              "line": 185,
+              "column": 3
+            },
+            {
+              "title": "forced fallback short landscape keeps native weather-time tabs and retry reachable",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5593,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:58:58.765Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ed503a418e41032d45d-8c7b5491e05566a5893e",
+              "file": "p8-atmosphere.spec.ts",
+              "line": 212,
+              "column": 3
+            },
+            {
+              "title": "GPU canvas pixels change for weather, seasons, festival, flood and layer off; plan stays neutral",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 12467,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:241:5",
+                        "location": {
+                          "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                          "column": 45,
+                          "line": 5
+                        },
+                        "snippet": "  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\","
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                            "column": 45,
+                            "line": 5
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  3 | async function open(page: Page) {\n  4 |   await page.goto(\"/?local-preview=1\");\n> 5 |   await expect(page.locator(\"#scene-root\")).toHaveAttribute(\"data-scene-state\", /ready|fallback/);\n    |                                             ^\n  6 |   await page.getByLabel(\"Mở gói world\").setInputFiles({\n  7 |     name: \"p8-synthetic.json\",\n  8 |     mimeType: \"application/json\",\n    at open (tests\\e2e\\p8-atmosphere.spec.ts:5:45)\n    at tests\\e2e\\p8-atmosphere.spec.ts:241:5"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:59:04.386Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-0c45b-ayer-off-plan-stays-neutral-firefox\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-0c45b-ayer-off-plan-stays-neutral-firefox\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-atmosphere-P8-synthetic-0c45b-ayer-off-plan-stays-neutral-firefox\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-atmosphere.spec.ts",
+                        "column": 45,
+                        "line": 5
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4ed503a418e41032d45d-151db41e4b5d65c53ef0",
+              "file": "p8-atmosphere.spec.ts",
+              "line": 238,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "p8-weather.spec.ts",
+      "file": "p8-weather.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "P8 weather consent and responsive lifecycle",
+          "file": "p8-weather.spec.ts",
+          "line": 164,
+          "column": 6,
+          "specs": [
+            {
+              "title": "vi phone covers consent, ready, stale, and error actions",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 12455,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at tests\\e2e\\p8-weather.spec.ts:185:51",
+                        "location": {
+                          "file": "tests\\e2e\\p8-weather.spec.ts",
+                          "column": 51,
+                          "line": 185
+                        },
+                        "snippet": "  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-weather.spec.ts",
+                            "column": 51,
+                            "line": 185
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );\n    at tests\\e2e\\p8-weather.spec.ts:185:51"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:59:24.931Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-weather-P8-weather-cons-37b74-ady-stale-and-error-actions-firefox\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-weather-P8-weather-cons-37b74-ady-stale-and-error-actions-firefox\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-weather-P8-weather-cons-37b74-ady-stale-and-error-actions-firefox\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-weather.spec.ts",
+                        "column": 51,
+                        "line": 185
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-8d543b638ee8bfee590b",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            },
+            {
+              "title": "vi landscape covers consent, ready, stale, and error actions",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 13287,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at tests\\e2e\\p8-weather.spec.ts:185:51",
+                        "location": {
+                          "file": "tests\\e2e\\p8-weather.spec.ts",
+                          "column": 51,
+                          "line": 185
+                        },
+                        "snippet": "  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-weather.spec.ts",
+                            "column": 51,
+                            "line": 185
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );\n    at tests\\e2e\\p8-weather.spec.ts:185:51"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T13:59:43.336Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-weather-P8-weather-cons-4e3cf-ady-stale-and-error-actions-firefox\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-weather-P8-weather-cons-4e3cf-ady-stale-and-error-actions-firefox\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-weather-P8-weather-cons-4e3cf-ady-stale-and-error-actions-firefox\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-weather.spec.ts",
+                        "column": 51,
+                        "line": 185
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-c9eedbcf2ba1c2b90a11",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            },
+            {
+              "title": "forced fallback vi phone covers consent, ready, stale, and error actions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 20653,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:00:02.144Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-da4d86a166e428f839c1",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            },
+            {
+              "title": "forced fallback vi landscape covers consent, ready, stale, and error actions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14333,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:00:23.617Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-3409008d345f22fb8ddc",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            },
+            {
+              "title": "en phone covers consent, ready, stale, and error actions",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 8167,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at tests\\e2e\\p8-weather.spec.ts:185:51",
+                        "location": {
+                          "file": "tests\\e2e\\p8-weather.spec.ts",
+                          "column": 51,
+                          "line": 185
+                        },
+                        "snippet": "  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-weather.spec.ts",
+                            "column": 51,
+                            "line": 185
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );\n    at tests\\e2e\\p8-weather.spec.ts:185:51"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:00:37.983Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-weather-P8-weather-cons-dfde7-ady-stale-and-error-actions-firefox\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-weather-P8-weather-cons-dfde7-ady-stale-and-error-actions-firefox\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-weather-P8-weather-cons-dfde7-ady-stale-and-error-actions-firefox\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-weather.spec.ts",
+                        "column": 51,
+                        "line": 185
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-be805d5e2062866ea812",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            },
+            {
+              "title": "en landscape covers consent, ready, stale, and error actions",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 12133,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n    at tests\\e2e\\p8-weather.spec.ts:185:51",
+                        "location": {
+                          "file": "tests\\e2e\\p8-weather.spec.ts",
+                          "column": 51,
+                          "line": 185
+                        },
+                        "snippet": "  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "tests\\e2e\\p8-weather.spec.ts",
+                            "column": 51,
+                            "line": 185
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveAttribute\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#scene-root')\nExpected pattern: \u001b[32m/ready|fallback/\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveAttribute\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#scene-root')\u001b[22m\n\n\n  183 |         }\n  184 |         await page.goto(\"/\");\n> 185 |         await expect(page.locator(\"#scene-root\")).toHaveAttribute(\n      |                                                   ^\n  186 |           \"data-scene-state\",\n  187 |           /ready|fallback/,\n  188 |         );\n    at tests\\e2e\\p8-weather.spec.ts:185:51"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:00:49.781Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "test-results\\p8-weather-P8-weather-cons-835ed-ady-stale-and-error-actions-firefox\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "test-results\\p8-weather-P8-weather-cons-835ed-ady-stale-and-error-actions-firefox\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "test-results\\p8-weather-P8-weather-cons-835ed-ady-stale-and-error-actions-firefox\\trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "tests\\e2e\\p8-weather.spec.ts",
+                        "column": 51,
+                        "line": 185
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-8576327316a42572cbe3",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            },
+            {
+              "title": "forced fallback en phone covers consent, ready, stale, and error actions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 24462,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:01:06.877Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-b836f724af85d65075eb",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            },
+            {
+              "title": "forced fallback en landscape covers consent, ready, stale, and error actions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14475,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:01:32.156Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-17af60822150cbf04cdd",
+              "file": "p8-weather.spec.ts",
+              "line": 168,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "P8 weather consent and request boundary",
+          "file": "p8-weather.spec.ts",
+          "line": 341,
+          "column": 6,
+          "specs": [
+            {
+              "title": "demo starts with weather disabled and no external requests",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8224,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:01:46.660Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-111c2714233a6335c165",
+              "file": "p8-weather.spec.ts",
+              "line": 362,
+              "column": 3
+            },
+            {
+              "title": "native package/reference import enables consent, one request, success, and off",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11899,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:01:54.916Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "fb1f94742285f7bd2452-7dc561c1b421c191c551",
+              "file": "p8-weather.spec.ts",
+              "line": 374,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "p9-life-sound.spec.ts",
+      "file": "p9-life-sound.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "P9 OfflineAudioContext measures the actual eight-voice storm mix below the peak limit",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 9,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5661,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-28T14:03:25.345Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "offline-mix-measurement",
+                      "contentType": "application/json",
+                      "body": "eyJwZWFrIjowLjEyMzEzNzUwMzg2MjM4MDk4LCJsYXJnZXN0U3RlcCI6MC4wMDEzMzc2ODQ2OTA5NTIzMDEsInNhbXBsZUNvdW50Ijo5NjAwMCwiY2hhbm5lbHMiOjJ9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1dcc5fbf546365ca8b59-b909b62293d65d88e2c0",
+          "file": "p9-life-sound.spec.ts",
+          "line": 240,
+          "column": 1
+        }
+      ],
+      "suites": [
+        {
+          "title": "P9 synthetic life and sound",
+          "file": "p9-life-sound.spec.ts",
+          "line": 49,
+          "column": 6,
+          "specs": [
+            {
+              "title": "local fixture, life toggle, walk, ride and sound send no data; real activation stays blocked",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12698,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:02:06.907Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1dcc5fbf546365ca8b59-308a7ea78faf7d864f3e",
+              "file": "p9-life-sound.spec.ts",
+              "line": 59,
+              "column": 3
+            },
+            {
+              "title": "life is visible in real pixels, Plan hides it and Pause does not advance simulation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13514,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:02:19.634Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1dcc5fbf546365ca8b59-93c438fae6129a713d93",
+              "file": "p9-life-sound.spec.ts",
+              "line": 99,
+              "column": 3
+            },
+            {
+              "title": "POV is eye level, exit keeps package and camera, keyboard releases; ride pause and tilt remain optional",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12495,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:02:33.181Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1dcc5fbf546365ca8b59-c9c8d5dda1a6a69c677c",
+              "file": "p9-life-sound.spec.ts",
+              "line": 124,
+              "column": 3
+            },
+            {
+              "title": "sound context is gesture-only, one per scene, local clip manifest stays in session and off releases voices",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12905,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:02:45.708Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1dcc5fbf546365ca8b59-ed8e93bda90369641673",
+              "file": "p9-life-sound.spec.ts",
+              "line": 162,
+              "column": 3
+            },
+            {
+              "title": "VI/EN touch and exit controls at 390x844",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13863,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:02:58.647Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1dcc5fbf546365ca8b59-7025314888ddf08482bd",
+              "file": "p9-life-sound.spec.ts",
+              "line": 217,
+              "column": 5
+            },
+            {
+              "title": "VI/EN touch and exit controls at 740x390",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12766,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-28T14:03:12.545Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1dcc5fbf546365ca8b59-abd6f36df33bdc2f690b",
+              "file": "p9-life-sound.spec.ts",
+              "line": 217,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-28T13:42:07.878Z",
+    "duration": 1283826.818,
+    "expected": 68,
+    "skipped": 0,
+    "unexpected": 9,
+    "flaky": 0
+  }
+}

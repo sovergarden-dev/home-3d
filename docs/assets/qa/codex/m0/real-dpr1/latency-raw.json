@@ -1,0 +1,234 @@
+{
+  "syntheticOnly": true,
+  "viewport": [
+    1440,
+    900
+  ],
+  "dpr": 1,
+  "environment": {
+    "sourceSha": "de7173261a8a3928685555252c2b479f76a713fe",
+    "harnessSha": "a83940ae87bfb497c796bec50b82f9eff187475d",
+    "platform": "WINDOWS_LOCAL",
+    "syntheticOnly": true,
+    "rendererClass": "REAL_GPU",
+    "headed": true,
+    "channel": "chrome",
+    "browserVersion": "152.0.7977.76",
+    "driverVersion": "32.0.101.7082",
+    "dprRequest": "1",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x000046D1) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "vendor": "Google Inc. (Intel)",
+    "dpr": 1,
+    "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+  },
+  "date": "2026-06-21",
+  "time": 420,
+  "heading": 28,
+  "zoom": 1,
+  "warmupMs": 5000,
+  "postPopulationWarmupMs": 5000,
+  "ui": "Memories dock mounted; 299→300→299",
+  "measurement": "real saveMemory/deleteMemory call to two subsequent RAF callbacks; upper bound, not physical GPU latency",
+  "goalMs": 100,
+  "raw": [
+    {
+      "run": 0,
+      "samples": [
+        {
+          "kind": "add",
+          "ms": 311.80000001192093,
+          "cpuMs": 2.300000011920929,
+          "count": 300
+        },
+        {
+          "kind": "delete",
+          "ms": 132.69999998807907,
+          "cpuMs": 0.3999999761581421,
+          "count": 299
+        },
+        {
+          "kind": "add",
+          "ms": 135.09999999403954,
+          "cpuMs": 2,
+          "count": 300
+        },
+        {
+          "kind": "delete",
+          "ms": 141.7000000178814,
+          "cpuMs": 0.5999999940395355,
+          "count": 299
+        },
+        {
+          "kind": "add",
+          "ms": 302.59999999403954,
+          "cpuMs": 2.5999999940395355,
+          "count": 300
+        },
+        {
+          "kind": "delete",
+          "ms": 99.30000001192093,
+          "cpuMs": 0.30000001192092896,
+          "count": 299
+        },
+        {
+          "kind": "add",
+          "ms": 113.19999998807907,
+          "cpuMs": 1.2999999821186066,
+          "count": 300
+        },
+        {
+          "kind": "delete",
+          "ms": 107,
+          "cpuMs": 1.0999999940395355,
+          "count": 299
+        },
+        {
+          "kind": "add",
+          "ms": 106.59999999403954,
+          "cpuMs": 1.4000000059604645,
+          "count": 300
+        },
+        {
+          "kind": "delete",
+          "ms": 114.40000000596046,
+          "cpuMs": 0.20000001788139343,
+          "count": 299
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "samples": [
+        {
+          "kind": "add",
+          "ms": 312.09999999403954,
+          "cpuMs": 4.199999988079071,
+          "count": 300
+        },
+        {
+          "kind": "delete",
+          "ms": 117.7999999821186,
+          "cpuMs": 0.4000000059604645,
+          "count": 299
+        },
+        {
+          "kind": "add",
+          "ms": 117.40000000596046,
+          "cpuMs": 2.600000023841858,
+          "count": 300
+        },
+        {
+          "kind": "delete",
+          "ms": 125.09999999403954,
+          "cpuMs": 0.5,
+          "count": 299
+        },
+        {
+          "kind": "add",
+          "ms": 334.30000001192093,
+          "cpuMs": 7.200000017881393,
+          "count": 300
+        },
+        {
+          "kind": "delete",
+          "ms": 116.69999998807907,
+          "cpuMs": 0.30000001192092896,
+          "count": 299
+        },
+        {
+          "kind": "add",
+          "ms": 109.5,
+          "cpuMs": 1.9000000059604645,
+          "count": 300
+        },
+        {
+          "kind": "delete",
+          "ms": 115,
+          "cpuMs": 0.4000000059604645,
+          "count": 299
+        },
+        {
+          "kind": "add",
+          "ms": 102,
+          "cpuMs": 1.300000011920929,
+          "count": 300
+        },
+        {
+          "kind": "delete",
+          "ms": 105.5,
+          "cpuMs": 0.10000002384185791,
+          "count": 299
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "samples": [
+        {
+          "kind": "add",
+          "ms": 284.7999999821186,
+          "cpuMs": 3.5,
+          "count": 300
+        },
+        {
+          "kind": "delete",
+          "ms": 135.30000001192093,
+          "cpuMs": 0.4000000059604645,
+          "count": 299
+        },
+        {
+          "kind": "add",
+          "ms": 141.30000001192093,
+          "cpuMs": 3.2000000178813934,
+          "count": 300
+        },
+        {
+          "kind": "delete",
+          "ms": 161.19999998807907,
+          "cpuMs": 0.5999999940395355,
+          "count": 299
+        },
+        {
+          "kind": "add",
+          "ms": 334.60000002384186,
+          "cpuMs": 7.300000011920929,
+          "count": 300
+        },
+        {
+          "kind": "delete",
+          "ms": 96.09999999403954,
+          "cpuMs": 0.5999999940395355,
+          "count": 299
+        },
+        {
+          "kind": "add",
+          "ms": 105.40000000596046,
+          "cpuMs": 1.199999988079071,
+          "count": 300
+        },
+        {
+          "kind": "delete",
+          "ms": 106.7999999821186,
+          "cpuMs": 0.29999998211860657,
+          "count": 299
+        },
+        {
+          "kind": "add",
+          "ms": 115.80000001192093,
+          "cpuMs": 2.800000011920929,
+          "count": 300
+        },
+        {
+          "kind": "delete",
+          "ms": 123.19999998807907,
+          "cpuMs": 0.29999998211860657,
+          "count": 299
+        }
+      ]
+    }
+  ]
+}

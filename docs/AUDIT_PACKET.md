@@ -9,16 +9,16 @@
 - Baseline được chủ dự án chỉ định và Git xác minh: `de7173261a8a3928685555252c2b479f76a713fe`.
 - Tag `baseline/p10-published`: `DONE`, peeled commit đúng baseline; tag object đã kiểm trong [CODEX_LOG.md](CODEX_LOG.md). Nhánh P10 đã xoá sau kiểm SHA/ancestor.
 - SHA main đóng băng/tag audit: `NOT_DONE`.
-- Bảng PR/head/merge SHA/CI: chưa có PR Codex; bổ sung sau mỗi PR.
+- PR #8 `docs: Codex takeover` đang draft. Head đầu `66514aec92a0d432094f916a562d16db4830a5a4`, CI PR `40687608932` 4/4 success; sửa chữa/evidence bổ sung chưa được merge. Head cuối và CI push main vẫn chờ.
 
 ## Bằng chứng
 
 | Nhóm | Trạng thái |
 | --- | --- |
-| Windows check, E2E và production smoke | NOT_VERIFIED |
-| GPU thật: renderer/driver/browser/viewport/DPR và raw | NOT_VERIFIED |
+| Windows check, E2E và production smoke | Check ứng viên thread: 362 unit/39 pipeline pass, build/smoke đạt. Baseline E2E headless còn fail; xem raw từng browser |
+| GPU thật: renderer/driver/browser/viewport/DPR và raw | Đã đo Chrome/Intel UHD D3D11; latency 300 ghim baseline chưa đạt; H6 có lượt 20 vòng pass 44,351 giây |
 | SwiftShader đối chứng | Evidence P10 cũ trong repo; chưa có số đo Codex |
-| Gitleaks và quét diff của các PR mới | NOT_VERIFIED |
+| Gitleaks và quét diff của các PR mới | Baseline scan sạch sau ngoại lệ fixture exact; final diff vẫn chờ |
 | Host mạng, SSR/storage và dữ liệu riêng | Cần kiểm lại trên thay đổi cuối; chỉ fixture tổng hợp |
 | PWA/a11y/Lighthouse/font local | NOT_DONE |
 | Bản riêng tư sẵn sàng deploy/runbook | NOT_DONE |

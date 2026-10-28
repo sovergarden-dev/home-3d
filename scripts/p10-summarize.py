@@ -8,7 +8,7 @@ from pathlib import Path
 root = Path(sys.argv[1])
 
 def load(name):
-    return json.loads((root / name).read_text())
+    return json.loads((root / name).read_text(encoding="utf-8"))
 
 def stats(values):
     ordered = sorted(values)
@@ -79,5 +79,5 @@ summary = {
     "benchmarkErrors": after["errors"],
     "notVerified": ([] if physical_gpu else ["physical GPU"]) + ["physical GPU memory", "native Safari", "real iOS/Android device", "real-world geometry/location"],
 }
-(root / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n")
-print(json.dumps(summary, ensure_ascii=False, indent=2))
+(root / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+print(json.dumps(summary, ensure_ascii=True, indent=2))
