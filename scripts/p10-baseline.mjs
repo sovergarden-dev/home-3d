@@ -1,15 +1,16 @@
-import { chromium } from "@playwright/test";
+import { launchBenchmark } from "./benchmark-browser.mjs";
 import fs from "node:fs";
 const port = process.argv[2] || "4180",
   label = process.argv[3] || "before";
 const output = process.argv[4] || "/tmp/p10-evidence";
 fs.mkdirSync(output, { recursive: true });
-const browser = await chromium.launch({ headless: true, args: ["--enable-unsafe-swiftshader"] });
+const { browser, dpr, environment } = await launchBenchmark();
+let rendererEvidence;
 const results = [];
 for (let run = 0; run < 3; run++) {
   const page = await browser.newPage({
     viewport: { width: 1440, height: 900 },
-    deviceScaleFactor: 1,
+    deviceScaleFactor: dpr,
     reducedMotion: "reduce",
   });
   await page.route("**/*", (r) =>
@@ -19,6 +20,7 @@ for (let run = 0; run < 3; run++) {
   );
   await page.goto(`http://127.0.0.1:${port}/?local-preview=1`);
   await page.locator("#scene-root[data-scene-state=ready]").waitFor({ timeout: 60000 });
+  rendererEvidence = await environment(page);
   await page.evaluate(async () => {
     const url = performance
       .getEntriesByType("resource")
@@ -69,10 +71,11 @@ fs.writeFileSync(
       date: "2026-06-21",
       time: 420,
       viewport: [1440, 900],
-      dpr: 1,
+      dpr,
       warmupMs: 5000,
       durationMs: 10000,
-      renderer: "SwiftShader; not physical GPU",
+      renderer: rendererEvidence.renderer,
+      environment: rendererEvidence,
       results,
     },
     null,

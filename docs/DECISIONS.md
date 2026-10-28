@@ -1,4 +1,12 @@
-# Quyết định — H6 hiện hành, Demo 1 lịch sử
+# Quyết định — Codex hiện hành, các pha trước giữ làm lịch sử
+
+## M0 — Tiếp quản và đo baseline (28/10/2026)
+
+- Chủ dự án giao Codex M0–M5, quyền PR/merge commit theo §5.2 của `CODEX_HANDOFF.md`; chỉ Notion audit cuối khi chủ dự án yêu cầu. Không Publish/deploy hoặc đổi dịch vụ. Các phân vai/cổng cũ bên dưới là lịch sử.
+- Toolchain riêng ngoài checkout: tránh đổi Bun của dự án khác và tránh lint quét JavaScript của bộ trình duyệt kiểm thử. Checkout dùng Git local `core.autocrlf=false`, `core.longpaths=true`. Giữ nguyên lint, lockfile, workflow và assertion baseline.
+- Tái dùng ba harness P10, chỉ thêm lựa chọn renderer/DPR và chứng cứ renderer thực. Mặc định giữ cách launch cũ, báo renderer quan sát được; `BENCH_GPU=real` bắt buộc Chrome/Edge headed và loại software renderer, `software` ép SwiftShader. DPR `native` được đọc từ cửa sổ headed chưa áp viewport emulation. Không đổi thuật toán đo, warm-up, số vòng hay ngưỡng. H6 chỉ thêm attachment/check GPU khi opt-in đo phần cứng; vòng 20 chu kỳ, capability guard và timeout gốc giữ nguyên.
+- Dùng chung adapter launch cho ba harness vì cả ba đang hard-code cùng môi trường và nhãn SwiftShader. Giữ ba bản riêng dễ tạo nhãn sai khi đổi renderer; viết lại benchmark sẽ làm mất tính so sánh. Adapter giới hạn ở launch/metadata, không tổng quát hoá luồng đo. Khi thay driver/browser/DPR phải ghi môi trường mới, không gộp số liệu khác điều kiện.
+- Kéo cấu hình gitleaks tối thiểu từ M2 vào M0 vì §5.2 yêu cầu scan trước PR đầu. Quét lịch sử ban đầu tìm sáu false positive đều là đúng chuỗi công khai `synthetic-fixture-p10`, tại `src/memories/session.ts` và `tests/e2e/p10-storage-r2.spec.ts`. Allowlist chỉ rule `generic-api-key`, chuỗi exact và hai đường dẫn đồng thời; không bỏ file/commit/rule, không xoá lịch sử. Scan lại 81 commit sạch. Tích hợp CI đầy đủ vẫn thuộc M2.
 
 ## H6 — một gói tích hợp, một lượt review
 

@@ -1,3 +1,28 @@
+# Backlog — Codex tiếp quản
+
+## Hiện hành từ 28/10/2026
+
+Nguồn phạm vi: [CODEX_HANDOFF.md](CODEX_HANDOFF.md); trạng thái có bằng chứng: [CODEX_LOG.md](CODEX_LOG.md). Các mục dưới là việc phải làm, chưa được gọi DONE.
+
+| Mốc | Phạm vi | Trạng thái |
+| --- | --- | --- |
+| M0 | Môi trường Windows, baseline local/GPU thật, tag, PR tiếp quản | PARTIAL |
+| M1 | P10.1: độ trễ 300 ghim, kích thước/picking ghim, chữ bưu thiếp | NOT_DONE |
+| M2 | Phiên bản/build SHA, repo/CI, hồi quy P1.1/P8/P9 và phục hồi WebGL | NOT_DONE |
+| M3 | Bench/PWA/font local/a11y/i18n/Lighthouse và ma trận Windows | NOT_DONE |
+| M4 | Bản riêng tư và runbook sẵn sàng deploy, không deploy | NOT_DONE |
+| M5 | Adapter chiều cao và chi tiết procedural tổng hợp | NOT_DONE |
+
+K1/H vẫn BLOCKED theo evidence P10 cũ; phải đo mới trên GPU thật. G1 được chủ dự án báo GEOREFERENCE_BOUND_PROVEN cho cặp tệp riêng; chưa mở cặp tệp đó trong lượt Codex. REAL_WORLD_NOT_VERIFIED tiếp tục giữ nguyên.
+
+## Cần chủ dự án hoặc để sau
+
+Dữ liệu khu thật, khảo sát/ranh lô, model kiến trúc sư (P6), bản quét nhà hoàn thiện (P11), bản thu phố, thiết bị di động/Safari thật, LICENSE, Publish, cloud/deploy và các ý tưởng ngoài M0–M5. Mặc định và câu hỏi ở [AUDIT_PACKET.md](AUDIT_PACKET.md).
+
+## Lịch sử trước bàn giao — không phải danh sách việc đang mở
+
+Các chỉ đạo phân vai và cổng dưới đây đã được bàn giao thay thế. Giữ nội dung cũ để tra cứu; checkbox chưa sửa không tự mở lại một pha.
+
 # Backlog — H6 hiện hành và lịch sử Demo 1
 
 ## H6 hiện hành

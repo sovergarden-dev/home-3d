@@ -1,0 +1,12 @@
+title = "Home 3D secret scanning"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Public P10 synthetic world ID, never an authentication credential"
+targetRules = ["generic-api-key"]
+condition = "AND"
+regexTarget = "secret"
+regexes = ['''^synthetic-fixture-p10$''']
+paths = ['''^src/memories/session\.ts$''', '''^tests/e2e/p10-storage-r2\.spec\.ts$''']

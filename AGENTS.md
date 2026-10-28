@@ -17,45 +17,21 @@
 
 # Phố Nhà Mình — hướng dẫn cho agent
 
-Web app bản đồ 3D khu phố quanh nhà Syringa, nhà làm tâm. Kế hoạch gốc là trang Notion "Phố Nhà Mình — Siêu kế hoạch map 3D"; `docs/PLAN.md` là bản sao, lệch nhau thì theo Notion. Chỉ làm đúng pha hoặc việc được giao. Demo 1 là ngoại lệ lát cắt xuyên pha được chủ dự án cho phép: bản chạy thử hư cấu trước, chi tiết sau. Xem `docs/DECISIONS.md` và `docs/BACKLOG.md`; không tự thêm dữ liệu thật.
+Web app bản đồ 3D khu phố quanh nhà Syringa, nhà làm tâm. Chỉ đạo hiện hành là `docs/CODEX_HANDOFF.md`; roadmap Notion và `docs/PLAN.md` giữ làm nguồn lịch sử, không ghi đè bàn giao. Xem `docs/DECISIONS.md` và `docs/BACKLOG.md`; không tự thêm dữ liệu thật.
 
 Khối LOVABLE ở đầu file do Lovable quản lý: giữ nguyên. Quy tắc state phía trên đã đồng bộ cho H6; không dùng mô tả Demo 1 lịch sử để đưa world riêng trở lại store SSR.
 
-## Chỉ đạo hiện hành — P10 kỷ niệm
+## Chỉ đạo hiện hành — Codex
 
-- Nguồn scope: [P10](https://app.notion.com/p/7592ff65db1f411db4d7cc8e36c2b691); runbook `docs/P10_RUNBOOK.md`. Nhánh `feat/p10-memories` từ main `72dd2bed1d58c558018538a51aae02f74304bc7d`, PR nháp thường vào main, không stacked. G1 không chặn P10; vẫn `BLOCKED_MISSING_GEOREFERENCE` / `REAL_WORLD_NOT_VERIFIED`.
-- `src/memories` giữ nội dung/ảnh/âm thanh trong client-session riêng; RAM mặc định. Chỉ công tắc lưu chủ động mới mở IndexedDB `pnm-p10/worlds`; khoá SHA world nội bộ không đi vào URL, log, export hoặc SSR. Không nới privacy guard cho world/georeference.
-- Ảnh giải mã-vẽ-mã hoá lại và quét byte, chỉ tổng hợp trong repo/test. Soát thủ công và xác nhận từng ảnh trước public; ML nhận diện là NOT_DONE có chủ ý. Không dependency/asset bên ngoài mới.
-- Tour/pins/capture tái dùng engine và một vòng RAF; không sửa world/undo/selection/hình học lô. Nhật ký luôn private và chỉ UI; public là bản xem trước/xuất file, không phải xuất bản mạng.
-- Một receipt cuối trên trang P10 và một workflow_dispatch ở full final head; giữ nguyên workflow/capability/assertion/timeout. Không merge, Publish, deploy, đổi Lovable, mở P11–P13 hoặc sửa lịch sử đã push.
+`docs/CODEX_HANDOFF.md` là chỉ đạo hiện hành do chủ dự án uỷ quyền ngày 28/10/2026. File bàn giao thắng chỉ đạo, phân vai và quy trình lịch sử; quy tắc cứng bên dưới vẫn giữ hiệu lực. `docs/PLAN.md` là snapshot lịch sử. Đầu mỗi milestone đọc lại bàn giao và khối Hiện trạng trong `docs/CODEX_LOG.md`.
 
-## Lịch sử chỉ đạo — P9 sự sống và âm thanh
+Codex thực hiện M0–M5, tự quyết và ghi lý do trong `docs/DECISIONS.md`; tự mở PR và merge commit khi đủ toàn bộ cổng §5.2 của bàn giao. Không push thẳng main, không sửa lịch sử đã push. Notion AI chỉ audit cuối khi chủ dự án yêu cầu. Cue và Hermes đã dừng Home 3D.
 
-- Scope: [P9](https://app.notion.com/p/e26beb96a134464fa5f46303ff86e64e); runbook `docs/P9_RUNBOOK.md`. Nhánh `feat/p9-life-sound` từ full main `7221b0c416633d2bd4273afdbd77b894b9ac5f23`; PR thường vào main, không stacked. H6/P7/P8 đã merged/accepted; không sửa nhánh/head cũ hay chạy lại CI chúng.
-- Lớp sống/âm thanh/POV chỉ là presentation client-only có seed trên world đang hiển thị, không sửa nguồn, world/store SSR, hình học, tâm, consent, selection/undo/provenance. Trần tổng theo tier 60/200/800/2000; Mặt bằng ẩn tác nhân. Một canvas/vòng RAF; không timer song song.
-- Chỉ fixture tổng hợp; không giao thông/API ngoài, dữ liệu thật, micro hay kích hoạt georeference. Giữ `BLOCKED_MISSING_GEOREFERENCE` / `REAL_WORLD_NOT_VERIFIED`. Audio synthetic, clip local tối đa 1 MB + manifest hash chỉ phiên/ignored slot; không commit audio riêng, không upload/network/storage.
-- Cue tự kiểm trọn gói, một receipt cuối cho Notion AI review, không giao QA lẻ cho owner. Một workflow_dispatch cuối full stable head với bốn job hiện hữu; không đổi workflow/guard để xanh.
-- Không merge/auto-merge/Publish/deploy, Lovable sync/settings, xóa nhánh, rewrite pushed history hoặc mở P10–P13. Nhánh H6 remote hiện còn và không động tới.
+Dữ liệu world, georeference và nội dung kỷ niệm ở phiên client riêng, không SSR-serialize. Kỷ niệm mặc định RAM; IndexedDB chỉ sau opt-in. Giữ kiểm ảnh/metadata, review ảnh trước public, nhật ký private và một canvas/vòng RAF/AudioContext. Public/guest là preview hoặc xuất tệp, không phải đăng mạng. Các ràng buộc chi tiết đã triển khai nằm trong runbook H6/P7/P8/P9/P10.
 
-## Lịch sử chỉ đạo — P8 không khí (stacked trên P7)
+Chỉ dùng fixture tổng hợp khi chủ dự án chưa chỉ định đường dẫn và mục đích cho dữ liệu thật. G1 đã được chủ dự án báo `GEOREFERENCE_BOUND_PROVEN` cho cặp tệp riêng; Codex chưa đọc cặp tệp đó, và `REAL_WORLD_NOT_VERIFIED` giữ nguyên. Không dùng trạng thái này để bỏ guard package/consent.
 
-- Scope: Notion “Home 3D — P8: Không khí, Cue làm trọn gói”. Runbook: `docs/P8_RUNBOOK.md`. Giữ Three.js trực tiếp, một world/canvas và UI dock; không rewrite app.
-- H6 accepted tại `70967c003c0b39e74c7196665ca37e54c1ad0cf8`; P7 accepted phần mềm tại `957e4fcff9395c46a55a2927b8728ccb1ad051e0`. Không sửa nhánh/PR #3/#4 hoặc chạy lại CI hai head này. P8 nhánh/PR riêng, stacked trên P7 khi #4 còn mở.
-- Ngày/giờ/thiên văn/lễ/mùa/thời tiết chỉ là presentation; không sửa canonical, geometry, provenance, center, overrides, selection, undo hay opt-in H6. Origin/world vẫn chỉ trong client session, không SSR/store dùng chung.
-- Thời tiết thật mặc định tắt; cần binding hiện hành + consent riêng cho Open-Meteo. Không geocode, suy tọa độ, xin định vị hay gửi request khi chỉ mở panel. Tất cả QA dùng synthetic + interception.
-- Kích hoạt khu thật vẫn `BLOCKED_MISSING_GEOREFERENCE`; giữ `REAL_WORLD_NOT_VERIFIED`. Tính theo tham chiếu cục bộ không xác nhận ranh/origin thực địa.
-- Cue tự kiểm/sửa trọn gói, một receipt cuối `SUBMITTED_FOR_TECHNICAL_REVIEW`. Chỉ Notion AI đặt `SOFTWARE_TECHNICAL_REVIEW_PASSED`. Không yêu cầu chủ dự án QA từng hiệu ứng.
-- Không merge/auto-merge/Publish/deploy, đổi Lovable sync, force-push/rebase/amend lịch sử đã push hoặc đưa dữ liệu khu thật vào repo/CI.
-
-## Lịch sử chỉ đạo — H6 một gói tích hợp
-
-- Nguồn scope: Notion “H6 — Cue làm trọn gói, nghiệm thu một lần”, W0–W7 và T01–T20. Cùng nhánh `feat/h6-pho-that-mat-bang` / PR #3; bảo toàn sửa đã nhận ở baseline `07175b33ece59d57023dda32a45be322ddcebf9d`.
-- Cue triển khai, tự kiểm và sửa đến ổn định; một receipt tổng cho Notion AI review kỹ thuật, rồi Syringa nghiệm thu tổng thể một lần. Hermes tạm dừng H6. Không giao vòng QA nhỏ cho Syringa.
-- Scope: mở gói UI, định hướng/chất lượng dữ liệu, editor tối thiểu, xuất bản làm việc mở lại, hiệu năng/lifecycle, privacy và tài liệu. Không kéo thêm P2–P13, nguồn mới, GIS tổng quát, cloud hoặc walking/collision.
-- Không đổi tâm/hình học nguồn để che lỗi render. Ranh chưa đo; minh họa lô là UI opt-in theo phiên, không polygon/nhà/công trường. Không đoán height/roof/frontage.
-- Repo/CI/PR/ảnh bằng chứng chỉ dùng fixture tổng hợp độc lập. ENU thật vẫn riêng tư. Canonical package/snapshot giữ nguyên; không re-intake hoặc đóng ZIP mới.
-- Không merge, auto-merge, Publish hay deploy. CI cuối phải workflow_dispatch đúng full final head và đủ bốn jobs; không thay bằng run PR. GPU vật lý/Preview chưa kiểm ghi NOT_VERIFIED.
-- Runbook hiện hành: `docs/H6_PRIVATE_WORLD_RUNBOOK.md`. Những mô tả Demo 1 bên dưới là lịch sử hoặc ràng buộc nền, không ghi đè scope H6 này.
+Không Publish/sửa Lovable, đăng nhập/deploy Cloudflare hoặc Google, đổi visibility/cài đặt repo, chi tiền, tạo tài khoản/token, hay đụng dự án khác. Gom câu hỏi vào `docs/AUDIT_PACKET.md`; chỉ hỏi trong chat khi không còn việc độc lập làm được. Sau mỗi PR cập nhật log; mỗi milestone báo 3–5 dòng rồi tiếp tục.
 
 ## Sự thật cố định
 
@@ -64,12 +40,12 @@ Khối LOVABLE ở đầu file do Lovable quản lý: giữ nguyên. Quy tắc s
 - Khu nhà chưa có Google Photorealistic 3D. Phố mình (tự dựng từ dữ liệu mở và khảo sát) là lớp chính; Phố thật chỉ mở Google Maps qua đường link.
 - OSM ở khu này gần như không có số tầng: chiều cao lấy từ khảo sát, Open Buildings bù chỗ thiếu.
 
-## Vai trò lịch sử trước H6 (không thay phân vai hiện hành)
+## Vai trò
 
-- **Syringa** (chủ dự án): giữ mọi key, token, cấu hình riêng; merge; upload R2; deploy bản riêng tư; bấm Publish trên Lovable.
-- **Notion AI**: lập kế hoạch, viết code và patch, review PR, xác nhận PR merge được hay chưa.
-- **Hermes** (máy Syringa): áp patch hoặc code theo pha được giao; chạy test, build, e2e; push nhánh, mở PR; ghi kết quả lên Bảng giao việc.
-- **Cue** (VPS): chỉ việc cần máy chạy 24/7 hoặc ở nước ngoài.
+- **Codex:** triển khai, kiểm chứng, self-review trong phiên riêng, quét riêng tư, PR/CI/merge theo cổng bàn giao; ghi log và chuẩn bị audit cuối.
+- **Syringa:** quyết định dữ liệu thật, giấy phép, tài khoản, chi phí, Publish và deploy; nghiệm thu thực địa.
+- **Notion AI:** chỉ audit cuối khi Syringa yêu cầu.
+- **Cue và Hermes:** không còn thực hiện Home 3D.
 
 ## Quy tắc cứng (vi phạm thì dừng lại và hỏi)
 
@@ -98,7 +74,7 @@ Khối LOVABLE ở đầu file do Lovable quản lý: giữ nguyên. Quy tắc s
 - Dependency của pipeline nằm trong `pipeline/package.json`, không thêm vào root.
 - main là nhánh Lovable sync: không push thẳng vào main, mọi thay đổi qua PR. Không force push; không rebase, amend hay squash commit đã push.
 - Service Worker chỉ đăng ký ở bản production và không đăng ký khi chạy trong iframe (preview của Lovable).
-- Không tạo `.hermes.md` hay `AGENTS.override.md` (Hermes sẽ ưu tiên chúng và bỏ qua file này).
+- Không tạo `.hermes.md` hay `AGENTS.override.md` (các harness ưu tiên file override; Codex cũng ưu tiên `AGENTS.override.md` thay cho `AGENTS.md`).
 
 ### 4. Asset
 
@@ -111,11 +87,11 @@ Khối LOVABLE ở đầu file do Lovable quản lý: giữ nguyên. Quy tắc s
 ## Stack
 
 - App: mặc định của Lovable: TanStack Start, React 19, TypeScript, Tailwind 4, shadcn/ui, vite.
-- 3D (từ P3): three, @react-three/fiber 9, @react-three/drei 10 (khớp React 19). WebGL2 là nền, chưa dùng WebGPU.
+- 3D hiện hành: Three.js trực tiếp + OrbitControls, WebGL2, không R3F/drei. Engine chỉ chạy phía client.
 - State: zustand cho UI an toàn; provider phiên client cho world/overrides/selection riêng. Không đưa world riêng vào payload SSR.
-- Khác: 3d-tiles-renderer (tileset của mình), camera-controls (qua drei), postprocessing + n8ao, three-mesh-bvh, suncalc, âm lịch Hồ Ngọc Đức (múi giờ +7), Open-Meteo.
+- BVH va chạm và thiên văn là mã trong dự án; âm lịch Việt múi giờ +7, adapter Open-Meteo có consent riêng. Thư viện trong roadmap cũ chưa mặc nhiên là dependency hiện hành.
 - Giờ hiển thị luôn theo `Asia/Ho_Chi_Minh`, không theo múi giờ của máy hay server.
-- Kiểm thử: vitest (đã có); @playwright/test, size-limit, gitleaks (thêm ở P2).
+- Kiểm thử: Vitest, Playwright và Bun cho pipeline; các cổng bổ sung theo milestone M2/M3.
 
 ## Hệ toạ độ
 
@@ -135,22 +111,15 @@ Khối LOVABLE ở đầu file do Lovable quản lý: giữ nguyên. Quy tắc s
 - Dồn việc nặng vào lúc tải: precompile shader cho mọi trạng thái (đêm, mưa, lễ hội), upload GPU, dựng BVH trước khi cho thao tác.
 - Trong `useFrame`: không tạo object/array, không setState của React. Dispose geometry, material, texture khi gỡ. Đồ vật lặp lại dùng InstancedMesh. Parse và giải nén trong worker.
 
-## Lệnh
+## Lệnh và quy trình
 
-- Cài: `bun install --frozen-lockfile`.
-- Hiện có: `bun run dev`, `bun run build`, `bun run test`, `bun run lint`; kiểm kiểu: `bunx tsc --noEmit`.
-- P2 thêm: `typecheck`, `test:e2e`, `check` (= typecheck + lint + test + build + size-limit).
-- Lint đang đỏ sẵn từ bản Lovable (chủ yếu Prettier) cho tới commit Prettier ở P2: không thêm lỗi lint mới; file mới phải sạch lint.
-- Pipeline: `cd pipeline` rồi chạy script tương ứng. Script chạy được trên Windows và Linux.
-
-## Quy trình mỗi việc
-
-1. Nhánh `p<số pha>-<tên ngắn>` từ main mới nhất (việc có patch: dùng đúng tên nhánh ghi trong việc).
-2. Commit nhỏ theo Conventional Commits. Code, comment, commit: tiếng Anh. UI: tiếng Việt mặc định, có tiếng Anh. Docs: tiếng Việt.
-3. Trên máy: các lệnh kiểm tra đạt. Khi đã có e2e (từ P2): chromium, firefox, webkit (viewport desktop, iPhone, Android) đạt trước khi mở PR, để tiết kiệm phút Actions. E2E trong CI là smoke: chấp nhận nhánh fallback khi trình duyệt headless không có WebGL2; test hình ảnh và hiệu năng chạy trên máy có GPU.
-4. PR gồm: việc đã làm theo "Phạm vi" của pha; checklist "Xong khi"; ảnh desktop và mobile; số đo hiệu năng trước/sau khi có đụng 3D (fps p50/p95, draw calls, tam giác).
-5. Báo kết quả trên Bảng giao việc theo mẫu ở đó: PR, nhánh; SHA head (đủ 40 ký tự); dòng tổng của `git diff --stat origin/main...HEAD`; CI run (ID, event, SHA, kết luận từng job), hoặc kết quả từng lệnh trên máy khi repo chưa có CI. Job lỗi: tên bước và khoảng 30 dòng log cuối (che mọi giá trị trông giống secret).
-6. Không merge khi Notion AI chưa xác nhận. Syringa merge; Lovable nhận commit trên main; Syringa bấm Publish.
+- Bun 1.4.3 theo CI; cài bằng `bun install --frozen-lockfile`. Không đổi guard 24 giờ để cài cho được.
+- `bun run check`: typecheck, lint, unit, pipeline và build. `bun run test:e2e`: Chromium, Firefox, WebKit. Pipeline có package riêng; script chạy trên Windows và Linux.
+- Nhánh `codex/<milestone>-<scope>` từ main mới nhất; commit nhỏ Conventional Commits. Code, comment và commit bằng tiếng Anh; docs tiếng Việt; UI VI mặc định, có EN.
+- Trước merge: local gate đạt, CI bốn job success đúng full head SHA, nhánh không behind main, self-review ở phiên riêng, gitleaks và quét diff sạch. Chỉ merge commit; không auto-merge trước đủ cổng.
+- Sau merge: CI push main bốn job success; nếu đỏ, sửa hoặc revert bằng PR mới. Ghi PR/head/merge SHA/run ID/counts và giới hạn kiểm chứng vào `docs/CODEX_LOG.md`.
+- Skip không phải pass. GPU thật phải có renderer, driver và phiên bản trình duyệt; SwiftShader không chứng minh hiệu năng phần cứng. Không đổi assertion, capability guard hoặc timeout H6 90 giây để làm xanh.
+- Đạt §7 bàn giao mới báo `READY_FOR_FINAL_AUDIT`; đóng băng main, tạo tag audit và hoàn tất `docs/AUDIT_PACKET.md`.
 
 ## Định nghĩa "Xong" cho mọi PR
 

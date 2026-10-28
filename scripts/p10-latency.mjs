@@ -1,15 +1,17 @@
-import { chromium, expect } from "@playwright/test";
+import { expect } from "@playwright/test";
+import { launchBenchmark } from "./benchmark-browser.mjs";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 const output = path.resolve(process.argv[2] ?? "/tmp/p10-evidence");
 await mkdir(output, { recursive: true });
-const browser = await chromium.launch({ args: ["--enable-unsafe-swiftshader"] });
+const { browser, dpr, environment } = await launchBenchmark();
+let rendererEvidence;
 const raw = [];
 try {
   for (let run = 0; run < 3; run++) {
     const page = await browser.newPage({
       viewport: { width: 1440, height: 900 },
-      deviceScaleFactor: 1,
+      deviceScaleFactor: dpr,
       reducedMotion: "reduce",
     });
     await page.addInitScript(() => {
@@ -27,6 +29,7 @@ try {
     await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "ready", {
       timeout: 60000,
     });
+    rendererEvidence = await environment(page);
     await page.getByRole("button", { name: "Thu gọn bảng riêng", exact: true }).click();
     await page.getByRole("tab", { name: "Kỷ niệm", exact: true }).click();
     await expect(page.getByTestId("memory-card")).toHaveCount(3);
@@ -97,7 +100,8 @@ try {
       {
         syntheticOnly: true,
         viewport: [1440, 900],
-        dpr: 1,
+        dpr,
+        environment: rendererEvidence,
         date: "2026-06-21",
         time: 420,
         heading: 28,
