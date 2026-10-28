@@ -43,9 +43,9 @@ import {
   clampCameraPose,
   DEFAULT_CAMERA_POSE,
   catmullCameraPose,
-  poseToOrbit,
   type CameraPose,
 } from "@/memories/camera";
+import { poseToOrbit } from "./view/memoryOrbit";
 import { buildMemoryHash, parseMemoryHash } from "@/memories/deepLink";
 import { bindPostcardCapture } from "@/memories/postcard";
 

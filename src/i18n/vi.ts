@@ -14,6 +14,8 @@ export const vi = {
   fallbackBody:
     "Demo cần WebGL2. Thử bật tăng tốc phần cứng hoặc dùng trình duyệt khác. Không tải dữ liệu vị trí thật.",
   retryScene: "Thử lại 3D",
+  recoveringScene: "Đang khôi phục cảnh 3D…",
+  staticSceneDescription: "Minh hoạ phố hư cấu ở chế độ tĩnh, không phải bản đồ khu thật",
   captureUnavailable: "Chưa thể chụp cảnh 3D",
   soundDemo: "Âm thanh tổng hợp cho demo, không phải bản thu phố thật",
   demoOnly: "Chưa có dữ liệu thật trong bản demo",

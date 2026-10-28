@@ -97,7 +97,8 @@ export function Dock({ mobile, onExpandedChange }: DockProps) {
   const order: Snap[] = ["peek", "half", "full"];
   const onPointerDown = (e: React.PointerEvent) => {
     drag.current = { y: e.clientY, h: sheetRef.current!.getBoundingClientRect().height };
-    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    e.currentTarget.setPointerCapture(e.pointerId);
+    (e.currentTarget as HTMLButtonElement).focus({ preventScroll: true });
     sheetRef.current!.style.transition = "none";
   };
   const onPointerMove = (e: React.PointerEvent) => {
@@ -132,7 +133,7 @@ export function Dock({ mobile, onExpandedChange }: DockProps) {
   return (
     <div
       ref={sheetRef}
-      className="pointer-events-auto glass fixed inset-x-0 bottom-0 z-20 flex flex-col !rounded-b-none transition-[height] duration-250 ease-[var(--ease)]"
+      className="pointer-events-auto glass fixed inset-x-0 bottom-0 z-20 flex flex-col !rounded-b-none transition-[height] duration-250 ease-[var(--ease)] motion-reduce:transition-none"
       style={{ height: snapHeights[snap], paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <button
@@ -151,6 +152,8 @@ export function Dock({ mobile, onExpandedChange }: DockProps) {
           onExpandedChange?.(snap !== "peek");
         }}
         onKeyDown={(e) => {
+          if (["ArrowUp", "ArrowDown", "Enter", " "].includes(e.key)) e.preventDefault();
+          if (e.key === "Enter" || e.key === " ") setSnap(order[(order.indexOf(snap) + 1) % 3]!);
           if (e.key === "ArrowUp") setSnap(order[Math.min(2, order.indexOf(snap) + 1)]!);
           if (e.key === "ArrowDown") setSnap(order[Math.max(0, order.indexOf(snap) - 1)]!);
         }}

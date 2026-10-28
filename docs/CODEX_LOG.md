@@ -16,16 +16,16 @@
 
 ### Bằng chứng thu mới bởi Codex
 
-| Kiểm tra | Kết quả | Nguồn |
-| --- | --- | --- |
-| Remote main | `de7173261a8a3928685555252c2b479f76a713fe` | Git/GitHub đọc trực tiếp |
-| PR mở khi bắt đầu | 0 | GitHub CLI |
-| GPU được Windows nhận diện | Intel(R) UHD Graphics | Win32_VideoController |
-| Driver | `32.0.101.7082` | Win32_VideoController |
-| Chrome đã cài | `152.0.7977.76` | File version |
-| Edge đã cài | `156.0.4314.42` | File version |
-| Bun riêng của dự án | `1.4.3 (c6da4a4d3)` | Binary chính thức và checksum |
-| Renderer WebGL, DPR và hiệu năng | `NOT_VERIFIED` | Chưa đo; tên GPU từ Windows không đủ chứng minh renderer |
+| Kiểm tra                         | Kết quả                                    | Nguồn                                                    |
+| -------------------------------- | ------------------------------------------ | -------------------------------------------------------- |
+| Remote main                      | `de7173261a8a3928685555252c2b479f76a713fe` | Git/GitHub đọc trực tiếp                                 |
+| PR mở khi bắt đầu                | 0                                          | GitHub CLI                                               |
+| GPU được Windows nhận diện       | Intel(R) UHD Graphics                      | Win32_VideoController                                    |
+| Driver                           | `32.0.101.7082`                            | Win32_VideoController                                    |
+| Chrome đã cài                    | `152.0.7977.76`                            | File version                                             |
+| Edge đã cài                      | `156.0.4314.42`                            | File version                                             |
+| Bun riêng của dự án              | `1.4.3 (c6da4a4d3)`                        | Binary chính thức và checksum                            |
+| Renderer WebGL, DPR và hiệu năng | `NOT_VERIFIED`                             | Chưa đo; tên GPU từ Windows không đủ chứng minh renderer |
 
 Baseline CI cũ được đọc lại tại run [39968559993](https://github.com/sovergarden-dev/home-3d/actions/runs/39968559993): quality và ba job E2E success. Log có 362 unit pass, 39 pipeline pass, Chromium 77 pass, WebKit 77 pass, Firefox 48 pass và 29 skip. Đây là CI Linux tại baseline, không thay kết quả Windows mới. Những số H6/P10/SwiftShader trong bàn giao là evidence lịch sử, chưa phải số đo Codex.
 
@@ -62,3 +62,13 @@ Self-review độc lập vòng 1 tìm hai P2: summarizer hard-code môi trườn
 ### Neo Git đã hoàn tất
 
 Tag object `b5b9b602bbabc58f0820cf4ce464981946a2605d` đã push; peeled commit đúng `de7173261a8a3928685555252c2b479f76a713fe`. Trước xoá remote P10 đã kiểm SHA đúng `a5d9011d404f531f2ebe28efb18d40f2ab0040b9` và ancestor của origin/main; remote sau xoá chỉ còn main. SHA này có thể dùng tạo lại nhánh nếu chủ dự án cần, không cần viết lại lịch sử. Tag không kích hoạt workflow mới theo cấu hình hiện hành; CI baseline push main vẫn 4/4 success tại run 39968559993.
+
+## 29/10/2026 — M2 chuẩn bị, chưa mở PR
+
+`PARTIAL`: worktree riêng từ main M0, chưa merge thay M1. Typecheck đã PASS sau sửa build identity, lint helpers, context recovery và sheet. Coverage provider 4.1.11 cùng chín version bắc cầu được resolve bằng Bun 1.4.3, giữ guard 24h; frozen install scripts-disabled đạt, chưa chạy coverage/check/E2E. Đã kiểm metadata và tarball đủ integrity của mười package mới: không binary native hoặc preinstall/install/postinstall. `parser.exe` trong nested node_modules là shim Windows do Bun tạo cho Babel parser JS có sẵn, không có trong npm tarball magicast. Chi tiết/giấy phép trong ATTRIBUTION và `dependency-review.json`.
+
+Còn phải làm: đo baseline coverage rồi ratchet, xác minh bundle manifest/budget, lint 0, check/E2E recovery/sheet, P8/P9 GPU/landscape/context warnings, quét riêng tư và review/PR/CI. Không coi typecheck là hoàn tất các cổng. Tám JSON M0 CRLF sẽ renormalize trong commit riêng giữ nguyên giá trị.
+
+### M2 preparation and M1 gate update
+
+M2 preliminary Windows validation: 365 semantic tests with V8 coverage, then the unchanged 600-frame/4 ms CPU test without instrumentation (1 pass); typecheck and lint pass with zero warnings. Preliminary shell is 221,427 gzip bytes. Final integrated-head checks remain NOT_VERIFIED. PR #9 final-head CI `40781481203` failed only the absolute WebKit H6 budget (87,777 ms; same-runner baseline 88,233 ms); it remains draft, not merged.

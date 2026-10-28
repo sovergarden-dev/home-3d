@@ -1,5 +1,11 @@
 # Quyết định — Codex hiện hành, các pha trước giữ làm lịch sử
 
+## M2 — Chuẩn bị cô lập trong lúc đo M1
+
+Chuẩn bị build identity, CI và lint trong worktree riêng trong khi M1 đo ma trận A/B; không chạy build/test nặng đồng thời và không sửa source đang đo. Thứ tự merge vẫn M1 rồi M2. Phiên bản lấy từ `package.json`; SHA ưu tiên giá trị full SHA hợp lệ do môi trường cấp, rồi Git của checkout, thiếu thì `null`/không xác định. Không thêm plugin Vite trùng và không đưa đường dẫn Git vào client.
+
+Các helper UI không có consumer bên ngoài được giữ nội bộ; hai variant được chia sang module thuần để Fast Refresh đúng quy tắc. Georeference vẫn chỉ đọc trong phiên client, phụ thuộc memo thể hiện đúng trạng thái tham chiếu; không đưa vị trí vào shared store.
+
 ## M0 — Tiếp quản và đo baseline (28/10/2026)
 
 - Chủ dự án giao Codex M0–M5, quyền PR/merge commit theo §5.2 của `CODEX_HANDOFF.md`; chỉ Notion audit cuối khi chủ dự án yêu cầu. Không Publish/deploy hoặc đổi dịch vụ. Các phân vai/cổng cũ bên dưới là lịch sử.
@@ -89,3 +95,39 @@ Notion AI tạo và kiểm patch. Hermes áp nguyên patch, chạy frozen instal
 - Hash versioned/whitelist chỉ camera/time/ID, không nội dung/tên/world hash/lat-lng. replaceState sau control-end; Clipboard chỉ nút bấm. Public/guest là preview/xuất file, không đăng mạng; nhật ký/marker luôn private.
 - Bưu thiếp 3840×2160/2048×1152 (fallback 1080×608) render đúng vùng ảnh: target HalfFloat tuyến tính → OutputPass ACES/exposure/sRGB → target byte để readback. Three r180 không tone-map offscreen như canvas; chỉ đặt outputColorSpace không đủ. Vùng ảnh chiếm 92% bề ngang. Finally trả camera/renderer, dispose cả hai target/output pass/clear canvas; không đổi canvas/DPR thật. Encode mới/quét metadata; Web Share chỉ nếu canShare(files), còn lại download.
 - Telemetry lỗi chỉ mã tĩnh, không serialize Error/context riêng; giữ mã `CLIENT_RENDER_FAILURE`. Khôi phục đúng ba Google Fonts links của main cho Be Vietnam Pro/Lora; P10 network harness chỉ abort các host `fonts.googleapis.com`/`fonts.gstatic.com` và yêu cầu 0 request ngoài hai host này. Không thay consent weather/Google P7/P8. TopInfo dùng hydration snapshot để ngày UTC+7 không lệch SSR.
+
+### M2 — Cổng CI và coverage (đang triển khai)
+
+Bốn job giữ nguyên tên, pin full SHA action và timeout 25 phút; checkout đúng PR head, quyền contents:read. Gitleaks 8.30.1 là CLI QA độc lập, tải từ release chính thức với SHA256 cố định trên CI; Windows dùng binary đã kiểm M0. M0 đã quét lịch sử đầy đủ; PR quét base..HEAD, push main quét lại đầy đủ cho repo nhỏ. Không thêm quyền hay cài đặt GitHub.
+
+Bundle budget dùng manifest Vite để tính hợp các static import closure của mọi entry/dynamic entry trừ engine riêng. Engine bị static-import vào shell sẽ fail; import chung chỉ đếm một lần. Ngưỡng 250.000 byte gzip (bảo thủ hơn 250 KiB). Script không dựa vào tên chunk hash hay bỏ các route UI khỏi phép tính.
+
+Coverage dùng provider V8 cùng phiên bản Vitest đã khoá (4.1.11), giấy phép MIT, phát hành 18/08/2026 (đã kiểm registry; không lifecycle install script/native ở package). Phạm vi geo, state, logic mô phỏng và khí quyển gồm cả file chưa chạy. Ratchet được thiết lập từ số đo thật, mục tiêu 85% ghi riêng; không tự cập nhật threshold trong CI. Dependency và các dependency bắc cầu sẽ được kiểm trước khi cài; chưa ghi gate đạt cho đến khi đo. Tài liệu chuẩn: [Vitest coverage](https://vitest.dev/config/coverage), [Vite manifest](https://vite.dev/guide/backend-integration.html).
+
+### M2 — Phục hồi scene và sheet
+
+Context loss bất ngờ: dispose scene cũ khi DOM còn gắn, một lần dựng lại tự động sau 250 ms. Không tự retry khi WebGL2 vắng mặt hoặc import lỗi. Loss tiếp theo giữ fallback tĩnh và nút thử lại; người dùng chủ động thử thì cấp lại một lần tự phục hồi. Timer bị huỷ khi unmount; world/memories vẫn ở client session. Minh hoạ tĩnh là SVG hư cấu độc lập, không đọc footprint của package. Test cũ manual retry được giữ sau loss thứ hai, bổ sung assertion tự phục hồi/lifecycle; không nới H6 timeout hay guard.
+
+Sheet đã có callback ẩn map controls ngay trên pointermove ở mã baseline, nên chưa xác nhận lỗi cũ còn tồn tại. Bổ sung kiểm kéo/cancel/focus thực tế; chuẩn hoá capture về currentTarget, hỗ trợ Enter/Space và tắt transition khi reduced-motion. Đây là sửa khả năng thao tác, không thay snap hoặc kích thước viewport để làm test xanh.
+
+### M2 — Chuẩn hoá LF
+
+Đã kiểm `git ls-files --eol`: 368 tệp tracked ở mốc M0, tám JSON evidence M0 đang CRLF (index và worktree), không có mixed endings. `.gitattributes` quy định text LF và binary cho asset. Tám JSON sẽ chỉ đổi newline trong commit riêng, kiểm nội dung JSON không đổi; không chỉnh số đo. Source đã LF. Chưa renormalize khi cây M2 còn đang sửa để tránh trộn thay đổi nội dung.
+
+M2 dependency verification đã hoàn tất: frozen install scripts-disabled, typecheck PASS. Tất cả mười tarball npm mới kiểm SHA512 theo dist.integrity, không có native binary hoặc lifecycle install script. Có Bun-generated Windows parser.exe shim ở nested node_modules/.bin; xác minh không phải binary xuất bản của dependency. Coverage, bundle gate và browser behavior vẫn chưa chạy, không đánh dấu DONE.
+
+### M2 — Gỡ Three.js khỏi import tĩnh của vỏ
+
+Build M1 cho thấy chunk chung tên postcard chứa Three.js (316,71 kB, gzip 88,47 kB). Kiểm dependency: `bridge/deepLink → memories/camera` và `ScaleBar → planCamera` kéo module Three vào vỏ dù scene dùng import động. M2 chuyển `poseToOrbit` dùng Vector3 sang module engine riêng; clamp/lerp thuần giữ đúng công thức Three.js; tách hàm thước tỉ lệ thuần khỏi module dựng OrthographicCamera. API camera/tour/scale và geometry giữ nguyên. Chưa tuyên bố đạt 250 KB cho tới khi build và script manifest đo thật; không loại chunk dùng chung khỏi phép tính chỉ vì tên file.
+
+### M2 — Harness P8/P9 riêng cho cổng hiện hành
+
+Giữ nguyên guard 20 vòng/20 phút của harness P8 lịch sử. Fixture 64 công trình được tách nguyên văn sang module dùng chung; harness mới chỉ đo 14 thao tác P8 hoặc sound-on lạnh/ấm P9, mặc định 30 lần mỗi thao tác. Timestamp bắt từ input thật, xác nhận state của main-frame submission, GPU fence rồi RAF tiếp theo; không gọi đây là thời gian âm thanh đầu tiên nghe được. Audio output được mute để QA không phát tiếng kéo dài, nhưng AudioContext phải chạy sau gesture và chỉ có một context. Clock cố định, seed 81273, nguồn SHA/renderer/driver phải xác minh. Mọi mẫu chậm/censored giữ trong raw; so ngưỡng 100 ms trên toàn bộ mẫu, không chỉ p50. Script mới chỉ syntax-check, chưa đo; không suy DONE từ code.
+
+### M2 — Coverage không được làm sai phép đo CPU
+
+Lượt coverage V8 đầu: 365 test pass, một bài CPU 200 tác nhân đỏ ở p95 6,945 ms (ngưỡng 4 ms). Chạy nguyên bài đó không coverage: PASS; đây là probe riêng 1 pass/5 case không được chọn, không là full-suite pass. Không nới ngưỡng hoặc giảm 600 frame. Tách nguyên văn bài timing sang file riêng, dùng chung fixture giữ nguyên; coverage chạy mọi bài hành vi rồi chạy bài timing không instrumentation trước khi check ratchet. Cổng check vẫn chạy toàn bộ assertion, không bỏ performance test. Diff body được so không thay token ngoài whitespace.
+
+### M1/M2 integration while the absolute WebKit gate is blocked
+
+M1 final docs head `b6620382f389545850bb025dbd1d4fff7452ec99` has CI run `40781481203`: quality/Chromium/Firefox pass; all 110 WebKit functional cases pass, but H6 is 87,777 ms against the unchanged 70,000 ms budget. The same-runner baseline is 88,233 ms (candidate -0.52%). The earlier identical runtime passed on another runner, but that does not make this head green. Keep PR #9 draft, do not rerun the same head, and integrate M1 into the M2 reliability worktree to continue independent work. M1 stays PARTIAL pending a complete passing gate; no merge on inferred infrastructure slowness.

@@ -8,6 +8,7 @@ import { memorySession } from "@/memories/session";
 import { worldDataProvider } from "@/world/privateWorldSession";
 import { startMomentLifecycle } from "@/memories/moments";
 import { stopMemoryAudio } from "@/memories/audio";
+import { StaticScene } from "./StaticScene";
 function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
   const t = useT();
   useBlocker({
@@ -47,6 +48,8 @@ function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
   );
   const [attempt, setAttempt] = useState(0);
   const [failed, setFailed] = useState(false);
+  const [recovering, setRecovering] = useState(false);
+  const recoveryAttempts = useRef(0);
   const [shortLandscape, setShortLandscape] = useState(false);
   // Reuse the compact recovery card while the mobile sheet is open: a centered
   // card would cover its tabs. Keep recovery above the sheet, not behind it.
@@ -62,6 +65,7 @@ function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
   // detaches the host, otherwise its document key listener retains the old scene.
   useLayoutEffect(() => {
     let cancelled = false;
+    let recoveryTimer: ReturnType<typeof setTimeout> | undefined;
     const store = useAppStore.getState();
     store.setLoadingProgress(0.15);
     useAppStore.setState({ sceneStatus: "loading" });
@@ -71,14 +75,24 @@ function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
         store.setLoadingProgress(0.55);
         try {
           runtime.current = createDemoScene(host.current, marker.current, () => {
+            if (cancelled) return;
             runtime.current?.dispose();
             runtime.current = null;
             setFailed(true);
             useAppStore.setState({ sceneStatus: "fallback" });
+            if (recoveryAttempts.current === 0) {
+              recoveryAttempts.current++;
+              setRecovering(true);
+              recoveryTimer = setTimeout(() => {
+                if (!cancelled) setAttempt((value) => value + 1);
+              }, 250);
+            }
           });
+          setRecovering(false);
           setFailed(false);
           useAppStore.setState({ sceneStatus: "ready" });
         } catch {
+          setRecovering(false);
           setFailed(true);
           useAppStore.setState({ sceneStatus: "fallback" });
         }
@@ -86,12 +100,14 @@ function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
       })
       .catch(() => {
         if (cancelled) return;
+        setRecovering(false);
         setFailed(true);
         useAppStore.setState({ sceneStatus: "fallback" });
         store.setLoadingProgress(1);
       });
     return () => {
       cancelled = true;
+      clearTimeout(recoveryTimer);
       runtime.current?.dispose();
       runtime.current = null;
     };
@@ -112,10 +128,12 @@ function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
     <div
       id="scene-root"
       data-scene-state={sceneStatus}
+      data-recovery-attempts={recoveryAttempts.current}
       className="absolute inset-0 touch-none select-none overflow-hidden"
       style={{ background: "var(--gradient-scene)" }}
     >
       <div ref={host} data-testid="demo-scene" className="absolute inset-0" />
+      {failed && <StaticScene />}
       <div
         ref={marker}
         data-testid="world-center-marker"
@@ -148,7 +166,9 @@ function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
             className={`pointer-events-auto glass max-w-sm p-6 text-center ${compactFallback ? "absolute right-4 top-20 w-[200px] max-w-[calc(100vw-3rem)] p-3 text-left" : ""}`}
             role="status"
           >
-            <p className="font-serif text-xl italic text-primary">{t.fallbackTitle}</p>
+            <p className="font-serif text-xl italic text-primary">
+              {recovering ? t.recoveringScene : t.fallbackTitle}
+            </p>
             <p className={`mt-3 text-sm text-muted-foreground ${compactFallback ? "hidden" : ""}`}>
               {t.fallbackBody}
             </p>
@@ -156,9 +176,12 @@ function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
               type="button"
               className={`chip mt-4 ${compactFallback ? "mt-2" : ""}`}
               onClick={() => {
+                recoveryAttempts.current = 0;
+                setRecovering(false);
                 setFailed(false);
                 setAttempt((n) => n + 1);
               }}
+              disabled={recovering}
             >
               {t.retryScene}
             </button>
