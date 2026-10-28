@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { chromium } from "@playwright/test";
+import { launchBenchmark } from "./benchmark-browser.mjs";
 import { P8_PACKAGE_TEXT } from "../tests/e2e/helpers/p8-fixture.ts";
 const mode = process.argv[2] ?? "perf";
 const out = path.resolve(process.argv[3] ?? "test-results/p10-evidence");
@@ -8,13 +8,11 @@ const port = Number(process.env.P10_PORT ?? 4178);
 fs.mkdirSync(out, { recursive: true });
 const write = (name, value) =>
   fs.writeFileSync(path.join(out, name), JSON.stringify(value, null, 2));
-const browser = await chromium.launch({
-  headless: true,
-  args: ["--enable-unsafe-swiftshader", "--js-flags=--expose-gc"],
-});
+const { browser, dpr, environment } = await launchBenchmark(["--js-flags=--expose-gc"]);
+let rendererEvidence;
 const page = await browser.newPage({
   viewport: { width: 1440, height: 900 },
-  deviceScaleFactor: 1,
+  deviceScaleFactor: dpr,
   reducedMotion: "no-preference",
 });
 const errors = [];
@@ -135,6 +133,7 @@ async function open() {
     {},
     { timeout: 30000 },
   );
+  rendererEvidence = await environment(page);
   await page.evaluate(async () => {
     const { useAppStore: s } = await window.__p10Import("/src/state/appStore.ts");
     s.setState({
@@ -287,6 +286,7 @@ try {
     }
     write("soak-raw.json", {
       complete: true,
+      environment: rendererEvidence,
       durationTarget: duration,
       elapsedMs: Date.now() - start,
       cycles: cycle,
@@ -381,9 +381,10 @@ try {
       date: "2026-06-21",
       time: 420,
       viewport: [1440, 900],
-      dpr: 1,
+      dpr,
       warmupMs: 5000,
-      renderer: "SwiftShader; NOT physical GPU; CPU pixel estimate is NOT GPU memory",
+      renderer: rendererEvidence.renderer,
+      environment: rendererEvidence,
       raw,
       errors,
     });

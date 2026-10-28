@@ -1,0 +1,333 @@
+{
+  "syntheticOnly": true,
+  "sourceSha": "de7173261a8a3928685555252c2b479f76a713fe",
+  "mode": "Windows Playwright default headless; Chromium requires WebGL2; original assertions and timeouts",
+  "results": {
+    "chromium": {
+      "stats": {
+        "startTime": "2026-10-28T13:24:01.255Z",
+        "duration": 1079338.384,
+        "expected": 61,
+        "skipped": 0,
+        "unexpected": 16,
+        "flaky": 0
+      },
+      "failures": [
+        {
+          "title": "20 mode/route/package/capture cycles keep one ready canvas and no page errors",
+          "status": "timedOut",
+          "durationMs": 96836,
+          "messages": [
+            "Test timeout of 90000ms exceeded."
+          ]
+        },
+        {
+          "title": "weather and date controls attempt no external location request and keep true activation blocked",
+          "status": "failed",
+          "durationMs": 6852,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "date drives Vietnamese auto festival; manual normal disables auto; VI/EN remains usable",
+          "status": "failed",
+          "durationMs": 7463,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "all presentation controls preserve exported geometry, provenance and package state byte-for-byte",
+          "status": "failed",
+          "durationMs": 7787,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "export invariant survives disabled presentation controls in Firefox fallback",
+          "status": "failed",
+          "durationMs": 7557,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "keyboard focus, touch targets, reduced-motion and portrait/landscape sheet stay usable",
+          "status": "failed",
+          "durationMs": 9086,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "forced fallback short landscape keeps native weather-time tabs and retry reachable",
+          "status": "failed",
+          "durationMs": 10092,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "GPU canvas pixels change for weather, seasons, festival, flood and layer off; plan stays neutral",
+          "status": "failed",
+          "durationMs": 8388,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "vi phone covers consent, ready, stale, and error actions",
+          "status": "failed",
+          "durationMs": 9383,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "vi landscape covers consent, ready, stale, and error actions",
+          "status": "failed",
+          "durationMs": 8584,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "forced fallback vi phone covers consent, ready, stale, and error actions",
+          "status": "failed",
+          "durationMs": 8415,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "forced fallback vi landscape covers consent, ready, stale, and error actions",
+          "status": "failed",
+          "durationMs": 9460,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "en phone covers consent, ready, stale, and error actions",
+          "status": "failed",
+          "durationMs": 8221,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "en landscape covers consent, ready, stale, and error actions",
+          "status": "failed",
+          "durationMs": 8638,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "forced fallback en phone covers consent, ready, stale, and error actions",
+          "status": "failed",
+          "durationMs": 10165,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "forced fallback en landscape covers consent, ready, stale, and error actions",
+          "status": "failed",
+          "durationMs": 7472,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        }
+      ]
+    },
+    "firefox": {
+      "stats": {
+        "startTime": "2026-10-28T13:42:07.878Z",
+        "duration": 1283826.818,
+        "expected": 68,
+        "skipped": 0,
+        "unexpected": 9,
+        "flaky": 0
+      },
+      "failures": [
+        {
+          "title": "20 mode/route/package/capture cycles keep one ready canvas and no page errors",
+          "status": "timedOut",
+          "durationMs": 100472,
+          "messages": [
+            "Test timeout of 90000ms exceeded.",
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "R23-1 missing coverage is rejected without crash and valid file recovers",
+          "status": "failed",
+          "durationMs": 10563,
+          "messages": [
+            "Error: expect(locator).toBeAttached() failed"
+          ]
+        },
+        {
+          "title": "R23-1 object coverage is rejected without crash and valid file recovers",
+          "status": "failed",
+          "durationMs": 10417,
+          "messages": [
+            "Error: expect(locator).toBeAttached() failed"
+          ]
+        },
+        {
+          "title": "R23-2 road field provenance survives override and export/reopen in VI/EN",
+          "status": "failed",
+          "durationMs": 12806,
+          "messages": [
+            "Error: expect(locator).toBeAttached() failed"
+          ]
+        },
+        {
+          "title": "GPU canvas pixels change for weather, seasons, festival, flood and layer off; plan stays neutral",
+          "status": "failed",
+          "durationMs": 12467,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "vi phone covers consent, ready, stale, and error actions",
+          "status": "failed",
+          "durationMs": 12455,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "vi landscape covers consent, ready, stale, and error actions",
+          "status": "failed",
+          "durationMs": 13287,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "en phone covers consent, ready, stale, and error actions",
+          "status": "failed",
+          "durationMs": 8167,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "en landscape covers consent, ready, stale, and error actions",
+          "status": "failed",
+          "durationMs": 12133,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        }
+      ]
+    },
+    "webkit": {
+      "stats": {
+        "startTime": "2026-10-28T14:03:34.647Z",
+        "duration": 1174124.8390000002,
+        "expected": 66,
+        "skipped": 0,
+        "unexpected": 11,
+        "flaky": 0
+      },
+      "failures": [
+        {
+          "title": "20 mode/route/package/capture cycles keep one ready canvas and no page errors",
+          "status": "timedOut",
+          "durationMs": 93948,
+          "messages": [
+            "Test timeout of 90000ms exceeded.",
+            "Error: locator._expect: Target page, context or browser has been closed"
+          ]
+        },
+        {
+          "title": "weather and date controls attempt no external location request and keep true activation blocked",
+          "status": "failed",
+          "durationMs": 7309,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "date drives Vietnamese auto festival; manual normal disables auto; VI/EN remains usable",
+          "status": "failed",
+          "durationMs": 10634,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "all presentation controls preserve exported geometry, provenance and package state byte-for-byte",
+          "status": "failed",
+          "durationMs": 10813,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "export invariant survives disabled presentation controls in Firefox fallback",
+          "status": "failed",
+          "durationMs": 8122,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "keyboard focus, touch targets, reduced-motion and portrait/landscape sheet stay usable",
+          "status": "failed",
+          "durationMs": 7501,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "GPU canvas pixels change for weather, seasons, festival, flood and layer off; plan stays neutral",
+          "status": "failed",
+          "durationMs": 7422,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "vi landscape covers consent, ready, stale, and error actions",
+          "status": "failed",
+          "durationMs": 6559,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "en landscape covers consent, ready, stale, and error actions",
+          "status": "failed",
+          "durationMs": 6086,
+          "messages": [
+            "Error: expect(locator).toHaveAttribute(expected) failed"
+          ]
+        },
+        {
+          "title": "P9 OfflineAudioContext measures the actual eight-voice storm mix below the peak limit",
+          "status": "failed",
+          "durationMs": 3723,
+          "messages": [
+            "Error: page.evaluate: ReferenceError: Can't find variable: OfflineAudioContext"
+          ]
+        },
+        {
+          "title": "sound context is gesture-only, one per scene, local clip manifest stays in session and off releases voices",
+          "status": "failed",
+          "durationMs": 16375,
+          "messages": [
+            "Error: expect(received).toBe(expected) // Object.is equality"
+          ]
+        }
+      ]
+    }
+  }
+}

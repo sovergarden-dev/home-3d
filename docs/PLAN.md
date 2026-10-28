@@ -1,5 +1,7 @@
 # Phố Nhà Mình — Siêu kế hoạch web app map 3D
 
+> **SNAPSHOT LỊCH SỬ — 13/10/2026.** Chỉ đạo hiện hành, phân vai và cổng làm việc: [CODEX_HANDOFF.md](CODEX_HANDOFF.md). Các trạng thái trong snapshot không phải trạng thái nghiệm thu hiện tại; xem [CODEX_LOG.md](CODEX_LOG.md).
+
 > **Cập nhật Demo 1:** P1.1 đã merge và chủ dự án xác nhận Publish. Sau đó được cho phép làm một demo 3D hư cấu xuyên pha trước, tinh chỉnh sau. Xem DECISIONS.md/BACKLOG.md. Không coi P2–P13 đã hoàn tất. Yêu cầu repo private cũ trong snapshot dưới đây bị quyết định giữ public thay thế; bảo vệ dữ liệu thật vẫn giữ nguyên.
 
 > Notion AI lập 13/10/2026. Bản đồ 3D khu phố quanh nhà, nhà mình làm tâm. Không ghi secret, API key, token, toạ độ hay địa chỉ nhà vào tài liệu này, Notion hay repo.

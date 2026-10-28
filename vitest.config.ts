@@ -5,6 +5,7 @@ import path from "node:path";
 export default defineConfig({
   plugins: [react()],
   test: {
+    ...(process.platform === "win32" ? { pool: "threads" as const, maxWorkers: 1 } : {}),
     environment: "jsdom",
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
