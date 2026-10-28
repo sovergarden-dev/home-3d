@@ -736,3 +736,255 @@ for (const width of [3840, 2048, 1920]) {
     }
   }
 }
+
+async function pinPixels(page: Page, mode: "diorama" | "topdown", zoom: number) {
+  await page.goto("/?local-preview=1");
+  await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", /ready|fallback/, {
+    timeout: 30000,
+  });
+  const ready = (await page.locator("#scene-root").getAttribute("data-scene-state")) === "ready";
+  if (process.env["REQUIRE_WEBGL2"] === "1") expect(ready).toBe(true);
+  test.skip(!ready, "WebGL2 unavailable; rendered pin measurements NOT_VERIFIED.");
+  const collapse = page.getByRole("button", { name: "Thu gọn bảng riêng", exact: true });
+  if (await collapse.isVisible()) await collapse.click();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        async () =>
+          (await window.__p10Import("/src/memories/session.ts")).memorySession.getSnapshot().ready,
+      ),
+    )
+    .toBe(true);
+  return page.evaluate(
+    async ({ mode, zoom }) => {
+      const { useAppStore: store } = await window.__p10Import("/src/state/appStore.ts");
+      const { memorySession: session } = await window.__p10Import("/src/memories/session.ts");
+      const { memoryCamera } = await window.__p10Import("/src/memories/bridge.ts");
+      const { captureDemoFrame } = await window.__p10Import("/src/engine/capture.ts");
+      store.setState({
+        viewMode: mode,
+        zoom,
+        heading: 0,
+        timeSpeed: 0,
+        realTimeEnabled: false,
+        lifeEnabled: false,
+        atmosphereEnabled: false,
+        festivalAuto: false,
+        selectedDate: "2026-06-21",
+        timeOfDayMinutes: 420,
+      });
+      for (const item of [...session.getSnapshot().memories]) session.deleteMemory(item.id);
+      const item = {
+        id: crypto.randomUUID(),
+        title: "Synthetic screen pin",
+        body: "",
+        position: [0, 0, 0],
+        camera: memoryCamera.getPose(),
+        date: "2026-06-21",
+        preset: "everyday",
+        tags: [],
+        photos: [],
+        visibility: "public",
+      };
+      const frame = () =>
+        new Promise<void>((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+        );
+      const pixels = async () => {
+        const data = captureDemoFrame();
+        if (!data) throw Error("PIN_CAPTURE_UNAVAILABLE");
+        const image = new Image();
+        await new Promise<void>((resolve, reject) => {
+          image.onload = () => resolve();
+          image.onerror = () => reject(Error("PIN_IMAGE_DECODE_FAILED"));
+          image.src = data;
+        });
+        const canvas = document.createElement("canvas");
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        const ctx = canvas.getContext("2d")!;
+        ctx.drawImage(image, 0, 0);
+        const result = {
+          width: canvas.width,
+          height: canvas.height,
+          data: ctx.getImageData(0, 0, canvas.width, canvas.height).data,
+        };
+        canvas.width = canvas.height = 0;
+        return result;
+      };
+      await frame();
+      const background = await pixels();
+      const baseCalls = Number(
+        document.querySelector<HTMLElement>('[data-testid="demo-scene"]')!.dataset.drawCalls,
+      );
+      session.saveMemory(item);
+      await frame();
+      const foreground = await pixels();
+      const calls = Number(
+        document.querySelector<HTMLElement>('[data-testid="demo-scene"]')!.dataset.drawCalls,
+      );
+      let left = foreground.width,
+        right = -1,
+        top = foreground.height,
+        bottom = -1,
+        peak = 0;
+      const rowWidths: { y: number; width: number }[] = [];
+      for (let y = 0; y < foreground.height; y++) {
+        let rowLeft = foreground.width,
+          rowRight = -1;
+        for (let x = 0; x < foreground.width; x++) {
+          const i = (y * foreground.width + x) * 4;
+          const delta =
+            Math.abs(foreground.data[i]! - background.data[i]!) +
+            Math.abs(foreground.data[i + 1]! - background.data[i + 1]!) +
+            Math.abs(foreground.data[i + 2]! - background.data[i + 2]!);
+          if (delta > 30) {
+            left = Math.min(left, x);
+            right = Math.max(right, x);
+            top = Math.min(top, y);
+            bottom = Math.max(bottom, y);
+            rowLeft = Math.min(rowLeft, x);
+            rowRight = Math.max(rowRight, x);
+          }
+        }
+        const width = rowRight >= rowLeft ? rowRight - rowLeft + 1 : 0;
+        if (width) {
+          rowWidths.push({ y, width });
+          peak = Math.max(peak, width);
+        }
+      }
+      const canvas = document.querySelector<HTMLCanvasElement>("#scene-root canvas")!;
+      const dpr = canvas.width / canvas.clientWidth;
+      const centreRows = rowWidths.filter((row) => row.width >= peak - 1);
+      return {
+        id: item.id,
+        pixelWidth: right >= left ? (right - left + 1) / dpr : 0,
+        pixelHeight: bottom >= top ? (bottom - top + 1) / dpr : 0,
+        centreX: (left + right) / 2 / dpr,
+        centreY: centreRows.reduce((sum, row) => sum + row.y, 0) / centreRows.length / dpr,
+        dpr,
+        baseCalls,
+        calls,
+      };
+    },
+    { mode, zoom },
+  );
+}
+
+for (const viewport of [
+  { width: 1440, height: 900 },
+  { width: 390, height: 844 },
+  { width: 740, height: 390 },
+]) {
+  for (const mode of ["diorama", "topdown"] as const) {
+    for (const zoom of [0.25, 4]) {
+      test(`rendered memory pin stays readable in ${mode} at ${viewport.width}x${viewport.height} zoom ${zoom}`, async ({
+        page,
+      }, info) => {
+        await page.setViewportSize(viewport);
+        const result = await pinPixels(page, mode, zoom);
+        expect(result.pixelWidth).toBeGreaterThanOrEqual(16);
+        expect(result.pixelWidth).toBeLessThanOrEqual(24);
+        expect(result.pixelHeight).toBeGreaterThan(result.pixelWidth);
+        expect(result.calls - result.baseCalls).toBeLessThanOrEqual(1);
+        await info.attach("pin-pixel-measurement", {
+          contentType: "application/json",
+          body: JSON.stringify({ syntheticOnly: true, viewport, mode, zoom, ...result }),
+        });
+      });
+    }
+  }
+}
+
+for (const mode of ["diorama", "topdown"] as const) {
+  test(`memory pin hit tolerance and overlap selection work in ${mode}`, async ({
+    page,
+    browserName,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const pin = await pinPixels(page, mode, 1);
+    expect(pin.pixelWidth).toBeGreaterThanOrEqual(16);
+    const touch = browserName === "chromium" ? await page.context().newCDPSession(page) : null;
+    const tap = async (x: number, y: number) => {
+      if (!touch) return page.mouse.click(x, y);
+      await touch.send("Input.dispatchTouchEvent", {
+        type: "touchStart",
+        touchPoints: [{ x, y, id: 0 }],
+      });
+      await touch.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+    };
+    await tap(pin.centreX + 26, pin.centreY);
+    expect(
+      await page.evaluate(
+        async () =>
+          (await window.__p10Import("/src/memories/bridge.ts")).memoryCamera.getSnapshot().memoryId,
+      ),
+    ).toBeNull();
+    await tap(pin.centreX + 20, pin.centreY);
+    await expect
+      .poll(() =>
+        page.evaluate(
+          async () =>
+            (await window.__p10Import("/src/memories/bridge.ts")).memoryCamera.getSnapshot()
+              .memoryId,
+        ),
+      )
+      .toBe(pin.id);
+    await page.evaluate(async () =>
+      (await window.__p10Import("/src/memories/bridge.ts")).memoryCamera.exit(),
+    );
+    const second = await page.evaluate(
+      async ({ firstId, mode }) => {
+        const { memorySession: session } = await window.__p10Import("/src/memories/session.ts");
+        const first = session.getSnapshot().memories.find((m: { id: string }) => m.id === firstId)!;
+        const value = {
+          ...first,
+          position: [...first.position],
+          id: crypto.randomUUID(),
+          title: "Synthetic overlapping pin",
+        };
+        if (mode === "topdown") {
+          const { useAppStore } = await window.__p10Import("/src/state/appStore.ts");
+          value.position[0] += 8 * useAppStore.getState().planMeasurement.metresPerCssPixel;
+        }
+        session.saveMemory(value);
+        return value.id;
+      },
+      { firstId: pin.id, mode },
+    );
+    if (mode === "topdown") {
+      await tap(pin.centreX + 7, pin.centreY);
+      await expect
+        .poll(() =>
+          page.evaluate(
+            async () =>
+              (await window.__p10Import("/src/memories/bridge.ts")).memoryCamera.getSnapshot()
+                .memoryId,
+          ),
+        )
+        .toBe(second);
+      await page.evaluate(
+        async ({ firstId, secondId }) => {
+          (await window.__p10Import("/src/memories/bridge.ts")).memoryCamera.exit();
+          const { memorySession: session } = await window.__p10Import("/src/memories/session.ts");
+          const items = session.getSnapshot().memories;
+          const first = items.find((m: { id: string }) => m.id === firstId)!;
+          const other = items.find((m: { id: string }) => m.id === secondId)!;
+          session.saveMemory({ ...other, position: [...first.position] });
+        },
+        { firstId: pin.id, secondId: second },
+      );
+    }
+    await tap(pin.centreX, pin.centreY);
+    await expect
+      .poll(() =>
+        page.evaluate(
+          async () =>
+            (await window.__p10Import("/src/memories/bridge.ts")).memoryCamera.getSnapshot()
+              .memoryId,
+        ),
+      )
+      .toBe([pin.id, second].sort()[0]);
+    await touch?.detach();
+  });
+}
