@@ -212,6 +212,11 @@ try {
           : null,
       };
     });
+    await page.screenshot({
+      path: path.join(output, `${scenarioName}.jpg`),
+      type: "jpeg",
+      quality: 75,
+    });
     const intervals = result.lastSubmission
       .slice(1)
       .map((value, index) => value - result.lastSubmission[index]);
@@ -263,6 +268,7 @@ try {
       ...gpuMemory.samples.map((r) => r.residentAllocationBytes),
     );
     gpuMemory.peakCommittedBytes = Math.max(...gpuMemory.samples.map((r) => r.committedBytes));
+    for (const row of rows) row.gpuMemoryStatus = "MEASURED_BATCH_UPPER_BOUND";
     gpuMemory.midBudgetStatus =
       gpuMemory.peakResidentAllocationBytes <= 350000000 ? "MET" : "NOT_MET";
   }
