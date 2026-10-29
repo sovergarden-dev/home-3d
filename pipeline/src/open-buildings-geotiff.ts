@@ -32,9 +32,18 @@ async function affine(image: Image): Promise<Affine> {
       throw Error("OPEN_BUILDINGS_TRANSFORM_INVALID");
     return [matrix[0]!, matrix[1]!, matrix[3]!, matrix[4]!, matrix[5]!, matrix[7]!];
   }
-  const origin = await image.getOrigin(),
+  const tie = await image.fileDirectory.getValue("ModelTiepoint"),
     resolution = await image.getResolution();
-  const m: Affine = [resolution[0]!, 0, origin[0]!, 0, resolution[1]!, origin[1]!];
+  if (!tie || tie.length !== 6 || !Array.from(tie).every(Number.isFinite))
+    throw Error("OPEN_BUILDINGS_TRANSFORM_INVALID");
+  const m: Affine = [
+    resolution[0]!,
+    0,
+    tie[3]! - tie[0]! * resolution[0]!,
+    0,
+    resolution[1]!,
+    tie[4]! - tie[1]! * resolution[1]!,
+  ];
   if (!m.every(Number.isFinite)) throw Error("OPEN_BUILDINGS_TRANSFORM_INVALID");
   return m;
 }

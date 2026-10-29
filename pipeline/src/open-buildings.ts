@@ -54,6 +54,10 @@ export async function enrichOpenBuildingsPackage(
     throw Error("OPEN_BUILDINGS_YEAR_UNSUPPORTED");
   const pkg = structuredClone(input);
   const world = pkg.world;
+  const before = pkg.overrides ? applyWorldOverrides(world, pkg.overrides) : { world, issues: [] };
+  if (before.issues.length || !validateWorld(before.world).valid)
+    throw Error("OPEN_BUILDINGS_WORLD_INVALID");
+  const exclusionLots = before.world.lots;
   const protectedIds = new Set<string>();
   for (const { patch } of pkg.overrides?.overrides ?? []) {
     if ("featureId" in patch) protectedIds.add(patch.featureId);
@@ -76,7 +80,7 @@ export async function enrichOpenBuildingsPackage(
   };
   const excluded = (geometry: SurfaceGeometry) =>
     surfaceIntersects(geometry, centre) ||
-    world.lots.some((lot) => surfaceIntersects(geometry, lot.geometry));
+    exclusionLots.some((lot) => surfaceIntersects(geometry, lot.geometry));
   const report: OpenBuildingsReport = {
     status: "NO_ELIGIBLE_HEIGHTS",
     year: sampler.year,

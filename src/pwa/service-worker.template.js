@@ -1,4 +1,5 @@
 /* Generated constants are prepended by scripts/build-pwa.mjs. */
+const activatedPrefix = "home3d-public-active-v1-";
 const allowed = new Map(OWNED_ASSETS.map((asset) => [asset.path, asset]));
 const hex = (bytes) =>
   [...new Uint8Array(bytes)].map((value) => value.toString(16).padStart(2, "0")).join("");
@@ -27,18 +28,36 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
       const cache = await caches.open(CACHE_NAME);
-      await Promise.all(
+      const writes = await Promise.allSettled(
         OWNED_ASSETS.map(async (asset) => cache.put(asset.path, await ownedResponse(asset))),
       );
+      if (writes.some((result) => result.status === "rejected")) {
+        await caches.delete(CACHE_NAME);
+        throw Error("PUBLIC_ASSET_INSTALL_FAILED");
+      }
     })(),
   );
 });
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     (async () => {
-      const names = (await caches.keys()).filter((name) => name.startsWith(CACHE_PREFIX));
-      const keep = new Set([CACHE_NAME, ...names.filter((name) => name !== CACHE_NAME).slice(-1)]);
-      await Promise.all(names.filter((name) => !keep.has(name)).map((name) => caches.delete(name)));
+      const names = await caches.keys();
+      const previous = names
+        .filter((name) => name.startsWith(activatedPrefix) && name !== activatedPrefix + CACHE_NAME)
+        .at(-1)
+        ?.slice(activatedPrefix.length);
+      const keep = new Set([CACHE_NAME, previous]);
+      // Empty marker caches contain no requests or private data, only activated generation names.
+      await caches.open(activatedPrefix + CACHE_NAME);
+      await Promise.all(
+        names
+          .filter((name) =>
+            name.startsWith(CACHE_PREFIX)
+              ? !keep.has(name)
+              : name.startsWith(activatedPrefix) && !keep.has(name.slice(activatedPrefix.length)),
+          )
+          .map((name) => caches.delete(name)),
+      );
       await self.clients.claim();
     })(),
   );

@@ -8,7 +8,7 @@ import {
   surfaceIntersects,
 } from "@/world/geometry";
 import { assessWallHeight } from "@/world/wallHeight";
-import type { SurfaceGeometry, WorldData } from "@/world/schema";
+import type { BuildingPart, SurfaceGeometry, WorldData } from "@/world/schema";
 
 export type DetailTier = "low" | "mid" | "high";
 type Shape = "box" | "cylinder" | "sphere";
@@ -86,6 +86,14 @@ export function planIllustrativeDetails(
   };
   const buildings = [...world.buildings]
     .filter((b) => !b.hidden)
+    .flatMap<BuildingPart>((building) =>
+      building.parts?.length
+        ? building.parts.map((part) => ({
+            ...part,
+            baseElevation: part.baseElevation ?? building.baseElevation ?? 0,
+          }))
+        : [building],
+    )
     .sort((a, b) => a.localId.localeCompare(b.localId));
   for (const building of buildings.slice(0, limit.features)) {
     const height = assessWallHeight(building, world.manifest.isSynthetic).renderedHeight;

@@ -227,3 +227,11 @@ Tíchhợp phầnmềmM3/M4/M5trongnhánh trước khi đo soak30phút vàma tr�
 ### M4 — Kiểm Workerd Linux trong quality
 
 WindowsWorkerdkhởiđộngđượchello/auth-onlynhưngbundleSSRđầyđủlỗiinternal qua3lượt, nên dừngretryWindows. Thêm kiểmLinuxnative vào qualityhiệnhữu (vẫn4job), dùngWrangler4.151.3/Workerd1.20261019.1đúnglock trongthưmụctoolQAriêng, bỏinstallscript/metrics/credentialenv; chỉdeploy --dry-run, khôngupload. JWT/khoá thửsinhtạm;mọifetchJWKSđượcchặn vàtrảpublickeylocal, khôngtruycậptàikhoản haydomainthật. Đây làgatechưađạt, cầnkếtquảCItrướckhibáoREADY.
+
+### M3–M5 — Sửa phát hiện từ review độc lập
+
+PWA chỉ giữ thế hệ hiện hành và thế hệ đã activate liền trước, nhận diện bằng cache marker rỗng. Cache của lần install thất bại bị xóa sau khi mọi write đã kết thúc; version digest bao gồm cả mã Service Worker. Không thêm dữ liệu ứng dụng, request riêng hoặc metadata người dùng vào cache.
+
+Enrichment dùng ranh lô sau khi áp dụng override để loại trừ nhưng vẫn trả base package và override tách biệt. GeoTIFF với một tie-point có raster offset khác zero được đưa về pixel-zero đúng bằng affine; nhiều tie-point chưa hỗ trợ thì từ chối. Chi tiết minh họa đi theo building parts như renderer, dùng elevation của part hoặc kế thừa parent; không trang trí parent ảo nằm trên các part thấp/không có căn cứ chiều cao.
+
+Đã thêm ca hồi quy cho bốn phát hiện. Pipeline đạt 50 test, chi tiết 3 unit test đạt; production PWA và check tích hợp còn đang chạy tại thời điểm ghi mục này. Không lấy static review làm bằng chứng runtime.

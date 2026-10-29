@@ -99,3 +99,60 @@ test("an update prompts, waits for explicit confirmation and leaves other tabs i
     ),
   ).toBe(2);
 });
+
+test("failed installation is removed and the previously activated generation survives the next update", async ({
+  page,
+}) => {
+  await page.request.post("/__qa__/update");
+  await page.goto("/gioi-thieu");
+  await page.evaluate(async () => {
+    await navigator.serviceWorker.ready;
+  });
+  await expect
+    .poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller)))
+    .toBe(true);
+  const original = await page.evaluate(async () =>
+    (await caches.keys()).find((name) => name.startsWith("home3d-public-static-v1-")),
+  );
+  expect(original).toBeTruthy();
+  await page.request.post("/__qa__/update?fail=1");
+  const failedState = await page.evaluate(async () => {
+    const registration = (await navigator.serviceWorker.getRegistration())!;
+    const done = new Promise<string>((resolve) =>
+      registration.addEventListener(
+        "updatefound",
+        () => {
+          const worker = registration.installing!;
+          worker.addEventListener("statechange", () => {
+            if (worker.state === "redundant") resolve(worker.state);
+          });
+        },
+        { once: true },
+      ),
+    );
+    await registration.update();
+    return done;
+  });
+  expect(failedState).toBe("redundant");
+  expect(
+    await page.evaluate(async () =>
+      (await caches.keys()).filter((name) => name.startsWith("home3d-public-static-v1-")),
+    ),
+  ).toEqual([original]);
+  await page.request.post("/__qa__/update");
+  await page.evaluate(async () => {
+    await (await navigator.serviceWorker.getRegistration())!.update();
+  });
+  await expect(page.getByTestId("pwa-update")).toBeVisible({ timeout: 60000 });
+  await page
+    .getByTestId("pwa-update")
+    .getByRole("button", { name: "Tải lại", exact: true })
+    .click();
+  await page.getByRole("alertdialog").getByRole("button", { name: "Tải lại", exact: true }).click();
+  await expect(page.getByTestId("pwa-update")).toHaveCount(0);
+  const generations = await page.evaluate(async () =>
+    (await caches.keys()).filter((name) => name.startsWith("home3d-public-static-v1-")),
+  );
+  expect(generations).toHaveLength(2);
+  expect(generations).toContain(original);
+});

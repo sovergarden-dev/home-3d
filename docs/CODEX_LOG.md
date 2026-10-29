@@ -2,11 +2,12 @@
 
 ## Hiện trạng
 
-- M0 DONE: PR #8 merge cf3cb262dfa7b69a881bef63c0d9a89dd32668fb; CI main 40717187350 xanh 4/4.
-- M1 PARTIAL: PR #9 parked/draft; head b662 có WebKit H6 87.777 ms (baseline cùng runner 88.233 ms), CI 40781481203 đỏ dù 110 ca chức năng đạt. Không merge/rerun head đó.
-- M2: code và kiểm Windows/GPU đã có, đang chuẩn bị PR tích hợp M1; check 378 unit/39 pipeline, lint 0, vỏ 222.305 byte. H6 GPU mới 43.434→41.839 ms. CI head cuối/review cuối còn pending.
-- M3/M4/M5 chuẩn bị trong worktree riêng; có test cục bộ từng phần, chưa tích hợp/merge. Không Publish/deploy hoặc đọc dữ liệu khu thật.
-- P9 còn NOT_MET ở đỉnh >100 ms; Windows WebKit không có Web Audio. Chi tiết trong M2_RELIABILITY_RUNBOOK và evidence, không gộp thành pass.
+- M0 DONE: PR #8, main `cf3cb262dfa7b69a881bef63c0d9a89dd32668fb`, CI `40717187350` 4/4. Main chưa đóng băng.
+- M1/M2 PARTIAL: PR #9 parked, PR #10 draft. GPU thật đã có H_MET_REAL_GPU ở 300 ghim; P9 còn mẫu >100 ms. CI `40810779896` quality đạt, ba browser còn hồi quy Retry 3D; WebKit H6 85.858 ms vượt 70.000 ms dù baseline cùng runner 88.438 ms. Không merge/rerun cùng head.
+- Bản sửa mới chỉ nâng full sheet lên trên fallback, giữ half sheet phía dưới nút Retry. Kiểm Windows: 9 ca kéo bảng đạt; 8/12 ca fallback/thời tiết đạt, 4 lỗi khởi tạo 5 giây đã giữ lại. Check đầy đủ đang chạy; chưa gọi gate đạt.
+- M3/M4/M5 đã tích hợp trong nhánh kiểm chứng, chưa merge. PWA production 3 ca đạt; axe ban đầu 3 viewport đạt sau sửa contrast/tabpanel. Bản kiểm mở rộng VI/EN đang được hoàn thiện. M5 pipeline 47 ca đạt trên fixture tổng hợp.
+- M4 unit/Bun smoke/dry-run/auth-only Workerd đạt; full Workerd Windows chưa chạy được. CI Linux diagnostic `40812073234` dừng ở lint trước bước Workerd; đã sửa format, chưa có bằng chứng full native Worker.
+- Đang review độc lập M3–M5 và chuẩn bị ma trận GPU, soak liên tục 30 phút, Lighthouse/4G. Không Publish/deploy, đăng nhập hoặc đọc dữ liệu khu thật. `REAL_WORLD_NOT_VERIFIED` giữ nguyên.
 
 ## 28/10/2026 — M0 hoàn tất
 
@@ -165,3 +166,9 @@ Run40804608976 Firefoxvẫnfailtrướcmouseup, nên giảthuyếtcleanupkhôngg
 ### M2 — Hồi quy nút thử lại ở landscape
 
 CI vòng ba `40810779896` đã qua toàn bộ ca kéo bảng; Firefox còn lỗi mới ở nút Retry 3D sau chuỗi consent thời tiết EN landscape (69 pass, 46 skip, 1 fail). Bảng half cao 48dvh với z50 che nút ở mép trên; bản sửa trước đã nâng cả half và full dù probe chỉ chứng minh vấn đề full. Giới hạn z50 cho full; half giữ z20 để thẻ fallback vẫn thao tác được. Giữ nguyên test thời tiết/click thật và ca hủy kéo; không nới timeout hoặc assertion. Mục kéo bảng đã có bằng chứng đạt; hồi quy vừa phát hiện được kiểm riêng trước khi xin cổng CI ở head mới. Chưa merge hoặc đánh dấu M2 DONE.
+
+## 29/10/2026 — Review tích hợp M3–M5
+
+Phiên review độc lập `01a185af-1d0b-73e3-8903-d047f9e42cc0` đưa ra bốn P2 cụ thể: cache install lỗi đẩy mất cache đang dùng; enrichment bỏ qua ranh lô override; GeoTIFF tie-point không ở pixel zero; chi tiết dùng parent thay vì building parts. Đã sửa cả bốn và thêm test tương ứng. Pipeline 50/50 và detail unit 3/3 đạt. Check/PWA và lượt review xác nhận sửa vẫn pending; M3/M4/M5 giữ PARTIAL.
+
+M2 head `88e0306` check cục bộ đạt 378 unit/39 pipeline, lint/type/build/bundle; run liên quan Windows giữ 17 pass/4 fail (đều 5 giây khởi tạo scene, không phải assertion tương tác). Không đổi timeout. Bản tự host font M3 sẽ được kiểm tích hợp lại; chưa dùng kết quả này để khẳng định mọi E2E Windows đạt.

@@ -7,11 +7,11 @@ Nguồn phạm vi: [CODEX_HANDOFF.md](CODEX_HANDOFF.md); trạng thái có bằn
 | Mốc | Phạm vi                                                            | Trạng thái                                    |
 | --- | ------------------------------------------------------------------ | --------------------------------------------- |
 | M0  | Môi trường Windows, baseline local/GPU thật, tag, PR tiếp quản     | DONE — PR #8, CI main 4/4                     |
-| M1  | P10.1: độ trễ 300 ghim, kích thước/picking ghim, chữ bưu thiếp     | PARTIAL — QA chính đạt, PR #9 chờ merge gates |
-| M2  | Phiên bản/build SHA, repo/CI, hồi quy P1.1/P8/P9 và phục hồi WebGL | NOT_DONE                                      |
-| M3  | Bench/PWA/font local/a11y/i18n/Lighthouse và ma trận Windows       | NOT_DONE                                      |
-| M4  | Bản riêng tư và runbook sẵn sàng deploy, không deploy              | NOT_DONE                                      |
-| M5  | Adapter chiều cao và chi tiết procedural tổng hợp                  | NOT_DONE                                      |
+| M1  | P10.1: độ trễ 300 ghim, kích thước/picking ghim, chữ bưu thiếp     | PARTIAL — QA chính có bằng chứng; PR #9 parked, tích hợp PR #10 |
+| M2  | Phiên bản/build SHA, repo/CI, hồi quy P1.1/P8/P9 và phục hồi WebGL | PARTIAL — phần mềm đã chuẩn bị, đang kiểm tích hợp |
+| M3  | Bench/PWA/font local/a11y/i18n/Lighthouse và ma trận Windows       | PARTIAL — phần mềm đã chuẩn bị, đang kiểm tích hợp |
+| M4  | Bản riêng tư và runbook sẵn sàng deploy, không deploy              | PARTIAL — phần mềm đã chuẩn bị, đang kiểm tích hợp |
+| M5  | Adapter chiều cao và chi tiết procedural tổng hợp                  | PARTIAL — phần mềm đã chuẩn bị, đang kiểm tích hợp |
 
 K1/H đã có H_MET_REAL_GPU ở source 59f6; SwiftShader đối chứng còn H_BLOCKED, ca 0↔1 diagnostic NOT_MET. M1 chờ cổng merge/CI main, không dùng số đo cũ để tuyên bố source mới đạt. G1 được chủ dự án báo GEOREFERENCE_BOUND_PROVEN cho cặp tệp riêng; chưa mở cặp tệp đó trong lượt Codex. REAL_WORLD_NOT_VERIFIED tiếp tục giữ nguyên.
 

@@ -100,9 +100,9 @@ const manifest = {
 };
 await writeFile(path.join(root, "manifest.webmanifest"), JSON.stringify(manifest, null, 2) + "\n");
 assets.sort((a, b) => a.path.localeCompare(b.path));
-const version = digest(JSON.stringify({ assets, shells })).slice(0, 20);
-const prefix = "home3d-public-static-v1-";
 const template = await readFile("src/pwa/service-worker.template.js", "utf8");
+const version = digest(JSON.stringify({ assets, shells, template })).slice(0, 20);
+const prefix = "home3d-public-static-v1-";
 await writeFile(
   path.join(root, "sw.js"),
   `const CACHE_PREFIX=${JSON.stringify(prefix)};\nconst CACHE_NAME=${JSON.stringify(prefix + version)};\nconst OWNED_ASSETS=${JSON.stringify(assets)};\nconst OFFLINE_SHELLS=${JSON.stringify(shells)};\n${template}`,

@@ -179,3 +179,49 @@ test("requires explicit presence/centre policy, local files and supported source
   ])
     expect(() => parseOpenBuildingsConfig(bad)).toThrow();
 });
+
+test("excludes the effective overridden lot while retaining the base package and overrides", async () => {
+  const input = fixture([building("synthetic-effective-lot-building")]);
+  input.world.lots = [
+    {
+      localId: "synthetic-moving-lot",
+      geometry: square(-40, 20),
+      status: "unknown",
+      confirmed: false,
+      provenance: { source: "synthetic", quality: "synthetic" },
+    },
+  ];
+  input.overrides = {
+    schemaVersion: "1.0",
+    overrides: [
+      {
+        localId: "synthetic-lot-edit",
+        revision: 1,
+        reason: "synthetic fixture",
+        identityScheme: "stable-local-id-v2",
+        patch: {
+          operation: "replace_lot_geometry",
+          featureId: "synthetic-moving-lot",
+          geometry: square(19, 19, 12),
+        },
+        provenance: { source: "manual_override", quality: "inferred" },
+      },
+    ],
+  };
+  let reads = 0;
+  const result = await enrichOpenBuildingsPackage(
+    input,
+    {
+      year: 2023,
+      async sample() {
+        reads++;
+        return [sample(20)];
+      },
+      async close() {},
+    },
+    policy,
+  );
+  expect(reads).toBe(0);
+  expect(result.package).toEqual(input);
+  expect(result.report.openBuildings).toMatchObject({ assigned: 0, excluded: 1 });
+});

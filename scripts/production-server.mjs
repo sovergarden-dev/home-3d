@@ -5,6 +5,7 @@ import worker from "../.output/server/index.mjs";
 const root = resolve(".output/public");
 const port = Number(process.env.PRODUCTION_QA_PORT ?? 4193);
 let revision = 0;
+let failInstall = false;
 const assets = {
   async fetch(request) {
     let pathname;
@@ -21,6 +22,7 @@ const assets = {
       return new Response(null, { status: 404 });
     if (pathname === "/sw.js") {
       let text = await readFile(filePath, "utf8");
+      if (failInstall) text = text.replace(/("sha256":")[a-f0-9]{64}/, `$1${"0".repeat(64)}`);
       if (revision) text = text.replace(/(const CACHE_NAME="[^"]+)(")/, `$1-qa${revision}$2`);
       return new Response(text, {
         headers: {
@@ -55,6 +57,7 @@ Bun.serve({
       request.method === "POST"
     ) {
       revision++;
+      failInstall = new URL(request.url).searchParams.get("fail") === "1";
       return new Response("OK");
     }
     const asset = await assets.fetch(request);
