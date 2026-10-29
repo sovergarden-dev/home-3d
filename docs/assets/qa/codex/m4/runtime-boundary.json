@@ -1,0 +1,21 @@
+{
+  "status": "PARTIAL_NATIVE_FULL_WORKER_NOT_VERIFIED",
+  "syntheticOnly": true,
+  "windows": {
+    "wrangler": "4.151.3",
+    "workerd": "1.20261019.1",
+    "dryRun": "PASS",
+    "hello": "PASS",
+    "realRs256AuthOnly": "PASS",
+    "fullSsr": "BLOCKED_STARTUP_INTERNAL_ERROR",
+    "attempts": [
+      "initial old SSR bundle",
+      "integrated pure-math/self-hosted-font bundle",
+      "lazy SSR import experiment (discarded, no improvement)"
+    ]
+  },
+  "confirmedFix": "Workers rejects fetch redirect:error; manual redirect plus non-2xx rejection verified in native auth-only run.",
+  "next": "Verify full bundle with Workerd Linux in repository CI; do not keep retrying Windows blindly.",
+  "deployed": false,
+  "realAccountsOrCredentialsUsed": false
+}

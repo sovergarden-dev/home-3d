@@ -40,3 +40,7 @@ Các lệnh CLI cụ thể và version sẽ được ghi sau khi QA thực sự 
 R2 private là v2 `NOT_DONE`, không cần cho v1 chọn file. Nếu làm sau này: bucket riêng, chỉ đọc qua Worker đã kiểm Access; đánh giá lại cache, quyền và logging trước khi sử dụng. Analytics mặc định tắt. Không có migration/database trong v1.
 
 Chủ dự án dùng cơ chế rollback phiên bản của Cloudflare để quay về bản đã kiểm, rồi lặp lại kiểm Access và endpoint. Không force-push hoặc viết lại Git. Nếu cần build lại phiên bản cũ, dùng tag/commit trong checkout riêng. Tag `baseline/p10-published` và lịch sử Lovable là hai điểm khôi phục của bản công khai; Publish Lovable vẫn là thao tác riêng của chủ dự án sau audit.
+
+## Giới hạn runtime đang điều tra
+
+Dry run Wrangler4.151.3 đạt; WorkerdWindows chạyhello vàauth-onlyRS256thậtđạt saukhisửa fetchredirect:manual. BundleSSRđầyđủvẫnkhôngkhởiđộngvới internalerror ởWorkerd1.20261019.1Windows, kểcảsauPureMath/SSRThree-splitvàthửlazyentry; dừngvòngthửWindows tạiđây, giữPARTIAL. Khôngsuy unitNodehoặcBunsmoke là bằngchứng đầyđủ choEdge. Kếtiếp kiểm cùngbundle ởWorkerdLinuxCIđượcphép, khôngtài khoản/login/deploy; chỉchốtREADY_TO_DEPLOY_NOT_DEPLOYEDnếucổngnàyđạt.

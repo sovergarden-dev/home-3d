@@ -205,3 +205,7 @@ M4 trust boundary nhận binding thô và xác thực schema đúng một lần 
 ### M4 — Fetch JWKS trên runtime thật
 
 Workerd1.20261019.1 từchối redirect:error ngaytrước fetch; unitNodekhôngpháthiệnkhácbiệtnày. Dùng redirect:manual, giữcheckresponse.okđểtừchối3xxkhôngđitheoLocation; unitthêmcase302. HelloWorkerdđạt; auth-onlyvàbundleđầyđủđangkiểm. ChưacoilàREADY_TO_DEPLOY_NOT_DEPLOYEDkhi fullnativeWorkerchưađạt.
+
+### M4 — Kiểm Workerd Linux trong quality
+
+WindowsWorkerdkhởiđộngđượchello/auth-onlynhưngbundleSSRđầyđủlỗiinternal qua3lượt, nên dừngretryWindows. Thêm kiểmLinuxnative vào qualityhiệnhữu (vẫn4job), dùngWrangler4.151.3/Workerd1.20261019.1đúnglock trongthưmụctoolQAriêng, bỏinstallscript/metrics/credentialenv; chỉdeploy --dry-run, khôngupload. JWT/khoá thửsinhtạm;mọifetchJWKSđượcchặn vàtrảpublickeylocal, khôngtruycậptàikhoản haydomainthật. Đây làgatechưađạt, cầnkếtquảCItrướckhibáoREADY.
