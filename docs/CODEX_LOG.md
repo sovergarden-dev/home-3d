@@ -161,3 +161,7 @@ Headabed181đãfullchecklại:378unit/39pipeline/lint0, shell222303gzip;3layoutc
 ### Điều tra focus CI vònghai
 
 Run40804608976 Firefoxvẫnfailtrướcmouseup, nên giảthuyếtcleanupkhônggiảithíchđủ. ProbeFirefoxWindowsépnoWebGL2 táihiện:ởfullsnap725px, pointerdownkhôngtớihandle vìcardfallbacknằmtrênnó; focusvềbodyvàheightkhôngđổikéo. ScreenshotCIxácnhậncardchehandle. Sheetexpandedđượcnângz-indextrênfallback/POV; testthêmcheckfocus/capturethậtvàheightphảithayđổitrướccancel, tránhnoopvẫngreen. GiữmọiassertionvàchưakếtluậnCIpass.
+
+### M2 — Hồi quy nút thử lại ở landscape
+
+CI vòng ba `40810779896` đã qua toàn bộ ca kéo bảng; Firefox còn lỗi mới ở nút Retry 3D sau chuỗi consent thời tiết EN landscape (69 pass, 46 skip, 1 fail). Bảng half cao 48dvh với z50 che nút ở mép trên; bản sửa trước đã nâng cả half và full dù probe chỉ chứng minh vấn đề full. Giới hạn z50 cho full; half giữ z20 để thẻ fallback vẫn thao tác được. Giữ nguyên test thời tiết/click thật và ca hủy kéo; không nới timeout hoặc assertion. Mục kéo bảng đã có bằng chứng đạt; hồi quy vừa phát hiện được kiểm riêng trước khi xin cổng CI ở head mới. Chưa merge hoặc đánh dấu M2 DONE.
