@@ -1,0 +1,24 @@
+{
+  "syntheticOnly": true,
+  "runId": 40804608976,
+  "headSha": "eaeea7bab722bc537e1f8369e836c50bc7dbc3d3",
+  "status": "FAILED_RETAINED",
+  "quality": "PASS",
+  "chromium": "PASS",
+  "firefox": {
+    "passed": 68,
+    "failed": 1,
+    "skipped": 46,
+    "failure": "Full sheet handle obstructed by renderer fallback card; locally reproduced with WebGL2 unavailable. Earlier synthetic-cleanup hypothesis was incomplete."
+  },
+  "webkit": {
+    "passed": 115,
+    "failed": 0,
+    "h6BaselineMs": 88905,
+    "h6CandidateMs": 85582,
+    "h6ChangePct": -3.7376975423204506,
+    "absoluteBudget": "NOT_MET_70000_MS"
+  },
+  "fix": "Expanded sheet z50 and stronger drag/cancel regression with an explicit static-fallback scenario. Nine local cases passed; new CI head required.",
+  "noSameHeadRerun": true
+}
