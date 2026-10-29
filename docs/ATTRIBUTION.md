@@ -41,11 +41,11 @@ M2 giữ công thức scalar clamp/lerp tương đương `three/src/math/MathUti
 
 Be Vietnam Pro (Copyright 2021 The Be Vietnam Pro Project Authors) và Lora (Copyright 2011 The Lora Project Authors, Reserved Font Name Lora), SIL Open Font License1.1. Giữ nguyên file WOFF2 từ nguồn phân phối Google Fonts, chỉ chọn subset Vietnamese/Latin và face đã dùng; không sửa tên hoặc glyph. OFL nguyên văn và bảng SHA256/URL nguồn nằm ở `src/assets/fonts/`. Google Fonts không phải Maps và không dùng làm nguồn hình học.
 
-Ứng dụng bỏ stylesheet/preconnect Google Fonts và dùng URL asset do Vite phát sinh. Việc xác minh network0hostngoài và font tiếngViệt còn phải chạy trước khi ghi DONE.
+Ứng dụng bỏ stylesheet/preconnect Google Fonts và dùng URL asset do Vite phát sinh. Các phép kiểm production và axe ban đầu đã chạy với font cục bộ; ma trận tích hợp cuối vẫn pending.
 
 ### Kiểm a11y M3
 
-axe-core 4.14.0 (MPL-2.0), công cụ dev để kiểm WCAG trong browser; không vào bundle runtime. Metadata công khai phát hành 05/10/2026, không có dependency/install script. Tarball và kết quả test còn NOT_VERIFIED ở bước chuẩn bị.
+axe-core 4.14.0 (MPL-2.0), công cụ dev để kiểm WCAG trong browser; không vào bundle runtime. Metadata công khai phát hành 05/10/2026, không có dependency/install script. Tarball đã kiểm integrity và không có install script/native; bằng chứng ở docs/assets/qa/codex/m3/dependency-review.json.
 
 ### M5 — Open Buildings Temporal và pipeline
 
@@ -69,3 +69,7 @@ Dependency chỉ thuộc package pipeline, không vào browser bundle. Tarball k
 | zstddec | 0.2.0 | MIT AND BSD-3-Clause |
 
 Chi tiết: `docs/assets/qa/codex/m5/dependency-review.json`.
+
+### Công cụ QA riêng, không vào build Lovable
+
+Lighthouse 13.5.0 và chrome-launcher 1.2.2 (Apache-2.0) chỉ thuộc toolchain QA. Wrangler 4.151.3 (MIT OR Apache-2.0), Miniflare 5.20261019.1-beta (MIT) và Workerd 1.20261019.1 (Apache-2.0) dùng để dry-run và kiểm native Worker cục bộ/CI. Toolchain này cài với guard 24 giờ và --ignore-scripts; Workerd có script postinstall trong metadata nhưng không chạy script đó. Native executable nằm ngoài dependency app; không đăng nhập hay deploy. Version, giấy phép và hash lock được ghi ở docs/assets/qa/codex/m3/qa-toolchain.json.

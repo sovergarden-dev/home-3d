@@ -41,6 +41,6 @@ Dry run không ghi output. Lệnh thật không ghi đè nguồn hoặc file out
 
 ## Bằng chứng và giới hạn
 
-Đã chạy: 47 test pipeline đạt, gồm median/holes/roof/preservation/config, đọc GeoTIFF tổng hợp thật WGS84/UTM, CLI canonical giữ geometry và binding G1, cùng summary loại bỏ ID/nhãn riêng. Full gate sau tích hợp M4 và dữ liệu thật chưa kiểm. Dependency geotiff/proj4 và các gói bắc cầu có tarball đúng integrity, tuổi trên 24 giờ, không native OS binary/install script; xem dependency-review.json và ATTRIBUTION.
+Đã chạy: 50 test pipeline đạt (kể cả ranh lô override và tie-point raster lệch gốc), gồm median/holes/roof/preservation/config, đọc GeoTIFF tổng hợp thật WGS84/UTM, CLI canonical giữ geometry và binding G1, cùng summary loại bỏ ID/nhãn riêng. Full gate sau tích hợp M4 và dữ liệu thật chưa kiểm. Dependency geotiff/proj4 và các gói bắc cầu có tarball đúng integrity, tuổi trên 24 giờ, không native OS binary/install script; xem dependency-review.json và ATTRIBUTION.
 
 `REAL_WORLD_NOT_VERIFIED`: chưa xác minh vùng phủ, band metadata, chất lượng height tại khu nhà, file dữ liệu thật, hoặc G1 mới trên dữ liệu của chủ dự án. Không chứng nhận độ giống thực địa từ fixture tổng hợp. Đầu ra phải được chủ dự án rà soát trước mọi sử dụng riêng; không tự Publish/deploy.

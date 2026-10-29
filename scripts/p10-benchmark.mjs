@@ -8,7 +8,10 @@ const port = Number(process.env.P10_PORT ?? 4178);
 fs.mkdirSync(out, { recursive: true });
 const write = (name, value) =>
   fs.writeFileSync(path.join(out, name), JSON.stringify(value, null, 2));
-const { browser, dpr, environment } = await launchBenchmark(["--js-flags=--expose-gc"]);
+const { browser, dpr, environment } = await launchBenchmark([
+  "--js-flags=--expose-gc",
+  "--mute-audio",
+]);
 let rendererEvidence;
 const page = await browser.newPage({
   viewport: { width: 1440, height: 900 },
@@ -265,6 +268,13 @@ try {
         { cycle, text: P8_PACKAGE_TEXT },
       );
       if (continuous) {
+        await page.getByRole("button", { name: "Tiếng phố", exact: true }).click();
+        await page.waitForFunction(
+          () =>
+            document.querySelector('[data-testid="demo-scene"]')?.dataset.audioState === "running",
+          {},
+          { timeout: 5000 },
+        );
         await page.evaluate(async () => {
           const { useAppStore } = await window.__p10Import("/src/state/appStore.ts");
           useAppStore.getState().setIllustrativeDetails(true);
@@ -273,6 +283,7 @@ try {
           await page.getByRole("radio", { name, exact: true }).click();
           await page.waitForTimeout(200);
         }
+        await page.getByRole("button", { name: "Tiếng phố", exact: true }).click();
       }
       await page.getByRole("button", { name: "Thêm kỷ niệm", exact: true }).click();
       await page.keyboard.press("Escape");
@@ -347,6 +358,9 @@ try {
       warmupCycles,
       continuousDocument: continuous,
       modeChanges: continuous ? measuredCycles * 4 : null,
+      audioCycles: continuous ? measuredCycles : null,
+      audioOutput:
+        "Muted browser output; actual AudioContext/graph is exercised by trusted clicks.",
       cycles: cycle,
       raw,
       errors,
