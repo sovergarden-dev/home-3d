@@ -36,13 +36,22 @@ test("no WebGL2 keeps a static fictional illustration even after opening a synth
   await expect(page.locator("#scene-root canvas")).toHaveCount(0);
 });
 
-for (const viewport of [
-  { width: 390, height: 844 },
-  { width: 740, height: 390 },
+for (const scenario of [
+  { viewport: { width: 390, height: 844 }, forceFallback: false },
+  { viewport: { width: 740, height: 390 }, forceFallback: false },
+  { viewport: { width: 390, height: 844 }, forceFallback: true },
 ]) {
-  test(`sheet hides controls during drag, restores on cancel, and supports keyboard at ${viewport.width}`, async ({
+  const { viewport, forceFallback } = scenario;
+  test(`sheet hides controls during drag, restores on cancel, and supports keyboard at ${viewport.width}${forceFallback ? " with static fallback" : ""}`, async ({
     page,
   }) => {
+    if (forceFallback)
+      await page.addInitScript(() => {
+        const original = HTMLCanvasElement.prototype.getContext;
+        HTMLCanvasElement.prototype.getContext = function (type: string, ...args: unknown[]) {
+          return type === "webgl2" ? null : Reflect.apply(original, this, [type, ...args]);
+        };
+      });
     await page.emulateMedia({ reducedMotion: "reduce" });
     expect(await page.evaluate(() => matchMedia("(prefers-reduced-motion: reduce)").matches)).toBe(
       true,
@@ -112,7 +121,16 @@ for (const viewport of [
       const handleBox = (await handle.boundingBox())!;
       await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + handleBox.height / 2);
       await page.mouse.down();
+      await expect(handle).toBeFocused();
+      expect(
+        await handle.evaluate((element) =>
+          element.hasPointerCapture(Number(element.getAttribute("data-captured-pointer"))),
+        ),
+      ).toBe(true);
       await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + 45, { steps: 3 });
+      expect(
+        await handle.evaluate((element) => element.parentElement!.getBoundingClientRect().height),
+      ).not.toBe(height);
       await handle.dispatchEvent("pointercancel", {
         pointerId: Number(await handle.getAttribute("data-captured-pointer")),
         pointerType: "mouse",

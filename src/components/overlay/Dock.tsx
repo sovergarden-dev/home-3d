@@ -140,7 +140,7 @@ export function Dock({ mobile, onExpandedChange }: DockProps) {
   return (
     <div
       ref={sheetRef}
-      className="pointer-events-auto glass fixed inset-x-0 bottom-0 z-20 flex flex-col !rounded-b-none transition-[height] duration-250 ease-[var(--ease)] motion-reduce:transition-none"
+      className={`pointer-events-auto glass fixed inset-x-0 bottom-0 ${snap === "peek" ? "z-20" : "z-50"} flex flex-col !rounded-b-none transition-[height] duration-250 ease-[var(--ease)] motion-reduce:transition-none`}
       style={{ height: snapHeights[snap], paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <button

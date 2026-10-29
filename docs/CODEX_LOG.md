@@ -153,3 +153,7 @@ Run40800634965 ởhead5f59f0e: qualityvàWebKit đạt, Firefox68pass/46skip/1fa
 ChromiumCI lượt40800634965 có114pass/1fail: HUDportrait-label tronglandscape dùngfontLinux xuốngthêm1dòng, chồngPOV12px (screenshot synthetic đãxem). Giữđủnội dung, đưagiờ/ngày thànhhai cột trongHUDlandscape đểgiảmchiềucao; giữnguyênzero-overlap assertion. WebKit115/115pass, H6baseline59970ms→55801ms (−6,95%), ngưỡng70s/+10%đạt. Đây làCIheadđầuM2, chưađủ4/4.
 
 Headabed181đãfullchecklại:378unit/39pipeline/lint0, shell222303gzip;3layoutcasevà6cancelcaseC/F/Wđạt. Review độc lập phầnCI-fixkhôngcònactionablefinding, xácnhậntimingassertionfocusđúngsựkiệnchứkhôngnớiđiềukiện. Chuẩn bịheadreceiptmới choCI; khôngrerun5f59f0e.
+
+### Điều tra focus CI vònghai
+
+Run40804608976 Firefoxvẫnfailtrướcmouseup, nên giảthuyếtcleanupkhônggiảithíchđủ. ProbeFirefoxWindowsépnoWebGL2 táihiện:ởfullsnap725px, pointerdownkhôngtớihandle vìcardfallbacknằmtrênnó; focusvềbodyvàheightkhôngđổikéo. ScreenshotCIxácnhậncardchehandle. Sheetexpandedđượcnângz-indextrênfallback/POV; testthêmcheckfocus/capturethậtvàheightphảithayđổitrướccancel, tránhnoopvẫngreen. GiữmọiassertionvàchưakếtluậnCIpass.

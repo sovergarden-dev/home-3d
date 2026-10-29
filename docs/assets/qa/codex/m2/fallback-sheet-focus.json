@@ -1,0 +1,252 @@
+{
+  "syntheticOnly": true,
+  "platform": "Windows Playwright Firefox with WebGL2 deliberately unavailable",
+  "cause": "Fallback card z40 covered the full-sheet handle z20; pointerdown hit the overlay/body, so the drag never began.",
+  "fix": "Expanded sheet z50; peek remains z20. Focus/capture and actual height movement now checked for every drag before cancellation.",
+  "observations": {
+    "before": [
+      {
+        "stage": "before-peek",
+        "media": true,
+        "height": 96,
+        "handleY": 749,
+        "focused": false,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "down-peek",
+        "media": true,
+        "height": 96,
+        "handleY": 749,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "move-peek",
+        "media": true,
+        "height": 178,
+        "handleY": 667,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "cancel-peek",
+        "media": true,
+        "height": 96,
+        "handleY": 749,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "up-peek",
+        "media": true,
+        "height": 96,
+        "handleY": 749,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "before-half",
+        "media": true,
+        "height": 405.1166687011719,
+        "handleY": 439.8833312988281,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "down-half",
+        "media": true,
+        "height": 405.1166687011719,
+        "handleY": 439.8833312988281,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "move-half",
+        "media": true,
+        "height": 372.1166687011719,
+        "handleY": 472.8833312988281,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "cancel-half",
+        "media": true,
+        "height": 405.1166687011719,
+        "handleY": 439.8833312988281,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "up-half",
+        "media": true,
+        "height": 405.1166687011719,
+        "handleY": 439.8833312988281,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "before-full",
+        "media": true,
+        "height": 725.8333129882812,
+        "handleY": 119.16667175292969,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "down-full",
+        "media": true,
+        "height": 725.8333129882812,
+        "handleY": 119.16667175292969,
+        "focused": false,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "move-full",
+        "media": true,
+        "height": 725.8333129882812,
+        "handleY": 119.16667175292969,
+        "focused": false,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "cancel-full",
+        "media": true,
+        "height": 725.8333129882812,
+        "handleY": 119.16667175292969,
+        "focused": false,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "up-full",
+        "media": true,
+        "height": 725.8333129882812,
+        "handleY": 119.16667175292969,
+        "focused": false,
+        "transition": "0.00001s"
+      }
+    ],
+    "after": [
+      {
+        "stage": "before-peek",
+        "media": true,
+        "height": 96,
+        "handleY": 749,
+        "focused": false,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "down-peek",
+        "media": true,
+        "height": 96,
+        "handleY": 749,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "move-peek",
+        "media": true,
+        "height": 178,
+        "handleY": 667,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "cancel-peek",
+        "media": true,
+        "height": 96,
+        "handleY": 749,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "up-peek",
+        "media": true,
+        "height": 96,
+        "handleY": 749,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "before-half",
+        "media": true,
+        "height": 405.1166687011719,
+        "handleY": 439.8833312988281,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "down-half",
+        "media": true,
+        "height": 405.1166687011719,
+        "handleY": 439.8833312988281,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "move-half",
+        "media": true,
+        "height": 372.1166687011719,
+        "handleY": 472.8833312988281,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "cancel-half",
+        "media": true,
+        "height": 405.1166687011719,
+        "handleY": 439.8833312988281,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "up-half",
+        "media": true,
+        "height": 405.1166687011719,
+        "handleY": 439.8833312988281,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "before-full",
+        "media": true,
+        "height": 725.8333129882812,
+        "handleY": 119.16667175292969,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "down-full",
+        "media": true,
+        "height": 725.8333129882812,
+        "handleY": 119.16667175292969,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "move-full",
+        "media": true,
+        "height": 692.8333129882812,
+        "handleY": 152.1666717529297,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "cancel-full",
+        "media": true,
+        "height": 725.8333129882812,
+        "handleY": 119.16667175292969,
+        "focused": true,
+        "transition": "0.00001s"
+      },
+      {
+        "stage": "up-full",
+        "media": true,
+        "height": 725.8333129882812,
+        "handleY": 119.16667175292969,
+        "focused": true,
+        "transition": "0.00001s"
+      }
+    ]
+  }
+}
