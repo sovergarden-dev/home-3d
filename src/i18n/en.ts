@@ -16,6 +16,8 @@ export const en: Dict = {
   fallbackBody:
     "This demo needs WebGL2. Try hardware acceleration or another browser. No real location data is loaded.",
   retryScene: "Retry 3D",
+  recoveringScene: "Restoring the 3D scene…",
+  staticSceneDescription: "Static illustration of a fictional street, not a real-world map",
   captureUnavailable: "The 3D scene is not ready for capture",
   soundDemo: "Synthesized demo ambience, not a real street recording",
   demoOnly: "Real-world data is not included in this demo",
@@ -94,7 +96,7 @@ export const en: Dict = {
     label: "Simulation",
     layer: "Life layer",
     density: "Simulation density",
-    note: "Illustrative traffic, people, vendors and animals · inferred lanes and paths, not surveyed data.",
+    note: "Illustrative traffic, people, vendors and animals, enlarged in Diorama for readability; inferred lanes and paths, not surveyed data.",
     audio: "Synthesized audio",
     localAudio: "Local audio · session only",
     audioError: "Clip unavailable; synthesized fallback",

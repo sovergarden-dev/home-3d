@@ -1,0 +1,894 @@
+{
+  "syntheticOnly": true,
+  "sourceSha": "0265a53b9e8b571b18fd19ad496e0c9ccdad181d",
+  "harnessSha": "b1d9bb18e8d7355eec3ca70540f6ff9399846860",
+  "runStatus": "INTERRUPTED_SUPERSEDED_BY_EMPTY_LAYER_FIX",
+  "complete": false,
+  "advertisedTotal": 327,
+  "observedResults": [
+    {
+      "status": "passed",
+      "index": 1,
+      "browser": "chromium",
+      "test": "demo.spec.ts:43:1 › demo labels, privacy, noindex and graceful 3D capability branch",
+      "durationAsLogged": "5.4s"
+    },
+    {
+      "status": "passed",
+      "index": 2,
+      "browser": "chromium",
+      "test": "demo.spec.ts:58:1 › diorama keeps the synthetic streets visually legible",
+      "durationAsLogged": "5.7s"
+    },
+    {
+      "status": "passed",
+      "index": 3,
+      "browser": "chromium",
+      "test": "demo.spec.ts:66:1 › time, weather, festivals, camera, capture and clear work in a rendered scene",
+      "durationAsLogged": "26.9s"
+    },
+    {
+      "status": "passed",
+      "index": 4,
+      "browser": "chromium",
+      "test": "demo.spec.ts:112:1 › mobile controls hide immediately during drag and return at peek",
+      "durationAsLogged": "5.7s"
+    },
+    {
+      "status": "passed",
+      "index": 5,
+      "browser": "chromium",
+      "test": "demo.spec.ts:135:1 › WebGL unavailable cannot trap the user behind loading or claim capture success",
+      "durationAsLogged": "4.0s"
+    },
+    {
+      "status": "passed",
+      "index": 6,
+      "browser": "chromium",
+      "test": "demo.spec.ts:150:1 › route roundtrip recreates exactly one canvas and context loss has a recovery UI",
+      "durationAsLogged": "8.2s"
+    },
+    {
+      "status": "passed",
+      "index": 7,
+      "browser": "chromium",
+      "test": "demo.spec.ts:169:1 › Mặt bằng renders one orthographic world, measures from its camera and applies layer toggles",
+      "durationAsLogged": "7.9s"
+    },
+    {
+      "status": "passed",
+      "index": 8,
+      "browser": "chromium",
+      "test": "demo.spec.ts:212:1 › explicit local preview refuses malformed package instead of silently returning to fixture",
+      "durationAsLogged": "7.9s"
+    },
+    {
+      "status": "passed",
+      "index": 9,
+      "browser": "chromium",
+      "test": "demo.spec.ts:239:1 › explicit local preview opens a valid synthetic package as one in-memory world",
+      "durationAsLogged": "5.8s"
+    },
+    {
+      "status": "passed",
+      "index": 10,
+      "browser": "chromium",
+      "test": "demo.spec.ts:293:1 › private diorama keeps the supplied ENU origin in frame when source geometry is offset",
+      "durationAsLogged": "10.7s"
+    },
+    {
+      "status": "passed",
+      "index": 11,
+      "browser": "chromium",
+      "test": "demo.spec.ts:389:1 › static scene stops drawing when idle",
+      "durationAsLogged": "5.9s"
+    },
+    {
+      "status": "passed",
+      "index": 12,
+      "browser": "chromium",
+      "test": "demo.spec.ts:406:1 › private preview labels a no-level class-prior height as unknown",
+      "durationAsLogged": "5.7s"
+    },
+    {
+      "status": "passed",
+      "index": 13,
+      "browser": "chromium",
+      "test": "demo.spec.ts:468:1 › local preview editor: edit, geometry gate, undo/redo, road edit, export and reload",
+      "durationAsLogged": "11.2s"
+    },
+    {
+      "status": "passed",
+      "index": 14,
+      "browser": "chromium",
+      "test": "h6-completion.spec.ts:183:3 › H6 completion synthetic integration › root and legacy query expose local file action with noindex and neutral fiction",
+      "durationAsLogged": "7.6s"
+    },
+    {
+      "status": "passed",
+      "index": 15,
+      "browser": "chromium",
+      "test": "h6-completion.spec.ts:198:5 › H6 completion synthetic integration › sentinel open/edit/capture/export/reload never reaches request attempts, console, storage or SSR",
+      "durationAsLogged": "15.4s"
+    },
+    {
+      "status": "passed",
+      "index": 16,
+      "browser": "chromium",
+      "test": "h6-completion.spec.ts:198:5 › H6 completion synthetic integration › sentinel unavailable renderer retains edit/export/privacy and never claims capture",
+      "durationAsLogged": "7.4s"
+    },
+    {
+      "status": "passed",
+      "index": 17,
+      "browser": "chromium",
+      "test": "h6-completion.spec.ts:288:3 › H6 completion synthetic integration › portrait/landscape keyboard and VI/EN retain a reachable compact panel",
+      "durationAsLogged": "4.6s"
+    },
+    {
+      "status": "passed",
+      "index": 18,
+      "browser": "chromium",
+      "test": "h6-completion.spec.ts:311:3 › H6 completion synthetic integration › 20 mode/route/package/capture cycles keep one ready canvas and no page errors",
+      "durationAsLogged": "1.5m"
+    },
+    {
+      "status": "passed",
+      "index": 19,
+      "browser": "chromium",
+      "test": "h6-completion.spec.ts:368:3 › H6 completion synthetic integration › canvas part picking, hidden layers and camera framing preserve the package",
+      "durationAsLogged": "11.4s"
+    },
+    {
+      "status": "passed",
+      "index": 20,
+      "browser": "chromium",
+      "test": "h6-completion.spec.ts:507:3 › H6 completion synthetic integration › context loss then real retry preserves the loaded package and one world",
+      "durationAsLogged": "9.1s"
+    },
+    {
+      "status": "passed",
+      "index": 21,
+      "browser": "chromium",
+      "test": "h6-review23.spec.ts:17:5 › Review 23 synthetic file regressions › R23-1 missing coverage is rejected without crash and valid file recovers",
+      "durationAsLogged": "6.7s"
+    },
+    {
+      "status": "passed",
+      "index": 22,
+      "browser": "chromium",
+      "test": "h6-review23.spec.ts:17:5 › Review 23 synthetic file regressions › R23-1 null coverage is rejected without crash and valid file recovers",
+      "durationAsLogged": "6.8s"
+    },
+    {
+      "status": "passed",
+      "index": 23,
+      "browser": "chromium",
+      "test": "h6-review23.spec.ts:17:5 › Review 23 synthetic file regressions › R23-1 object coverage is rejected without crash and valid file recovers",
+      "durationAsLogged": "6.7s"
+    },
+    {
+      "status": "passed",
+      "index": 24,
+      "browser": "chromium",
+      "test": "h6-review23.spec.ts:23:3 › Review 23 synthetic file regressions › R23-2 road field provenance survives override and export/reopen in VI/EN",
+      "durationAsLogged": "9.6s"
+    },
+    {
+      "status": "passed",
+      "index": 25,
+      "browser": "chromium",
+      "test": "h6-roundtrip.spec.ts:112:1 › H6 synthetic source → build → editor → export → source rebuild → reload preserves part edits",
+      "durationAsLogged": "17.7s"
+    },
+    {
+      "status": "passed",
+      "index": 26,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:73:1 › P10 real image pipeline strips synthetic JPEG EXIF Orientation/GPS/XMP and PNG/WebP metadata",
+      "durationAsLogged": "5.6s"
+    },
+    {
+      "status": "passed",
+      "index": 27,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:253:1 › P10 import always reprocesses memory AND journal photos; public export excludes private data",
+      "durationAsLogged": "10.1s"
+    },
+    {
+      "status": "passed",
+      "index": 28,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:298:1 › P10 A→B→C/loading/error isolation; unconsented private data never enters network, URL or storage",
+      "durationAsLogged": "19.3s"
+    },
+    {
+      "status": "passed",
+      "index": 29,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:362:1 › P10 opt-in IndexedDB survives reload; disabling writes retains RAM; all-device delete clears saved data",
+      "durationAsLogged": "19.5s"
+    },
+    {
+      "status": "passed",
+      "index": 30,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:398:1 › P10 blocked/quota storage keeps RAM and reports only neutral code",
+      "durationAsLogged": "9.5s"
+    },
+    {
+      "status": "passed",
+      "index": 31,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:442:1 › P10 guest hides private memories, home label, marker/lot and construction diary",
+      "durationAsLogged": "6.2s"
+    },
+    {
+      "status": "passed",
+      "index": 32,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:456:1 › P10 tour uses actual camera, restores pose, mode interruption, strict deep-link round trip",
+      "durationAsLogged": "6.7s"
+    },
+    {
+      "status": "passed",
+      "index": 33,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:498:1 › P10 postcard renders actual scene at desktop 4K and mobile 2K, cancels and restores canvas",
+      "durationAsLogged": "7.2s"
+    },
+    {
+      "status": "passed",
+      "index": 34,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:552:3 › P10 editor photo <=6 actions, keyboard focus/Escape, XSS text at 1440x900",
+      "durationAsLogged": "11.7s"
+    },
+    {
+      "status": "passed",
+      "index": 35,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:552:3 › P10 editor photo <=6 actions, keyboard focus/Escape, XSS text at 390x844",
+      "durationAsLogged": "10.8s"
+    },
+    {
+      "status": "passed",
+      "index": 36,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:552:3 › P10 editor photo <=6 actions, keyboard focus/Escape, XSS text at 740x390",
+      "durationAsLogged": "11.6s"
+    },
+    {
+      "status": "passed",
+      "index": 37,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:617:7 › postcard caption ink boxes stay separated at 3840px in vi with empty",
+      "durationAsLogged": "2.1s"
+    },
+    {
+      "status": "passed",
+      "index": 38,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:617:7 › postcard caption ink boxes stay separated at 3840px in vi with maximum width",
+      "durationAsLogged": "2.2s"
+    },
+    {
+      "status": "passed",
+      "index": 39,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:617:7 › postcard caption ink boxes stay separated at 3840px in vi with Vietnamese accents",
+      "durationAsLogged": "2.1s"
+    },
+    {
+      "status": "passed",
+      "index": 40,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:617:7 › postcard caption ink boxes stay separated at 3840px in en with empty",
+      "durationAsLogged": "2.0s"
+    },
+    {
+      "status": "passed",
+      "index": 41,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:617:7 › postcard caption ink boxes stay separated at 3840px in en with maximum width",
+      "durationAsLogged": "2.2s"
+    },
+    {
+      "status": "passed",
+      "index": 42,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:617:7 › postcard caption ink boxes stay separated at 3840px in en with Vietnamese accents",
+      "durationAsLogged": "2.0s"
+    },
+    {
+      "status": "passed",
+      "index": 43,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:617:7 › postcard caption ink boxes stay separated at 2048px in vi with empty",
+      "durationAsLogged": "2.0s"
+    },
+    {
+      "status": "passed",
+      "index": 44,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:617:7 › postcard caption ink boxes stay separated at 2048px in vi with maximum width",
+      "durationAsLogged": "1.9s"
+    },
+    {
+      "status": "passed",
+      "index": 45,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:617:7 › postcard caption ink boxes stay separated at 2048px in vi with Vietnamese accents",
+      "durationAsLogged": "1.9s"
+    },
+    {
+      "status": "passed",
+      "index": 46,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:617:7 › postcard caption ink boxes stay separated at 2048px in en with empty",
+      "durationAsLogged": "1.8s"
+    },
+    {
+      "status": "passed",
+      "index": 47,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:617:7 › postcard caption ink boxes stay separated at 2048px in en with maximum width",
+      "durationAsLogged": "1.8s"
+    },
+    {
+      "status": "passed",
+      "index": 48,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:617:7 › postcard caption ink boxes stay separated at 2048px in en with Vietnamese accents",
+      "durationAsLogged": "1.8s"
+    },
+    {
+      "status": "passed",
+      "index": 49,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:617:7 › postcard caption ink boxes stay separated at 1920px in vi with empty",
+      "durationAsLogged": "1.6s"
+    },
+    {
+      "status": "passed",
+      "index": 50,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:617:7 › postcard caption ink boxes stay separated at 1920px in vi with maximum width",
+      "durationAsLogged": "1.7s"
+    },
+    {
+      "status": "passed",
+      "index": 51,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:617:7 › postcard caption ink boxes stay separated at 1920px in vi with Vietnamese accents",
+      "durationAsLogged": "1.7s"
+    },
+    {
+      "status": "passed",
+      "index": 52,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:617:7 › postcard caption ink boxes stay separated at 1920px in en with empty",
+      "durationAsLogged": "1.9s"
+    },
+    {
+      "status": "passed",
+      "index": 53,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:617:7 › postcard caption ink boxes stay separated at 1920px in en with maximum width",
+      "durationAsLogged": "1.7s"
+    },
+    {
+      "status": "passed",
+      "index": 54,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:617:7 › postcard caption ink boxes stay separated at 1920px in en with Vietnamese accents",
+      "durationAsLogged": "1.5s"
+    },
+    {
+      "status": "passed",
+      "index": 55,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:890:7 › rendered memory pin stays readable in diorama at 1440x900 zoom 0.25",
+      "durationAsLogged": "6.8s"
+    },
+    {
+      "status": "passed",
+      "index": 56,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:890:7 › rendered memory pin stays readable in diorama at 1440x900 zoom 4",
+      "durationAsLogged": "7.2s"
+    },
+    {
+      "status": "passed",
+      "index": 57,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:890:7 › rendered memory pin stays readable in topdown at 1440x900 zoom 0.25",
+      "durationAsLogged": "6.5s"
+    },
+    {
+      "status": "passed",
+      "index": 58,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:890:7 › rendered memory pin stays readable in topdown at 1440x900 zoom 4",
+      "durationAsLogged": "7.0s"
+    },
+    {
+      "status": "passed",
+      "index": 59,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:890:7 › rendered memory pin stays readable in diorama at 390x844 zoom 0.25",
+      "durationAsLogged": "5.7s"
+    },
+    {
+      "status": "passed",
+      "index": 60,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:890:7 › rendered memory pin stays readable in diorama at 390x844 zoom 4",
+      "durationAsLogged": "5.7s"
+    },
+    {
+      "status": "passed",
+      "index": 61,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:890:7 › rendered memory pin stays readable in topdown at 390x844 zoom 0.25",
+      "durationAsLogged": "5.6s"
+    },
+    {
+      "status": "passed",
+      "index": 62,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:890:7 › rendered memory pin stays readable in topdown at 390x844 zoom 4",
+      "durationAsLogged": "5.5s"
+    },
+    {
+      "status": "passed",
+      "index": 63,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:890:7 › rendered memory pin stays readable in diorama at 740x390 zoom 0.25",
+      "durationAsLogged": "6.1s"
+    },
+    {
+      "status": "passed",
+      "index": 64,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:890:7 › rendered memory pin stays readable in diorama at 740x390 zoom 4",
+      "durationAsLogged": "6.2s"
+    },
+    {
+      "status": "passed",
+      "index": 65,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:890:7 › rendered memory pin stays readable in topdown at 740x390 zoom 0.25",
+      "durationAsLogged": "5.4s"
+    },
+    {
+      "status": "passed",
+      "index": 66,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:890:7 › rendered memory pin stays readable in topdown at 740x390 zoom 4",
+      "durationAsLogged": "5.7s"
+    },
+    {
+      "status": "passed",
+      "index": 67,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:909:3 › memory pin hit tolerance and overlap selection work in diorama",
+      "durationAsLogged": "12.6s"
+    },
+    {
+      "status": "passed",
+      "index": 68,
+      "browser": "chromium",
+      "test": "p10-memories.spec.ts:909:3 › memory pin hit tolerance and overlap selection work in topdown",
+      "durationAsLogged": "20.9s"
+    },
+    {
+      "status": "passed",
+      "index": 69,
+      "browser": "chromium",
+      "test": "p10-render-lifecycle.spec.ts:35:1 › P10 pins alter real captured pixels without world rebuild",
+      "durationAsLogged": "9.8s"
+    },
+    {
+      "status": "passed",
+      "index": 70,
+      "browser": "chromium",
+      "test": "p10-render-lifecycle.spec.ts:101:1 › P10 journal before/after keyboard slider and VI/EN stay private",
+      "durationAsLogged": "6.2s"
+    },
+    {
+      "status": "passed",
+      "index": 71,
+      "browser": "chromium",
+      "test": "p10-render-lifecycle.spec.ts:141:1 › P10 actual flight freezes for pause/hidden and reduced motion jumps",
+      "durationAsLogged": "8.4s"
+    },
+    {
+      "status": "passed",
+      "index": 72,
+      "browser": "chromium",
+      "test": "p10-storage-r2.spec.ts:68:3 › P10 R2 storage › opt-in reload remembers content and flag-off never reads IDB",
+      "durationAsLogged": "17.8s"
+    },
+    {
+      "status": "passed",
+      "index": 73,
+      "browser": "chromium",
+      "test": "p10-storage-r2.spec.ts:116:3 › P10 R2 storage › import cancel is atomic and accept merges by id",
+      "durationAsLogged": "5.5s"
+    },
+    {
+      "status": "passed",
+      "index": 74,
+      "browser": "chromium",
+      "test": "p10-storage-r2.spec.ts:143:3 › P10 R2 storage › missing/corrupt IDB is readonly without pageerror; confirmed clear recovers",
+      "durationAsLogged": "6.0s"
+    },
+    {
+      "status": "passed",
+      "index": 75,
+      "browser": "chromium",
+      "test": "p10-storage-r2.spec.ts:174:3 › P10 R2 storage › UI import dismisses atomically, then accepts an id merge while retaining other ids",
+      "durationAsLogged": "6.6s"
+    },
+    {
+      "status": "passed",
+      "index": 76,
+      "browser": "chromium",
+      "test": "p10-storage-r2.spec.ts:215:3 › P10 R2 storage › corrupt IndexedDB remains readonly and exact until confirmed UI clear",
+      "durationAsLogged": "11.6s"
+    },
+    {
+      "status": "passed",
+      "index": 77,
+      "browser": "chromium",
+      "test": "p10-storage-r2.spec.ts:346:3 › P10 R2 storage › valid oversized IndexedDB remains exact and readonly until confirmed UI clear",
+      "durationAsLogged": "15.9s"
+    },
+    {
+      "status": "passed",
+      "index": 78,
+      "browser": "chromium",
+      "test": "p7-real-street.spec.ts:202:3 › P7 synthetic real-street handoff › private package/reference gating is hash-bound and hidden input is attached",
+      "durationAsLogged": "8.7s"
+    },
+    {
+      "status": "passed",
+      "index": 79,
+      "browser": "chromium",
+      "test": "p7-real-street.spec.ts:218:3 › P7 synthetic real-street handoff › fixture, WebGL2 fallback, and loading states keep real street disabled",
+      "durationAsLogged": "13.8s"
+    },
+    {
+      "status": "passed",
+      "index": 80,
+      "browser": "chromium",
+      "test": "p7-real-street.spec.ts:254:3 › P7 synthetic real-street handoff › package switch and UI reset invalidate references without rebuilding the scene host",
+      "durationAsLogged": "10.9s"
+    },
+    {
+      "status": "passed",
+      "index": 81,
+      "browser": "chromium",
+      "test": "p7-real-street.spec.ts:286:3 › P7 synthetic real-street handoff › cancel intentionally focuses first and leaves no privacy side effect",
+      "durationAsLogged": "9.8s"
+    },
+    {
+      "status": "passed",
+      "index": 82,
+      "browser": "chromium",
+      "test": "p7-real-street.spec.ts:325:3 › P7 synthetic real-street handoff › Street View confirmation uses synthetic popup, no real Google contact, no referrer, and minimal encoded params",
+      "durationAsLogged": "9.3s"
+    },
+    {
+      "status": "passed",
+      "index": 83,
+      "browser": "chromium",
+      "test": "p7-real-street.spec.ts:383:3 › P7 synthetic real-street handoff › Satellite confirmation sends only its documented minimal parameters",
+      "durationAsLogged": "10.3s"
+    },
+    {
+      "status": "passed",
+      "index": 84,
+      "browser": "chromium",
+      "test": "p7-real-street.spec.ts:417:3 › P7 synthetic real-street handoff › blocked popup preserves the session and keeps the control usable",
+      "durationAsLogged": "10.0s"
+    },
+    {
+      "status": "passed",
+      "index": 85,
+      "browser": "chromium",
+      "test": "p7-real-street.spec.ts:430:3 › P7 synthetic real-street handoff › language and portrait/landscape keep the dialog reachable",
+      "durationAsLogged": "9.9s"
+    },
+    {
+      "status": "failed",
+      "index": 86,
+      "browser": "chromium",
+      "test": "p8-atmosphere.spec.ts:55:3 › P8 synthetic atmosphere integration › weather and date controls attempt no external location request and keep true activation blocked",
+      "durationAsLogged": "6.8s"
+    },
+    {
+      "status": "failed",
+      "index": 87,
+      "browser": "chromium",
+      "test": "p8-atmosphere.spec.ts:80:3 › P8 synthetic atmosphere integration › date drives Vietnamese auto festival; manual normal disables auto; VI/EN remains usable",
+      "durationAsLogged": "7.9s"
+    },
+    {
+      "status": "failed",
+      "index": 88,
+      "browser": "chromium",
+      "test": "p8-atmosphere.spec.ts:112:3 › P8 synthetic atmosphere integration › all presentation controls preserve exported geometry, provenance and package state byte-for-byte",
+      "durationAsLogged": "6.6s"
+    },
+    {
+      "status": "passed",
+      "index": 89,
+      "browser": "chromium",
+      "test": "p8-atmosphere.spec.ts:139:3 › P8 synthetic atmosphere integration › export invariant survives disabled presentation controls in Firefox fallback",
+      "durationAsLogged": "11.7s"
+    },
+    {
+      "status": "passed",
+      "index": 90,
+      "browser": "chromium",
+      "test": "p8-atmosphere.spec.ts:185:3 › P8 synthetic atmosphere integration › keyboard focus, touch targets, reduced-motion and portrait/landscape sheet stay usable",
+      "durationAsLogged": "10.9s"
+    },
+    {
+      "status": "passed",
+      "index": 91,
+      "browser": "chromium",
+      "test": "p8-atmosphere.spec.ts:212:3 › P8 synthetic atmosphere integration › forced fallback short landscape keeps native weather-time tabs and retry reachable",
+      "durationAsLogged": "4.9s"
+    },
+    {
+      "status": "passed",
+      "index": 92,
+      "browser": "chromium",
+      "test": "p8-atmosphere.spec.ts:238:3 › P8 synthetic atmosphere integration › GPU canvas pixels change for weather, seasons, festival, flood and layer off; plan stays neutral",
+      "durationAsLogged": "17.8s"
+    },
+    {
+      "status": "passed",
+      "index": 93,
+      "browser": "chromium",
+      "test": "p8-weather.spec.ts:168:7 › P8 weather consent and responsive lifecycle › vi phone covers consent, ready, stale, and error actions",
+      "durationAsLogged": "1.4m"
+    },
+    {
+      "status": "failed",
+      "index": 94,
+      "browser": "chromium",
+      "test": "p8-weather.spec.ts:168:7 › P8 weather consent and responsive lifecycle › vi landscape covers consent, ready, stale, and error actions",
+      "durationAsLogged": "3.0m"
+    },
+    {
+      "status": "passed",
+      "index": 95,
+      "browser": "chromium",
+      "test": "p8-weather.spec.ts:168:7 › P8 weather consent and responsive lifecycle › forced fallback vi phone covers consent, ready, stale, and error actions",
+      "durationAsLogged": "12.4s"
+    },
+    {
+      "status": "passed",
+      "index": 96,
+      "browser": "chromium",
+      "test": "p8-weather.spec.ts:168:7 › P8 weather consent and responsive lifecycle › forced fallback vi landscape covers consent, ready, stale, and error actions",
+      "durationAsLogged": "12.3s"
+    },
+    {
+      "status": "passed",
+      "index": 97,
+      "browser": "chromium",
+      "test": "p8-weather.spec.ts:168:7 › P8 weather consent and responsive lifecycle › en phone covers consent, ready, stale, and error actions",
+      "durationAsLogged": "1.4m"
+    },
+    {
+      "status": "passed",
+      "index": 98,
+      "browser": "chromium",
+      "test": "p8-weather.spec.ts:168:7 › P8 weather consent and responsive lifecycle › en landscape covers consent, ready, stale, and error actions",
+      "durationAsLogged": "1.2m"
+    },
+    {
+      "status": "passed",
+      "index": 99,
+      "browser": "chromium",
+      "test": "p8-weather.spec.ts:168:7 › P8 weather consent and responsive lifecycle › forced fallback en phone covers consent, ready, stale, and error actions",
+      "durationAsLogged": "11.9s"
+    },
+    {
+      "status": "passed",
+      "index": 100,
+      "browser": "chromium",
+      "test": "p8-weather.spec.ts:168:7 › P8 weather consent and responsive lifecycle › forced fallback en landscape covers consent, ready, stale, and error actions",
+      "durationAsLogged": "10.8s"
+    },
+    {
+      "status": "passed",
+      "index": 101,
+      "browser": "chromium",
+      "test": "p8-weather.spec.ts:362:3 › P8 weather consent and request boundary › demo starts with weather disabled and no external requests",
+      "durationAsLogged": "5.3s"
+    },
+    {
+      "status": "passed",
+      "index": 102,
+      "browser": "chromium",
+      "test": "p8-weather.spec.ts:374:3 › P8 weather consent and request boundary › native package/reference import enables consent, one request, success, and off",
+      "durationAsLogged": "10.7s"
+    },
+    {
+      "status": "passed",
+      "index": 103,
+      "browser": "chromium",
+      "test": "p9-life-sound.spec.ts:59:3 › P9 synthetic life and sound › local fixture, life toggle, walk, ride and sound send no data; real activation stays blocked",
+      "durationAsLogged": "11.7s"
+    },
+    {
+      "status": "passed",
+      "index": 104,
+      "browser": "chromium",
+      "test": "p9-life-sound.spec.ts:99:3 › P9 synthetic life and sound › life is visible in real pixels, Plan hides it and Pause does not advance simulation",
+      "durationAsLogged": "13.5s"
+    },
+    {
+      "status": "passed",
+      "index": 105,
+      "browser": "chromium",
+      "test": "p9-life-sound.spec.ts:124:3 › P9 synthetic life and sound › POV is eye level, exit keeps package and camera, keyboard releases; ride pause and tilt remain optional",
+      "durationAsLogged": "12.5s"
+    },
+    {
+      "status": "passed",
+      "index": 106,
+      "browser": "chromium",
+      "test": "p9-life-sound.spec.ts:162:3 › P9 synthetic life and sound › sound context is gesture-only, one per scene, local clip manifest stays in session and off releases voices",
+      "durationAsLogged": "10.8s"
+    },
+    {
+      "status": "passed",
+      "index": 107,
+      "browser": "chromium",
+      "test": "p9-life-sound.spec.ts:217:5 › P9 synthetic life and sound › VI/EN touch and exit controls at 390x844",
+      "durationAsLogged": "9.9s"
+    },
+    {
+      "status": "passed",
+      "index": 108,
+      "browser": "chromium",
+      "test": "p9-life-sound.spec.ts:217:5 › P9 synthetic life and sound › VI/EN touch and exit controls at 740x390",
+      "durationAsLogged": "9.9s"
+    },
+    {
+      "status": "passed",
+      "index": 109,
+      "browser": "chromium",
+      "test": "p9-life-sound.spec.ts:240:1 › P9 OfflineAudioContext measures the actual eight-voice storm mix below the peak limit",
+      "durationAsLogged": "4.2s"
+    },
+    {
+      "status": "passed",
+      "index": 110,
+      "browser": "firefox",
+      "test": "demo.spec.ts:43:1 › demo labels, privacy, noindex and graceful 3D capability branch",
+      "durationAsLogged": "13.7s"
+    },
+    {
+      "status": "passed",
+      "index": 111,
+      "browser": "firefox",
+      "test": "demo.spec.ts:58:1 › diorama keeps the synthetic streets visually legible",
+      "durationAsLogged": "10.7s"
+    },
+    {
+      "status": "passed",
+      "index": 112,
+      "browser": "firefox",
+      "test": "demo.spec.ts:66:1 › time, weather, festivals, camera, capture and clear work in a rendered scene",
+      "durationAsLogged": "16.2s"
+    },
+    {
+      "status": "passed",
+      "index": 113,
+      "browser": "firefox",
+      "test": "demo.spec.ts:112:1 › mobile controls hide immediately during drag and return at peek",
+      "durationAsLogged": "10.8s"
+    },
+    {
+      "status": "passed",
+      "index": 114,
+      "browser": "firefox",
+      "test": "demo.spec.ts:135:1 › WebGL unavailable cannot trap the user behind loading or claim capture success",
+      "durationAsLogged": "4.9s"
+    },
+    {
+      "status": "passed",
+      "index": 115,
+      "browser": "firefox",
+      "test": "demo.spec.ts:150:1 › route roundtrip recreates exactly one canvas and context loss has a recovery UI",
+      "durationAsLogged": "20.8s"
+    },
+    {
+      "status": "passed",
+      "index": 116,
+      "browser": "firefox",
+      "test": "demo.spec.ts:169:1 › Mặt bằng renders one orthographic world, measures from its camera and applies layer toggles",
+      "durationAsLogged": "12.1s"
+    },
+    {
+      "status": "passed",
+      "index": 117,
+      "browser": "firefox",
+      "test": "demo.spec.ts:212:1 › explicit local preview refuses malformed package instead of silently returning to fixture",
+      "durationAsLogged": "12.7s"
+    },
+    {
+      "status": "passed",
+      "index": 118,
+      "browser": "firefox",
+      "test": "demo.spec.ts:239:1 › explicit local preview opens a valid synthetic package as one in-memory world",
+      "durationAsLogged": "17.3s"
+    },
+    {
+      "status": "passed",
+      "index": 119,
+      "browser": "firefox",
+      "test": "demo.spec.ts:293:1 › private diorama keeps the supplied ENU origin in frame when source geometry is offset",
+      "durationAsLogged": "23.7s"
+    },
+    {
+      "status": "passed",
+      "index": 120,
+      "browser": "firefox",
+      "test": "demo.spec.ts:389:1 › static scene stops drawing when idle",
+      "durationAsLogged": "11.7s"
+    },
+    {
+      "status": "passed",
+      "index": 121,
+      "browser": "firefox",
+      "test": "demo.spec.ts:406:1 › private preview labels a no-level class-prior height as unknown",
+      "durationAsLogged": "13.6s"
+    },
+    {
+      "status": "passed",
+      "index": 122,
+      "browser": "firefox",
+      "test": "demo.spec.ts:468:1 › local preview editor: edit, geometry gate, undo/redo, road edit, export and reload",
+      "durationAsLogged": "25.5s"
+    },
+    {
+      "status": "passed",
+      "index": 123,
+      "browser": "firefox",
+      "test": "h6-completion.spec.ts:183:3 › H6 completion synthetic integration › root and legacy query expose local file action with noindex and neutral fiction",
+      "durationAsLogged": "31.7s"
+    },
+    {
+      "status": "passed",
+      "index": 124,
+      "browser": "firefox",
+      "test": "h6-completion.spec.ts:198:5 › H6 completion synthetic integration › sentinel open/edit/capture/export/reload never reaches request attempts, console, storage or SSR",
+      "durationAsLogged": "32.8s"
+    },
+    {
+      "status": "passed",
+      "index": 125,
+      "browser": "firefox",
+      "test": "h6-completion.spec.ts:198:5 › H6 completion synthetic integration › sentinel unavailable renderer retains edit/export/privacy and never claims capture",
+      "durationAsLogged": "21.4s"
+    },
+    {
+      "status": "passed",
+      "index": 126,
+      "browser": "firefox",
+      "test": "h6-completion.spec.ts:288:3 › H6 completion synthetic integration › portrait/landscape keyboard and VI/EN retain a reachable compact panel",
+      "durationAsLogged": "18.9s"
+    }
+  ],
+  "notObservedOrInterrupted": 201,
+  "note": "List output and original error artifacts retained. Full JSON reporter did not flush after interruption. No claim that all 327 ran."
+}

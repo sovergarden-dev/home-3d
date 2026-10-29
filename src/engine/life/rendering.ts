@@ -5,6 +5,7 @@ export interface LifeRenderer {
   readonly group: THREE.Group;
   update(dt: number, settings?: LifeSettings): void;
   setVisible(visible: boolean): void;
+  setDiorama(enabled: boolean): void;
   dispose(): void;
 }
 const kinds: LifeKind[] = [
@@ -104,6 +105,7 @@ export function createLifeRenderer(sim: LifeSimulation): LifeRenderer {
       update(dt, settings = {}) {
         if (!disposed) sim.update(dt, settings);
       },
+      setDiorama() {},
       setVisible() {
         group.visible = false;
       },
@@ -153,6 +155,7 @@ export function createLifeRenderer(sim: LifeSimulation): LifeRenderer {
   group.add(lamps);
   geometries.push(lampGeometry);
   materials.push(lampMaterial);
+  let diorama = false;
   let visible = true,
     disposed = false;
   const updateMatrices = (settings: LifeSettings) => {
@@ -162,17 +165,18 @@ export function createLifeRenderer(sim: LifeSimulation): LifeRenderer {
     let lampCount = 0;
     for (const kind of kinds) {
       const mesh = meshes.get(kind)!;
+      const size = diorama ? (kind === "pedestrian" ? 2 : 1.6) : 1;
       let count = 0;
       (mesh.material as THREE.MeshStandardMaterial).emissiveIntensity = 0;
       for (const agent of sim.agents)
         if (agent.active && agent.kind === kind && count < limit) {
           dummy.position.set(
             agent.x,
-            agent.y + (kind === "pedestrian" || kind === "vendor" ? 0.45 : 0.25),
+            agent.y + (kind === "pedestrian" || kind === "vendor" ? 0.45 : 0.25) * size,
             agent.z,
           );
           dummy.rotation.set(0, -agent.rotation - Math.PI / 2, 0);
-          dummy.scale.setScalar(agent.fade);
+          dummy.scale.setScalar(agent.fade * size);
           dummy.updateMatrix();
           mesh.setMatrixAt(count++, dummy.matrix);
           if (
@@ -199,12 +203,12 @@ export function createLifeRenderer(sim: LifeSimulation): LifeRenderer {
               s = Math.sin(agent.rotation);
             for (const offset of [-side, side]) {
               lampDummy.position.set(
-                agent.x + c * offset + s * front,
-                agent.y + 0.34,
-                agent.z + s * offset - c * front,
+                agent.x + (c * offset + s * front) * size,
+                agent.y + 0.34 * size,
+                agent.z + (s * offset - c * front) * size,
               );
               lampDummy.rotation.set(0, -agent.rotation - Math.PI / 2, 0);
-              lampDummy.scale.setScalar(agent.fade);
+              lampDummy.scale.setScalar(agent.fade * size);
               lampDummy.updateMatrix();
               if (lampCount < max * 2) lamps.setMatrixAt(lampCount++, lampDummy.matrix);
             }
@@ -223,6 +227,9 @@ export function createLifeRenderer(sim: LifeSimulation): LifeRenderer {
       sim.update(dt, settings);
       group.visible = visible && settings.visible !== false;
       updateMatrices(settings);
+    },
+    setDiorama(enabled) {
+      diorama = enabled;
     },
     setVisible(next) {
       visible = next;

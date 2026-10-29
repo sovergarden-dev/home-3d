@@ -1,0 +1,50 @@
+{
+  "syntheticOnly": true,
+  "runId": 40750407968,
+  "headSha": "797512f9a3979af1034720c1d13a48dbe978bb36",
+  "workflowJobs": "4_SUCCESS",
+  "unit": {
+    "files": 59,
+    "passed": 370
+  },
+  "pipeline": {
+    "files": 6,
+    "passed": 39
+  },
+  "e2e": {
+    "chromium": {
+      "pass": 109,
+      "fail": 0,
+      "skip": 0
+    },
+    "firefox": {
+      "pass": 66,
+      "fail": 0,
+      "skip": 43
+    },
+    "webkit": {
+      "pass": 109,
+      "fail": 0,
+      "skip": 0
+    }
+  },
+  "h6": [
+    {
+      "job": "e2e-full-webkit",
+      "durationAsLogged": "1.4m",
+      "skipped": false
+    },
+    {
+      "job": "e2e-full-chromium",
+      "durationAsLogged": "52.4s",
+      "skipped": false
+    },
+    {
+      "job": "e2e-full-firefox",
+      "durationAsLogged": null,
+      "skipped": true
+    }
+  ],
+  "webkitBudget": "NOT_MET_1.4_MINUTES_LOGGED_VS_UNCHANGED_70_SECOND_LIMIT",
+  "mergeGate": "NOT_READY_DESPITE_GREEN_JOBS"
+}

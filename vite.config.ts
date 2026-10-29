@@ -5,8 +5,17 @@
 //     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { resolveBuildSha } from "./build/identity";
 
 export default defineConfig({
+  vite: {
+    define: {
+      "import.meta.env.VITE_BUILD_SHA": JSON.stringify(
+        resolveBuildSha(process.env["VITE_BUILD_SHA"]),
+      ),
+    },
+    build: { manifest: true },
+  },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this

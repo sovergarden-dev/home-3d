@@ -96,8 +96,10 @@ export function Dock({ mobile, onExpandedChange }: DockProps) {
 
   const order: Snap[] = ["peek", "half", "full"];
   const onPointerDown = (e: React.PointerEvent) => {
+    e.preventDefault();
     drag.current = { y: e.clientY, h: sheetRef.current!.getBoundingClientRect().height };
-    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    e.currentTarget.setPointerCapture(e.pointerId);
+    (e.currentTarget as HTMLButtonElement).focus({ preventScroll: true });
     sheetRef.current!.style.transition = "none";
   };
   const onPointerMove = (e: React.PointerEvent) => {
@@ -109,30 +111,36 @@ export function Dock({ mobile, onExpandedChange }: DockProps) {
     sheetRef.current!.style.height = `${height}px`;
     onExpandedChange?.(height > 100);
   };
+  const finishDrag = (next: Snap) => {
+    drag.current = null;
+    const element = sheetRef.current!;
+    element.style.transition = "";
+    element.style.height = snapHeights[next];
+    setSnap(next);
+    onExpandedChange?.(next !== "peek");
+  };
+  const cancelDrag = () => {
+    if (drag.current) finishDrag(snap);
+  };
   const onPointerUp = (e: React.PointerEvent) => {
     if (!drag.current) return;
     const dy = drag.current.y - e.clientY;
-    const h = drag.current.h + dy;
-    drag.current = null;
-    const el = sheetRef.current!;
-    el.style.transition = "";
-    el.style.height = "";
-    const vh = window.innerHeight;
-    if (Math.abs(dy) < 6) {
-      const next = order[(order.indexOf(snap) + 1) % 3]!;
-      setSnap(next);
-      onExpandedChange?.(next !== "peek");
-      return;
-    }
-    const next = h > vh * 0.67 ? "full" : h > vh * 0.3 ? "half" : "peek";
-    setSnap(next);
-    onExpandedChange?.(next !== "peek");
+    const height = drag.current.h + dy;
+    const next =
+      Math.abs(dy) < 6
+        ? order[(order.indexOf(snap) + 1) % 3]!
+        : height > window.innerHeight * 0.67
+          ? "full"
+          : height > window.innerHeight * 0.3
+            ? "half"
+            : "peek";
+    finishDrag(next);
   };
 
   return (
     <div
       ref={sheetRef}
-      className="pointer-events-auto glass fixed inset-x-0 bottom-0 z-20 flex flex-col !rounded-b-none transition-[height] duration-250 ease-[var(--ease)]"
+      className={`pointer-events-auto glass fixed inset-x-0 bottom-0 ${snap === "peek" ? "z-20" : "z-50"} flex flex-col !rounded-b-none transition-[height] duration-250 ease-[var(--ease)] motion-reduce:transition-none`}
       style={{ height: snapHeights[snap], paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <button
@@ -142,15 +150,11 @@ export function Dock({ mobile, onExpandedChange }: DockProps) {
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
-        onPointerCancel={() => {
-          drag.current = null;
-          if (sheetRef.current) {
-            sheetRef.current.style.height = "";
-            sheetRef.current.style.transition = "";
-          }
-          onExpandedChange?.(snap !== "peek");
-        }}
+        onPointerCancel={cancelDrag}
+        onLostPointerCapture={cancelDrag}
         onKeyDown={(e) => {
+          if (["ArrowUp", "ArrowDown", "Enter", " "].includes(e.key)) e.preventDefault();
+          if (e.key === "Enter" || e.key === " ") setSnap(order[(order.indexOf(snap) + 1) % 3]!);
           if (e.key === "ArrowUp") setSnap(order[Math.min(2, order.indexOf(snap) + 1)]!);
           if (e.key === "ArrowDown") setSnap(order[Math.max(0, order.indexOf(snap) - 1)]!);
         }}

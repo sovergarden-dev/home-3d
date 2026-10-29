@@ -1,3 +1,4 @@
+import { acquireAudioPreparation } from "./life/audioPreparation";
 import { importLocalAudioFile } from "./life/audioImport";
 import {
   AUDIO_PEAK_LIMIT,
@@ -34,6 +35,8 @@ const MAX_IMPORT_BYTES = 1_000_000;
 
 /** Synthetic, fixture-only ambience. It never opens a microphone, fetches audio, or persists files. */
 export function createDemoAudio(options: DemoAudioOptions = {}): DemoAudio {
+  const preparation = acquireAudioPreparation();
+  preparation.prepare(options.initialWeather ?? "clear");
   let context: AudioContext | null = null;
   let master: GainNode | null = null;
   let ambience: AudioBufferSourceNode | null = null;
@@ -119,6 +122,10 @@ export function createDemoAudio(options: DemoAudioOptions = {}): DemoAudio {
     try {
       const factory = options.audioContextFactory ?? (() => new AudioContext());
       context = factory();
+      if (options.onStateChange)
+        addListener(context, "statechange", () => {
+          if (!disposed) options.onStateChange?.();
+        });
       master = track(context.createGain());
       // Keep all synthetic layers well below the peak bound; the compressor is not used as a brickwall.
       master.gain.value = enabled ? 0.22 : 0;
@@ -149,7 +156,9 @@ export function createDemoAudio(options: DemoAudioOptions = {}): DemoAudio {
     layersReady = true;
     try {
       ambience = track(context.createBufferSource());
-      ambience.buffer = createSyntheticBuffer(context, weather, layerMinutes);
+      ambience.buffer =
+        preparation.buffer(context, weather) ??
+        createSyntheticBuffer(context, weather, layerMinutes);
       ambience.loop = true;
       ambienceGain = track(context.createGain());
       ambienceGain.gain.value = 0.32;
@@ -158,7 +167,8 @@ export function createDemoAudio(options: DemoAudioOptions = {}): DemoAudio {
       ambience.start();
 
       rain = track(context.createBufferSource());
-      rain.buffer = createSyntheticBuffer(context, "rain", layerMinutes);
+      rain.buffer =
+        preparation.buffer(context, "rain") ?? createSyntheticBuffer(context, "rain", layerMinutes);
       rain.loop = true;
       rainGain = track(context.createGain());
       rainGain.gain.value = rainLevel(weather);
@@ -262,6 +272,7 @@ export function createDemoAudio(options: DemoAudioOptions = {}): DemoAudio {
   }
   function updateWeather(next: AudioWeather) {
     weather = next;
+    preparation.prepare(next);
     if (!context || !ambienceGain || !rainGain) return;
     const now = context.currentTime;
     ambienceGain.gain.setTargetAtTime(ambientLevel(next), now, 0.25);
@@ -436,6 +447,7 @@ export function createDemoAudio(options: DemoAudioOptions = {}): DemoAudio {
     dispose() {
       if (disposed) return;
       disposed = true;
+      preparation.dispose();
       importRevision++;
       pause();
       for (const [target, type, listener] of listeners) target.removeEventListener(type, listener);

@@ -1,0 +1,46 @@
+{
+  "syntheticOnly": true,
+  "runId": 40777137757,
+  "headSha": "ddc3246b38fea900c3e9413d146061fbaa2a7861",
+  "jobs": "4_SUCCESS",
+  "unit": {
+    "pass": 371,
+    "files": 59
+  },
+  "pipeline": {
+    "pass": 39
+  },
+  "e2e": {
+    "chromium": {
+      "pass": 110,
+      "fail": 0,
+      "skip": 0
+    },
+    "webkit": {
+      "pass": 110,
+      "fail": 0,
+      "skip": 0
+    },
+    "firefox": {
+      "pass": 66,
+      "fail": 0,
+      "skip": 44
+    }
+  },
+  "h6": {
+    "webkitBaselineMs": 58262,
+    "webkitCandidateMs": 57605,
+    "webkitChangePct": -1.1276646871030915,
+    "webkitLimitMs": 70000,
+    "relativeLimitPct": 10,
+    "chromiumMs": 50658,
+    "status": "PASS"
+  },
+  "baselineEnvironment": {
+    "platform": "linux",
+    "arch": "x64",
+    "cpuModel": "AMD EPYC 9V45 96-Core Processor",
+    "logicalCpus": 4
+  },
+  "scope": "Same-runner WebKit comparison and absolute gate passed; skips are not passes."
+}

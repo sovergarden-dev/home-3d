@@ -53,6 +53,7 @@ export interface AudioDiagnostics {
 }
 
 export interface DemoAudioOptions {
+  onStateChange?: () => void;
   audioContextFactory?: () => AudioContext;
   maxImportBytes?: number;
   lifeSources?: readonly AudioLifeSource[];

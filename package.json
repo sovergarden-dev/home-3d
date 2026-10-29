@@ -1,5 +1,6 @@
 {
   "name": "tanstack_start_ts",
+  "version": "0.10.1",
   "private": true,
   "sideEffects": false,
   "type": "module",
@@ -14,8 +15,11 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "check:pipeline": "cd pipeline && bun x tsc --noEmit --project tsconfig.json && bun test src",
-    "check": "bun run typecheck && bun run lint && bun run test && bun run check:pipeline && bun run build",
-    "test:e2e": "playwright test"
+    "check": "bun run typecheck && bun run lint && bun run test:coverage && bun run check:pipeline && bun run build && bun run check:bundle",
+    "test:e2e": "playwright test",
+    "check:secrets": "node scripts/check-secrets.mjs",
+    "check:bundle": "node scripts/check-bundle.mjs",
+    "test:coverage": "vitest run --coverage --exclude src/test/p9-life-performance.test.ts && vitest run src/test/p9-life-performance.test.ts && node scripts/check-coverage.mjs"
   },
   "overrides": {
     "rolldown": "1.2.1"
@@ -87,6 +91,7 @@
     "@types/react-dom": "^19.2.0",
     "@types/three": "0.180.0",
     "@vitejs/plugin-react": "^5.2.0",
+    "@vitest/coverage-v8": "4.1.11",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.6",
