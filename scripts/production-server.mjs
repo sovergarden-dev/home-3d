@@ -42,11 +42,30 @@ const assets = {
     });
   },
 };
+function acceptsGzip(value) {
+  const offers = new Map();
+  for (const item of (value ?? "").split(",")) {
+    const [rawName, ...parameters] = item.trim().toLowerCase().split(";");
+    const quality = parameters
+      .map((p) => p.trim())
+      .find((p) => p.startsWith("q="))
+      ?.slice(2);
+    const q =
+      quality === undefined
+        ? 1
+        : /^(?:0(?:\.\d{0,3})?|1(?:\.0{0,3})?)$/.test(quality)
+          ? Number(quality)
+          : 0;
+    offers.set(rawName.trim(), q);
+  }
+  const gzip = offers.get("gzip") ?? offers.get("*") ?? 0;
+  return gzip > 0 && gzip >= (offers.get("identity") ?? 0);
+}
 async function transport(response, request) {
   if (
     process.env.PRODUCTION_QA_COMPRESSION !== "gzip" ||
     response.status !== 200 ||
-    !request.headers.get("accept-encoding")?.includes("gzip") ||
+    !acceptsGzip(request.headers.get("accept-encoding")) ||
     !/^(text\/(html|css|javascript)|application\/javascript)/.test(
       response.headers.get("content-type") ?? "",
     ) ||

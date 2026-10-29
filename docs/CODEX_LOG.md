@@ -176,3 +176,7 @@ M2 head `88e0306` check cục bộ đạt 378 unit/39 pipeline, lint/type/build/
 ### PR #10 được giữ parked
 
 Đã cập nhật mô tả PR #10 với head `46b1fd87da630bcc8aa509de2e9bd8d449bf099a`, CI `40810779896`, hồi quy Retry 3D và H6 vượt 70 giây. Head local `88e0306` đã được review không còn finding và nằm trong bản tích hợp; chưa merge PR. Check tích hợp đạt 401 unit/50 pipeline, shell 224.355 byte gzip. PWA 5 production test tại `5e093ccc471464e9cd5d8bae86335b87afdae6be` đạt; review độc lập đóng tất cả phát hiện source, bao gồm rollback. Kiểm giao diện mở rộng còn lỗi nút collapsed private panel bị sheet che một phần ở landscape, đang sửa. Main chưa đóng băng.
+
+### Gate UI/PWA sau sửa
+
+Axe mở rộng 9/9 (1440×900, 390×844, 740×390 trên C/F/W) đạt, có cả keyboard đưa sheet về peek và nút private panel hiện lại. PWA production dùng gzip đạt 5/5 tại `a948321b72d9d95833ab2af7338c55e4dc24d05e`; shell 224.364 byte gzip. Review cuối chỉ thêm P3 cho QA transport bỏ qua gzip;q=0; đã sửa parser quality và kiểm 4 HTTP request thật, body hash khớp asset build trong mọi chế độ. Không có finding runtime còn mở; cổng CI/native/GPU cuối vẫn chưa đạt.

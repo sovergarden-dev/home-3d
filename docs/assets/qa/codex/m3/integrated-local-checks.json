@@ -34,10 +34,17 @@
       "tests/e2e/accessibility.spec.ts": "a248a386e2b8784231979d30af632d8c5b174de5523b3e83326787d9730f0b5c"
     }
   },
-  "independentReview": "Four initial P2 findings and two PWA rollback follow-ups closed at source level; final private-panel layout review pending.",
+  "independentReview": "All runtime findings closed at source level. QA gzip q=0 P3 corrected; four actual HTTP negotiations preserve built asset hashes.",
   "limitations": [
     "No native Safari or real mobile device proof.",
     "No real area data accessed.",
     "Final CI/native Workerd/performance/Lighthouse/continuous30min soak pending."
-  ]
+  ],
+  "latestBundleGzipBytes": 224364,
+  "productionPwaGzip": {
+    "sourceSha": "a948321b72d9d95833ab2af7338c55e4dc24d05e",
+    "passed": 5,
+    "failed": 0,
+    "durationSeconds": 24.5
+  }
 }
