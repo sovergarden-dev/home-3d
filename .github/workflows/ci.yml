@@ -47,6 +47,8 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun x playwright install --with-deps chromium
       - run: bun run test:e2e --project=chromium
+      - name: Verify production PWA and update lifecycle
+        run: bun run build && bun run test:production
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: failure()
         with:
