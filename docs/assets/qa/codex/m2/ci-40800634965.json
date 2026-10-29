@@ -1,0 +1,43 @@
+{
+  "syntheticOnly": true,
+  "runId": 40800634965,
+  "headSha": "5f59f0ee69fef323e3db202012a97796331b7859",
+  "status": "FAILED_RETAINED",
+  "quality": {
+    "status": "PASS",
+    "unit": 378,
+    "pipeline": 39
+  },
+  "chromium": {
+    "passed": 114,
+    "failed": 1,
+    "skipped": 0,
+    "h6Ms": 50377,
+    "failure": "Short landscape HUD wraps one additional line with Linux font; 12px overlap. All zero-overlap assertions retained."
+  },
+  "firefox": {
+    "passed": 68,
+    "failed": 1,
+    "skipped": 46,
+    "failure": "Focus asserted after native mouseup driver cleanup following synthetic pointercancel. Focus now checked immediately after cancellation; geometry remains checked before/after cleanup."
+  },
+  "webkit": {
+    "passed": 115,
+    "failed": 0,
+    "skipped": 0,
+    "h6BaselineMs": 59970,
+    "h6CandidateMs": 55801,
+    "h6DeltaPct": -6.951809237952311
+  },
+  "fixSource": "abed181253c8d45c32ea3b07f504bb7924a10b39",
+  "localFixValidation": {
+    "unit": 378,
+    "pipeline": 39,
+    "lintWarnings": 0,
+    "shellGzipBytes": 222303,
+    "threeBrowserLayoutCases": 3,
+    "threeBrowserCancelCases": 6,
+    "review": "No remaining actionable finding; source-only independent review."
+  },
+  "next": "New exact-head CI required; no same-head rerun."
+}
