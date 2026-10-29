@@ -189,13 +189,15 @@ try {
   if (mode === "soak" || mode === "desktop-soak") {
     const continuous = mode === "desktop-soak";
     await open();
+    if (continuous && !(await page.evaluate(() => typeof window.gc === "function")))
+      throw Error("EXPOSED_GC_REQUIRED_FOR_QUIESCENT_HEAP_METHOD");
     await page.getByRole("button", { name: "Thu gọn bảng riêng", exact: true }).click();
     await page.getByRole("tab", { name: "Kỷ niệm", exact: true }).click();
     const cdp = await page.context().newCDPSession(page);
     const raw = [];
     const start = Date.now();
     const duration = Number(process.env.P10_SOAK_MS ?? (continuous ? 1800000 : 1200000));
-    const warmupCycles = continuous ? 5 : 0;
+    const warmupCycles = continuous ? 6 : 0;
     const minCycles = Number(process.env.P10_MIN_CYCLES ?? 20);
     if (
       !Number.isFinite(duration) ||

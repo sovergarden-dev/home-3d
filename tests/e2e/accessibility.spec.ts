@@ -1,6 +1,16 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
+async function verifyKeyboardFocus(page: Page, control: Locator) {
+  await control.focus();
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Shift+Tab");
+  await expect(control).toBeFocused();
+  expect(await page.locator(":focus").evaluate((node) => node.matches(":focus-visible"))).toBe(
+    true,
+  );
+}
+
 for (const viewport of [
   { width: 1440, height: 900 },
   { width: 390, height: 844 },
@@ -79,13 +89,13 @@ for (const viewport of [
       await expect(page.getByTestId("private-world-panel")).toBeVisible();
     }
     const sound = page.getByRole("button", { name: "Tiếng phố", exact: true });
-    await sound.focus();
-    await page.keyboard.press("Tab");
-    await page.keyboard.press("Shift+Tab");
-    await expect(sound).toBeFocused();
-    expect(await page.locator(":focus").evaluate((node) => node.matches(":focus-visible"))).toBe(
-      true,
-    );
+    if (ready) await verifyKeyboardFocus(page, sound);
+    else {
+      await expect(sound).toBeDisabled();
+      await sound.focus();
+      await expect(sound).not.toBeFocused();
+    }
+    await verifyKeyboardFocus(page, page.getByRole("radio", { name: "vi", exact: true }));
     await expect(page.getByRole("button", { name: "Tiếng phố", exact: true })).toHaveAttribute(
       "aria-describedby",
       "sound-demo-description",
@@ -103,3 +113,23 @@ for (const viewport of [
     expect(external).toEqual([]);
   });
 }
+
+test("keyboard remains available when 3D and sound are unavailable", async ({ page }) => {
+  await page.setViewportSize({ width: 740, height: 390 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.addInitScript(() => {
+    const original = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (type: string, ...args: unknown[]) {
+      return type === "webgl2" ? null : Reflect.apply(original, this, [type, ...args]);
+    };
+  });
+  await page.goto("/");
+  await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "fallback", {
+    timeout: 60000,
+  });
+  const sound = page.getByRole("button", { name: "Tiếng phố", exact: true });
+  await expect(sound).toBeDisabled();
+  await sound.focus();
+  await expect(sound).not.toBeFocused();
+  await verifyKeyboardFocus(page, page.getByRole("radio", { name: "vi", exact: true }));
+});

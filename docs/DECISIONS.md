@@ -243,3 +243,11 @@ Review tiếp phát hiện hai ca rollback PWA: marker cũ không đổi thứ t
 M1/M2 chưa qua đủ cổng merge nên main vẫn ở M0; PR #9/#10 giữ draft parked, có lý do CI cụ thể. Gom bản ứng viên M3–M5 cùng các sửa M1/M2 vào PR tích hợp để đo font, PWA, runtime riêng và lớp chi tiết trên cùng cây mã. Giữ lịch sử merge, không squash/rebase/force. Chỉ được merge sau review, privacy, local gate và bốn job CI đúng head; phải kiểm lại CI main. Bản phát hành công khai vẫn do chủ dự án Publish sau audit.
 
 Axe WCAG 2.2 ở 740×390 phát hiện nút mở bảng riêng chỉ còn 12,8 px chiều cao bấm được khi half sheet che lên. Bảng riêng đã thu gọn được ẩn hoàn toàn trong lúc mobile sheet mở hoặc đang kéo, và hiện lại khi về peek; bảng riêng đang mở và dữ liệu phiên không bị đổi. Giữ nguyên luật target-size và bổ sung kiểm bàn phím thu sheet rồi truy cập lại nút.
+
+M4: lỗi native full Worker là gốc module của harness, không phải bằng chứng build SSR sai. Miniflare 5 convertV4 mặc định lấy cwd làm modulesRoot; bundle nằm ngoài checkout sinh tên bắt đầu bằng ../, Workerd từ chối. Đặt modulesRoot=dirname(bundle); giữ nguyên Wrangler/Lovable build. Fresh dry-run + native Windows đầy đủ đã đạt, Linux cần head CI mới.
+
+Axe CI Firefox không có WebGL2 nên nút âm thanh được disable đúng thiết kế. Test keyboard cũ giả định nút luôn focusable. Giữ nguyên kiểm focus âm thanh khi scene ready; fallback phải chứng minh nút disabled và không focus, đồng thời nút chọn VI luôn qua Tab/ShiftTab/focus-visible. Thêm ca forced fallback để Windows cũng chạy nhánh này; không đổi guard H6, timeout hoặc khả năng của app.
+
+Probe bàn phím universal dùng nút chọn ngôn ngữ (form control), vì WebKit có thiết lập Tab mặc định bỏ qua link; kiểm focus link rồi ShiftTab không phải phép chứng minh form-control keyboard ổn định trên các browser. Giữ nguyên assert focus/focus-visible và kiểm âm thanh khi ready, không bật chức năng âm thanh bị disable ở fallback.
+
+Soak được chốt trước khi chạy: warm6 vòng để baseline quiescent có cùng trạng thái AudioContext đã tạo như cuối phép đo, sau khi vòng5 đã luyện SPA remount. Không chọn baseline theo số heap thu được. Phải có gc được expose thực, đo đủ30phút sau warmup, báo cả tăng heap cuối và cực đại của các mẫu sau GC. Kết quả GPU phát triển và các probe production khác phương pháp được giữ riêng; không chuyển diagnostic thành pass ngân sách.

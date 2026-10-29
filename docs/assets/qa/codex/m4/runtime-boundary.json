@@ -1,5 +1,5 @@
 {
-  "status": "PARTIAL_NATIVE_FULL_WORKER_NOT_VERIFIED",
+  "status": "NATIVE_WINDOWS_FULL_WORKER_PASS_LINUX_PENDING",
   "syntheticOnly": true,
   "windows": {
     "wrangler": "4.151.3",
@@ -7,7 +7,7 @@
     "dryRun": "PASS",
     "hello": "PASS",
     "realRs256AuthOnly": "PASS",
-    "fullSsr": "BLOCKED_STARTUP_INTERNAL_ERROR",
+    "fullSsr": "PASS_AFTER_MODULE_ROOT_FIX",
     "attempts": [
       "initial old SSR bundle",
       "integrated pure-math/self-hosted-font bundle",
@@ -15,7 +15,9 @@
     ]
   },
   "confirmedFix": "Workers rejects fetch redirect:error; manual redirect plus non-2xx rejection verified in native auth-only run.",
-  "next": "Verify full bundle with Workerd Linux in repository CI; do not keep retrying Windows blindly.",
+  "next": "Verify the corrected harness on Linux CI; no deployment or real Access policy verification.",
   "deployed": false,
-  "realAccountsOrCredentialsUsed": false
+  "realAccountsOrCredentialsUsed": false,
+  "rootCause": "Miniflare defaults modulesRoot to cwd; an external QA bundle became a module name with leading parent traversal. Explicit bundle-directory root removes invalid virtual module paths.",
+  "controlledProbe": "The identical old bundle then reached JWT validation but still had historical redirect:error. A fresh current bundle with redirect:manual passed all native checks."
 }

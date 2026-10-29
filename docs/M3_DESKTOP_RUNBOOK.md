@@ -31,7 +31,7 @@ $env:P10_PORT = "4196"
 bun scripts/p10-benchmark.mjs desktop-soak test-results/desktop-soak
 ```
 
-Soak warm-up 5 vòng rồi ít nhất 30 phút/20 vòng đo, 4 lần đổi mode mỗi vòng, SPA navigation không reload document, thêm/xóa ảnh/ghim, tour, postcard, IndexedDB opt-in, chi tiết minh họa và âm thanh bật/tắt bằng click thật. Audio output được mute, AudioContext vẫn chạy. Số heap lấy sau yêu cầu GC và chờ ổn định; không dùng kết quả này thay phép đo heap tự nhiên. Phải báo thời gian thật, số vòng, tăng heap sau warm-up và các resource sống.
+Soak warm-up 6 vòng (vòng 5 đã đi qua SPA navigation, vòng 6 tái tạo trạng thái AudioContext tương đương cuối phép đo) rồi ít nhất 30 phút/20 vòng đo, 4 lần đổi mode mỗi vòng, SPA navigation không reload document, thêm/xóa ảnh/ghim, tour, postcard, IndexedDB opt-in, chi tiết minh họa và âm thanh bật/tắt bằng click thật. Audio output được mute, AudioContext vẫn chạy. Số heap lấy sau yêu cầu GC và chờ ổn định; không dùng kết quả này thay phép đo heap tự nhiên. Phải báo thời gian thật, số vòng, tăng heap sau warm-up và các resource sống.
 
 ## Production và mô phỏng mạng
 

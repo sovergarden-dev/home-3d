@@ -51,6 +51,8 @@ const options = convertV4MiniflareOptions({
   log: new Log(LogLevel.ERROR),
   name: "home3d-private-local-qa",
   modules: true,
+  // QA bundles live outside the checkout; module names must not traverse above the Worker root.
+  modulesRoot: path.dirname(path.resolve(bundle)),
   scriptPath: bundle,
   compatibilityDate: "2026-06-01",
   compatibilityFlags: ["nodejs_compat"],

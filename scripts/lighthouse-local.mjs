@@ -25,7 +25,7 @@ for (const formFactor of ["mobile", "desktop"]) {
   try {
     const browser = await chromium.connectOverCDP(`http://127.0.0.1:${chrome.port}`);
     const page = await browser.newPage();
-    await page.goto(`${origin}/gioi-thieu`);
+    await page.goto("about:blank");
     const environment = await page.evaluate(() => {
       const gl = document.createElement("canvas").getContext("webgl2");
       const ext = gl?.getExtension("WEBGL_debug_renderer_info");
@@ -47,6 +47,13 @@ for (const formFactor of ["mobile", "desktop"]) {
     );
     if (!result?.lhr) throw Error("LIGHTHOUSE_REPORT_MISSING");
     const report = result.lhr;
+    const verification = await browser.newPage();
+    await verification.goto(`${origin}/`);
+    const buildInfo = await verification.getByTestId("build-info").innerText();
+    const sourceSha = buildInfo.match(/\b[a-f0-9]{40}\b/i)?.[0]?.toLowerCase();
+    if (!sourceSha || (process.env.BENCH_SOURCE_SHA && sourceSha !== process.env.BENCH_SOURCE_SHA))
+      throw Error("LIGHTHOUSE_BUILD_SHA_MISMATCH");
+    await verification.close();
     const externalHosts = [
       ...new Set(
         (report.audits["network-requests"]?.details?.items ?? []).flatMap((item) => {
@@ -65,6 +72,7 @@ for (const formFactor of ["mobile", "desktop"]) {
     await writeFile(path.join(output, `${formFactor}.json.gz`), gzipSync(safeReport));
     rows.push({
       formFactor,
+      sourceSha,
       transport: process.env.PRODUCTION_QA_COMPRESSION ?? "identity",
       lighthouseVersion: report.lighthouseVersion,
       environment,
