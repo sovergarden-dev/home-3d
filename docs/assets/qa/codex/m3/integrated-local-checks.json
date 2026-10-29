@@ -46,5 +46,15 @@
     "passed": 5,
     "failed": 0,
     "durationSeconds": 24.5
+  },
+  "legacyWeatherOnProductionProbe": {
+    "passed": 2,
+    "failed": 1,
+    "chromium": "PASS unchanged original test",
+    "firefox": "PASS unchanged original test",
+    "webkit": "FAIL: mock request counter remained0 after consent; trace records api.open-meteo.com HTTP200 while Service Worker controlled production page.",
+    "data": "Only explicit synthetic fixture/companion; no real area data.",
+    "interpretation": "Observed request-interception limitation when reusing the dev-network-mock test against production Service Worker. Kept as failure; do not call it fully mocked or native Safari proof.",
+    "reference": "https://playwright.dev/docs/api/class-page#page-route"
   }
 }

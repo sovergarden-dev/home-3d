@@ -180,3 +180,5 @@ M2 head `88e0306` check cục bộ đạt 378 unit/39 pipeline, lint/type/build/
 ### Gate UI/PWA sau sửa
 
 Axe mở rộng 9/9 (1440×900, 390×844, 740×390 trên C/F/W) đạt, có cả keyboard đưa sheet về peek và nút private panel hiện lại. PWA production dùng gzip đạt 5/5 tại `a948321b72d9d95833ab2af7338c55e4dc24d05e`; shell 224.364 byte gzip. Review cuối chỉ thêm P3 cho QA transport bỏ qua gzip;q=0; đã sửa parser quality và kiểm 4 HTTP request thật, body hash khớp asset build trong mọi chế độ. Không có finding runtime còn mở; cổng CI/native/GPU cuối vẫn chưa đạt.
+
+Probe thêm test thời tiết gốc trên build production: Chromium/Firefox đạt; WebKit fail mock request counter (0 thay vì 1). Trace thực ghi HTTP 200 từ host Open-Meteo trong lúc Service Worker điều khiển trang, chỉ với fixture/companion tổng hợp. [Playwright ghi rõ page.route không chặn được request do Service Worker xử lý](https://playwright.dev/docs/api/class-page#page-route). Giữ fail, không gọi đây là phép thử hoàn toàn mock hoặc chứng nhận Safari; không tiếp tục probe mạng này. Test weather dev trên WebKit ở lượt tích hợp đã đạt 4/4. Không có dữ liệu khu thật hoặc host mới trong app.
