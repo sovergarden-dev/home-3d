@@ -10,6 +10,17 @@ export default defineConfig({
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
+    coverage: {
+      provider: "v8",
+      include: [
+        "src/geo/*.ts",
+        "src/state/*.ts",
+        "src/engine/life/{simulation,graph,collision,orientation}.ts",
+        "src/atmosphere/{astronomy,clock,calendar,weather}.ts",
+      ],
+      reporter: ["text", "json-summary"],
+      reportsDirectory: "coverage",
+    },
   },
   resolve: {
     alias: { "@": path.resolve(__dirname, "./src") },

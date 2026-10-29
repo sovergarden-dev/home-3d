@@ -69,6 +69,7 @@ export function createLifeRuntime(options: {
     settings.floodLevel = state.floodLevel;
     // The same density setting is presentation-only and never edits the package.
     (settings as LifeSettings & { density: number }).density = state.lifeDensity;
+    rendering.setDiorama(state.viewMode === "diorama");
     rendering.setVisible(Boolean(settings.visible));
   }
   return {

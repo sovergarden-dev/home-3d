@@ -25,7 +25,7 @@ await page.addInitScript(() => {
     const e = [...performance.getEntriesByType("resource")]
       .reverse()
       .find((e) => new URL(e.name).pathname === path);
-    return import(e?.name ?? path);
+    return import(e?.name ?? new URL(path, location.href).href);
   };
   const state = {
     urls: 0,
@@ -126,8 +126,8 @@ await page.addInitScript(() => {
     });
   }
 });
-async function open() {
-  await page.goto(`http://127.0.0.1:${port}/?local-preview=1`);
+async function open(navigate = true) {
+  if (navigate) await page.goto(`http://127.0.0.1:${port}/?local-preview=1`);
   await page.waitForFunction(
     () => document.querySelector("#scene-root")?.dataset.sceneState === "ready",
     {},
@@ -183,16 +183,33 @@ async function resources() {
   }));
 }
 try {
-  if (mode === "soak") {
+  if (mode === "soak" || mode === "desktop-soak") {
+    const continuous = mode === "desktop-soak";
     await open();
     await page.getByRole("button", { name: "Thu gọn bảng riêng", exact: true }).click();
     await page.getByRole("tab", { name: "Kỷ niệm", exact: true }).click();
     const cdp = await page.context().newCDPSession(page);
     const raw = [];
     const start = Date.now();
-    const duration = Number(process.env.P10_SOAK_MS ?? 1200000);
+    const duration = Number(process.env.P10_SOAK_MS ?? (continuous ? 1800000 : 1200000));
+    const warmupCycles = continuous ? 5 : 0;
+    const minCycles = Number(process.env.P10_MIN_CYCLES ?? 20);
+    if (
+      !Number.isFinite(duration) ||
+      duration < (continuous ? 1800000 : 1) ||
+      !Number.isInteger(minCycles) ||
+      minCycles < (continuous ? 20 : 1)
+    )
+      throw Error("INVALID_SOAK_TARGET");
+    let measuredStart = continuous ? null : start;
+    let measuredCycles = 0;
     let cycle = 0;
-    while (Date.now() - start < duration || cycle < Number(process.env.P10_MIN_CYCLES ?? 20)) {
+    const documentIdentity = await page.evaluate(() => performance.timeOrigin);
+    while (
+      measuredStart === null ||
+      Date.now() - measuredStart < duration ||
+      measuredCycles < minCycles
+    ) {
       cycle++;
       const began = Date.now();
       await page.evaluate(
@@ -247,25 +264,36 @@ try {
         },
         { cycle, text: P8_PACKAGE_TEXT },
       );
+      if (continuous) {
+        for (const name of ["Mặt bằng", "Đi bộ", "Ngồi sau xe ôm", "Diorama"]) {
+          await page.getByRole("radio", { name, exact: true }).click();
+          await page.waitForTimeout(200);
+        }
+      }
       await page.getByRole("button", { name: "Thêm kỷ niệm", exact: true }).click();
       await page.keyboard.press("Escape");
       if (cycle % 5 === 0) {
-        await page
-          .getByRole("link", { name: "Phố Nhà Mình", exact: true })
-          .count()
-          .then(async (n) => {
-            if (n)
-              await page.getByRole("link", { name: "Phố Nhà Mình", exact: true }).first().click();
-          });
-        await page.goto(`http://127.0.0.1:${port}/about`);
-        await open();
+        if (continuous) {
+          await page.getByRole("link", { name: "Giới thiệu", exact: true }).click();
+          await page.getByRole("link", { name: "Về phố", exact: true }).click();
+          await open(false);
+          if ((await page.evaluate(() => performance.timeOrigin)) !== documentIdentity)
+            throw Error("SOAK_MUST_NOT_RELOAD_DOCUMENT");
+        } else {
+          await page.goto(`http://127.0.0.1:${port}/gioi-thieu`);
+          await open();
+        }
         await page.getByRole("button", { name: "Thu gọn bảng riêng", exact: true }).click();
         await page.getByRole("tab", { name: "Kỷ niệm", exact: true }).click();
       }
       await page.evaluate(() => window.gc?.());
       await page.waitForTimeout(500);
+      if (measuredStart !== null) measuredCycles++;
+      if (continuous && cycle === warmupCycles) measuredStart = Date.now();
       raw.push({
         cycle,
+        phase: cycle <= warmupCycles ? "warmup" : "measured",
+        measuredMs: measuredStart === null ? 0 : Date.now() - measuredStart,
         wallMs: Date.now() - start,
         cycleMs: Date.now() - began,
         ...(await resources()),
@@ -273,7 +301,11 @@ try {
       });
       write("soak-raw.json", {
         durationTarget: duration,
-        elapsedMs: Date.now() - start,
+        elapsedMs: measuredStart === null ? 0 : Date.now() - measuredStart,
+        totalElapsedMs: Date.now() - start,
+        measuredCycles,
+        warmupCycles,
+        continuousDocument: continuous,
         cycles: cycle,
         raw,
         errors,
@@ -281,14 +313,36 @@ try {
       console.log(
         `soak ${cycle} cycles; ${(Date.now() - start) / 1000}s; openURLs=${raw.at(-1).counts.urls}; bitmaps=${raw.at(-1).counts.bitmap}`,
       );
-      const next = Math.min(start + duration, start + cycle * 58000);
-      if (Date.now() < next) await page.waitForTimeout(next - Date.now());
+      if (measuredStart !== null) {
+        const next = Math.min(
+          measuredStart + duration,
+          measuredStart + (measuredCycles + (continuous ? 1 : 0)) * 58000,
+        );
+        if (Date.now() < next) await page.waitForTimeout(next - Date.now());
+      }
+    }
+    if (continuous) {
+      await page.evaluate(() => window.gc?.());
+      await page.waitForTimeout(500);
+      raw.push({
+        cycle,
+        phase: "final",
+        measuredMs: Date.now() - measuredStart,
+        wallMs: Date.now() - start,
+        ...(await resources()),
+        dom: await cdp.send("Memory.getDOMCounters"),
+      });
     }
     write("soak-raw.json", {
       complete: true,
       environment: rendererEvidence,
       durationTarget: duration,
-      elapsedMs: Date.now() - start,
+      elapsedMs: Date.now() - measuredStart,
+      totalElapsedMs: Date.now() - start,
+      measuredCycles,
+      warmupCycles,
+      continuousDocument: continuous,
+      modeChanges: continuous ? measuredCycles * 4 : null,
       cycles: cycle,
       raw,
       errors,

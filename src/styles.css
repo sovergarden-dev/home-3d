@@ -1,3 +1,4 @@
+@import "./assets/fonts/fonts.css";
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -166,7 +167,24 @@
 
 @media (max-width: 767px) and (max-height: 480px) {
   .h6-top-info {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    column-gap: 0.5rem;
+    width: 226px;
+    max-width: 100%;
     padding: 0.5rem 0.75rem;
+  }
+  .h6-top-info > :first-child {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .h6-top-info > :nth-child(2) {
+    grid-column: 2;
+    grid-row: 1;
+    margin-top: 0;
+  }
+  .h6-top-info > :nth-child(n + 3) {
+    grid-column: 1 / -1;
   }
   .h6-top-info > div:first-child {
     font-size: 1.5rem;
@@ -306,4 +324,40 @@
   .h6-view-actions {
     grid-template-columns: repeat(3, 44px);
   }
+}
+
+@media (max-width: 767px) and (max-height: 480px) {
+  .h6-top-info [data-testid="build-info"] {
+    max-width: 200px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  main:is([data-view-mode="walk"], [data-view-mode="ride"])
+    .private-world-panel[data-collapsed="true"] {
+    top: calc(max(1rem, env(safe-area-inset-top)) + 4rem);
+    right: max(1rem, env(safe-area-inset-right));
+    left: auto;
+    max-width: 222px;
+  }
+  .p9-pov-controls .p9-style-label {
+    display: none;
+  }
+  .p9-orientation-row {
+    flex-wrap: nowrap;
+  }
+  .p9-orientation-row > button {
+    max-width: 148px;
+    flex-shrink: 1;
+    white-space: normal;
+    text-align: left;
+  }
+  .p9-orientation-row [role="status"] {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.capture-action {
+  background-color: color-mix(in oklch, var(--accent), black 15%);
 }

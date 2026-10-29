@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Tag, Trees } from "lucide-react";
-import { calculatePlanScaleBar } from "@/engine/view/planCamera";
+import { calculatePlanScaleBar } from "@/engine/view/planScale";
 import { useT } from "@/i18n";
 import { useAppStore } from "@/state/appStore";
 

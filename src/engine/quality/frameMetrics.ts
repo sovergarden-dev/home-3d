@@ -24,6 +24,15 @@ function percentile(samples: number[], percentileValue: number) {
   return sorted[index] ?? null;
 }
 
+let observer: ((timestampMs: number, phase: FramePhase) => void) | null = null;
+/** Optional local timing reader; no geometry, identity, storage or network side effects. */
+export function observeRenderedFrames(next: (timestampMs: number, phase: FramePhase) => void) {
+  observer = next;
+  return () => {
+    if (observer === next) observer = null;
+  };
+}
+
 export function createFrameMetrics(capacity = 240): FrameMetrics {
   if (!Number.isInteger(capacity) || capacity < 1)
     throw new Error("FRAME_METRICS_CAPACITY_INVALID");
@@ -62,6 +71,7 @@ export function createFrameMetrics(capacity = 240): FrameMetrics {
         if (current.samples.length > capacity) current.samples.shift();
       }
       current.previous = timestampMs;
+      observer?.(timestampMs, phase);
     },
     reset(phase) {
       if (phase) state[phase].previous = null;
