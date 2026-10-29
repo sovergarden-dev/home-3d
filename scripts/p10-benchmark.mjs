@@ -265,6 +265,10 @@ try {
         { cycle, text: P8_PACKAGE_TEXT },
       );
       if (continuous) {
+        await page.evaluate(async () => {
+          const { useAppStore } = await window.__p10Import("/src/state/appStore.ts");
+          useAppStore.getState().setIllustrativeDetails(true);
+        });
         for (const name of ["Mặt bằng", "Đi bộ", "Ngồi sau xe ôm", "Diorama"]) {
           await page.getByRole("radio", { name, exact: true }).click();
           await page.waitForTimeout(200);

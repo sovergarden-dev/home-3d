@@ -1,6 +1,9 @@
 import { expect } from "@playwright/test";
 import { mkdir, writeFile, readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
+import { spawn } from "node:child_process";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { launchBenchmark } from "./benchmark-browser.mjs";
 import { P8_PACKAGE_TEXT } from "../tests/e2e/helpers/p8-fixture.ts";
 const output = process.argv[2] ?? "test-results/desktop-benchmark",
@@ -8,6 +11,27 @@ const output = process.argv[2] ?? "test-results/desktop-benchmark",
 if (process.env.BENCH_GPU !== "real") throw Error("REAL_GPU_REQUIRED");
 await mkdir(output, { recursive: true });
 const { browser, dpr, environment } = await launchBenchmark(["--mute-audio"]);
+const memoryPath = path.resolve(output, "gpu-memory.json");
+const gpuSampler =
+  process.platform === "win32"
+    ? spawn(
+        "powershell.exe",
+        [
+          "-NoProfile",
+          "-File",
+          fileURLToPath(new URL("./windows-gpu-memory.ps1", import.meta.url)),
+          "-RootProcessId",
+          String(process.pid),
+          "-OutputFile",
+          memoryPath,
+        ],
+        { windowsHide: true, stdio: "ignore" },
+      )
+    : null;
+let samplerError = false;
+gpuSampler?.on("error", () => {
+  samplerError = true;
+});
 const percentile = (values, q) => {
   const s = [...values].sort((a, b) => a - b);
   return s[Math.max(0, Math.ceil(s.length * q) - 1)] ?? null;
@@ -85,8 +109,15 @@ try {
       floodLevel: 0.2,
       festival: "tet",
     },
-  ]) {
-    const { name, ...patch } = scenario;
+  ].flatMap((scenario) =>
+    [false, true].map((illustrativeDetails) => ({
+      ...scenario,
+      name: `${scenario.name}-${illustrativeDetails ? "details" : "plain"}`,
+      illustrativeDetails,
+    })),
+  )) {
+    const { name: scenarioName, ...patch } = scenario;
+    console.log(`Measuring ${scenarioName}`);
     await page.evaluate(
       (patch) =>
         window.__desktopStore.setState({
@@ -107,9 +138,28 @@ try {
         firstSubmission = [],
         lastSubmission = [],
         submissionsPerClock = [];
+      const data = document.querySelector('[data-testid="demo-scene"]').dataset;
+      const peaks = {
+        drawCalls: 0,
+        triangles: 0,
+        textures: 0,
+        geometries: 0,
+        illustrativeInstances: 0,
+      };
+      const collectCounters = () => {
+        for (const [key, field] of Object.entries({
+          drawCalls: "drawCalls",
+          triangles: "triangles",
+          textures: "memoryTextures",
+          geometries: "memoryGeometries",
+          illustrativeInstances: "illustrativeInstances",
+        }))
+          peaks[key] = Math.max(peaks[key], Number(data[field] ?? 0));
+      };
       let recording = false;
       const stop = window.__desktopFrames((time) => {
         if (!recording) return;
+        collectCounters();
         const clock = window.__desktopRafClock;
         if (clocks.at(-1) !== clock) {
           clocks.push(clock);
@@ -124,6 +174,7 @@ try {
       const state = window.__desktopStore.getState(),
         minutes = state.timeOfDayMinutes;
       try {
+        recording = true;
         for (let step = 0; step < 600; step++) {
           await new Promise(requestAnimationFrame);
           recording = true;
@@ -133,12 +184,17 @@ try {
             timeOfDayMinutes: minutes,
           });
         }
+        await new Promise(requestAnimationFrame);
         recording = false;
       } finally {
         stop();
       }
-      const data = document.querySelector('[data-testid="demo-scene"]').dataset;
+      collectCounters();
       return {
+        peaks,
+        effectiveDpr:
+          document.querySelector('[data-testid="demo-scene"] canvas').width /
+          document.querySelector('[data-testid="demo-scene"] canvas').clientWidth,
         clocks,
         firstSubmission,
         lastSubmission,
@@ -177,6 +233,7 @@ try {
       complete,
       raw: result,
       intervalsMs: intervals,
+      browserRafIntervalsMs: clockIntervals,
       frameMs: {
         p50: percentile(intervals, 0.5),
         p95: percentile(intervals, 0.95),
@@ -186,18 +243,35 @@ try {
       tier,
       limits,
       geometryBudget:
-        result.counters.drawCalls <= limits.drawCalls &&
-        result.counters.triangles <= limits.triangles,
+        result.peaks.drawCalls <= limits.drawCalls && result.peaks.triangles <= limits.triangles,
       frameBudget: complete && Math.max(...intervals) <= 50,
       fpsBudget: complete && percentile(fps, 0.5) >= limits.fps,
       gpuMemoryStatus: "NOT_VERIFIED",
     });
+  }
+  await writeFile(`${memoryPath}.stop`, "stop");
+  if (gpuSampler && gpuSampler.exitCode === null && !samplerError)
+    await Promise.race([
+      new Promise((resolve) => gpuSampler.once("exit", resolve)),
+      new Promise((resolve) => setTimeout(resolve, 12000)),
+    ]);
+  const gpuMemory = await readFile(memoryPath, "utf8")
+    .then(JSON.parse)
+    .catch(() => ({ status: "NOT_VERIFIED", samples: [] }));
+  if (gpuMemory.status === "MEASURED") {
+    gpuMemory.peakResidentAllocationBytes = Math.max(
+      ...gpuMemory.samples.map((r) => r.residentAllocationBytes),
+    );
+    gpuMemory.peakCommittedBytes = Math.max(...gpuMemory.samples.map((r) => r.committedBytes));
+    gpuMemory.midBudgetStatus =
+      gpuMemory.peakResidentAllocationBytes <= 350000000 ? "MET" : "NOT_MET";
   }
   await writeFile(
     `${output}/report.json`,
     JSON.stringify(
       {
         syntheticOnly: true,
+        gpuMemory,
         environment: metadata,
         fixtureSha256: createHash("sha256").update(P8_PACKAGE_TEXT).digest("hex"),
         scriptSha256: createHash("sha256")
@@ -239,5 +313,7 @@ try {
     }),
   );
 } finally {
+  await writeFile(`${memoryPath}.stop`, "stop");
+  if (gpuSampler?.exitCode === null) gpuSampler.kill();
   await browser.close();
 }

@@ -32,30 +32,44 @@ for (const viewport of [
     const scan = async (scenario: string) => {
       const violations = await page.evaluate(async () => {
         const axe = (window as unknown as { axe: typeof import("axe-core") }).axe;
-        return (await axe.run(document,{ runOnly:{type:"tag",values:["wcag2a","wcag2aa","wcag21a","wcag21aa","wcag22aa"]} })).violations.map((v)=>({id:v.id,impact:v.impact,nodes:v.nodes.map((n)=>({target:n.target,summary:n.failureSummary}))}));
+        return (
+          await axe.run(document, {
+            runOnly: {
+              type: "tag",
+              values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"],
+            },
+          })
+        ).violations.map((v) => ({
+          id: v.id,
+          impact: v.impact,
+          nodes: v.nodes.map((n) => ({ target: n.target, summary: n.failureSummary })),
+        }));
       });
       scans.push({ scenario, violations });
     };
     await scan("VI initial shell");
-    const ready = await page.locator("#scene-root").getAttribute("data-scene-state") === "ready";
+    const ready = (await page.locator("#scene-root").getAttribute("data-scene-state")) === "ready";
     if (process.env["REQUIRE_WEBGL2"] === "1") expect(ready).toBe(true);
     if (ready) {
-      await page.getByRole("radio", {name:"Mặt bằng",exact:true}).click();
+      await page.getByRole("radio", { name: "Mặt bằng", exact: true }).click();
       await expect(page.getByTestId("plan-scale-ruler")).toBeVisible();
       await scan("VI Plan controls");
-      await page.getByRole("radio", {name:"Diorama",exact:true}).click();
+      await page.getByRole("radio", { name: "Diorama", exact: true }).click();
     }
-    for (const id of ["time","weather","festival","memories"]) {
+    for (const id of ["time", "weather", "festival", "memories"]) {
       await page.locator(`#tab-${id}`).click();
       await scan(`VI ${id} panel`);
     }
-    await page.getByRole("radio", {name:"EN",exact:true}).click();
+    await page.getByRole("radio", { name: "en", exact: true }).click();
     await scan("EN memories panel");
     await page.locator("#tab-time").click();
     await scan("EN time panel");
-    await page.getByRole("radio", {name:"VI",exact:true}).click();
-    await test.info().attach("accessibility-scans",{contentType:"application/json",body:JSON.stringify({viewport,ready,scans})});
-    expect(scans.filter((scan)=>scan.violations.length)).toEqual([]);
+    await page.getByRole("radio", { name: "vi", exact: true }).click();
+    await test.info().attach("accessibility-scans", {
+      contentType: "application/json",
+      body: JSON.stringify({ viewport, ready, scans }),
+    });
+    expect(scans.filter((scan) => scan.violations.length)).toEqual([]);
     const sound = page.getByRole("button", { name: "Tiếng phố", exact: true });
     await sound.focus();
     await page.keyboard.press("Tab");
