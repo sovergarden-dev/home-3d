@@ -1,9 +1,16 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { gzipSync } from "node:zlib";
+import { readBuildOutput } from "../build/output.mjs";
 
-const root = path.resolve(process.argv[2] ?? ".output/public");
-const manifest = JSON.parse(await readFile(path.join(root, ".vite/manifest.json"), "utf8"));
+const output = await readBuildOutput();
+const root = path.resolve(process.argv[2] ?? output.root);
+const manifest = JSON.parse(
+  await readFile(
+    process.argv[3] ?? path.join(path.dirname(output.serverEntry), "client-manifest.json"),
+    "utf8",
+  ),
+);
 const entries = Object.entries(manifest).filter(([, row]) => row.isEntry || row.isDynamicEntry);
 const engine = entries.find(([key, row]) => /(?:^|\/)engine\/demoScene\.ts$/.test(row.src ?? key));
 if (!entries.length || !engine || !engine[1].isDynamicEntry)

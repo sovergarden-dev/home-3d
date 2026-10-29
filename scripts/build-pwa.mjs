@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { readFile, writeFile, readdir } from "node:fs/promises";
+import { readFile, writeFile, readdir, rename } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { readBuildOutput } from "../build/output.mjs";
@@ -113,6 +113,11 @@ await writeFile(
   headers,
   existing +
     "\n/sw.js\n  Cache-Control: no-cache\n  Service-Worker-Allowed: /\n/manifest.webmanifest\n  Cache-Control: no-cache\n",
+);
+// Vite's internal manifest may include absolute build paths; it is tooling input, not a public asset.
+await rename(
+  path.join(root, ".vite/manifest.json"),
+  path.join(path.dirname(output.serverEntry), "client-manifest.json"),
 );
 console.log(
   JSON.stringify({
