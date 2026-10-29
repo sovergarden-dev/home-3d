@@ -60,6 +60,11 @@ for (const viewport of [
       exact: true,
     });
     const controls = page.locator(".h6-map-controls-anchor");
+    await handle.evaluate((element) => {
+      element.addEventListener("pointerdown", (event) => {
+        element.setAttribute("data-captured-pointer", String((event as PointerEvent).pointerId));
+      });
+    });
     await expect(handle).toHaveAttribute("aria-expanded", "false");
     await expect(controls).toBeVisible();
     const peekHeight = await handle.evaluate(
@@ -72,7 +77,7 @@ for (const viewport of [
     await expect(handle).toBeFocused();
     await expect(controls).toBeHidden();
     await handle.dispatchEvent("pointercancel", {
-      pointerId: 1,
+      pointerId: Number(await handle.getAttribute("data-captured-pointer")),
       pointerType: "mouse",
       isPrimary: true,
       bubbles: true,
@@ -109,29 +114,23 @@ for (const viewport of [
       await page.mouse.down();
       await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + 45, { steps: 3 });
       await handle.dispatchEvent("pointercancel", {
-        pointerId: 1,
+        pointerId: Number(await handle.getAttribute("data-captured-pointer")),
         pointerType: "mouse",
         isPrimary: true,
         bubbles: true,
       });
-      await page.mouse.up();
       expect(
         await handle.evaluate((element) => element.parentElement!.getBoundingClientRect().height),
       ).toBe(height);
       await expect(handle).toBeFocused();
+      await page.mouse.up();
+      expect(
+        await handle.evaluate((element) => element.parentElement!.getBoundingClientRect().height),
+      ).toBe(height);
     }
     const fullHeight = await handle.evaluate(
       (element) => element.parentElement!.getBoundingClientRect().height,
     );
-    await handle.evaluate((element) => {
-      element.addEventListener(
-        "pointerdown",
-        (event) => {
-          element.setAttribute("data-captured-pointer", String((event as PointerEvent).pointerId));
-        },
-        { once: true },
-      );
-    });
     const captured = (await handle.boundingBox())!;
     await page.mouse.move(captured.x + captured.width / 2, captured.y + 12);
     await page.mouse.down();

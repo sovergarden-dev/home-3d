@@ -145,3 +145,9 @@ P8/P9raw487 giữ mọi mẫu: P8 420actionsmax78,4ms, continuous717intervalmax4
 Chuẩn bị M3 phát hiện prerender opt-in qua wrapper làm mất Wrangler output config; chuyển hậu xử lý sang chính fetch export đã build, config phục hồi và shell/hash được sinh thật. PWA ba ca production local đã đạt ở bước chuẩn bị, cần kiểm sau tích hợp. M4 17 unit JWT và dry-run thật Wrangler4.151.3 đạt, chưa deploy; runtime Workerd còn cần kiểm. M5 47pipelinecases synthetic đạt, gồm GeoTIFFWGS/UTM và canonical+G1; phần renderer/hiệu năng cuối chưa nghiệm thu. Đây là tiến độ, không phải milestoneDONE.
 
 Review cuối ở ff550657 xác nhận không còn actionable finding. Assertion lost capture nay chờ sự kiện native và kiểm height trước mouseup, đã chạy6/6 ởC/F/W. Evidence M2 gồm34file, max168124byte trước receipt cuối; gitleaksdir515340byte sạch, path/token scan sạch. H6raw đã khử path/loopback. Đang commitreceipt để mở PR, chưa gọi CI4/mergepass.
+
+### CI PR #10 vòng đầu
+
+Run40800634965 ởhead5f59f0e: qualityvàWebKit đạt, Firefox68pass/46skip/1fail ởfocus sau pointercancel trongportrait. Geometry đãkhôi phục; phép kiểm gửi pointercancel tổng hợp rồi mouseup native đểdọn driver, bước sau cóthểfocus phần tử đangnằm dưới con trỏ sau khisheetđổiheight. Giữ assertionfocus nhưng kiểmngaysau cancel trước bướcdriver cleanup; dùngpointerIDthực cho mọicancel. Không thayruntime, timeout hoặcskipguard; đây làharnessfix cầnheadmớivàCIkiểm, khôngreruncùnghead.
+
+ChromiumCI lượt40800634965 có114pass/1fail: HUDportrait-label tronglandscape dùngfontLinux xuốngthêm1dòng, chồngPOV12px (screenshot synthetic đãxem). Giữđủnội dung, đưagiờ/ngày thànhhai cột trongHUDlandscape đểgiảmchiềucao; giữnguyênzero-overlap assertion. WebKit115/115pass, H6baseline59970ms→55801ms (−6,95%), ngưỡng70s/+10%đạt. Đây làCIheadđầuM2, chưađủ4/4.
