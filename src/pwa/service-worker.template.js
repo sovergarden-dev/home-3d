@@ -27,12 +27,17 @@ async function ownedResponse(asset) {
 self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
+      // Verify every public response in memory before touching any retained generation.
+      const staged = await Promise.allSettled(OWNED_ASSETS.map(ownedResponse));
+      if (staged.some((result) => result.status === "rejected"))
+        throw Error("PUBLIC_ASSET_INSTALL_FAILED");
+      const protectedGeneration = (await caches.keys()).includes(activatedPrefix + CACHE_NAME);
       const cache = await caches.open(CACHE_NAME);
       const writes = await Promise.allSettled(
-        OWNED_ASSETS.map(async (asset) => cache.put(asset.path, await ownedResponse(asset))),
+        staged.map((result, index) => cache.put(OWNED_ASSETS[index].path, result.value)),
       );
       if (writes.some((result) => result.status === "rejected")) {
-        await caches.delete(CACHE_NAME);
+        if (!protectedGeneration) await caches.delete(CACHE_NAME);
         throw Error("PUBLIC_ASSET_INSTALL_FAILED");
       }
     })(),
@@ -48,6 +53,7 @@ self.addEventListener("activate", (event) => {
         ?.slice(activatedPrefix.length);
       const keep = new Set([CACHE_NAME, previous]);
       // Empty marker caches contain no requests or private data, only activated generation names.
+      await caches.delete(activatedPrefix + CACHE_NAME);
       await caches.open(activatedPrefix + CACHE_NAME);
       await Promise.all(
         names

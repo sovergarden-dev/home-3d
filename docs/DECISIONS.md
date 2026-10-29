@@ -235,3 +235,5 @@ PWA chỉ giữ thế hệ hiện hành và thế hệ đã activate liền trư
 Enrichment dùng ranh lô sau khi áp dụng override để loại trừ nhưng vẫn trả base package và override tách biệt. GeoTIFF với một tie-point có raster offset khác zero được đưa về pixel-zero đúng bằng affine; nhiều tie-point chưa hỗ trợ thì từ chối. Chi tiết minh họa đi theo building parts như renderer, dùng elevation của part hoặc kế thừa parent; không trang trí parent ảo nằm trên các part thấp/không có căn cứ chiều cao.
 
 Đã thêm ca hồi quy cho bốn phát hiện. Pipeline đạt 50 test, chi tiết 3 unit test đạt; production PWA và check tích hợp còn đang chạy tại thời điểm ghi mục này. Không lấy static review làm bằng chứng runtime.
+
+Review tiếp phát hiện hai ca rollback PWA: marker cũ không đổi thứ tự và install lỗi có thể xóa cache thế hệ từng activate. Đã đổi sang xác minh toàn bộ response trong RAM trước khi ghi CacheStorage, giữ cache đã activate khi có lỗi copy, và tạo lại marker hiện hành khi activate. Thêm ca A→B→A→C cùng rollback A thất bại lúc B đang chạy, kiểm hash byte cache A còn nguyên. Chỉ asset public đã khóa hash được giữ trong bộ đệm tạm; không có nội dung riêng.

@@ -156,3 +156,87 @@ test("failed installation is removed and the previously activated generation sur
   expect(generations).toHaveLength(2);
   expect(generations).toContain(original);
 });
+
+test("rollback refreshes activation order and failed rollback preserves retained bytes", async ({
+  page,
+}) => {
+  await page.request.post("/__qa__/update?revision=100");
+  await page.goto("/gioi-thieu");
+  await page.evaluate(async () => {
+    await navigator.serviceWorker.ready;
+  });
+  await expect
+    .poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller)))
+    .toBe(true);
+  const versions = () =>
+    page.evaluate(async () =>
+      (await caches.keys()).filter((name) => name.startsWith("home3d-public-static-v1-")),
+    );
+  const a = (await versions())[0]!;
+  const activate = async (revision: number) => {
+    await page.request.post(`/__qa__/update?revision=${revision}`);
+    await page.evaluate(async () => {
+      await (await navigator.serviceWorker.getRegistration())!.update();
+    });
+    await expect(page.getByTestId("pwa-update")).toBeVisible({ timeout: 60000 });
+    await page
+      .getByTestId("pwa-update")
+      .getByRole("button", { name: "Tải lại", exact: true })
+      .click();
+    await page
+      .getByRole("alertdialog")
+      .getByRole("button", { name: "Tải lại", exact: true })
+      .click();
+    await expect(page.getByTestId("pwa-update")).toHaveCount(0);
+  };
+  await activate(101);
+  const retained = await page.evaluate(async (name) => {
+    const cache = await caches.open(name),
+      keys = await cache.keys();
+    const bytes = await (await cache.match(keys[0]!))!.arrayBuffer();
+    return {
+      count: keys.length,
+      path: new URL(keys[0]!.url).pathname,
+      hash: [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))],
+    };
+  }, a);
+  await page.request.post("/__qa__/update?revision=100&fail=1");
+  await page.evaluate(async () => {
+    const registration = (await navigator.serviceWorker.getRegistration())!;
+    const failed = new Promise<void>((resolve) =>
+      registration.addEventListener(
+        "updatefound",
+        () => {
+          const worker = registration.installing!;
+          worker.addEventListener("statechange", () => {
+            if (worker.state === "redundant") resolve();
+          });
+        },
+        { once: true },
+      ),
+    );
+    await registration.update();
+    await failed;
+  });
+  expect(await versions()).toContain(a);
+  expect(
+    await page.evaluate(
+      async ({ name, resource }) => {
+        const cache = await caches.open(name),
+          bytes = await (await cache.match(resource))!.arrayBuffer();
+        return {
+          count: (await cache.keys()).length,
+          path: resource,
+          hash: [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))],
+        };
+      },
+      { name: a, resource: retained.path },
+    ),
+  ).toEqual(retained);
+  await activate(100);
+  await activate(102);
+  const final = await versions();
+  expect(final).toHaveLength(2);
+  expect(final).toContain(a);
+  expect(final.some((name) => name.endsWith("-qa101"))).toBe(false);
+});

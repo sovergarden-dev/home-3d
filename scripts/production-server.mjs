@@ -56,7 +56,10 @@ Bun.serve({
       pathname === "/__qa__/update" &&
       request.method === "POST"
     ) {
-      revision++;
+      const selected = new URL(request.url).searchParams.get("revision");
+      if (selected !== null && !/^\d{1,3}$/.test(selected))
+        return new Response(null, { status: 400 });
+      revision = selected === null ? revision + 1 : Number(selected);
       failInstall = new URL(request.url).searchParams.get("fail") === "1";
       return new Response("OK");
     }
