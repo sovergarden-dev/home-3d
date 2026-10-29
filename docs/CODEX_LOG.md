@@ -194,3 +194,9 @@ Ma trận desktop GPU thật đã chạy đủ Chrome/Edge/Firefox, 4 cảnh ×6
 Lighthouse13.5 production tại `a948321b72d9d95833ab2af7338c55e4dc24d05e`, gzip, headless Chrome152 IntelUHD: mobilePerformance26/Accessibility100; desktop60/100. Performance NOT_MET, accessibility đạt95. MobileTBT9.914,5ms, desktop936,5ms; không request ngoài. Audit chỉ ra42,3s ScriptEvaluation ở engine trong profile mobile, không có căn cứ đổ lỗi cho React UI là nguyên nhân chính. Giữ đầy đủ JSON gzip, không giảm tiêu chuẩn hoặc thay root bằng trang nhẹ để báo xanh.
 
 Quét endpoint build xác nhận /.vite/manifest.json trả200 kèm đường dẫn build; đã chuyển manifest nội bộ sang server-only, check bundle vẫn đọc graph gốc. Test production mới yêu cầu URL nội bộ404, đang chạy. Không có dữ liệu khu thật và chưa Publish/deploy.
+
+## 29/10/2026 — Tạm dừng theo chủ dự án để khởi động lại máy
+
+Đã dừng phép đo Edge đang chạy và các server/browser QA cục bộ thuộc Home 3D. Mã ứng viên `4e5136f1cfdcd5e69a31af7a7455d5fa2f40c74a` đã push lên PR #11; main vẫn `cf3cb262dfa7b69a881bef63c0d9a89dd32668fb`, chưa merge/freeze/audit tag. CI `40836100757` chạy độc lập trên GitHub: quality success, ba browser còn đang chạy tại thời điểm tạm dừng. Không hủy/rerun CI.
+
+Soak30phút đã hoàn tất và raw được lưu. Lượt Edge full matrix bị ngắt theo yêu cầu chủ dự án: giữ tất cả batch đã ghi, đánh dấu INTERRUPTED, không coi là ma trận hoàn chỉnh. Điểm tiếp tục cục bộ ghi đủ đường dẫn, log, giới hạn và việc còn lại; sau reboot phải xem kết quả CI cũ trước, không tự rerun cùng head. Chưa Publish/deploy hoặc mở dữ liệu khu thật.
