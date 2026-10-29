@@ -340,3 +340,7 @@
     min-width: 0;
   }
 }
+
+.capture-action {
+  background-color: color-mix(in oklch, var(--accent), black 15%);
+}

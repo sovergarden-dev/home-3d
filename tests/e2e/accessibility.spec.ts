@@ -44,7 +44,11 @@ for (const viewport of [
       }));
     });
     expect(violations).toEqual([]);
-    await page.getByRole("button", { name: "Tiếng phố", exact: true }).focus();
+    const sound = page.getByRole("button", { name: "Tiếng phố", exact: true });
+    await sound.focus();
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Shift+Tab");
+    await expect(sound).toBeFocused();
     expect(await page.locator(":focus").evaluate((node) => node.matches(":focus-visible"))).toBe(
       true,
     );

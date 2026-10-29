@@ -185,3 +185,7 @@ Bật prerender của TanStack qua wrapper 2.25.3 làm output local không còn 
 ### M3 — Soak không reload document
 
 Receipt M1 lịch sử dùng navigation đầy đủ mỗi năm vòng; số heap của nó không chứng minh giữ bộ nhớ liên tục trong một document. M3 thêm mode desktop-soak vào harness có sẵn: năm vòng warm-up nhanh, rồi đủ 30 phút đo và ít nhất20vòng đo; bốn viewmode mỗi vòng, route qua link SPA và kiểm performance.timeOrigin không đổi. Không dùng reload để giải phóng leak. Giữ raw mọi mẫu, baseline heap sau warm-up và đo peak/end so với10%; không coi heap/renderer counters là GPU memory.
+
+### M3 — Lỗi a11y đo được
+
+Axe4.14 trênba viewport tìmhai lỗi: chữtrắng trênnútchụpảnh thiếutươngphản, vàtabactive trỏaria-controls tới panelchưatồntạikhi sheetpeek. Chỉ tối màu nềnCTA chụpảnh cùnghue, giữpalette3D; cácpanel luôncócontainerẩnđúngID, chỉmountnộidungkhi activevàđangmở. Khôngmountnộidungkỷniệm riêng trongcáctabẩn. KeyboardtestdùngTab/Shift+Tab thật, khôngsuyfocus-visible từfocus bằngscript.

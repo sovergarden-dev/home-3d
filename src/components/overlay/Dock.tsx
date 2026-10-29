@@ -30,7 +30,6 @@ export function Dock({ mobile, onExpandedChange }: DockProps) {
   const drag = useRef<{ y: number; h: number } | null>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const Panel = tabs.find((x) => x.id === active)!.Panel;
 
   const onTabKey = (e: KeyboardEvent, i: number) => {
     const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
@@ -72,16 +71,21 @@ export function Dock({ mobile, onExpandedChange }: DockProps) {
     </div>
   );
 
-  const panel = (
-    <div
-      role="tabpanel"
-      id={`panel-${active}`}
-      aria-labelledby={`tab-${active}`}
-      className="animate-in fade-in duration-200"
-    >
-      <Panel />
-    </div>
-  );
+  const panel = tabs.map(({ id, Panel }) => {
+    const visible = active === id && (!mobile || snap !== "peek");
+    return (
+      <div
+        key={id}
+        role="tabpanel"
+        id={`panel-${id}`}
+        aria-labelledby={`tab-${id}`}
+        hidden={!visible}
+        className="animate-in fade-in duration-200"
+      >
+        {visible && <Panel />}
+      </div>
+    );
+  });
 
   if (!mobile) {
     return (
@@ -168,7 +172,7 @@ export function Dock({ mobile, onExpandedChange }: DockProps) {
       </button>
       <div className="px-3">{tabBar}</div>
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 pb-3 pt-3">
-        {snap !== "peek" && panel}
+        {panel}
       </div>
     </div>
   );
