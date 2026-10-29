@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "vite build && bun scripts/build-pwa.mjs",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
@@ -15,7 +15,8 @@
     "typecheck": "tsc --noEmit",
     "check:pipeline": "cd pipeline && bun x tsc --noEmit --project tsconfig.json && bun test src",
     "check": "bun run typecheck && bun run lint && bun run test && bun run check:pipeline && bun run build",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:production": "playwright test --config playwright.production.config.ts"
   },
   "overrides": {
     "rolldown": "1.2.1"
@@ -99,7 +100,8 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
     "vite": "8.1.5",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "axe-core": "4.14.0"
   },
   "patchedDependencies": {
     "sonner@2.0.7": "patches/sonner@2.0.7.patch"

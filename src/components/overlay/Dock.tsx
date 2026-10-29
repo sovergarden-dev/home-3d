@@ -41,7 +41,11 @@ export function Dock({ mobile, onExpandedChange }: DockProps) {
   };
 
   const tabBar = (
-    <div role="tablist" aria-label="Dock" className="no-scrollbar flex gap-1 overflow-x-auto">
+    <div
+      role="tablist"
+      aria-label={t.dockLabel}
+      className="no-scrollbar flex gap-1 overflow-x-auto"
+    >
       {tabs.map(({ id, Icon }, i) => (
         <button
           key={id}

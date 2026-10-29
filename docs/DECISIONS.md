@@ -89,3 +89,21 @@ Notion AI tạo và kiểm patch. Hermes áp nguyên patch, chạy frozen instal
 - Hash versioned/whitelist chỉ camera/time/ID, không nội dung/tên/world hash/lat-lng. replaceState sau control-end; Clipboard chỉ nút bấm. Public/guest là preview/xuất file, không đăng mạng; nhật ký/marker luôn private.
 - Bưu thiếp 3840×2160/2048×1152 (fallback 1080×608) render đúng vùng ảnh: target HalfFloat tuyến tính → OutputPass ACES/exposure/sRGB → target byte để readback. Three r180 không tone-map offscreen như canvas; chỉ đặt outputColorSpace không đủ. Vùng ảnh chiếm 92% bề ngang. Finally trả camera/renderer, dispose cả hai target/output pass/clear canvas; không đổi canvas/DPR thật. Encode mới/quét metadata; Web Share chỉ nếu canShare(files), còn lại download.
 - Telemetry lỗi chỉ mã tĩnh, không serialize Error/context riêng; giữ mã `CLIENT_RENDER_FAILURE`. Khôi phục đúng ba Google Fonts links của main cho Be Vietnam Pro/Lora; P10 network harness chỉ abort các host `fonts.googleapis.com`/`fonts.gstatic.com` và yêu cầu 0 request ngoài hai host này. Không thay consent weather/Google P7/P8. TopInfo dùng hydration snapshot để ngày UTC+7 không lệch SSR.
+
+## M3 — Chuẩn bị font và offline trong worktree riêng
+
+Chuẩn bị mã nhẹ trong lúc M1/M2 chạy cổng riêng; không chạy browser/build/benchmark cạnh phép đo GPU. Nghiệm thu và merge vẫn theo thứ tự. Tự host đúng các face đang dùng: Be Vietnam Pro normal300/400/500/600, Lora italic400/500, subset Vietnamese+Latin;12face dùng10woff2,185.248byte tổng, lớn nhất40.772byte. Kiểm SHA256 từ tệp tải; giấy phép OFL giữ cùng font. Không tải nội dung Maps hoặc dữ liệu khu thật. Chưa build/kiểm UI font/PWA/Lighthouse, nên M3 chưa DONE.
+
+### M3 — Kiểm production và tài nguyên offline
+
+PNG icon được rasterize từ SVG tự tạo; ép riêng hai icon thành asset có hash thay vì data URL để manifest có URL thực. Build đầu đã chặn đúng lỗi thiếu icon có hash, build sau đạt với hai shell prerender. QA production đầu bị 404 ở file sinh sau build vì adapter local gọi Nitro trước static assets. Adapter sửa theo thứ tự Static Assets mặc định của Workers; không đổi app để làm test xanh. Sau sửa, ba E2E production thực (offline/allowlist cache, iframe không đăng ký, update có xác nhận và tab khác không reload) đạt. Cấu hình private run_worker_first cần tự phục vụ public ASSETS sau khi chặn endpoint runtime.
+
+Cấu hình reduce của Playwright Test phải đặt trong contextOptions; a11y kiểm media rõ ràng. Không suy Playwright WebKit là Safari thật. Các kiểm này vẫn là bước chuẩn bị trước tích hợp M2, chưa phải cổng head cuối.
+
+### M3 — Giữ nguyên hook build của Cloudflare/Lovable
+
+Bật prerender của TanStack qua wrapper 2.25.3 làm output local không còn wrangler.json và deploy config. Mã wrapper cài compiled hook để tìm thư mục output; preset Cloudflare cũng dùng compiled để sinh các file này. Đây là dấu hiệu xung đột hook cần tránh, không vá hoặc nâng dependency hàng loạt. Bỏ opt-in prerender của app; hậu xử lý dùng chính fetch export đã build để tạo hai HTML shell công khai. Cấu trúc TanStack/Nitro và plugin wrapper giữ nguyên. Script đọc metadata của build mới nhất để hỗ trợ cả .output/public local và dist/client của wrapper Lovable, thay vì hard-code đường dẫn local. Cần kiểm lại build/config/PWA sau thay đổi; chưa coi là đã xác minh Lovable thật.
+
+### M3 — Soak không reload document
+
+Receipt M1 lịch sử dùng navigation đầy đủ mỗi năm vòng; số heap của nó không chứng minh giữ bộ nhớ liên tục trong một document. M3 thêm mode desktop-soak vào harness có sẵn: năm vòng warm-up nhanh, rồi đủ 30 phút đo và ít nhất20vòng đo; bốn viewmode mỗi vòng, route qua link SPA và kiểm performance.timeOrigin không đổi. Không dùng reload để giải phóng leak. Giữ raw mọi mẫu, baseline heap sau warm-up và đo peak/end so với10%; không coi heap/renderer counters là GPU memory.

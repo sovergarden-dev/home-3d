@@ -28,7 +28,6 @@ test.beforeEach(async ({ context }) => {
   await context.route("**/*", (route) => {
     const url = new URL(route.request().url());
     if (["127.0.0.1", "localhost", "::1"].includes(url.hostname)) return route.continue();
-    if (["fonts.googleapis.com", "fonts.gstatic.com"].includes(url.hostname)) return route.abort();
     return route.abort();
   });
 });

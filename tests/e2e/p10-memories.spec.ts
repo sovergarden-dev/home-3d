@@ -66,7 +66,6 @@ test.beforeEach(async ({ context }) => {
       ["blob:", "data:"].includes(url.protocol)
     )
       return route.continue();
-    if (["fonts.googleapis.com", "fonts.gstatic.com"].includes(url.hostname)) return route.abort();
     return route.abort();
   });
 });

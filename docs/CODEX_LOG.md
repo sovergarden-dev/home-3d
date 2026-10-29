@@ -62,3 +62,7 @@ Self-review độc lập vòng 1 tìm hai P2: summarizer hard-code môi trườn
 ### Neo Git đã hoàn tất
 
 Tag object `b5b9b602bbabc58f0820cf4ce464981946a2605d` đã push; peeled commit đúng `de7173261a8a3928685555252c2b479f76a713fe`. Trước xoá remote P10 đã kiểm SHA đúng `a5d9011d404f531f2ebe28efb18d40f2ab0040b9` và ancestor của origin/main; remote sau xoá chỉ còn main. SHA này có thể dùng tạo lại nhánh nếu chủ dự án cần, không cần viết lại lịch sử. Tag không kích hoạt workflow mới theo cấu hình hiện hành; CI baseline push main vẫn 4/4 success tại run 39968559993.
+
+## 29/10/2026 — PR #10 tích hợp M1/M2 đã mở
+
+[PR #10](https://github.com/sovergarden-dev/home-3d/pull/10), head `5f59f0ee69fef323e3db202012a97796331b7859`, draft. Source thực thi đã check tại6cce959, test-only cuối ff550657 vàreceipt5f59f0e; reviewer độc lập không còn actionable finding. Gitleaks cuối17commits/4,26MB sạch; evidence/path/token/size sạch. Main chưa merge, CI đúngheadđangchạy. PR #9parked đượcgiữ lại vìheadcũkhôngđủcổng; không rerun hoặc nớiH6. M3 tíchhợp nhánhứngviên đểtiếptục việcđộc lập, không coilàmainđãđạt.
