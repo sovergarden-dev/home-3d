@@ -29,7 +29,7 @@ try {
       });
       try {
         const page = await context.newPage();
-        page.on("request", (request) => {
+        context.on("request", (request) => {
           const url = new URL(request.url());
           if (["http:", "https:"].includes(url.protocol) && url.origin !== origin)
             externalHosts.add(url.hostname);
@@ -62,6 +62,20 @@ try {
             timeout: 60000,
           });
           const metrics = await page.evaluate(() => ({
+            navigation: (() => {
+              const n = performance.getEntriesByType("navigation")[0];
+              return n
+                ? {
+                    fetchStart: n.fetchStart,
+                    requestStart: n.requestStart,
+                    responseStart: n.responseStart,
+                    responseEnd: n.responseEnd,
+                    workerStart: n.workerStart,
+                    transferBytes: n.transferSize,
+                    encodedBytes: n.encodedBodySize,
+                  }
+                : null;
+            })(),
             firstContentfulPaintMs:
               performance.getEntriesByName("first-contentful-paint")[0]?.startTime ?? null,
             worldReadyMs: window.__loadReadyMs,

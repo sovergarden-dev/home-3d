@@ -1,0 +1,70 @@
+{
+  "syntheticOnly": true,
+  "buildManifest": {
+    "id": "/",
+    "name": "Phố Nhà Mình",
+    "short_name": "Phố Nhà Mình",
+    "lang": "vi",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#F3F1EA",
+    "theme_color": "#F3F1EA",
+    "icons": [
+      {
+        "src": "/assets/icon-192-BlrIBbrK.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "any maskable"
+      },
+      {
+        "src": "/assets/icon-512-lSlHSDRT.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "any maskable"
+      }
+    ]
+  },
+  "rows": [
+    {
+      "formFactor": "mobile",
+      "sourceSha": "a948321b72d9d95833ab2af7338c55e4dc24d05e",
+      "transport": "gzip",
+      "lighthouseVersion": "13.5.0",
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/152.0.0.0 Safari/537.36",
+        "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x000046D1) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "driverVersion": "32.0.101.7082",
+      "performance": 26,
+      "accessibility": 100,
+      "fcpMs": 5187.16475,
+      "lcpMs": 11005.053,
+      "totalBlockingMs": 9914.5,
+      "externalHosts": [],
+      "runtimeError": null,
+      "warnings": [],
+      "method": "Production root, Lighthouse default mobile/desktop settings; dedicated headless Chrome. Raw JSON gzip changes only loopback origin to synthetic.invalid, preserving all timings/audits."
+    },
+    {
+      "formFactor": "desktop",
+      "sourceSha": "a948321b72d9d95833ab2af7338c55e4dc24d05e",
+      "transport": "gzip",
+      "lighthouseVersion": "13.5.0",
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/152.0.0.0 Safari/537.36",
+        "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x000046D1) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "driverVersion": "32.0.101.7082",
+      "performance": 60,
+      "accessibility": 100,
+      "fcpMs": 845.4024999999998,
+      "lcpMs": 1482.283,
+      "totalBlockingMs": 936.5,
+      "externalHosts": [],
+      "runtimeError": null,
+      "warnings": [],
+      "method": "Production root, Lighthouse default mobile/desktop settings; dedicated headless Chrome. Raw JSON gzip changes only loopback origin to synthetic.invalid, preserving all timings/audits."
+    }
+  ]
+}

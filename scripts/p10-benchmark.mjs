@@ -172,6 +172,8 @@ async function samples(ms = 10000) {
 async function resources() {
   return page.evaluate(async () => ({
     elapsed: performance.now(),
+    documentTimeOrigin: performance.timeOrigin,
+    documentVisibility: document.visibilityState,
     counts: { ...window.__p10ResourceCounts },
     canvas: document.querySelectorAll('[data-testid="demo-scene"] canvas').length,
     scene: { ...document.querySelector('[data-testid="demo-scene"]')?.dataset },
@@ -260,12 +262,26 @@ try {
           s.setGuest(false);
           await s.setPersistent(true);
           await s.setPersistent(false);
+          const waitForWorld = async (mode) => {
+            const deadline = performance.now() + 10000;
+            while (true) {
+              const snapshot = w.getSnapshot();
+              const scene = document.querySelector('[data-testid="demo-scene"]')?.dataset;
+              if (
+                snapshot.mode === mode &&
+                s.getSnapshot().ready &&
+                scene?.worldMode === mode &&
+                scene.worldRevision === String(snapshot.revision)
+              )
+                return;
+              if (performance.now() >= deadline) throw Error("SOAK_WORLD_TRANSITION_NOT_OBSERVED");
+              await new Promise((r) => setTimeout(r, 10));
+            }
+          };
           w.openText(text.replaceAll("P8_SYNTHETIC_ATMOSPHERE_ONLY", `P10_SOAK_${cycle % 3}`));
-          for (let i = 0; i < 100 && !s.getSnapshot().ready; i++)
-            await new Promise((r) => setTimeout(r, 10));
+          await waitForWorld("private");
           w.resetFixture();
-          for (let i = 0; i < 100 && !s.getSnapshot().ready; i++)
-            await new Promise((r) => setTimeout(r, 10));
+          await waitForWorld("fixture");
         },
         { cycle, text: P8_PACKAGE_TEXT },
       );
@@ -282,7 +298,10 @@ try {
           useAppStore.getState().setIllustrativeDetails(true);
         });
         for (const name of ["Mặt bằng", "Đi bộ", "Ngồi sau xe ôm", "Diorama"]) {
-          await page.getByRole("radio", { name, exact: true }).click();
+          const control = page.getByRole("radio", { name, exact: true });
+          await control.click();
+          if ((await control.getAttribute("aria-checked")) !== "true")
+            throw Error("SOAK_MODE_CHANGE_NOT_OBSERVED");
           await page.waitForTimeout(200);
         }
         await page.getByRole("button", { name: "Tiếng phố", exact: true }).click();
@@ -363,6 +382,7 @@ try {
       continuousDocument: continuous,
       modeChanges: continuous ? measuredCycles * 4 : null,
       audioCycles: continuous ? measuredCycles : null,
+      verifiedPackageTransitions: measuredCycles * 2,
       audioOutput:
         "Muted browser output; actual AudioContext/graph is exercised by trusted clicks.",
       cycles: cycle,
