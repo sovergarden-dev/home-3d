@@ -18,9 +18,14 @@ it("prepares the same six-second PCM without an AudioContext and cancels pending
     for (const weather of ["sunny", "rain"] as const) {
       const prepared = preparation.buffer(context, weather)!;
       expect(prepared.duration).toBe(6);
-      expect(prepared.getChannelData(0)).toEqual(
-        createSyntheticBuffer(context, weather, 0.1).getChannelData(0),
-      );
+      const actual = prepared.getChannelData(0);
+      const expected = createSyntheticBuffer(context, weather, 0.1).getChannelData(0);
+      // Compare every PCM byte without building a 288,000-element assertion tree.
+      expect(
+        Buffer.from(actual.buffer, actual.byteOffset, actual.byteLength).equals(
+          Buffer.from(expected.buffer, expected.byteOffset, expected.byteLength),
+        ),
+      ).toBe(true);
     }
     preparation.prepare("storm");
     expect(vi.getTimerCount()).toBeGreaterThan(0);

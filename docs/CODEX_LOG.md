@@ -157,3 +157,7 @@ Headabed181đãfullchecklại:378unit/39pipeline/lint0, shell222303gzip;3layoutc
 ## 29/10/2026 — PR #10 tích hợp M1/M2 đã mở
 
 [PR #10](https://github.com/sovergarden-dev/home-3d/pull/10), head `5f59f0ee69fef323e3db202012a97796331b7859`, draft. Source thực thi đã check tại6cce959, test-only cuối ff550657 vàreceipt5f59f0e; reviewer độc lập không còn actionable finding. Gitleaks cuối17commits/4,26MB sạch; evidence/path/token/size sạch. Main chưa merge, CI đúngheadđangchạy. PR #9parked đượcgiữ lại vìheadcũkhôngđủcổng; không rerun hoặc nớiH6. M3 tíchhợp nhánhứngviên đểtiếptục việcđộc lập, không coilàmainđãđạt.
+
+### Điều tra focus CI vònghai
+
+Run40804608976 Firefoxvẫnfailtrướcmouseup, nên giảthuyếtcleanupkhônggiảithíchđủ. ProbeFirefoxWindowsépnoWebGL2 táihiện:ởfullsnap725px, pointerdownkhôngtớihandle vìcardfallbacknằmtrênnó; focusvềbodyvàheightkhôngđổikéo. ScreenshotCIxácnhậncardchehandle. Sheetexpandedđượcnângz-indextrênfallback/POV; testthêmcheckfocus/capturethậtvàheightphảithayđổitrướccancel, tránhnoopvẫngreen. GiữmọiassertionvàchưakếtluậnCIpass.
