@@ -315,7 +315,8 @@
     white-space: nowrap;
     text-overflow: ellipsis;
   }
-  .private-world-panel[data-collapsed="true"] {
+  main:is([data-view-mode="walk"], [data-view-mode="ride"])
+    .private-world-panel[data-collapsed="true"] {
     top: calc(max(1rem, env(safe-area-inset-top)) + 4rem);
     right: max(1rem, env(safe-area-inset-right));
     left: auto;

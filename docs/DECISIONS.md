@@ -161,3 +161,9 @@ Profile trên source 0b56c49 cho thấy AudioContext constructor và synthSample
 AudioContext statechange chủ động render một khung và cập nhật diagnostics, không mở RAF liên tục. Probe trước sửa cho context thật running nhưng dataset vẫn suspended trong cảnh dừng; không gọi timeout của dataset là âm thanh thực bị hỏng. Diorama phóng đại tác nhân 1,6×, người đi bộ 2×; POV trở về tỉ lệ cũ, simulation/collision/graph và số mesh/tam giác giữ nguyên. Landscape chuyển panel local đã thu gọn sang bên phải; SHA vẫn đầy đủ trong text/title, chỉ cắt hiển thị; hàng tilt/status không đè HUD.
 
 Playwright 1.58 Test không hỗ trợ use.reducedMotion trực tiếp: trace xác nhận field bị bỏ qua. Cấu hình chung chuyển sang contextOptions no-preference để giữ đúng điều kiện thực tế cũ của H6; không dùng thay đổi chế độ chuyển động để giảm thời gian benchmark. Ca reduced-motion bật page.emulateMedia rõ ràng và assert media trước khi kiểm chiều cao ổn định qua hai RAF. Đây là sửa harness, không nới timeout, assertion H6 hay ngưỡng hiệu năng.
+
+### M2 — Khép hai P2 từ review độc lập
+
+Reviewer riêng tìm panel thu gọn đè thước Mặt bằng và lỗi hủy kéo lịch sử chưa được test phát hiện. Chỉ đổi vị trí panel sang phải trong POV đi bộ/xe ôm; Mặt bằng giữ anchor trái cũ. Hủy kéo/lost capture và thả về cùng snap phải gán lại height của snap rõ ràng, không xóa style rồi trông chờ React render khi state không đổi. Pointerdown ngăn default focus của WebKit trước khi focus handle; thao tác bàn phím giữ nguyên.
+
+Test bổ sung geometry sau cancel ở peek/half/full, mất capture thật và Mặt bằng. Firefox dùng pointer ID khác Chromium/WebKit nên harness đọc ID thực từ event; không hard-code 1 cho releasePointerCapture. Windows WebKit 26 thực sự không có AudioContext hay biến thể prefixed/OfflineAudioContext, được probe riêng và ghi NOT_VERIFIED_UNSUPPORTED. Không thêm skip vào assertion audio cũ; CI Linux vẫn phải kiểm đầy đủ.

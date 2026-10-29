@@ -279,10 +279,15 @@ test("short landscape keeps POV, local package and map controls apart", async ({
   await page.setViewportSize({ width: 740, height: 390 });
   const ready = await open(page);
   test.skip(!ready, "WebGL2 is unavailable in this project");
-  for (const mode of ["Đi bộ", "Ngồi sau xe ôm"]) {
-    await page.getByRole("radio", { name: mode, exact: true }).click();
+  for (const mode of ["Đi bộ", "Ngồi sau xe ôm", "Mặt bằng"]) {
+    const selectedMode = page.getByRole("radio", { name: mode, exact: true });
+    await selectedMode.click();
+    await expect(selectedMode).toHaveAttribute("aria-checked", "true");
+    if (mode === "Mặt bằng") await expect(page.getByTestId("plan-scale-ruler")).toBeVisible();
     const regions = await page
-      .locator(".h6-top-info,.private-world-panel,.p9-pov-controls,.h6-map-controls-anchor")
+      .locator(
+        ".h6-top-info,.private-world-panel,.p9-pov-controls,.plan-scale-bar,.h6-map-controls-anchor",
+      )
       .evaluateAll((elements) =>
         elements.map((element) => {
           const b = element.getBoundingClientRect();
@@ -305,9 +310,13 @@ test("short landscape keeps POV, local package and map controls apart", async ({
             Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.y, b.y)),
         ).toBe(0);
       }
-    const exit = page.getByRole("button", { name: "Thoát POV", exact: true });
-    await exit.focus();
-    await expect(exit).toBeFocused();
-    await exit.press("Enter");
+    if (mode === "Mặt bằng") {
+      await page.getByRole("radio", { name: "Diorama", exact: true }).click();
+    } else {
+      const exit = page.getByRole("button", { name: "Thoát POV", exact: true });
+      await exit.focus();
+      await expect(exit).toBeFocused();
+      await exit.press("Enter");
+    }
   }
 });

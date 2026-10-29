@@ -96,6 +96,7 @@ export function Dock({ mobile, onExpandedChange }: DockProps) {
 
   const order: Snap[] = ["peek", "half", "full"];
   const onPointerDown = (e: React.PointerEvent) => {
+    e.preventDefault();
     drag.current = { y: e.clientY, h: sheetRef.current!.getBoundingClientRect().height };
     e.currentTarget.setPointerCapture(e.pointerId);
     (e.currentTarget as HTMLButtonElement).focus({ preventScroll: true });
@@ -110,24 +111,30 @@ export function Dock({ mobile, onExpandedChange }: DockProps) {
     sheetRef.current!.style.height = `${height}px`;
     onExpandedChange?.(height > 100);
   };
+  const finishDrag = (next: Snap) => {
+    drag.current = null;
+    const element = sheetRef.current!;
+    element.style.transition = "";
+    element.style.height = snapHeights[next];
+    setSnap(next);
+    onExpandedChange?.(next !== "peek");
+  };
+  const cancelDrag = () => {
+    if (drag.current) finishDrag(snap);
+  };
   const onPointerUp = (e: React.PointerEvent) => {
     if (!drag.current) return;
     const dy = drag.current.y - e.clientY;
-    const h = drag.current.h + dy;
-    drag.current = null;
-    const el = sheetRef.current!;
-    el.style.transition = "";
-    el.style.height = "";
-    const vh = window.innerHeight;
-    if (Math.abs(dy) < 6) {
-      const next = order[(order.indexOf(snap) + 1) % 3]!;
-      setSnap(next);
-      onExpandedChange?.(next !== "peek");
-      return;
-    }
-    const next = h > vh * 0.67 ? "full" : h > vh * 0.3 ? "half" : "peek";
-    setSnap(next);
-    onExpandedChange?.(next !== "peek");
+    const height = drag.current.h + dy;
+    const next =
+      Math.abs(dy) < 6
+        ? order[(order.indexOf(snap) + 1) % 3]!
+        : height > window.innerHeight * 0.67
+          ? "full"
+          : height > window.innerHeight * 0.3
+            ? "half"
+            : "peek";
+    finishDrag(next);
   };
 
   return (
@@ -143,14 +150,8 @@ export function Dock({ mobile, onExpandedChange }: DockProps) {
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
-        onPointerCancel={() => {
-          drag.current = null;
-          if (sheetRef.current) {
-            sheetRef.current.style.height = "";
-            sheetRef.current.style.transition = "";
-          }
-          onExpandedChange?.(snap !== "peek");
-        }}
+        onPointerCancel={cancelDrag}
+        onLostPointerCapture={cancelDrag}
         onKeyDown={(e) => {
           if (["ArrowUp", "ArrowDown", "Enter", " "].includes(e.key)) e.preventDefault();
           if (e.key === "Enter" || e.key === " ") setSnap(order[(order.indexOf(snap) + 1) % 3]!);

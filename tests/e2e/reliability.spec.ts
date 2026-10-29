@@ -62,6 +62,9 @@ for (const viewport of [
     const controls = page.locator(".h6-map-controls-anchor");
     await expect(handle).toHaveAttribute("aria-expanded", "false");
     await expect(controls).toBeVisible();
+    const peekHeight = await handle.evaluate(
+      (element) => element.parentElement!.getBoundingClientRect().height,
+    );
     const box = (await handle.boundingBox())!;
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
     await page.mouse.down();
@@ -77,6 +80,9 @@ for (const viewport of [
     await expect(controls).toBeVisible();
     await page.mouse.up();
     await expect(handle).toHaveAttribute("aria-expanded", "false");
+    expect(
+      await handle.evaluate((element) => element.parentElement!.getBoundingClientRect().height),
+    ).toBe(peekHeight);
     await handle.press("Enter");
     await expect(handle).toHaveAttribute("aria-expanded", "true");
     await expect(controls).toBeHidden();
@@ -93,5 +99,109 @@ for (const viewport of [
       return { before, after: sheet.getBoundingClientRect().height };
     });
     expect(motion.after).toBe(motion.before);
+    for (const snap of ["half", "full"]) {
+      if (snap === "full") await handle.press("ArrowUp");
+      const height = await handle.evaluate(
+        (element) => element.parentElement!.getBoundingClientRect().height,
+      );
+      const handleBox = (await handle.boundingBox())!;
+      await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + handleBox.height / 2);
+      await page.mouse.down();
+      await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + 45, { steps: 3 });
+      await handle.dispatchEvent("pointercancel", {
+        pointerId: 1,
+        pointerType: "mouse",
+        isPrimary: true,
+        bubbles: true,
+      });
+      await page.mouse.up();
+      expect(
+        await handle.evaluate((element) => element.parentElement!.getBoundingClientRect().height),
+      ).toBe(height);
+      await expect(handle).toBeFocused();
+    }
+    const fullHeight = await handle.evaluate(
+      (element) => element.parentElement!.getBoundingClientRect().height,
+    );
+    await handle.evaluate((element) => {
+      element.addEventListener(
+        "pointerdown",
+        (event) => {
+          element.setAttribute("data-captured-pointer", String((event as PointerEvent).pointerId));
+        },
+        { once: true },
+      );
+    });
+    const captured = (await handle.boundingBox())!;
+    await page.mouse.move(captured.x + captured.width / 2, captured.y + 12);
+    await page.mouse.down();
+    await page.mouse.move(captured.x + captured.width / 2, captured.y + 45);
+    await expect(handle).toHaveAttribute("data-captured-pointer", /^\d+$/);
+    expect(
+      await handle.evaluate((element) =>
+        element.hasPointerCapture(Number(element.getAttribute("data-captured-pointer"))),
+      ),
+    ).toBe(true);
+    await handle.evaluate((element) =>
+      element.releasePointerCapture(Number(element.getAttribute("data-captured-pointer"))),
+    );
+    await page.mouse.up();
+    expect(
+      await handle.evaluate((element) => element.parentElement!.getBoundingClientRect().height),
+    ).toBe(fullHeight);
   });
 }
+
+test("native WebGL context loss recovers once and preserves the loaded synthetic package", async ({
+  page,
+}) => {
+  const warnings: string[] = [];
+  page.on("console", (message) => {
+    if (/too many active webgl|shader error/i.test(message.text())) warnings.push(message.text());
+  });
+  await page.goto("/?local-preview=1");
+  await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", /ready|fallback/, {
+    timeout: 30000,
+  });
+  const ready = (await page.locator("#scene-root").getAttribute("data-scene-state")) === "ready";
+  if (process.env["REQUIRE_WEBGL2"] === "1") expect(ready).toBe(true);
+  test.skip(!ready, "WebGL2 unavailable");
+  const canLose = await page
+    .locator("#scene-root canvas")
+    .evaluate((canvas: HTMLCanvasElement) =>
+      Boolean(canvas.getContext("webgl2")?.getExtension("WEBGL_lose_context")),
+    );
+  test.skip(!canLose, "Native context-loss extension unavailable");
+  await page.getByLabel("Mở gói world").setInputFiles({
+    name: "synthetic-context-loss.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(P8_PACKAGE_TEXT),
+  });
+  await expect(page.getByText("Đã mở gói cục bộ", { exact: false })).toBeVisible();
+  const revision = await page.getByTestId("demo-scene").getAttribute("data-world-revision");
+  await page.locator("#scene-root canvas").evaluate((canvas: HTMLCanvasElement) => {
+    canvas.dataset["lostCanvas"] = "first";
+    canvas.getContext("webgl2")!.getExtension("WEBGL_lose_context")!.loseContext();
+  });
+  await expect(page.locator("#scene-root")).toHaveAttribute("data-recovery-attempts", "1");
+  await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "ready", {
+    timeout: 30000,
+  });
+  await expect(page.locator("#scene-root canvas")).toHaveCount(1);
+  await expect(page.locator("#scene-root canvas")).not.toHaveAttribute("data-lost-canvas", "first");
+  await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-world-revision", revision!);
+  await page
+    .locator("#scene-root canvas")
+    .evaluate((canvas: HTMLCanvasElement) =>
+      canvas.getContext("webgl2")!.getExtension("WEBGL_lose_context")!.loseContext(),
+    );
+  await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "fallback");
+  await expect(page.getByTestId("static-scene")).toBeVisible();
+  await page.getByRole("button", { name: "Thử lại 3D", exact: true }).click();
+  await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "ready", {
+    timeout: 30000,
+  });
+  await expect(page.locator("#scene-root canvas")).toHaveCount(1);
+  await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-world-revision", revision!);
+  expect(warnings).toEqual([]);
+});
