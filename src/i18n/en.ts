@@ -86,6 +86,9 @@ export const en: Dict = {
     ride: "Motorbike passenger",
   },
   life: {
+    details: "Illustrative details",
+    detailsNote:
+      "Stylized, inferred props and facades; Diorama only, not measurements or verified conditions.",
     syntheticDestination: "Fictional stop: synthetic market · not real directions",
     tiltGranted: "Tilt enabled · sensor data is never stored",
     tiltDenied: "Tilt declined · drag to look still works",

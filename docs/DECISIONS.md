@@ -89,3 +89,21 @@ Notion AI tạo và kiểm patch. Hermes áp nguyên patch, chạy frozen instal
 - Hash versioned/whitelist chỉ camera/time/ID, không nội dung/tên/world hash/lat-lng. replaceState sau control-end; Clipboard chỉ nút bấm. Public/guest là preview/xuất file, không đăng mạng; nhật ký/marker luôn private.
 - Bưu thiếp 3840×2160/2048×1152 (fallback 1080×608) render đúng vùng ảnh: target HalfFloat tuyến tính → OutputPass ACES/exposure/sRGB → target byte để readback. Three r180 không tone-map offscreen như canvas; chỉ đặt outputColorSpace không đủ. Vùng ảnh chiếm 92% bề ngang. Finally trả camera/renderer, dispose cả hai target/output pass/clear canvas; không đổi canvas/DPR thật. Encode mới/quét metadata; Web Share chỉ nếu canShare(files), còn lại download.
 - Telemetry lỗi chỉ mã tĩnh, không serialize Error/context riêng; giữ mã `CLIENT_RENDER_FAILURE`. Khôi phục đúng ba Google Fonts links của main cho Be Vietnam Pro/Lora; P10 network harness chỉ abort các host `fonts.googleapis.com`/`fonts.gstatic.com` và yêu cầu 0 request ngoài hai host này. Không thay consent weather/Google P7/P8. TopInfo dùng hydration snapshot để ngày UTC+7 không lệch SSR.
+
+## M5 — Chiều cao từ raster cục bộ, không nhập footprint
+
+Chỉ đọc các GeoTIFF chủ dự án chỉ định trong config local; không tự tìm vùng, tải tile hoặc đăng nhập. Chọn năm lớn nhất trong danh sách đã cung cấp, không fallback năm cũ cho vùng thiếu mẫu. Mẫu hợp lệ nằm trong footprint hiện có và ngoài lỗ, có building_presence đạt ngưỡng explicit (không phải xác suất). Trung vị building_height là tổng chiều cao trên nền đất: trừ roofHeight đã biết, còn mái chưa biết giữ nguyên roofType và ghi inferred. Không gán giá trị 0/âm hoặc dữ liệu ngoài 0–100 m.
+
+Bỏ qua footprint chạm bất kỳ lô nào và vùng vuông bảo thủ bao quanh bán kính tâm explicit; không coi vùng bảo vệ là ranh lô. Giữ nguyên geometry, topology, ID, số tầng và thuộc tính khác. Feature có override, số tầng hoặc height có căn cứ được giữ nguyên. Provenance mới dùng open_buildings, inferred, v1/năm và CC-BY-4.0; world không trở thành verified.
+
+GeoTIFF và chuyển UTM dùng thư viện chuyên dụng geotiff 3.0.5/proj4 2.22.0 trong package pipeline riêng; không thêm vào app/browser. Đang chuẩn bị, chưa cài/kiểm nên NOT_VERIFIED. Chỉ metadata công khai và code notebook được đọc; không tải dữ liệu địa lý. Đoạn thực thi với dữ liệu thật vẫn PARTIAL cho tới khi có đường dẫn và mục đích do chủ dự án đưa.
+
+### M5 — Làm trực tiếp trên canonical và giữ G1
+
+Bổ sung CLI enrich:canonical để không phải dựng lại footprint từ nguồn GIS mới. Chỉ đọc package, companion G1 và config/tile do chủ dự án đưa; kiểm hash byte của package khớp companion trước khi dùng origin. Đầu ra chỉ đổi height/provenance/manifest nguồn qua enrichment; tạo companion mới với cùng origin và hash của đúng byte package mới, không tái dùng companion cũ sau khi package thay đổi. Không ghi đè nguồn hoặc file đầu ra đã có; dữ liệu không synthetic phải nằm ngoài repo/OneDrive. stdout chỉ số tổng hợp, không hash, ID, origin, path hoặc nhãn licence tự do. Đây là mã chuẩn bị, chưa chạy trên dữ liệu thật.
+
+Ngân sách chi tiết procedural dành tối đa 70% instance cho mặt tiền trước, phần còn lại cho cây/cột/dây/đèn để khu nhiều nhà không làm mất toàn bộ đạo cụ phố. Tắt mặc định, chỉ Diorama, group tách và non-pickable; không ghi vào canonical.
+
+### Thứ tự kiểm cuối M3–M5
+
+Tíchhợp phầnmềmM3/M4/M5trongnhánh trước khi đo soak30phút vàma trậnGPUcuối,vìfont/PWA/lớpchi tiếtcùngảnhhưởngruntime. KhônggọiM3DONEkhisoak/Lighthousechưachạy; khônggọiM4READYkhifullWorkerdchưađượcxácminh. CácPRvẫnphảiđủcổngtrướcmerge. M5dữliệuthậtvẫnPARTIALvìchưacóđườngdẫn/quyền; khônglấykếtquảfixturelàmnghiệmthuthựcđịa.

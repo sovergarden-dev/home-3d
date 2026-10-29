@@ -80,6 +80,9 @@ export const vi = {
     ride: "Ngồi sau xe ôm",
   },
   life: {
+    details: "Chi tiết minh hoạ",
+    detailsNote:
+      "Đạo cụ và mặt tiền cách điệu, suy luận; chỉ hiện ở Diorama, không dùng để đo hay xác nhận hiện trạng.",
     syntheticDestination: "Đích giả: Trạm chợ tổng hợp · không chỉ đường thật",
     tiltGranted: "Đã cho phép nghiêng · không lưu dữ liệu",
     tiltDenied: "Đã từ chối · vẫn kéo để nhìn",

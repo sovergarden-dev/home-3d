@@ -1,3 +1,4 @@
+import { createIllustrativeDetails } from "./illustration/details";
 import { createLifeRuntime } from "./life/runtime";
 import { bindLifeCommands, resetLifeSession, updateLifeStatus } from "./life/session";
 import * as THREE from "three";
@@ -546,6 +547,8 @@ export function createDemoScene(
   host.dataset["memoryPinMeshes"] = "1";
   host.dataset["memoryPins"] = String(memoryPins.mesh.count);
 
+  let illustrativeDetails: ReturnType<typeof createIllustrativeDetails> | null = null;
+
   function mountWorld() {
     const snapshot = worldDataProvider.getSnapshot();
     currentWorld = snapshot;
@@ -554,6 +557,8 @@ export function createDemoScene(
     life = null;
     audio.notifyPackageReplaced();
     if (useAppStore.getState().soundOn) useAppStore.setState({ soundOn: false });
+    illustrativeDetails?.dispose();
+    illustrativeDetails = null;
     worldBundle?.dispose();
     const meshBuildStartedAt = performance.now();
     worldBundle = buildWorldMeshes(snapshot.world, materialFactory);
@@ -592,6 +597,8 @@ export function createDemoScene(
     life = null;
     audio.notifyPackageReplaced();
     if (useAppStore.getState().soundOn) useAppStore.setState({ soundOn: false });
+    illustrativeDetails?.dispose();
+    illustrativeDetails = null;
     worldBundle?.dispose();
     worldBundle = null;
   }
@@ -775,6 +782,21 @@ export function createDemoScene(
   }
 
   function updateLayerVisibility() {
+    const showDetails =
+      useAppStore.getState().illustrativeDetails && useAppStore.getState().viewMode === "diorama";
+    if (showDetails && "world" in currentWorld && !illustrativeDetails) {
+      illustrativeDetails = createIllustrativeDetails(
+        currentWorld.world,
+        renderer.capabilities.maxTextureSize <= 4096 ? "low" : "mid",
+      );
+    }
+    if (showDetails && illustrativeDetails) scene.add(illustrativeDetails.group);
+    else illustrativeDetails?.group.removeFromParent();
+    host.dataset["illustrativeDetails"] = String(showDetails);
+    host.dataset["illustrativeInstances"] = String(
+      showDetails ? (illustrativeDetails?.instances ?? 0) : 0,
+    );
+
     if (!worldBundle) return;
     const state = useAppStore.getState();
     worldBundle.setLayerVisible("trees", state.showTrees);
@@ -1389,7 +1411,12 @@ export function createDemoScene(
     ) {
       if (!syncingControlsState) applyView(state.viewMode === previous.viewMode);
     }
-    if (state.showTrees !== previous.showTrees || state.showLabels !== previous.showLabels) {
+    if (
+      state.showTrees !== previous.showTrees ||
+      state.showLabels !== previous.showLabels ||
+      state.illustrativeDetails !== previous.illustrativeDetails ||
+      state.viewMode !== previous.viewMode
+    ) {
       updateLayerVisibility();
       render();
     }

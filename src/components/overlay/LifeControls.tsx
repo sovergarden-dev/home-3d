@@ -54,6 +54,20 @@ export function LifeControls() {
           {t.life.noGraph}
         </p>
       )}
+      <button
+        type="button"
+        role="switch"
+        aria-checked={state.illustrativeDetails}
+        onClick={() => state.setIllustrativeDetails(!state.illustrativeDetails)}
+        className="chip"
+      >
+        {t.life.details}
+      </button>
+      {state.illustrativeDetails && (
+        <p className="text-xs text-muted-foreground" role="status">
+          {t.life.detailsNote}
+        </p>
+      )}
       <details onToggle={(e) => setShowImport(e.currentTarget.open)}>
         <summary className="ctl cursor-pointer justify-start text-xs">{t.life.importAudio}</summary>
         {showImport && (

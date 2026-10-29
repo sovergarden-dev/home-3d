@@ -1,3 +1,4 @@
+import { parseOpenBuildingsConfig, type OpenBuildingsConfig } from "./open-buildings-config";
 import type { GeodeticPoint } from "../../src/geo/enu";
 import type { CenterConfirmation } from "../../src/world/schema";
 
@@ -5,6 +6,7 @@ export type PipelineInputFormat = "geojson" | "osm-overpass";
 
 export interface PipelineConfig {
   schemaVersion: "1.0";
+  openBuildings?: OpenBuildingsConfig;
   datasetRevision: string;
   origin: GeodeticPoint;
   centerConfirmation?: CenterConfirmation;
@@ -184,7 +186,9 @@ export function parsePipelineConfig(value: unknown): PipelineConfig {
     sourceNamespaces.add(namespace);
   }
 
+  const openBuildings = parseOpenBuildingsConfig(value["openBuildings"]);
   const result: PipelineConfig = {
+    ...(openBuildings ? { openBuildings } : {}),
     schemaVersion: "1.0",
     datasetRevision: nonEmptyString(
       value["datasetRevision"],
