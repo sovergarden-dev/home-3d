@@ -16,6 +16,37 @@ Ba ghim mẫu, nhật ký demo, ảnh metadata/12 MP và UI bằng chứng đư�
 
 P10 giữ đúng ba liên kết Google Fonts của main cho Be Vietnam Pro và Lora; các harness P10 chỉ abort request tới `fonts.googleapis.com`/`fonts.gstatic.com`, không cho phép host ngoài. Không đóng gói/copy tệp font; Google Fonts không phải Google Maps và không phải nguồn model.
 
+## M2 — Công cụ coverage (dev-only)
+
+Không thêm dependency runtime. Các package mới để đo coverage, giữ guard 24 giờ và kiểm lifecycle/native:
+
+| Package                 | Version  | License      |
+| ----------------------- | -------- | ------------ |
+| `@bcoe/v8-coverage`     | `1.0.2`  | MIT          |
+| `@vitest/coverage-v8`   | `4.1.11` | MIT          |
+| `ast-v8-to-istanbul`    | `1.0.7`  | MIT          |
+| `html-escaper`          | `2.0.2`  | MIT          |
+| `istanbul-lib-coverage` | `3.2.2`  | BSD-3-Clause |
+| `istanbul-lib-report`   | `3.0.1`  | BSD-3-Clause |
+| `istanbul-reports`      | `3.2.0`  | BSD-3-Clause |
+| `js-tokens`             | `10.0.0` | MIT          |
+| `magicast`              | `0.5.5`  | MIT          |
+| `make-dir`              | `4.0.0`  | MIT          |
+
+Nguồn và thời gian phát hành đã kiểm từ npm registry, ghi trong `docs/assets/qa/codex/m2/dependency-review.json`. Gitleaks CLI 8.30.1 dùng giấy phép MIT từ dự án gitleaks/gitleaks, không vào dependency hoặc bundle app.
+
+M2 giữ công thức scalar clamp/lerp tương đương `three/src/math/MathUtils.js` (MIT) trong camera pose thuần để vỏ không import Three.js. Hàm dựng Vector3 vẫn ở engine lazy. Không thêm asset/runtime dependency cho thay đổi này.
+
+## M3 — Font cục bộ
+
+Be Vietnam Pro (Copyright 2021 The Be Vietnam Pro Project Authors) và Lora (Copyright 2011 The Lora Project Authors, Reserved Font Name Lora), SIL Open Font License1.1. Giữ nguyên file WOFF2 từ nguồn phân phối Google Fonts, chỉ chọn subset Vietnamese/Latin và face đã dùng; không sửa tên hoặc glyph. OFL nguyên văn và bảng SHA256/URL nguồn nằm ở `src/assets/fonts/`. Google Fonts không phải Maps và không dùng làm nguồn hình học.
+
+Ứng dụng bỏ stylesheet/preconnect Google Fonts và dùng URL asset do Vite phát sinh. Việc xác minh network0hostngoài và font tiếngViệt còn phải chạy trước khi ghi DONE.
+
+### Kiểm a11y M3
+
+axe-core 4.14.0 (MPL-2.0), công cụ dev để kiểm WCAG trong browser; không vào bundle runtime. Metadata công khai phát hành 05/10/2026, không có dependency/install script. Tarball và kết quả test còn NOT_VERIFIED ở bước chuẩn bị.
+
 ### M5 — Open Buildings Temporal và pipeline
 
 [Google Research Open Buildings 2.5D Temporal v1](https://sites.research.google/gr/open-buildings/temporal/) được dùng theo CC-BY-4.0, có dữ liệu Copernicus Sentinel-2. Catalogue hiện có 2016–2023, độ phân giải hiệu dụng 4 m dù raster phát hành 0,5 m. building_height là mét trên nền đất; dùng cùng building_presence như ngưỡng xếp hạng, không phải xác suất. Không dùng Google Maps/Street View làm nguồn model. Chỉ code và fixture tự tạo đã được kiểm; chưa mở tile khu thật.

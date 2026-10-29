@@ -1,0 +1,393 @@
+{
+  "syntheticOnly": true,
+  "sourceReport": "k3-after-report.json",
+  "scope": "Renderer pixels/ink boxes; no physical performance certification implied. Every result retained, including previous setup failures.",
+  "rows": [
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in vi with empty",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 10139,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in vi with maximum width",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 3230,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in vi with Vietnamese accents",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 2397,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in en with empty",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 2779,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in en with maximum width",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 2496,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in en with Vietnamese accents",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 2523,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in vi with empty",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 2321,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in vi with maximum width",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 2399,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in vi with Vietnamese accents",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 3491,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in en with empty",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 2150,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in en with maximum width",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 2718,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in en with Vietnamese accents",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 2365,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in vi with empty",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 1430,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in vi with maximum width",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 1457,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in vi with Vietnamese accents",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 1591,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in en with empty",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 1594,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in en with maximum width",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 1449,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in en with Vietnamese accents",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 1433,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in vi with empty",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 6238,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in vi with maximum width",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 3874,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in vi with Vietnamese accents",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 3202,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in en with empty",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 3220,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in en with maximum width",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 3212,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in en with Vietnamese accents",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 3136,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in vi with empty",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 2876,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in vi with maximum width",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 2988,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in vi with Vietnamese accents",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 3347,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in en with empty",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 3077,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in en with maximum width",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 3287,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in en with Vietnamese accents",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 2942,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in vi with empty",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 2966,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in vi with maximum width",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 2709,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in vi with Vietnamese accents",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 2898,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in en with empty",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 3108,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in en with maximum width",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 2899,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in en with Vietnamese accents",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 3561,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in vi with empty",
+      "browser": "webkit",
+      "status": "failed",
+      "durationMs": 2591,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in vi with maximum width",
+      "browser": "webkit",
+      "status": "failed",
+      "durationMs": 2493,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in vi with Vietnamese accents",
+      "browser": "webkit",
+      "status": "failed",
+      "durationMs": 2191,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in en with empty",
+      "browser": "webkit",
+      "status": "failed",
+      "durationMs": 2280,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in en with maximum width",
+      "browser": "webkit",
+      "status": "failed",
+      "durationMs": 2283,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in en with Vietnamese accents",
+      "browser": "webkit",
+      "status": "failed",
+      "durationMs": 2202,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in vi with empty",
+      "browser": "webkit",
+      "status": "failed",
+      "durationMs": 2342,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in vi with maximum width",
+      "browser": "webkit",
+      "status": "failed",
+      "durationMs": 2530,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in vi with Vietnamese accents",
+      "browser": "webkit",
+      "status": "failed",
+      "durationMs": 2133,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in en with empty",
+      "browser": "webkit",
+      "status": "failed",
+      "durationMs": 1930,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in en with maximum width",
+      "browser": "webkit",
+      "status": "failed",
+      "durationMs": 2070,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in en with Vietnamese accents",
+      "browser": "webkit",
+      "status": "failed",
+      "durationMs": 2207,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in vi with empty",
+      "browser": "webkit",
+      "status": "failed",
+      "durationMs": 2267,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in vi with maximum width",
+      "browser": "webkit",
+      "status": "failed",
+      "durationMs": 2768,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in vi with Vietnamese accents",
+      "browser": "webkit",
+      "status": "failed",
+      "durationMs": 2208,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in en with empty",
+      "browser": "webkit",
+      "status": "failed",
+      "durationMs": 2399,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in en with maximum width",
+      "browser": "webkit",
+      "status": "failed",
+      "durationMs": 2071,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in en with Vietnamese accents",
+      "browser": "webkit",
+      "status": "failed",
+      "durationMs": 2110,
+      "measurements": []
+    }
+  ],
+  "stats": {
+    "startTime": "2026-10-28T15:19:42.061Z",
+    "duration": 212797.035,
+    "expected": 36,
+    "skipped": 0,
+    "unexpected": 18,
+    "flaky": 0
+  }
+}

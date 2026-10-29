@@ -1,4 +1,5 @@
-import * as THREE from "three";
+const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+const lerp = (from: number, to: number, amount: number) => (1 - amount) * from + amount * to;
 
 export type CameraMode = "diorama" | "topdown";
 export type Vec3Tuple = readonly [number, number, number];
@@ -39,17 +40,13 @@ export function clampCameraPose(pose: CameraPose, bounds = DEFAULT_CAMERA_BOUNDS
       finite(pose.target[2], 0),
     ],
     yaw: wrapAngle(finite(pose.yaw, 0)),
-    pitch: THREE.MathUtils.clamp(
-      finite(pose.pitch, DEFAULT_CAMERA_POSE.pitch),
-      bounds.pitch[0],
-      bounds.pitch[1],
-    ),
-    distance: THREE.MathUtils.clamp(
+    pitch: clamp(finite(pose.pitch, DEFAULT_CAMERA_POSE.pitch), bounds.pitch[0], bounds.pitch[1]),
+    distance: clamp(
       finite(pose.distance, DEFAULT_CAMERA_POSE.distance),
       bounds.distance[0],
       bounds.distance[1],
     ),
-    zoom: THREE.MathUtils.clamp(finite(pose.zoom, 1), bounds.zoom[0], bounds.zoom[1]),
+    zoom: clamp(finite(pose.zoom, 1), bounds.zoom[0], bounds.zoom[1]),
   };
 }
 export function wrapAngle(angle: number) {
@@ -64,18 +61,18 @@ export function interpolateCameraPose(
   to: CameraPose,
   amount: number,
 ): CameraPose {
-  const t = THREE.MathUtils.clamp(amount, 0, 1);
+  const t = clamp(amount, 0, 1);
   return clampCameraPose({
     mode: t < 1 ? from.mode : to.mode,
     target: [
-      THREE.MathUtils.lerp(from.target[0], to.target[0], t),
-      THREE.MathUtils.lerp(from.target[1], to.target[1], t),
-      THREE.MathUtils.lerp(from.target[2], to.target[2], t),
+      lerp(from.target[0], to.target[0], t),
+      lerp(from.target[1], to.target[1], t),
+      lerp(from.target[2], to.target[2], t),
     ],
     yaw: from.yaw + shortestAngleDelta(from.yaw, to.yaw) * t,
-    pitch: THREE.MathUtils.lerp(from.pitch, to.pitch, t),
-    distance: THREE.MathUtils.lerp(from.distance, to.distance, t),
-    zoom: THREE.MathUtils.lerp(from.zoom, to.zoom, t),
+    pitch: lerp(from.pitch, to.pitch, t),
+    distance: lerp(from.distance, to.distance, t),
+    zoom: lerp(from.zoom, to.zoom, t),
   });
 }
 
@@ -98,7 +95,7 @@ export function catmullCameraPose(
   next: CameraPose,
   amount: number,
 ): CameraPose {
-  const t = THREE.MathUtils.clamp(amount, 0, 1);
+  const t = clamp(amount, 0, 1);
   const fromYaw = from.yaw;
   const unwrap = (yaw: number, reference: number) => reference + shortestAngleDelta(reference, yaw);
   const prevYaw = unwrap(prev.yaw, fromYaw);
@@ -118,13 +115,4 @@ export function catmullCameraPose(
     distance: scalar((pose) => pose.distance),
     zoom: scalar((pose) => pose.zoom),
   });
-}
-
-export function poseToOrbit(pose: CameraPose, position = new THREE.Vector3()) {
-  const radius = pose.distance * Math.cos(pose.pitch);
-  return position.set(
-    pose.target[0] + Math.sin(pose.yaw) * radius,
-    pose.target[1] + pose.distance * Math.sin(pose.pitch),
-    pose.target[2] + Math.cos(pose.yaw) * radius,
-  );
 }

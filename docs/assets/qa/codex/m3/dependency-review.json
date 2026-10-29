@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "method": "Integrity-matched npm tarball contents plus registry release times; no extraction or package script execution.",
+  "packages": [
+    {
+      "name": "axe-core",
+      "version": "4.14.0",
+      "published": "2026-10-05T17:43:36.099Z",
+      "license": "MPL-2.0",
+      "integrity": "sha512-9WTZxEjsZ7b13TH8JPmbV2z8CHbl80/2hm3XPEG4JgNdQLK81IBRXmSxHfMAOkSqQeRxT/0dwNDz2GOm3zzpcQ==",
+      "integrityVerified": true,
+      "ageOver24Hours": true,
+      "nativeFiles": [],
+      "installScripts": {},
+      "portableWasmFiles": []
+    }
+  ]
+}

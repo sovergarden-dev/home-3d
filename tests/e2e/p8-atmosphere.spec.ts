@@ -59,9 +59,7 @@ test.describe("P8 synthetic atmosphere integration", () => {
     page.on("request", (request) => {
       const u = new URL(request.url());
       if (
-        !["127.0.0.1", "localhost", "::1", "fonts.googleapis.com", "fonts.gstatic.com"].includes(
-          u.hostname,
-        ) &&
+        !["127.0.0.1", "localhost", "::1"].includes(u.hostname) &&
         !["data:", "blob:"].includes(u.protocol)
       )
         external.push(request.url());

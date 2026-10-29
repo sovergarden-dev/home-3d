@@ -1,0 +1,32 @@
+{
+  "syntheticOnly": true,
+  "sourceSha": "59f6d6881261a542e1f1b52b4d0d2d6e86f4834a",
+  "baselineDurationMs": 44351,
+  "durationMs": 41481,
+  "changePct": -6.471105499312301,
+  "limitPct": 10,
+  "status": "PASS",
+  "rows": [
+    {
+      "test": "20 mode/route/package/capture cycles keep one ready canvas and no page errors",
+      "status": "passed",
+      "durationMs": 41481,
+      "environment": [
+        {
+          "syntheticOnly": true,
+          "sourceSha": "59f6d6881261a542e1f1b52b4d0d2d6e86f4834a",
+          "browserVersion": "152.0.7977.76",
+          "driverVersion": "32.0.101.7082",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "headed": true,
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x000046D1) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "vendor": "Google Inc. (Intel)",
+          "dpr": 1
+        }
+      ]
+    }
+  ]
+}

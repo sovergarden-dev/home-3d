@@ -74,3 +74,32 @@ describe("P9 presentation resource ownership", () => {
     simulation.dispose();
   });
 });
+
+it("enlarges only Diorama presentation while preserving actor positions and resource counts", () => {
+  const simulation = createLifeSimulation(world, 42),
+    rendering = createLifeRenderer(simulation);
+  rendering.update(1, { speed: 1, visible: true, hour: 12 });
+  rendering.update(0, { speed: 0, visible: true, hour: 12 });
+  const meshes = rendering.group.children as THREE.InstancedMesh[];
+  const mesh = meshes.find((mesh) => mesh.count > 0 && mesh.name !== "life-headlamps")!;
+  const before = new THREE.Matrix4();
+  mesh.getMatrixAt(0, before);
+  const actors = JSON.stringify(simulation.agents);
+  rendering.setDiorama(true);
+  rendering.update(0, { speed: 0, visible: true, hour: 12 });
+  const enlarged = new THREE.Matrix4();
+  mesh.getMatrixAt(0, enlarged);
+  expect(enlarged.elements[12]).toBe(before.elements[12]);
+  expect(enlarged.elements[14]).toBe(before.elements[14]);
+  const scale = (matrix: THREE.Matrix4) => new THREE.Vector3().setFromMatrixScale(matrix).x;
+  expect(scale(enlarged) / scale(before)).toBeCloseTo(mesh.name === "life-pedestrian" ? 2 : 1.6, 4);
+  expect(JSON.stringify(simulation.agents)).toBe(actors);
+  expect(meshes).toHaveLength(11);
+  rendering.setDiorama(false);
+  rendering.update(0, { speed: 0, visible: true, hour: 12 });
+  const restored = new THREE.Matrix4();
+  mesh.getMatrixAt(0, restored);
+  expect(restored.elements).toEqual(before.elements);
+  rendering.dispose();
+  simulation.dispose();
+});

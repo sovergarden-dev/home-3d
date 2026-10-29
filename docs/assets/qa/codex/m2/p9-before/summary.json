@@ -1,0 +1,33 @@
+{
+  "syntheticOnly": true,
+  "family": "p9",
+  "targetMs": 100,
+  "rounds": 30,
+  "summary": {
+    "cold-sound-on": {
+      "statistics": {
+        "n": 30,
+        "min": 172.19999998807907,
+        "p50": 177.95000000298023,
+        "p95": 183.7999999821186,
+        "max": 241.80000001192093
+      },
+      "complete": true,
+      "allUnder100Ms": false,
+      "newProgramLinks": 0
+    },
+    "warm-sound-on": {
+      "statistics": null,
+      "complete": false,
+      "allUnder100Ms": false,
+      "newProgramLinks": 0
+    }
+  },
+  "frames": {
+    "targetMaxMs": 50,
+    "statistics": null,
+    "complete": true,
+    "allAtMost50Ms": true
+  },
+  "status": "NOT_MET"
+}

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { memo, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Download, Share2, X } from "lucide-react";
 import { useAppStore } from "@/state/appStore";
 import { p10Extras } from "@/i18n/p10Extras";
@@ -11,6 +11,9 @@ import {
 import { worldDataProvider } from "@/world/privateWorldSession";
 import { memorySession } from "@/memories/session";
 
+const readGuest = () => memorySession.getSnapshot().guest;
+const readReady = () => memorySession.getSnapshot().ready;
+
 const buttonClass =
   "inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-border bg-background px-3 text-sm hover:bg-accent disabled:cursor-not-allowed disabled:opacity-50";
 const fieldClass =
@@ -20,7 +23,7 @@ export interface MemoryPostcardProps {
   guest?: boolean;
 }
 
-export function MemoryPostcard({ guest }: MemoryPostcardProps = {}) {
+function MemoryPostcardView({ guest }: MemoryPostcardProps = {}) {
   const language = useAppStore((s) => s.language);
   const selectedDate = useAppStore((s) => s.selectedDate);
   const minutes = useAppStore((s) => s.timeOfDayMinutes);
@@ -30,12 +33,9 @@ export function MemoryPostcard({ guest }: MemoryPostcardProps = {}) {
     worldDataProvider.getSnapshot,
     worldDataProvider.getSnapshot,
   );
-  const session = useSyncExternalStore(
-    memorySession.subscribe,
-    memorySession.getSnapshot,
-    memorySession.getSnapshot,
-  );
-  const isGuest = guest ?? session.guest;
+  const sessionGuest = useSyncExternalStore(memorySession.subscribe, readGuest, readGuest);
+  const sessionReady = useSyncExternalStore(memorySession.subscribe, readReady, readReady);
+  const isGuest = guest ?? sessionGuest;
   const enabled =
     !world.loading &&
     (world.mode === "fixture" ||
@@ -151,7 +151,7 @@ export function MemoryPostcard({ guest }: MemoryPostcardProps = {}) {
       <div className="flex flex-wrap gap-2">
         <button
           type="button"
-          disabled={busy || !session.ready}
+          disabled={busy || !sessionReady}
           className={buttonClass}
           onClick={() => void create()}
         >
@@ -208,4 +208,5 @@ export function MemoryPostcard({ guest }: MemoryPostcardProps = {}) {
   );
 }
 
+export const MemoryPostcard = memo(MemoryPostcardView);
 export default MemoryPostcard;
