@@ -223,3 +223,7 @@ Ngân sách chi tiết procedural dành tối đa 70% instance cho mặt tiền 
 ### Thứ tự kiểm cuối M3–M5
 
 Tíchhợp phầnmềmM3/M4/M5trongnhánh trước khi đo soak30phút vàma trậnGPUcuối,vìfont/PWA/lớpchi tiếtcùngảnhhưởngruntime. KhônggọiM3DONEkhisoak/Lighthousechưachạy; khônggọiM4READYkhifullWorkerdchưađượcxácminh. CácPRvẫnphảiđủcổngtrướcmerge. M5dữliệuthậtvẫnPARTIALvìchưacóđườngdẫn/quyền; khônglấykếtquảfixturelàmnghiệmthuthựcđịa.
+
+### M4 — Kiểm Workerd Linux trong quality
+
+WindowsWorkerdkhởiđộngđượchello/auth-onlynhưngbundleSSRđầyđủlỗiinternal qua3lượt, nên dừngretryWindows. Thêm kiểmLinuxnative vào qualityhiệnhữu (vẫn4job), dùngWrangler4.151.3/Workerd1.20261019.1đúnglock trongthưmụctoolQAriêng, bỏinstallscript/metrics/credentialenv; chỉdeploy --dry-run, khôngupload. JWT/khoá thửsinhtạm;mọifetchJWKSđượcchặn vàtrảpublickeylocal, khôngtruycậptàikhoản haydomainthật. Đây làgatechưađạt, cầnkếtquảCItrướckhibáoREADY.
