@@ -315,6 +315,8 @@ try {
         dom: await cdp.send("Memory.getDOMCounters"),
       });
       write("soak-raw.json", {
+        complete: false,
+        environment: rendererEvidence,
         durationTarget: duration,
         elapsedMs: measuredStart === null ? 0 : Date.now() - measuredStart,
         totalElapsedMs: Date.now() - start,

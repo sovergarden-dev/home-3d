@@ -118,6 +118,7 @@ try {
     JSON.stringify(
       {
         syntheticOnly: true,
+        transport: process.env.PRODUCTION_QA_COMPRESSION ?? "identity",
         network,
         method:
           "Production root with public fictional world. Three isolated contexts per viewport for cold HTTP/SW caches, followed by same-context reload after verified Service Worker control. CDP emulates 150ms latency and 1.6Mbps down/0.75Mbps up; no CPU throttling. No Playwright routing (which would disable HTTP cache). FCP is browser Paint Timing; world ready is observed from the actual scene state. No slow samples removed.",

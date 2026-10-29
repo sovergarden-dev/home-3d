@@ -65,6 +65,7 @@ for (const formFactor of ["mobile", "desktop"]) {
     await writeFile(path.join(output, `${formFactor}.json.gz`), gzipSync(safeReport));
     rows.push({
       formFactor,
+      transport: process.env.PRODUCTION_QA_COMPRESSION ?? "identity",
       lighthouseVersion: report.lighthouseVersion,
       environment,
       driverVersion: process.env.BENCH_GPU_DRIVER ?? "NOT_VERIFIED",

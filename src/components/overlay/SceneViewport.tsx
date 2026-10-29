@@ -154,7 +154,7 @@ function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
         </div>
         <div className="mx-auto h-3 w-px bg-primary" />
       </div>
-      <PrivateWorldPanel enabled />
+      <PrivateWorldPanel enabled dockExpanded={dockExpanded} />
       {failed ? (
         <div
           className={`pointer-events-none absolute inset-0 z-40 grid px-6 ${compactFallback ? "items-start justify-start" : "place-items-center"}`}

@@ -172,3 +172,7 @@ CI vòng ba `40810779896` đã qua toàn bộ ca kéo bảng; Firefox còn lỗi
 Phiên review độc lập `01a185af-1d0b-73e3-8903-d047f9e42cc0` đưa ra bốn P2 cụ thể: cache install lỗi đẩy mất cache đang dùng; enrichment bỏ qua ranh lô override; GeoTIFF tie-point không ở pixel zero; chi tiết dùng parent thay vì building parts. Đã sửa cả bốn và thêm test tương ứng. Pipeline 50/50 và detail unit 3/3 đạt. Check/PWA và lượt review xác nhận sửa vẫn pending; M3/M4/M5 giữ PARTIAL.
 
 M2 head `88e0306` check cục bộ đạt 378 unit/39 pipeline, lint/type/build/bundle; run liên quan Windows giữ 17 pass/4 fail (đều 5 giây khởi tạo scene, không phải assertion tương tác). Không đổi timeout. Bản tự host font M3 sẽ được kiểm tích hợp lại; chưa dùng kết quả này để khẳng định mọi E2E Windows đạt.
+
+### PR #10 được giữ parked
+
+Đã cập nhật mô tả PR #10 với head `46b1fd87da630bcc8aa509de2e9bd8d449bf099a`, CI `40810779896`, hồi quy Retry 3D và H6 vượt 70 giây. Head local `88e0306` đã được review không còn finding và nằm trong bản tích hợp; chưa merge PR. Check tích hợp đạt 401 unit/50 pipeline, shell 224.355 byte gzip. PWA 5 production test tại `5e093ccc471464e9cd5d8bae86335b87afdae6be` đạt; review độc lập đóng tất cả phát hiện source, bao gồm rollback. Kiểm giao diện mở rộng còn lỗi nút collapsed private panel bị sheet che một phần ở landscape, đang sửa. Main chưa đóng băng.

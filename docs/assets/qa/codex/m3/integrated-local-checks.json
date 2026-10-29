@@ -1,0 +1,43 @@
+{
+  "syntheticOnly": true,
+  "status": "PARTIAL_INTEGRATED_GATES",
+  "localCheck": {
+    "unitPassed": 401,
+    "pipelinePassed": 50,
+    "lintWarnings": 0,
+    "typecheck": "PASS",
+    "build": "PASS",
+    "shellGzipBytes": 224355,
+    "shellLimitBytes": 250000,
+    "sourceBeforeFinalPwaAndUiPatch": "40ade483bae79bf6b03596e2469570e6a6123ef3"
+  },
+  "productionPwa": {
+    "sourceSha": "5e093ccc471464e9cd5d8bae86335b87afdae6be",
+    "passed": 5,
+    "failed": 0,
+    "transport": "identity",
+    "durationSeconds": 28.4
+  },
+  "expandedBrowserFirst": {
+    "passed": 29,
+    "failed": 4,
+    "details": "Three identical landscape target-size violations plus one unchanged 5-second initial scene-load timeout in Chromium forced fallback VI phone."
+  },
+  "accessibilityAfterFix": {
+    "passed": 9,
+    "failed": 0,
+    "durationSeconds": 168,
+    "matrix": "Chromium/Firefox/WebKit x1440x900,390x844,740x390; all main panels VI/EN, WCAG2 A/AA,2.1A/AA,2.2AA; actual Tab/ShiftTab focus and keyboard sheet restoration.",
+    "sourceFilesSha256": {
+      "src/components/overlay/PrivateWorldPanel.tsx": "576cadf86028f93e7dfb728ac8245597b52ad246f84bc733410826ce3e188840",
+      "src/components/overlay/SceneViewport.tsx": "826e014d5c41354bc1484c1aac43c23b36cce31bc09f2904d6340f85f707c81d",
+      "tests/e2e/accessibility.spec.ts": "a248a386e2b8784231979d30af632d8c5b174de5523b3e83326787d9730f0b5c"
+    }
+  },
+  "independentReview": "Four initial P2 findings and two PWA rollback follow-ups closed at source level; final private-panel layout review pending.",
+  "limitations": [
+    "No native Safari or real mobile device proof.",
+    "No real area data accessed.",
+    "Final CI/native Workerd/performance/Lighthouse/continuous30min soak pending."
+  ]
+}

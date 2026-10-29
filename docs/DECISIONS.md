@@ -237,3 +237,9 @@ Enrichment dùng ranh lô sau khi áp dụng override để loại trừ nhưng 
 Đã thêm ca hồi quy cho bốn phát hiện. Pipeline đạt 50 test, chi tiết 3 unit test đạt; production PWA và check tích hợp còn đang chạy tại thời điểm ghi mục này. Không lấy static review làm bằng chứng runtime.
 
 Review tiếp phát hiện hai ca rollback PWA: marker cũ không đổi thứ tự và install lỗi có thể xóa cache thế hệ từng activate. Đã đổi sang xác minh toàn bộ response trong RAM trước khi ghi CacheStorage, giữ cache đã activate khi có lỗi copy, và tạo lại marker hiện hành khi activate. Thêm ca A→B→A→C cùng rollback A thất bại lúc B đang chạy, kiểm hash byte cache A còn nguyên. Chỉ asset public đã khóa hash được giữ trong bộ đệm tạm; không có nội dung riêng.
+
+### Cổng cuối trên bản tích hợp
+
+M1/M2 chưa qua đủ cổng merge nên main vẫn ở M0; PR #9/#10 giữ draft parked, có lý do CI cụ thể. Gom bản ứng viên M3–M5 cùng các sửa M1/M2 vào PR tích hợp để đo font, PWA, runtime riêng và lớp chi tiết trên cùng cây mã. Giữ lịch sử merge, không squash/rebase/force. Chỉ được merge sau review, privacy, local gate và bốn job CI đúng head; phải kiểm lại CI main. Bản phát hành công khai vẫn do chủ dự án Publish sau audit.
+
+Axe WCAG 2.2 ở 740×390 phát hiện nút mở bảng riêng chỉ còn 12,8 px chiều cao bấm được khi half sheet che lên. Bảng riêng đã thu gọn được ẩn hoàn toàn trong lúc mobile sheet mở hoặc đang kéo, và hiện lại khi về peek; bảng riêng đang mở và dữ liệu phiên không bị đổi. Giữ nguyên luật target-size và bổ sung kiểm bàn phím thu sheet rồi truy cập lại nút.

@@ -1,6 +1,7 @@
 // Local QA adapter for the built Cloudflare module. No deploy or account access.
 import { resolve, relative, sep } from "node:path";
 import { readFile, stat } from "node:fs/promises";
+import { gzipSync } from "node:zlib";
 import worker from "../.output/server/index.mjs";
 const root = resolve(".output/public");
 const port = Number(process.env.PRODUCTION_QA_PORT ?? 4193);
@@ -41,6 +42,26 @@ const assets = {
     });
   },
 };
+async function transport(response, request) {
+  if (
+    process.env.PRODUCTION_QA_COMPRESSION !== "gzip" ||
+    response.status !== 200 ||
+    !request.headers.get("accept-encoding")?.includes("gzip") ||
+    !/^(text\/(html|css|javascript)|application\/javascript)/.test(
+      response.headers.get("content-type") ?? "",
+    ) ||
+    response.headers.has("content-encoding")
+  )
+    return response;
+  const headers = new Headers(response.headers);
+  headers.set("Content-Encoding", "gzip");
+  headers.set("Vary", "Accept-Encoding");
+  headers.delete("Content-Length");
+  return new Response(gzipSync(new Uint8Array(await response.arrayBuffer()), { level: 6 }), {
+    status: response.status,
+    headers,
+  });
+}
 Bun.serve({
   hostname: "127.0.0.1",
   port,
@@ -64,15 +85,18 @@ Bun.serve({
       return new Response("OK");
     }
     const asset = await assets.fetch(request);
-    if (asset.status !== 404) return asset;
-    return worker.fetch(
-      request,
-      { ASSETS: assets },
-      {
-        waitUntil(p) {
-          void p.catch(() => {});
+    if (asset.status !== 404) return transport(asset, request);
+    return transport(
+      await worker.fetch(
+        request,
+        { ASSETS: assets },
+        {
+          waitUntil(p) {
+            void p.catch(() => {});
+          },
         },
-      },
+      ),
+      request,
     );
   },
 });

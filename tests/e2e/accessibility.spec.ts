@@ -70,6 +70,14 @@ for (const viewport of [
       body: JSON.stringify({ viewport, ready, scans }),
     });
     expect(scans.filter((scan) => scan.violations.length)).toEqual([]);
+    if (viewport.width < 768) {
+      await expect(page.getByTestId("private-world-panel")).toBeHidden();
+      await page
+        .getByRole("button", { name: "Kéo để mở rộng bảng điều khiển", exact: true })
+        .focus();
+      await page.keyboard.press("ArrowDown");
+      await expect(page.getByTestId("private-world-panel")).toBeVisible();
+    }
     const sound = page.getByRole("button", { name: "Tiếng phố", exact: true });
     await sound.focus();
     await page.keyboard.press("Tab");

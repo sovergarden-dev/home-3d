@@ -42,6 +42,7 @@ import {
 
 interface PrivateWorldPanelProps {
   enabled: boolean;
+  dockExpanded?: boolean;
 }
 const emptyDoc = (): WorldOverrideDocument => ({ schemaVersion: "1.0", overrides: [] });
 const EMPTY_FEATURES = [] as const;
@@ -57,7 +58,7 @@ const provenance = (
     ? feature.provenance
     : { source: "unknown", quality: "unknown" });
 
-export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
+export function PrivateWorldPanel({ enabled, dockExpanded = false }: PrivateWorldPanelProps) {
   const t = useT();
   const snapshot = useSyncExternalStore(
     worldDataProvider.subscribe,
@@ -423,7 +424,7 @@ export function PrivateWorldPanel({ enabled }: PrivateWorldPanelProps) {
 
   return (
     <section
-      className={`private-world-panel pointer-events-auto absolute z-20 flex max-h-[calc(100dvh-8rem)] max-w-sm flex-col overflow-hidden rounded-xl border border-border bg-background/95 p-3.5 shadow-xl backdrop-blur ${collapsed ? "left-4 top-60 w-fit" : "bottom-20 right-4 w-[calc(100vw-2rem)] md:bottom-72 md:right-6"}`}
+      className={`private-world-panel pointer-events-auto absolute z-20 ${collapsed && dockExpanded ? "hidden" : "flex"} max-h-[calc(100dvh-8rem)] max-w-sm flex-col overflow-hidden rounded-xl border border-border bg-background/95 p-3.5 shadow-xl backdrop-blur ${collapsed ? "left-4 top-60 w-fit" : "bottom-20 right-4 w-[calc(100vw-2rem)] md:bottom-72 md:right-6"}`}
       aria-labelledby="private-world-preview-title"
       aria-busy={snapshot.loading}
       data-testid="private-world-panel"

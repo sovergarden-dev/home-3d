@@ -318,6 +318,23 @@ try {
       externalHosts: [...new Set(external)],
     }),
   );
+} catch (error) {
+  await writeFile(
+    path.join(output, "incomplete.json"),
+    JSON.stringify(
+      {
+        syntheticOnly: true,
+        complete: false,
+        errorType: error.name,
+        rows,
+        errors,
+        externalHosts: [...new Set(external)],
+      },
+      null,
+      2,
+    ) + "\n",
+  );
+  throw error;
 } finally {
   await writeFile(`${memoryPath}.stop`, "stop");
   if (gpuSampler?.exitCode === null) gpuSampler.kill();
