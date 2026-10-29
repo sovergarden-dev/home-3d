@@ -89,3 +89,19 @@ Notion AI tạo và kiểm patch. Hermes áp nguyên patch, chạy frozen instal
 - Hash versioned/whitelist chỉ camera/time/ID, không nội dung/tên/world hash/lat-lng. replaceState sau control-end; Clipboard chỉ nút bấm. Public/guest là preview/xuất file, không đăng mạng; nhật ký/marker luôn private.
 - Bưu thiếp 3840×2160/2048×1152 (fallback 1080×608) render đúng vùng ảnh: target HalfFloat tuyến tính → OutputPass ACES/exposure/sRGB → target byte để readback. Three r180 không tone-map offscreen như canvas; chỉ đặt outputColorSpace không đủ. Vùng ảnh chiếm 92% bề ngang. Finally trả camera/renderer, dispose cả hai target/output pass/clear canvas; không đổi canvas/DPR thật. Encode mới/quét metadata; Web Share chỉ nếu canShare(files), còn lại download.
 - Telemetry lỗi chỉ mã tĩnh, không serialize Error/context riêng; giữ mã `CLIENT_RENDER_FAILURE`. Khôi phục đúng ba Google Fonts links của main cho Be Vietnam Pro/Lora; P10 network harness chỉ abort các host `fonts.googleapis.com`/`fonts.gstatic.com` và yêu cầu 0 request ngoài hai host này. Không thay consent weather/Google P7/P8. TopInfo dùng hydration snapshot để ngày UTC+7 không lệch SSR.
+
+## M4 — Chuẩn bị runtime riêng trong lúc M1 đo GPU
+
+Chỉ chuẩn bị mã/server contract và runbook trong worktree riêng khi CPU/GPU đang dành cho M1; không chạy build/test/CLI service song song phép đo. Thứ tự nghiệm thu/merge vẫn sau M1–M3; chưa gọi M4 DONE. Bàn giao cho phép đổi thứ tự có lý do: JWT logic độc lập không thay source/browser đang benchmark.
+
+Cùng build mặc định demo. Runtime riêng chỉ trả trạng thái cho phép chọn file cục bộ sau khi xác minh Access JWT bằng WebCrypto RS256, JWKS của team domain đã cấu hình, issuer/audience/thời hạn. Không đưa origin/geometry/package hoặc token vào response/log/store SSR. G1 companion và consent từng lần giữ nguyên. Endpoint private không bao giờ được cache bởi PWA. Khoá ký synthetic chỉ sinh tạm trong unit test như M4 bàn giao cho phép; không tạo credential cho dịch vụ.
+
+Nguồn chuẩn đã đọc: [Cloudflare JWT validation](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/authorization-cookie/validating-json/), [Wrangler configuration](https://developers.cloudflare.com/workers/wrangler/configuration/). Chưa đăng nhập, cấu hình hay deploy dịch vụ nào.
+
+M4 chọn `jose` 6.2.13 (MIT, phát hành 20/10/2026, không dependency bắc cầu hay install script) cho JOSE parsing, JWK import và JWT signature/claim verification, theo ví dụ Cloudflare. Đây là runtime dependency server-only cần thiết để tránh tự duy trì parser/mật mã JWT. Chỉ wrapper giới hạn kích thước/network/cache và zod runtime contract thuộc app; không import server module vào client. Trước PR phải kiểm tarball, guard 24h, các ca ký thật bằng khoá synthetic và đo bundle client/server; chưa có claim bundle đạt cho tới khi chạy.
+
+M4 trust boundary nhận binding thô và xác thực schema đúng một lần bên trong verifier, nên URL JWKS không thể lấy từ token/caller-supplied issuer. Định cỡ: reach dự kiến chỉ gia đình sau Access (ước lượng, chưa có deployment/người dùng đo); capability của người gửi request có thể sửa header; motive là truy cập trái phép nếu sau này có dữ liệu server; blast radius v1 chỉ flag chọn file, dữ liệu riêng vẫn local. Sàn xác thực vẫn bắt buộc theo bàn giao. Chọn boundary server + thư viện JOSE, không thêm DB/rate-limit/quota hay login machinery. Mở lại đánh giá khi thêm R2 hoặc dữ liệu server. Các chỉ dẫn stack Nuxt/npm/Pages không áp vào dự án TanStack/Bun/Workers này; giữ cấu hình Nitro/Lovable, không đổi nodejs_compat có sẵn để theo một stack khác.
+
+### M4 — Fetch JWKS trên runtime thật
+
+Workerd1.20261019.1 từchối redirect:error ngaytrước fetch; unitNodekhôngpháthiệnkhácbiệtnày. Dùng redirect:manual, giữcheckresponse.okđểtừchối3xxkhôngđitheoLocation; unitthêmcase302. HelloWorkerdđạt; auth-onlyvàbundleđầyđủđangkiểm. ChưacoilàREADY_TO_DEPLOY_NOT_DEPLOYEDkhi fullnativeWorkerchưađạt.

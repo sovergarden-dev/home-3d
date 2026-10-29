@@ -5,6 +5,7 @@ import { MapPin } from "lucide-react";
 import { worldDataProvider } from "@/world/privateWorldSession";
 import { BUILD_SHA, PUBLIC_BUILD_VERSION } from "@/config/buildInfo";
 import { memorySession } from "@/memories/session";
+import { PrivateAccessBadge } from "./PrivateAccessBadge";
 
 const subscribeHydration = () => () => {};
 
@@ -74,6 +75,7 @@ export function TopInfo() {
       <p className="mt-1 text-[10px] text-muted-foreground" data-testid="build-info">
         {PUBLIC_BUILD_VERSION} · SHA {BUILD_SHA ?? t.localPreview.buildUnknown}
       </p>
+      <PrivateAccessBadge />
     </div>
   );
 }

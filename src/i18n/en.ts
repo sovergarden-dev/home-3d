@@ -2,6 +2,7 @@ import type { Dict } from "./vi";
 
 export const en: Dict = {
   appName: "Phố Nhà Mình",
+  privateAccessVerified: "Private access verified",
   tagline: "Our street, just a little.",
   viewportPlaceholder: "The 3D map will appear here",
   demoBadge: "DEMO · Fictional street",
