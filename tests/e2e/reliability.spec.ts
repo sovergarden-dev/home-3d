@@ -142,9 +142,19 @@ for (const viewport of [
         element.hasPointerCapture(Number(element.getAttribute("data-captured-pointer"))),
       ),
     ).toBe(true);
-    await handle.evaluate((element) =>
-      element.releasePointerCapture(Number(element.getAttribute("data-captured-pointer"))),
-    );
+    await handle.evaluate((element) => {
+      element.addEventListener(
+        "lostpointercapture",
+        () => element.setAttribute("data-loss-delivered", "true"),
+        { once: true },
+      );
+      element.releasePointerCapture(Number(element.getAttribute("data-captured-pointer")));
+    });
+    await page.mouse.move(captured.x + captured.width / 2 + 1, captured.y + 46);
+    await expect(handle).toHaveAttribute("data-loss-delivered", "true");
+    expect(
+      await handle.evaluate((element) => element.parentElement!.getBoundingClientRect().height),
+    ).toBe(fullHeight);
     await page.mouse.up();
     expect(
       await handle.evaluate((element) => element.parentElement!.getBoundingClientRect().height),
