@@ -1,0 +1,39 @@
+{
+  "syntheticOnly": true,
+  "family": "p9",
+  "targetMs": 100,
+  "rounds": 1,
+  "summary": {
+    "cold-sound-on": {
+      "statistics": {
+        "n": 1,
+        "min": 127.90000000596046,
+        "p50": 127.90000000596046,
+        "p95": 127.90000000596046,
+        "max": 127.90000000596046
+      },
+      "complete": true,
+      "allUnder100Ms": false,
+      "newProgramLinks": 0
+    },
+    "warm-sound-on": {
+      "statistics": {
+        "n": 1,
+        "min": 60.599999994039536,
+        "p50": 60.599999994039536,
+        "p95": 60.599999994039536,
+        "max": 60.599999994039536
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0
+    }
+  },
+  "frames": {
+    "targetMaxMs": 50,
+    "statistics": null,
+    "complete": true,
+    "allAtMost50Ms": true
+  },
+  "status": "DIAGNOSTIC_INSUFFICIENT_SAMPLES"
+}

@@ -2,10 +2,11 @@
 
 ## Hiện trạng
 
-- M0 DONE: PR #8 merge `cf3cb262dfa7b69a881bef63c0d9a89dd32668fb`, CI main 40717187350 xanh 4/4.
-- M1 PARTIAL: PR #9 vẫn draft; head b6620382 có 110 ca WebKit đạt nhưng H6 87,777 giây vượt 70 giây, CI 40781481203 đỏ. Không merge hoặc rerun cùng head.
-- M2 đang tích hợp M1 bằng merge để tiếp tục phần độ tin cậy; check sơ bộ 365 ca coverage + 1 ca CPU đạt, lint 0, vỏ 221.427 byte gzip. Cổng cuối chưa kiểm.
-- M3/M4 chỉ chuẩn bị cô lập, M5 chưa triển khai. Không Publish/deploy, không đọc dữ liệu khu thật.
+- M0 DONE: PR #8 merge cf3cb262dfa7b69a881bef63c0d9a89dd32668fb; CI main 40717187350 xanh 4/4.
+- M1 PARTIAL: PR #9 parked/draft; head b662 có WebKit H6 87.777 ms (baseline cùng runner 88.233 ms), CI 40781481203 đỏ dù 110 ca chức năng đạt. Không merge/rerun head đó.
+- M2: code và kiểm Windows/GPU đã có, đang chuẩn bị PR tích hợp M1; check 378 unit/39 pipeline, lint 0, vỏ 222.305 byte. H6 GPU mới 43.434→41.839 ms. CI head cuối/review cuối còn pending.
+- M3/M4/M5 chuẩn bị trong worktree riêng; có test cục bộ từng phần, chưa tích hợp/merge. Không Publish/deploy hoặc đọc dữ liệu khu thật.
+- P9 còn NOT_MET ở đỉnh >100 ms; Windows WebKit không có Web Audio. Chi tiết trong M2_RELIABILITY_RUNBOOK và evidence, không gộp thành pass.
 
 ## 28/10/2026 — M0 hoàn tất
 
@@ -132,3 +133,15 @@ Còn phải làm: đo baseline coverage rồi ratchet, xác minh bundle manifest
 ### M2 sơ bộ và cập nhật cổng M1
 
 Kiểm Windows sơ bộ M2: 365 ca semantic với V8 coverage đạt, sau đó ca CPU giữ nguyên 600 frame/4 ms không instrumentation đạt; typecheck và lint không lỗi/cảnh báo. Vỏ sơ bộ 221.427 byte gzip. Cổng head tích hợp cuối NOT_VERIFIED. PR #9 CI `40781481203` đỏ ở H6 WebKit 87.777 ms (baseline cùng runner 88.233 ms); PR vẫn draft, chưa merge.
+
+## 29/10/2026 — M2 trước PR tích hợp
+
+Checkpoint a68da1c chuẩn bị reliability/quality, merge M1 bằng 0b56c49, tối ưu audio/đọc tác nhân 1da524d, LF riêng 487156d, sửa review 6cce959, tăng assertion lost capture ff55065. Không rebase/amend/squash. Main vẫn cf3cb262dfa7b69a881bef63c0d9a89dd32668fb; branch không behind main.
+
+Full check tại6cce959 đạt 377 unit semantic có coverage + ca CPU nguyên600frame/4ms,39pipeline,typecheck/lint/build,bundle222305gzip. NativeH6 cùng harnessChrome/Intel/DPR1/no-preference: de71732 43434ms→6cce959 41839ms (−3,67%). C/F22case liên quan đạt; layout9/9 ba browser vàlost-capturetrướcmouseup6/6 đạt. WindowsWebKit audio thực không cóAPI, giữfail/NOT_VERIFIED_UNSUPPORTED; không đổi skipguard.
+
+P8/P9raw487 giữ mọi mẫu: P8 420actionsmax78,4ms, continuous717intervalmax44,5ms; P9cold-contextp5077,10,p9592,10,max124,20;warmp5061,55,p9576,80,max108. P9NOT_MET cho mọi mẫu<100; không đo firstaudible. Reviewer riêng xác nhận protocol/hash, tìm2P2đãsửa/đóng và1P3assertionđãtăngcường/kiểm6browsercase. Không gọi CI/mergeDONE khi chưa có run đúngheadcuối.
+
+Chuẩn bị M3 phát hiện prerender opt-in qua wrapper làm mất Wrangler output config; chuyển hậu xử lý sang chính fetch export đã build, config phục hồi và shell/hash được sinh thật. PWA ba ca production local đã đạt ở bước chuẩn bị, cần kiểm sau tích hợp. M4 17 unit JWT và dry-run thật Wrangler4.151.3 đạt, chưa deploy; runtime Workerd còn cần kiểm. M5 47pipelinecases synthetic đạt, gồm GeoTIFFWGS/UTM và canonical+G1; phần renderer/hiệu năng cuối chưa nghiệm thu. Đây là tiến độ, không phải milestoneDONE.
+
+Review cuối ở ff550657 xác nhận không còn actionable finding. Assertion lost capture nay chờ sự kiện native và kiểm height trước mouseup, đã chạy6/6 ởC/F/W. Evidence M2 gồm34file, max168124byte trước receipt cuối; gitleaksdir515340byte sạch, path/token scan sạch. H6raw đã khử path/loopback. Đang commitreceipt để mở PR, chưa gọi CI4/mergepass.
