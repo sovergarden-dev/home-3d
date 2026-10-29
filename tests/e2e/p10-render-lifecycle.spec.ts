@@ -31,6 +31,47 @@ test.beforeEach(async ({ context }) => {
     return route.abort();
   });
 });
+test("an empty memory layer does not compile pin shaders on route remount", async ({
+  page,
+}, info) => {
+  await page.addInitScript(() => {
+    const observed = { count: 0 };
+    (window as unknown as { __pinShaderSources: typeof observed }).__pinShaderSources = observed;
+    const original = WebGL2RenderingContext.prototype.shaderSource;
+    WebGL2RenderingContext.prototype.shaderSource = function (shader, source) {
+      if (source.includes("pinViewport")) observed.count++;
+      return original.call(this, shader, source);
+    };
+  });
+  const ready = await open(page);
+  if (process.env["REQUIRE_WEBGL2"] === "1") expect(ready).toBe(true);
+  test.skip(!ready, "WebGL2 unavailable; shader compilation NOT_VERIFIED.");
+  const initialPinSources = await page.evaluate(
+    () => (window as unknown as { __pinShaderSources: { count: number } }).__pinShaderSources.count,
+  );
+  expect(initialPinSources).toBeGreaterThan(0);
+  await page.evaluate(async () => {
+    await (await window.__p10Import("/src/memories/session.ts")).memorySession.clearAll();
+  });
+  await expect(page.getByTestId("memory-card")).toHaveCount(0);
+  await page.getByRole("link", { name: "Giới thiệu", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Về Phố Nhà Mình", exact: true })).toBeVisible();
+  await page.evaluate(() => {
+    (window as unknown as { __pinShaderSources: { count: number } }).__pinShaderSources.count = 0;
+  });
+  await page.getByRole("link", { name: "Về phố", exact: true }).click();
+  await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "ready");
+  await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-memory-pins", "0");
+  const emptyRemountPinSources = await page.evaluate(
+    () => (window as unknown as { __pinShaderSources: { count: number } }).__pinShaderSources.count,
+  );
+  await info.attach("empty-pin-shader-compilation", {
+    contentType: "application/json",
+    body: JSON.stringify({ syntheticOnly: true, initialPinSources, emptyRemountPinSources }),
+  });
+  expect(emptyRemountPinSources).toBe(0);
+});
+
 test("P10 pins alter real captured pixels without world rebuild", async ({ page }) => {
   const ready = await open(page);
   if (process.env["REQUIRE_WEBGL2"] === "1") expect(ready).toBe(true);

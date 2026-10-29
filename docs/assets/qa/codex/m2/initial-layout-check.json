@@ -1,0 +1,28 @@
+{
+  "syntheticOnly": true,
+  "status": "RESOLVED",
+  "passed": 1,
+  "failed": 3,
+  "causes": [
+    "New landscape test used a nonexistent ride label; corrected to actual VI text.",
+    "Playwright 1.58 Test ignores direct use.reducedMotion; trace context-options omitted it and sheet ran at 0.25s. Installed Test types document contextOptions.reducedMotion. Standalone browser API with reduce confirmed media=true, transitionProperty=none. Targeted tests now explicitly emulate and assert reduced motion, then check actual height stability. H6 remains explicitly no-preference, preserving its previous actual conditions."
+  ],
+  "existingAssertionsChanged": false,
+  "artifacts": "Raw screenshots/traces retained locally; no private world used.",
+  "followup": {
+    "passed": 1,
+    "failed": 3,
+    "layoutIssue": "Ride orientation controls wrapped and overlapped HUD; constrained row width while retaining 44px buttons."
+  },
+  "final": {
+    "passed": 4,
+    "failed": 0,
+    "durationSeconds": 34.6,
+    "checks": [
+      "740x390 POV/HUD/map/local-panel no rectangle overlap",
+      "no-WebGL2 static illustration stays synthetic on package open",
+      "390x844 and 740x390 drag/cancel/keyboard/focus",
+      "explicit reduced-motion media and two-frame height stability"
+    ]
+  }
+}

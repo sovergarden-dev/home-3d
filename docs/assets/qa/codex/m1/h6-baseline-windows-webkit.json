@@ -1,0 +1,13 @@
+{
+  "syntheticOnly": true,
+  "sourceSha": "de7173261a8a3928685555252c2b479f76a713fe",
+  "role": "Same-runner baseline calibration; current-head full suite remains the acceptance gate",
+  "platform": "win32",
+  "arch": "x64",
+  "cpuModel": "Intel(R) N100",
+  "logicalCpus": 4,
+  "status": "timedOut",
+  "durationMs": 92844,
+  "scope": "Local Windows validation of CI calibration helper, not a CI budget result",
+  "statusMeaning": "Old published baseline timed out on Windows WebKit; no passing baseline timing claim."
+}

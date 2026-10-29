@@ -1,0 +1,169 @@
+{
+  "syntheticOnly": true,
+  "label": "DIAGNOSTIC_WITH_PROFILER_NOT_ACCEPTANCE",
+  "environment": {
+    "sourceSha": "0b56c490b2b04b56294d6742645559b0e459f7b5",
+    "harnessSha": "0b56c490b2b04b56294d6742645559b0e459f7b5",
+    "platform": "WINDOWS_LOCAL",
+    "syntheticOnly": true,
+    "rendererClass": "REAL_GPU",
+    "headed": true,
+    "channel": "chrome",
+    "browserVersion": "152.0.7977.76",
+    "driverVersion": "32.0.101.7082",
+    "dprRequest": "native",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x000046D1) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "vendor": "Google Inc. (Intel)",
+    "dpr": 1,
+    "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+  },
+  "functions": [
+    {
+      "name": "(idle)",
+      "module": "runtime",
+      "selfMs": 540.119
+    },
+    {
+      "name": "(program)",
+      "module": "runtime",
+      "selfMs": 325.758
+    },
+    {
+      "name": "AudioContext",
+      "module": "runtime",
+      "selfMs": 69.95
+    },
+    {
+      "name": "synthSample",
+      "module": "/src/engine/life/audioSynthesis.ts",
+      "selfMs": 68.747
+    },
+    {
+      "name": "createSyntheticBuffer",
+      "module": "/src/engine/life/audioSynthesis.ts",
+      "selfMs": 55.475
+    },
+    {
+      "name": "createPeriodicNoise",
+      "module": "/src/engine/life/audioSynthesis.ts",
+      "selfMs": 9.125
+    },
+    {
+      "name": "getProgramInfoLog",
+      "module": "runtime",
+      "selfMs": 2.968
+    },
+    {
+      "name": "getParameters",
+      "module": "/node_modules/.vite/deps/three.module-CJMZh8a2.js",
+      "selfMs": 2.568
+    },
+    {
+      "name": "initializeLayers",
+      "module": "/src/engine/demoAudio.ts",
+      "selfMs": 2.562
+    },
+    {
+      "name": "getShaderInfoLog",
+      "module": "runtime",
+      "selfMs": 1.66
+    },
+    {
+      "name": "",
+      "module": "/node_modules/.vite/deps/react-dom_client.js",
+      "selfMs": 1.61
+    },
+    {
+      "name": "render",
+      "module": "/src/engine/demoScene.ts",
+      "selfMs": 1.356
+    },
+    {
+      "name": "elementsFromPoint",
+      "module": "runtime",
+      "selfMs": 1.24
+    },
+    {
+      "name": "getImplicitAriaRole",
+      "module": "runtime",
+      "selfMs": 1.2
+    },
+    {
+      "name": "visit",
+      "module": "runtime",
+      "selfMs": 1.185
+    },
+    {
+      "name": "getTextAlternativeInternal",
+      "module": "runtime",
+      "selfMs": 1.177
+    },
+    {
+      "name": "(garbage collector)",
+      "module": "runtime",
+      "selfMs": 1.174
+    },
+    {
+      "name": "getElementAccessibleName",
+      "module": "runtime",
+      "selfMs": 1.17
+    },
+    {
+      "name": "getListener",
+      "module": "/node_modules/.vite/deps/react-dom_client.js",
+      "selfMs": 1.106
+    },
+    {
+      "name": "set",
+      "module": "/node_modules/.vite/deps/three.module-CJMZh8a2.js",
+      "selfMs": 1.069
+    }
+  ],
+  "observation": {
+    "events": [
+      {
+        "kind": "construct",
+        "start": 10871.59999999404,
+        "end": 10941.5
+      },
+      {
+        "kind": "buffer",
+        "start": 10976.199999988079,
+        "end": 10976.399999976158,
+        "length": 288000,
+        "sampleRate": 48000
+      },
+      {
+        "kind": "buffer",
+        "start": 11040.5,
+        "end": 11040.5,
+        "length": 288000,
+        "sampleRate": 48000
+      },
+      {
+        "kind": "state",
+        "at": 11116.699999988079,
+        "state": "running"
+      },
+      {
+        "kind": "state",
+        "at": 11696.399999976158,
+        "state": "suspended"
+      },
+      {
+        "kind": "state",
+        "at": 12274.799999982119,
+        "state": "running"
+      }
+    ],
+    "audioState": "running",
+    "sceneAudioState": "suspended",
+    "frames": 7,
+    "pressed": "true"
+  },
+  "warmFrames": 1
+}
