@@ -146,6 +146,14 @@ Chuẩn bị M3 phát hiện prerender opt-in qua wrapper làm mất Wrangler ou
 
 Review cuối ở ff550657 xác nhận không còn actionable finding. Assertion lost capture nay chờ sự kiện native và kiểm height trước mouseup, đã chạy6/6 ởC/F/W. Evidence M2 gồm34file, max168124byte trước receipt cuối; gitleaksdir515340byte sạch, path/token scan sạch. H6raw đã khử path/loopback. Đang commitreceipt để mở PR, chưa gọi CI4/mergepass.
 
+### CI PR #10 vòng đầu
+
+Run40800634965 ởhead5f59f0e: qualityvàWebKit đạt, Firefox68pass/46skip/1fail ởfocus sau pointercancel trongportrait. Geometry đãkhôi phục; phép kiểm gửi pointercancel tổng hợp rồi mouseup native đểdọn driver, bước sau cóthểfocus phần tử đangnằm dưới con trỏ sau khisheetđổiheight. Giữ assertionfocus nhưng kiểmngaysau cancel trước bướcdriver cleanup; dùngpointerIDthực cho mọicancel. Không thayruntime, timeout hoặcskipguard; đây làharnessfix cầnheadmớivàCIkiểm, khôngreruncùnghead.
+
+ChromiumCI lượt40800634965 có114pass/1fail: HUDportrait-label tronglandscape dùngfontLinux xuốngthêm1dòng, chồngPOV12px (screenshot synthetic đãxem). Giữđủnội dung, đưagiờ/ngày thànhhai cột trongHUDlandscape đểgiảmchiềucao; giữnguyênzero-overlap assertion. WebKit115/115pass, H6baseline59970ms→55801ms (−6,95%), ngưỡng70s/+10%đạt. Đây làCIheadđầuM2, chưađủ4/4.
+
+Headabed181đãfullchecklại:378unit/39pipeline/lint0, shell222303gzip;3layoutcasevà6cancelcaseC/F/Wđạt. Review độc lập phầnCI-fixkhôngcònactionablefinding, xácnhậntimingassertionfocusđúngsựkiệnchứkhôngnớiđiềukiện. Chuẩn bịheadreceiptmới choCI; khôngrerun5f59f0e.
+
 ## 29/10/2026 — PR #10 tích hợp M1/M2 đã mở
 
 [PR #10](https://github.com/sovergarden-dev/home-3d/pull/10), head `5f59f0ee69fef323e3db202012a97796331b7859`, draft. Source thực thi đã check tại6cce959, test-only cuối ff550657 vàreceipt5f59f0e; reviewer độc lập không còn actionable finding. Gitleaks cuối17commits/4,26MB sạch; evidence/path/token/size sạch. Main chưa merge, CI đúngheadđangchạy. PR #9parked đượcgiữ lại vìheadcũkhôngđủcổng; không rerun hoặc nớiH6. M3 tíchhợp nhánhứngviên đểtiếptục việcđộc lập, không coilàmainđãđạt.
