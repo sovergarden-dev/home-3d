@@ -1,0 +1,37 @@
+{
+  "syntheticOnly": true,
+  "reviewedBy": "Codex visual inspection",
+  "sourceSha": "0265a53b9e8b571b18fd19ad496e0c9ccdad181d",
+  "postcards": {
+    "2k": "Visible separation, no clipped caption in the inspected exported image.",
+    "4kEmptyWard": "Visible separation retained without ward; actual PNG 3840x2160, viewer scaled display. Numeric ink-box assertions remain separate."
+  },
+  "r1": {
+    "brightnessDeltaPct": 4.382539572385455,
+    "maxChannelDeltaPct": 7.504569647255313,
+    "limitPct": 15,
+    "status": "PASS"
+  },
+  "pinGallery": {
+    "directory": "visuals-time",
+    "viewports": [
+      "1440x900",
+      "390x844",
+      "740x390"
+    ],
+    "modes": [
+      "diorama",
+      "topdown"
+    ],
+    "zoom": [
+      0.25,
+      4
+    ],
+    "note": "Actual app Time tab selected to expose pins. Enlarged pins remain legible at far zoom; close camera naturally clips some offscreen content; existing overlay panels can cover part of the scene. Home marker and plan labels retain priority. Landscape density is tracked in M2."
+  },
+  "status": "INSPECTED_SYNTHETIC_IMAGES",
+  "limitations": [
+    "Image review is not numeric pixel measurement; numeric pin receipts and E2E are separate.",
+    "No real-world area, native phone or Safari verification."
+  ]
+}

@@ -1,0 +1,394 @@
+{
+  "syntheticOnly": true,
+  "status": "NOT_MET",
+  "mode": "VITE_DEVELOPMENT_REAL_GPU",
+  "method": "600 camera steps per scenario. Original active scenario also reset clock time per step; duplicate engine submissions are retained. Development runtime and active-clock overwrite overhead limit generalization to production. No slow samples removed.",
+  "rows": [
+    {
+      "browser": "chrome",
+      "environment": {
+        "sourceSha": "43a0edeb30c8f50ff3ae5f771dd87961cd98b505",
+        "harnessSha": "43a0edeb30c8f50ff3ae5f771dd87961cd98b505",
+        "platform": "WINDOWS_LOCAL",
+        "syntheticOnly": true,
+        "rendererClass": "REAL_GPU",
+        "headed": true,
+        "channel": "chrome",
+        "browserVersion": "152.0.7977.76",
+        "driverVersion": "32.0.101.7082",
+        "dprRequest": "1",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x000046D1) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (Intel)",
+        "dpr": 1,
+        "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+      },
+      "memory": {
+        "status": "MEASURED",
+        "method": "Windows WDDM per-process GPU memory counters, summed only for browser descendants of the benchmark process. Includes browser allocation overhead; not app-only texture bytes or a physical VRAM census.",
+        "peakResidentAllocationBytes": 244350976,
+        "peakCommittedBytes": 249237504,
+        "midBudgetStatus": "MET"
+      },
+      "rows": [
+        {
+          "scenario": "sunny-paused-plain",
+          "complete": true,
+          "frameMs": {
+            "p50": 24.30000001192093,
+            "p95": 35.599999994039536,
+            "max": 53.20000001788139
+          },
+          "fps": {
+            "p05": 36.65241295051924,
+            "p50": 39.984006397441064,
+            "p95": 43.917435221783144
+          },
+          "peaks": {
+            "drawCalls": 128,
+            "triangles": 49874,
+            "textures": 2,
+            "geometries": 136,
+            "illustrativeInstances": 0
+          },
+          "geometryBudget": true,
+          "fpsBudget": false,
+          "frameBudget": false
+        },
+        {
+          "scenario": "sunny-paused-details",
+          "complete": true,
+          "frameMs": {
+            "p50": 23,
+            "p95": 36.60000002384186,
+            "max": 47.39999997615814
+          },
+          "fps": {
+            "p05": 37.785754770451504,
+            "p50": 41.288191577209,
+            "p95": 44.991001799640124
+          },
+          "peaks": {
+            "drawCalls": 131,
+            "triangles": 80082,
+            "textures": 2,
+            "geometries": 139,
+            "illustrativeInstances": 1207
+          },
+          "geometryBudget": true,
+          "fpsBudget": false,
+          "frameBudget": true
+        },
+        {
+          "scenario": "storm-active-plain",
+          "complete": true,
+          "frameMs": {
+            "p50": 43,
+            "p95": 72.40000000596046,
+            "max": 123.5
+          },
+          "fps": {
+            "p05": 20.111956558173816,
+            "p50": 21.853942815516298,
+            "p95": 24.530847540782446
+          },
+          "peaks": {
+            "drawCalls": 185,
+            "triangles": 22586,
+            "textures": 2,
+            "geometries": 142,
+            "illustrativeInstances": 0
+          },
+          "geometryBudget": true,
+          "fpsBudget": false,
+          "frameBudget": false
+        },
+        {
+          "scenario": "storm-active-details",
+          "complete": true,
+          "frameMs": {
+            "p50": 45.099999994039536,
+            "p95": 79.19999998807907,
+            "max": 130.5
+          },
+          "fps": {
+            "p05": 19.421246844047424,
+            "p50": 20.608641890499456,
+            "p95": 22.7505403253327
+          },
+          "peaks": {
+            "drawCalls": 188,
+            "triangles": 52794,
+            "textures": 2,
+            "geometries": 142,
+            "illustrativeInstances": 1207
+          },
+          "geometryBudget": true,
+          "fpsBudget": false,
+          "frameBudget": false
+        }
+      ]
+    },
+    {
+      "browser": "msedge",
+      "environment": {
+        "sourceSha": "43a0edeb30c8f50ff3ae5f771dd87961cd98b505",
+        "harnessSha": "43a0edeb30c8f50ff3ae5f771dd87961cd98b505",
+        "platform": "WINDOWS_LOCAL",
+        "syntheticOnly": true,
+        "rendererClass": "REAL_GPU",
+        "headed": true,
+        "channel": "msedge",
+        "browserVersion": "156.0.4314.50",
+        "driverVersion": "32.0.101.7082",
+        "dprRequest": "1",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x000046D1) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (Intel)",
+        "dpr": 1,
+        "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+      },
+      "memory": {
+        "status": "MEASURED",
+        "method": "Windows WDDM per-process GPU memory counters, summed only for browser descendants of the benchmark process. Includes browser allocation overhead; not app-only texture bytes or a physical VRAM census.",
+        "peakResidentAllocationBytes": 178778112,
+        "peakCommittedBytes": 183533568,
+        "midBudgetStatus": "MET"
+      },
+      "rows": [
+        {
+          "scenario": "sunny-paused-plain",
+          "complete": true,
+          "frameMs": {
+            "p50": 23.900000005960464,
+            "p95": 34.20000001788139,
+            "max": 57.5
+          },
+          "fps": {
+            "p05": 38.192234245703375,
+            "p50": 41.27682993946059,
+            "p95": 45.00112502812573
+          },
+          "peaks": {
+            "drawCalls": 128,
+            "triangles": 49874,
+            "textures": 2,
+            "geometries": 136,
+            "illustrativeInstances": 0
+          },
+          "geometryBudget": true,
+          "fpsBudget": false,
+          "frameBudget": false
+        },
+        {
+          "scenario": "sunny-paused-details",
+          "complete": true,
+          "frameMs": {
+            "p50": 22.900000005960464,
+            "p95": 34.29999998211861,
+            "max": 66.80000001192093
+          },
+          "fps": {
+            "p05": 38.67723844517512,
+            "p50": 42.396834369700485,
+            "p95": 45.60310101086884
+          },
+          "peaks": {
+            "drawCalls": 131,
+            "triangles": 80082,
+            "textures": 2,
+            "geometries": 139,
+            "illustrativeInstances": 1207
+          },
+          "geometryBudget": true,
+          "fpsBudget": false,
+          "frameBudget": false
+        },
+        {
+          "scenario": "storm-active-plain",
+          "complete": true,
+          "frameMs": {
+            "p50": 36.099999994039536,
+            "p95": 65.7000000178814,
+            "max": 103.39999997615814
+          },
+          "fps": {
+            "p05": 23.17765673890372,
+            "p50": 25.641025641025642,
+            "p95": 28.307227778826213
+          },
+          "peaks": {
+            "drawCalls": 185,
+            "triangles": 22586,
+            "textures": 2,
+            "geometries": 142,
+            "illustrativeInstances": 0
+          },
+          "geometryBudget": true,
+          "fpsBudget": false,
+          "frameBudget": false
+        },
+        {
+          "scenario": "storm-active-details",
+          "complete": true,
+          "frameMs": {
+            "p50": 37.599999994039536,
+            "p95": 63.900000005960464,
+            "max": 108.60000002384186
+          },
+          "fps": {
+            "p05": 22.871083326980305,
+            "p50": 24.5579567779961,
+            "p95": 26.802465826856
+          },
+          "peaks": {
+            "drawCalls": 188,
+            "triangles": 52794,
+            "textures": 2,
+            "geometries": 142,
+            "illustrativeInstances": 1207
+          },
+          "geometryBudget": true,
+          "fpsBudget": false,
+          "frameBudget": false
+        }
+      ]
+    },
+    {
+      "browser": "firefox",
+      "environment": {
+        "sourceSha": "43a0edeb30c8f50ff3ae5f771dd87961cd98b505",
+        "harnessSha": "43a0edeb30c8f50ff3ae5f771dd87961cd98b505",
+        "platform": "WINDOWS_LOCAL",
+        "syntheticOnly": true,
+        "rendererClass": "REAL_GPU",
+        "headed": true,
+        "channel": "playwright-firefox",
+        "browserVersion": "146.0.1",
+        "driverVersion": "32.0.101.7082",
+        "dprRequest": "1",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "renderer": "ANGLE (Intel, Intel(R) HD Graphics Direct3D11 vs_5_0 ps_5_0), or similar",
+        "vendor": "Google Inc. (Intel)",
+        "dpr": 1,
+        "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+      },
+      "memory": {
+        "status": "MEASURED",
+        "method": "Windows WDDM per-process GPU memory counters, summed only for browser descendants of the benchmark process. Includes browser allocation overhead; not app-only texture bytes or a physical VRAM census.",
+        "peakResidentAllocationBytes": 14980960256,
+        "peakCommittedBytes": 408481792,
+        "midBudgetStatus": "NOT_MET"
+      },
+      "rows": [
+        {
+          "scenario": "sunny-paused-plain",
+          "complete": true,
+          "frameMs": {
+            "p50": 52,
+            "p95": 85,
+            "max": 156
+          },
+          "fps": {
+            "p05": 15.20503996391338,
+            "p50": 18.079041569742945,
+            "p95": 19.44012441679626
+          },
+          "peaks": {
+            "drawCalls": 128,
+            "triangles": 49874,
+            "textures": 2,
+            "geometries": 136,
+            "illustrativeInstances": 0
+          },
+          "geometryBudget": true,
+          "fpsBudget": false,
+          "frameBudget": false
+        },
+        {
+          "scenario": "sunny-paused-details",
+          "complete": true,
+          "frameMs": {
+            "p50": 48,
+            "p95": 84,
+            "max": 157
+          },
+          "fps": {
+            "p05": 16.235611189583224,
+            "p50": 20.037804658121583,
+            "p95": 22.868816843645995
+          },
+          "peaks": {
+            "drawCalls": 131,
+            "triangles": 80082,
+            "textures": 2,
+            "geometries": 139,
+            "illustrativeInstances": 1207
+          },
+          "geometryBudget": true,
+          "fpsBudget": false,
+          "frameBudget": false
+        },
+        {
+          "scenario": "storm-active-plain",
+          "complete": true,
+          "frameMs": {
+            "p50": 67,
+            "p95": 123,
+            "max": 300
+          },
+          "fps": {
+            "p05": 10.939642346626215,
+            "p50": 13.687879838665516,
+            "p95": 14.426406093713956
+          },
+          "peaks": {
+            "drawCalls": 189,
+            "triangles": 54030,
+            "textures": 2,
+            "geometries": 142,
+            "illustrativeInstances": 0
+          },
+          "geometryBudget": true,
+          "fpsBudget": false,
+          "frameBudget": false
+        },
+        {
+          "scenario": "storm-active-details",
+          "complete": true,
+          "frameMs": {
+            "p50": 84,
+            "p95": 158,
+            "max": 403
+          },
+          "fps": {
+            "p05": 8.313980234897643,
+            "p50": 10.32535183636382,
+            "p95": 13.2284464512487
+          },
+          "peaks": {
+            "drawCalls": 192,
+            "triangles": 84238,
+            "textures": 2,
+            "geometries": 142,
+            "illustrativeInstances": 1207
+          },
+          "geometryBudget": true,
+          "fpsBudget": false,
+          "frameBudget": false
+        }
+      ]
+    }
+  ],
+  "firefoxMemoryCaveat": "Dedicated+shared WDDM counters reached14980960256 bytes while committed was378458112. Do not treat this as physical resident VRAM or a proven leak; counter consistency/attribution is NOT_VERIFIED. Raw counter NOT_MET flag is retained. Chrome/Edge measured counters were below350MB.",
+  "productionDiagnostics": "Separate180-step production GL-command probes (no per-frame clock overwrite) still showed slow storm frames; they are diagnostics, not a replacement full matrix."
+}

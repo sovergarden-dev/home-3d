@@ -1,11 +1,13 @@
 {
   "name": "tanstack_start_ts",
+  "version": "0.10.1",
   "private": true,
   "sideEffects": false,
   "type": "module",
   "scripts": {
+    "deploy:private": "node scripts/private-deploy.mjs",
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "vite build && bun scripts/build-pwa.mjs",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
@@ -13,9 +15,13 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
-    "check:pipeline": "cd pipeline && bun x tsc --noEmit --project tsconfig.json && bun test src",
-    "check": "bun run typecheck && bun run lint && bun run test && bun run check:pipeline && bun run build",
-    "test:e2e": "playwright test"
+    "check:pipeline": "cd pipeline && bun install --frozen-lockfile && bun x tsc --noEmit --project tsconfig.json && bun test src",
+    "check": "bun run typecheck && bun run lint && bun run test:coverage && bun run check:pipeline && bun run build && bun run check:bundle",
+    "test:e2e": "playwright test",
+    "check:secrets": "node scripts/check-secrets.mjs",
+    "check:bundle": "node scripts/check-bundle.mjs",
+    "test:coverage": "vitest run --coverage --exclude src/test/p9-life-performance.test.ts && vitest run src/test/p9-life-performance.test.ts && node scripts/check-coverage.mjs",
+    "test:production": "playwright test --config playwright.production.config.ts"
   },
   "overrides": {
     "rolldown": "1.2.1"
@@ -59,6 +65,7 @@
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
+    "jose": "6.2.13",
     "lucide-react": "^0.575.0",
     "react": "^19.2.0",
     "react-day-picker": "^9.14.0",
@@ -87,6 +94,7 @@
     "@types/react-dom": "^19.2.0",
     "@types/three": "0.180.0",
     "@vitejs/plugin-react": "^5.2.0",
+    "@vitest/coverage-v8": "4.1.11",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.6",
@@ -99,7 +107,8 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
     "vite": "8.1.5",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "axe-core": "4.14.0"
   },
   "patchedDependencies": {
     "sonner@2.0.7": "patches/sonner@2.0.7.patch"

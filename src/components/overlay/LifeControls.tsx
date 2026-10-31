@@ -54,6 +54,20 @@ export function LifeControls() {
           {t.life.noGraph}
         </p>
       )}
+      <button
+        type="button"
+        role="switch"
+        aria-checked={state.illustrativeDetails}
+        onClick={() => state.setIllustrativeDetails(!state.illustrativeDetails)}
+        className="chip"
+      >
+        {t.life.details}
+      </button>
+      {state.illustrativeDetails && (
+        <p className="text-xs text-muted-foreground" role="status">
+          {t.life.detailsNote}
+        </p>
+      )}
       <details onToggle={(e) => setShowImport(e.currentTarget.open)}>
         <summary className="ctl cursor-pointer justify-start text-xs">{t.life.importAudio}</summary>
         {showImport && (
@@ -133,7 +147,7 @@ export function PovControls() {
       className="p9-pov-controls pointer-events-auto glass p-2 space-y-1"
     >
       <div className="flex flex-wrap gap-1 items-center">
-        <span className="text-xs font-medium">{t.life.label}</span>
+        <span className="p9-style-label text-xs font-medium">{t.life.label}</span>
         {state.viewMode === "ride" && (
           <button
             type="button"
@@ -174,22 +188,24 @@ export function PovControls() {
                 ? t.life.syntheticDestination
                 : t.life.route}
           </p>
-          <button
-            type="button"
-            className="ctl px-2 text-xs"
-            onClick={() => sendLifeCommand({ kind: "orientation" })}
-          >
-            {t.life.tilt}
-          </button>
-          <span role="status" className="block text-xs">
-            {status.orientation === "granted"
-              ? t.life.tiltGranted
-              : status.orientation === "denied"
-                ? t.life.tiltDenied
-                : status.orientation === "unsupported"
-                  ? t.life.tiltUnsupported
-                  : t.life.tiltOff}
-          </span>
+          <div className="p9-orientation-row flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              className="ctl px-2 text-xs"
+              onClick={() => sendLifeCommand({ kind: "orientation" })}
+            >
+              {t.life.tilt}
+            </button>
+            <span role="status" className="block text-xs">
+              {status.orientation === "granted"
+                ? t.life.tiltGranted
+                : status.orientation === "denied"
+                  ? t.life.tiltDenied
+                  : status.orientation === "unsupported"
+                    ? t.life.tiltUnsupported
+                    : t.life.tiltOff}
+            </span>
+          </div>
         </>
       )}
     </section>

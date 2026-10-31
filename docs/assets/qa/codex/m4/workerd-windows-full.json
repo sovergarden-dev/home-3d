@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "syntheticOnly": true,
+  "runtime": "workerd 1.20261019.1 via Miniflare5.20261019.1-beta",
+  "bundleSha256": "1e4854dc493400dee5bf6e7a0b5409e0edd213494c95f53e76235f4a42c1eb46",
+  "jwksRequestsInterceptedLocally": 1,
+  "unexpectedOutboundDenied": 0,
+  "externalPlatformAccess": "NONE",
+  "checks": [
+    "missing/malformed/wrong-audience/wrong-issuer/expired return neutral demo",
+    "native Workerd verifies genuine ephemeral RS256 through locally intercepted JWKS",
+    "modified signature denied",
+    "same built application SSR excludes token and identity"
+  ],
+  "limitations": [
+    "Ephemeral synthetic keys and mocked JWKS transport; no real Access login or deployment.",
+    "ASSETS binding uses a local file-backed service; actual hosted Access policies are not tested."
+  ]
+}

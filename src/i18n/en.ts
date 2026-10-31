@@ -2,7 +2,9 @@ import type { Dict } from "./vi";
 
 export const en: Dict = {
   appName: "Phố Nhà Mình",
+  privateAccessVerified: "Private access verified",
   tagline: "Our street, just a little.",
+  loadingProgress: "Loading the 3D street",
   viewportPlaceholder: "The 3D map will appear here",
   demoBadge: "DEMO · Fictional street",
   privatePackageBadge: "PRIVATE PACKAGE · PREVIEW",
@@ -16,6 +18,8 @@ export const en: Dict = {
   fallbackBody:
     "This demo needs WebGL2. Try hardware acceleration or another browser. No real location data is loaded.",
   retryScene: "Retry 3D",
+  recoveringScene: "Restoring the 3D scene…",
+  staticSceneDescription: "Static illustration of a fictional street, not a real-world map",
   captureUnavailable: "The 3D scene is not ready for capture",
   soundDemo: "Synthesized demo ambience, not a real street recording",
   demoOnly: "Real-world data is not included in this demo",
@@ -86,6 +90,9 @@ export const en: Dict = {
     ride: "Motorbike passenger",
   },
   life: {
+    details: "Illustrative details",
+    detailsNote:
+      "Stylized, inferred props and facades; Diorama only, not measurements or verified conditions.",
     syntheticDestination: "Fictional stop: synthetic market · not real directions",
     tiltGranted: "Tilt enabled · sensor data is never stored",
     tiltDenied: "Tilt declined · drag to look still works",
@@ -94,7 +101,7 @@ export const en: Dict = {
     label: "Simulation",
     layer: "Life layer",
     density: "Simulation density",
-    note: "Illustrative traffic, people, vendors and animals · inferred lanes and paths, not surveyed data.",
+    note: "Illustrative traffic, people, vendors and animals, enlarged in Diorama for readability; inferred lanes and paths, not surveyed data.",
     audio: "Synthesized audio",
     localAudio: "Local audio · session only",
     audioError: "Clip unavailable; synthesized fallback",
@@ -309,6 +316,22 @@ export const en: Dict = {
     reviewRequired: "Faces, license plates, and other people's house numbers are redacted",
   },
   about: "About",
+  pageNotFound: "Page not found",
+  pageNotFoundBody: "This page is no longer at this address. You can return to the street.",
+  pageLoadError: "The page could not be loaded",
+  pageLoadErrorBody: "Try again or return to the street.",
+  retryPage: "Try again",
+  dockLabel: "Street controls",
+  pwa: {
+    updateReady: "A new version of Phố Nhà Mình is available.",
+    updating: "Updating…",
+    updateFailed: "The update could not finish. Try again when ready.",
+    reload: "Reload",
+    later: "Later",
+    reloadTitle: "Save changes before reloading",
+    saveBeforeReload:
+      "Reloading clears data kept only in this session. Save or download the changes you need. Other tabs will not reload automatically.",
+  },
   backHome: "Back to the street",
   sheetHandle: "Drag to expand the control panel",
   aboutTitle: "About Phố Nhà Mình",

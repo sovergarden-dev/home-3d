@@ -1,0 +1,350 @@
+{
+  "syntheticOnly": true,
+  "diagnosticOnly": true,
+  "note": "Local Linux diagnostics during the temporary Notion AI takeover. Not a CI result and not a budget pass. The CI gate (<70000 ms and <=+10% vs same-runner baseline) is unchanged and must be measured on the exact new head.",
+  "environment": {
+    "os": "Ubuntu 24.04.5 userland (chroot) on Amazon Linux 2023 kernel",
+    "cpu": "Intel Xeon @ 2.50GHz, 2 vCPU",
+    "ramGiB": 4,
+    "gpu": "none (software rendering)",
+    "browser": "Playwright WebKit 26.0",
+    "playwrightDevice": "Desktop Safari",
+    "viewport": "1280x720",
+    "deviceScaleFactor": 2,
+    "reducedMotion": "no-preference",
+    "server": "Vite dev, VITE_BUILD_SHA = exact HEAD; one server per arm",
+    "fixture": "same synthetic 3-building package as the H6 20-cycle spec"
+  },
+  "ciContext": {
+    "run": "40836100757",
+    "head": "4e5136f1cfdcd5e69a31af7a7455d5fa2f40c74a",
+    "webkitH6Ms": 86957,
+    "sameRunnerBaselineMs": 87409,
+    "runnerCpu": "AMD EPYC 7763, 4 logical CPUs",
+    "absoluteGateMs": 70000
+  },
+  "harness": {
+    "description": "Diagnostic loop mirroring 3 cycles of the H6 20-cycle spec (open package, Mặt bằng/Đi bộ/Diorama, Giữ khoảnh khắc, Giới thiệu -> Về phố, wait ready) with rAF interval capture. Scripts kept outside the repo in the handoff package.",
+    "rafAfterClickSha256": "91fe80ab8e8e6d891087c5fc6c1ef950c969a0a2bd0d51fd97623b72699f6eca",
+    "abbaScriptSha256": "7f8a3d24d9f5c83da137728f5569c3afd9f74d21e095a1f5b930e5889daaf9ff"
+  },
+  "preFixCssInjection": {
+    "source": "9b12c1d8b2581b3a7eaed55af1579a944589b905",
+    "total3CyclesMs": {
+      "default": {
+        "runsMs": [26299, 25594, 25365, 25629],
+        "meanMs": 25722,
+        "medianMs": 25611.5,
+        "minMs": 25365,
+        "maxMs": 26299
+      },
+      "noblur": {
+        "runsMs": [17902, 17564],
+        "meanMs": 17733,
+        "medianMs": 17733.0,
+        "minMs": 17564,
+        "maxMs": 17902
+      },
+      "notrans": {
+        "runsMs": [20753, 20279],
+        "meanMs": 20516,
+        "medianMs": 20516.0,
+        "minMs": 20279,
+        "maxMs": 20753
+      },
+      "noshadow": {
+        "runsMs": [24088, 22757],
+        "meanMs": 23422,
+        "medianMs": 23422.5,
+        "minMs": 22757,
+        "maxMs": 24088
+      },
+      "noctltrans": {
+        "runsMs": [21851, 23226],
+        "meanMs": 22538,
+        "medianMs": 22538.5,
+        "minMs": 21851,
+        "maxMs": 23226
+      },
+      "noblur_notrans": {
+        "runsMs": [16226, 16139],
+        "meanMs": 16182,
+        "medianMs": 16182.5,
+        "minMs": 16139,
+        "maxMs": 16226
+      }
+    },
+    "singleRunsMs": {
+      "hidecanvas": 23565,
+      "saturateOnly": 22334,
+      "blur8px": 27753,
+      "defaultSameSession": 24548
+    },
+    "mainThreadBusyPerModeClickMs": "~140-190",
+    "playwrightActionabilityWaitPerClickMs": "~900-1050",
+    "rafCallbacksPerModeClick": "3-4 in ~1.5 s"
+  },
+  "realCodeAbba": {
+    "A": "9b12c1d8b2581b3a7eaed55af1579a944589b905",
+    "B": "d4fca7747a0ef6c9533b598d78594e60afc84180",
+    "order": "warm-up A, warm-up B (discarded), then ABBAABBAABBA",
+    "A_total3CyclesMs": {
+      "runsMs": [25012, 25516, 24521, 25427, 26355, 25317],
+      "meanMs": 25358,
+      "medianMs": 25372.0,
+      "minMs": 24521,
+      "maxMs": 26355
+    },
+    "B_total3CyclesMs": {
+      "runsMs": [16677, 16721, 16743, 16865, 17289, 17066],
+      "meanMs": 16894,
+      "medianMs": 16804.0,
+      "minMs": 16677,
+      "maxMs": 17289
+    },
+    "deltaMeanPct": -33.38,
+    "deltaMedianPct": -33.77,
+    "runs": [
+      {
+        "order": 1,
+        "arm": "A",
+        "total3CyclesMs": 25012,
+        "cycle3ClickMs": {
+          "Mặt bằng": 1393,
+          "Đi bộ": 1177,
+          "Diorama": 1056,
+          "capture": 1350
+        },
+        "cycle3FirstRafIntervalMs": {
+          "Mặt bằng": 656,
+          "Đi bộ": 590,
+          "Diorama": 616,
+          "capture": 553
+        }
+      },
+      {
+        "order": 2,
+        "arm": "B",
+        "total3CyclesMs": 16677,
+        "cycle3ClickMs": {
+          "Mặt bằng": 927,
+          "Đi bộ": 730,
+          "Diorama": 660,
+          "capture": 833
+        },
+        "cycle3FirstRafIntervalMs": {
+          "Mặt bằng": 293,
+          "Đi bộ": 560,
+          "Diorama": 442,
+          "capture": 282
+        }
+      },
+      {
+        "order": 3,
+        "arm": "B",
+        "total3CyclesMs": 16721,
+        "cycle3ClickMs": {
+          "Mặt bằng": 1176,
+          "Đi bộ": 504,
+          "Diorama": 826,
+          "capture": 769
+        },
+        "cycle3FirstRafIntervalMs": {
+          "Mặt bằng": 286,
+          "Đi bộ": 164,
+          "Diorama": 525,
+          "capture": 308
+        }
+      },
+      {
+        "order": 4,
+        "arm": "A",
+        "total3CyclesMs": 25516,
+        "cycle3ClickMs": {
+          "Mặt bằng": 1408,
+          "Đi bộ": 1117,
+          "Diorama": 1097,
+          "capture": 1380
+        },
+        "cycle3FirstRafIntervalMs": {
+          "Mặt bằng": 637,
+          "Đi bộ": 577,
+          "Diorama": 615,
+          "capture": 564
+        }
+      },
+      {
+        "order": 5,
+        "arm": "A",
+        "total3CyclesMs": 24521,
+        "cycle3ClickMs": {
+          "Mặt bằng": 1336,
+          "Đi bộ": 1156,
+          "Diorama": 1101,
+          "capture": 1317
+        },
+        "cycle3FirstRafIntervalMs": {
+          "Mặt bằng": 613,
+          "Đi bộ": 581,
+          "Diorama": 604,
+          "capture": 552
+        }
+      },
+      {
+        "order": 6,
+        "arm": "B",
+        "total3CyclesMs": 16743,
+        "cycle3ClickMs": {
+          "Mặt bằng": 1004,
+          "Đi bộ": 614,
+          "Diorama": 616,
+          "capture": 753
+        },
+        "cycle3FirstRafIntervalMs": {
+          "Mặt bằng": 259,
+          "Đi bộ": 160,
+          "Diorama": 123,
+          "capture": 159
+        }
+      },
+      {
+        "order": 7,
+        "arm": "B",
+        "total3CyclesMs": 16865,
+        "cycle3ClickMs": {
+          "Mặt bằng": 918,
+          "Đi bộ": 774,
+          "Diorama": 655,
+          "capture": 899
+        },
+        "cycle3FirstRafIntervalMs": {
+          "Mặt bằng": 304,
+          "Đi bộ": 510,
+          "Diorama": 483,
+          "capture": 361
+        }
+      },
+      {
+        "order": 8,
+        "arm": "A",
+        "total3CyclesMs": 25427,
+        "cycle3ClickMs": {
+          "Mặt bằng": 1507,
+          "Đi bộ": 1442,
+          "Diorama": 1111,
+          "capture": 1446
+        },
+        "cycle3FirstRafIntervalMs": {
+          "Mặt bằng": 667,
+          "Đi bộ": 985,
+          "Diorama": 619,
+          "capture": 565
+        }
+      },
+      {
+        "order": 9,
+        "arm": "A",
+        "total3CyclesMs": 26355,
+        "cycle3ClickMs": {
+          "Mặt bằng": 1449,
+          "Đi bộ": 1224,
+          "Diorama": 1219,
+          "capture": 1605
+        },
+        "cycle3FirstRafIntervalMs": {
+          "Mặt bằng": 650,
+          "Đi bộ": 696,
+          "Diorama": 640,
+          "capture": 627
+        }
+      },
+      {
+        "order": 10,
+        "arm": "B",
+        "total3CyclesMs": 17289,
+        "cycle3ClickMs": {
+          "Mặt bằng": 976,
+          "Đi bộ": 601,
+          "Diorama": 623,
+          "capture": 792
+        },
+        "cycle3FirstRafIntervalMs": {
+          "Mặt bằng": 264,
+          "Đi bộ": 164,
+          "Diorama": 131,
+          "capture": 167
+        }
+      },
+      {
+        "order": 11,
+        "arm": "B",
+        "total3CyclesMs": 17066,
+        "cycle3ClickMs": {
+          "Mặt bằng": 834,
+          "Đi bộ": 781,
+          "Diorama": 780,
+          "capture": 914
+        },
+        "cycle3FirstRafIntervalMs": {
+          "Mặt bằng": 279,
+          "Đi bộ": 501,
+          "Diorama": 633,
+          "capture": 311
+        }
+      },
+      {
+        "order": 12,
+        "arm": "A",
+        "total3CyclesMs": 25317,
+        "cycle3ClickMs": {
+          "Mặt bằng": 1469,
+          "Đi bộ": 1292,
+          "Diorama": 1109,
+          "capture": 1467
+        },
+        "cycle3FirstRafIntervalMs": {
+          "Mặt bằng": 701,
+          "Đi bộ": 641,
+          "Diorama": 671,
+          "capture": 577
+        }
+      }
+    ]
+  },
+  "unchangedSpecLocal": {
+    "spec": "tests/e2e/h6-completion.spec.ts 20 mode/route/package/capture cycles (timeout 90000 ms unchanged)",
+    "9b12c1d": {
+      "result": "TIMEOUT_90000_MS",
+      "cyclesCompletedBeforeTimeout": 10,
+      "captureEndSecondsFromFirstAction": [
+        11.8, 20.0, 28.6, 36.9, 45.1, 53.3, 61.9, 70.1, 78.2, 86.5
+      ],
+      "steadyCycleSeconds": 8.3
+    },
+    "d4fca77": {
+      "result": "TIMEOUT_90000_MS",
+      "cyclesCompletedBeforeTimeout": 14,
+      "captureEndSecondsFromFirstAction": [
+        8.9, 15.1, 21.2, 27.7, 34.1, 40.4, 46.2, 52.0, 57.4, 64.2, 70.6, 76.3, 82.2, 88.2
+      ],
+      "steadyCycleSeconds": 6.1
+    }
+  },
+  "postFixCssInjection": {
+    "source": "d4fca7747a0ef6c9533b598d78594e60afc84180",
+    "total3CyclesMs": {
+      "default": [17114, 17107],
+      "hidecanvas": [17251, 15652],
+      "noctltrans": [15964, 16051],
+      "noshadow": [15911, 15149],
+      "notrans": [16456, 16822]
+    },
+    "deviceScaleFactor1SingleRunMs": 8393,
+    "reading": "Remaining single factors are each <10% and noisy; transitions and soft shadows stay (PLAN style: motion 150-250 ms, soft shadows). DPR 2 roughly doubles the loop versus DPR 1."
+  },
+  "projection": {
+    "status": "NOT_VERIFIED",
+    "ciH6EstimateMs": "~58000-66000",
+    "method": "CI same-runner baseline 87409 ms scaled by the local -33% diagnostic loop delta (low end) or the -26% steady-cycle delta of the unchanged spec (high end)"
+  }
+}

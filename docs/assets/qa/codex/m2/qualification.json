@@ -1,0 +1,123 @@
+{
+  "syntheticOnly": true,
+  "runtimeSha": "487156d0a8a266161f8c00ad1096d5efed081429",
+  "p8": {
+    "latencyStatus": "MET",
+    "actions": 420,
+    "maxLatencyMs": 78.39999997615814,
+    "newShaderLinks": 0,
+    "continuousFrameStatus": "MET",
+    "continuousSteps": 720,
+    "continuousIntervals": 717,
+    "maxContinuousIntervalMs": 44.5,
+    "sparseDragNote": "The historical control harness also records driver-paced sparse input gaps. Its combined NOT_MET status is retained; those gaps do not measure continuous rotation. The separate RAF-paced path keeps all slow samples and requires every step to render. No comparison between the two frame protocols is claimed."
+  },
+  "p9": {
+    "status": "NOT_MET",
+    "samplesPerAction": 30,
+    "coldContext": {
+      "statistics": {
+        "n": 30,
+        "min": 68.90000000596046,
+        "p50": 77.09999999403954,
+        "p95": 92.09999999403954,
+        "max": 124.19999998807907
+      },
+      "complete": true,
+      "allUnder100Ms": false,
+      "newProgramLinks": 0
+    },
+    "warmContext": {
+      "statistics": {
+        "n": 30,
+        "min": 56.599999994039536,
+        "p50": 61.54999999701977,
+        "p95": 76.80000001192093,
+        "max": 108
+      },
+      "complete": true,
+      "allUnder100Ms": false,
+      "newProgramLinks": 0
+    },
+    "beforeColdP50Ms": 177.95000000298023,
+    "beforeWarmStatus": "CENSORED_STALE_RENDER_DIAGNOSTICS",
+    "browserLifecycle": "One browser process; fresh page/context for each round. Cold means the page has not created an AudioContext, not a fresh browser/audio-service process on every round.",
+    "audioOutput": "Muted in automation; no first-audible or physical-speaker quality claim."
+  },
+  "inputsSha256": {
+    "p8-before/raw.json": "8fab055aeba281b089d97342b4d6fd255a62eeb16746d467ba97e7d71c81d0b1",
+    "p8-after/raw.json": "55b5e25c9a0a376e58a66a04ce863398901cc915bd6dcb32a8b21abd484e7ee1",
+    "p9-before/raw.json": "39f1c2f393fc7137feb9edf2d9634629ccc34c425e110018903b468cd69a26a7",
+    "p9-after/raw.json": "3b11f7eec8f1106f3b06f27d7bc28d0578d5f6c20f2336db977b563d89360fee",
+    "p8-continuous-after/report.json": "bd3fd9a32065b2ab1883b0f42a33b1ce67e21f91ef35371e9eb4728ed0c88ae5"
+  },
+  "localCheck": {
+    "status": "PASS",
+    "semanticUnit": 377,
+    "uninstrumentedCpuPerformance": 1,
+    "cpuSamples": 600,
+    "cpuP95LimitMs": 4,
+    "pipeline": 39,
+    "lintErrors": 0,
+    "lintWarnings": 0,
+    "shellGzipBytes": 222305,
+    "head": "6cce9597edfb7ae93790a4a4c4abc0d4b8c415fb"
+  },
+  "relatedE2E": {
+    "chromium": {
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0
+    },
+    "firefox": {
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0
+    },
+    "webkit": {
+      "initial": {
+        "passed": 7,
+        "failed": 3,
+        "skipped": 0
+      },
+      "unsupportedAudio": "WebKit26 Windows exposes no AudioContext or OfflineAudioContext, including prefixed versions. Original audio assertion kept; no claim of pass.",
+      "latestLayoutAfterFix": {
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0
+      }
+    }
+  },
+  "limits": [
+    "Exact final-head CI is pending; independent read-only review has no remaining actionable finding.",
+    "No actual private-world data, phone, native Safari or cloud deployment tested.",
+    "GPU memory is not inferred from heap or geometry counts."
+  ],
+  "review": {
+    "findings": [
+      "P2: collapsed package panel overlapped Plan ruler in landscape",
+      "P2: cancellation cleared inline height without restoring unchanged snap"
+    ],
+    "fixes": "Scoped relocation to POV; explicit snap height restoration, native pointer focus/default and lost-capture cleanup. Tests use observed pointer ID.",
+    "targetedFinalBrowsers": {
+      "chromium": 3,
+      "firefox": 3,
+      "webkit": 3
+    },
+    "status": "NO_REMAINING_ACTIONABLE_FINDINGS",
+    "reviewedThrough": "ff55065710205041925eaf3beddd34e8ed3e8e2c",
+    "finalCaptureAssertions": {
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "nativeEventBeforeMouseup": true
+    }
+  },
+  "hardwareH6": {
+    "status": "PASS",
+    "baselineDurationMs": 43434,
+    "candidateDurationMs": 41839,
+    "changePct": -3.6722383386287194,
+    "candidateSource": "6cce9597edfb7ae93790a4a4c4abc0d4b8c415fb"
+  }
+}

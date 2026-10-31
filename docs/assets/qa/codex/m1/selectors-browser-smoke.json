@@ -1,0 +1,75 @@
+{
+  "syntheticOnly": true,
+  "sourceSha": "0265a53b9e8b571b18fd19ad496e0c9ccdad181d",
+  "platform": "WINDOWS_LOCAL",
+  "scope": "Actual image reprocessing/public export, guest privacy, 4K/2K postcard/cancellation after narrow subscriptions",
+  "pass": 9,
+  "fail": 0,
+  "skip": 0,
+  "rows": [
+    {
+      "test": "P10 import always reprocesses memory AND journal photos; public export excludes private data",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 19303,
+      "retry": 0
+    },
+    {
+      "test": "P10 guest hides private memories, home label, marker/lot and construction diary",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 5665,
+      "retry": 0
+    },
+    {
+      "test": "P10 postcard renders actual scene at desktop 4K and mobile 2K, cancels and restores canvas",
+      "browser": "chromium",
+      "status": "passed",
+      "durationMs": 6703,
+      "retry": 0
+    },
+    {
+      "test": "P10 import always reprocesses memory AND journal photos; public export excludes private data",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 16540,
+      "retry": 0
+    },
+    {
+      "test": "P10 guest hides private memories, home label, marker/lot and construction diary",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 10206,
+      "retry": 0
+    },
+    {
+      "test": "P10 postcard renders actual scene at desktop 4K and mobile 2K, cancels and restores canvas",
+      "browser": "firefox",
+      "status": "passed",
+      "durationMs": 11148,
+      "retry": 0
+    },
+    {
+      "test": "P10 import always reprocesses memory AND journal photos; public export excludes private data",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 13320,
+      "retry": 0
+    },
+    {
+      "test": "P10 guest hides private memories, home label, marker/lot and construction diary",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 19812,
+      "retry": 0
+    },
+    {
+      "test": "P10 postcard renders actual scene at desktop 4K and mobile 2K, cancels and restores canvas",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 13982,
+      "retry": 0
+    }
+  ],
+  "note": "Compact receipt; full local Playwright report retained outside repository. Browser tests do not certify physical GPU performance."
+}

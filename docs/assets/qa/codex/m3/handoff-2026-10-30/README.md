@@ -1,0 +1,8 @@
+# Bằng chứng Codex đóng gói ngày 30/10/2026, chưa commit trước đó
+
+Codex đo trên Windows: GPU Intel UHD Graphics (driver 32.0.101.7082), Chrome 152.0.7977.76 headed, `REAL_GPU`; chỉ dùng fixture tổng hợp. Khi đóng gói, Codex đã khử thông tin máy (đường dẫn thay bằng `<REPO>`) và giữ nguyên mọi số đo. Ngày 31/10, Notion AI chép nguyên văn các tệp vào đây; SHA-256 của cả 20 tệp khớp `metadata/evidence-provenance.json` trong gói bàn giao. Trace lớn và lượt Edge bị dừng (INTERRUPTED) chỉ có trong gói ZIP, không commit.
+
+- `continuous-soak/`: source/harness `4e5136f`. 6 vòng warm-up, sau đó đo 1.807.819 ms: 31 vòng, 124 lần đổi mode, 62 lần đổi package, 31 lần bật/tắt âm thanh. Heap cuối −3,15% (đạt <10%), peak quiescent +22,16% (NOT_MET). ObjectURL tạo 0 lần nên đường này NOT_EXERCISED. Không gọi kết quả là leak-free.
+- `load-4g/`, `network-profile/`: production `7e7e8e3`, CDP 150 ms, 1,6/0,75 Mbps, không throttle CPU, 12 mẫu ở 2 viewport. Shell lớn nhất 1.760 ms, world cold 6.257 ms, warm 1.460,1 ms: đạt 2 s/8 s/2 s theo phương pháp local. Probe 512 KiB chứng minh throttle có tác dụng; đây không phải mạng di động thật.
+- `k1-real-chrome/`: source `4e5136f`, chỉ điều kiện active-300, 6 batch AB/BA × 10 cặp. Trước sửa p50 thêm/xoá 196,95/188,70 ms; sau sửa 103,20/101,00 ms (p95 122,7/115,9 ms). NOT_MET với trần p50 <100 ms. Nhãn DIAGNOSTIC_INSUFFICIENT_SAMPLES vì ba điều kiện còn lại chưa chạy; đây không phải full matrix.
+- `h6-hardware-chrome/`: ứng viên `4e5136f` chạy 20 vòng trong 64.975 ms ở 1440×900 DPR 1, PASS chức năng. Hai lượt baseline cùng đợt đều timeout 90 s, nên delta so với baseline là NOT_VERIFIED.

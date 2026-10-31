@@ -1,0 +1,40 @@
+{
+  "syntheticOnly": true,
+  "sourceSha": "4e5136f1cfdcd5e69a31af7a7455d5fa2f40c74a",
+  "complete": true,
+  "measuredMs": 1807819,
+  "warmupCycles": 6,
+  "measuredCycles": 31,
+  "modeChanges": 124,
+  "verifiedPackageTransitions": 62,
+  "audioCycles": 31,
+  "baselineHeapBytes": 67037699,
+  "finalHeapBytes": 64924540,
+  "peakQuiescentHeapBytes": 81894625,
+  "finalGrowthPct": -3.152195005977154,
+  "peakGrowthPct": 22.162046462841744,
+  "heapBelowTenPercent": false,
+  "singleDocument": true,
+  "visibilityValues": [
+    "visible"
+  ],
+  "maxCanvas": 1,
+  "maxRaf": 1,
+  "maxAudioContexts": 1,
+  "maxOpenBitmaps": 0,
+  "maxOpenObjectUrls": 0,
+  "objectUrlPathExercised": false,
+  "bitmapCreates": 74,
+  "bitmapCloses": 74,
+  "maxIdbHandles": 0,
+  "domListenerRange": [
+    417,
+    516
+  ],
+  "errors": [],
+  "method": "Quiescent Chrome heap after explicit GC, same document and equivalent warm/final AudioContext phase. Browser heap estimate, not a proof that all paths are leak-free. ObjectURL creation was not exercised by this scripted workload.",
+  "endGrowthUnderTenPercent": true,
+  "peakGrowthUnderTenPercent": false,
+  "memoryAssessment": "End retained-heap growth meets10%; peak quiescent sample exceeds10%. Preserve both; do not report a general leak-free or all-memory-budget pass.",
+  "audioNodeMeaning": "audioTotalNodes is cumulative created nodes (demoAudio.track); live audioNodes stayed6 while the context existed,0 after route disposal."
+}

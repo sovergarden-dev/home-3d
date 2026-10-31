@@ -1,4 +1,4 @@
-import { chromium } from "@playwright/test";
+import { chromium, firefox } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 
 /** Keeps the existing harnesses' measurements unchanged while identifying their renderer. */
@@ -7,16 +7,20 @@ export async function launchBenchmark(extraArgs = []) {
   if (!["auto", "real", "software"].includes(mode)) throw Error("INVALID_BENCH_GPU");
   const headed = mode === "real";
   const channel = process.env.BENCH_BROWSER ?? "chrome";
-  if (headed && !["chrome", "msedge"].includes(channel)) throw Error("INVALID_BENCH_BROWSER");
-  const browser = await chromium.launch({
-    headless: !headed,
-    ...(headed ? { channel } : {}),
-    args: [
-      ...(headed ? [] : ["--enable-unsafe-swiftshader"]),
-      ...(mode === "software" ? ["--use-gl=angle", "--use-angle=swiftshader"] : []),
-      ...extraArgs,
-    ],
-  });
+  if (headed && !["chrome", "msedge", "firefox"].includes(channel))
+    throw Error("INVALID_BENCH_BROWSER");
+  const firefoxRun = headed && channel === "firefox";
+  const browser = firefoxRun
+    ? await firefox.launch({ headless: false, firefoxUserPrefs: { "media.volume_scale": "0.0" } })
+    : await chromium.launch({
+        headless: !headed,
+        ...(headed ? { channel } : {}),
+        args: [
+          ...(headed ? [] : ["--enable-unsafe-swiftshader"]),
+          ...(mode === "software" ? ["--use-gl=angle", "--use-angle=swiftshader"] : []),
+          ...extraArgs,
+        ],
+      });
   try {
     let dpr = Number(process.env.BENCH_DPR ?? "1");
     if (process.env.BENCH_DPR === "native") {
@@ -64,7 +68,7 @@ export async function launchBenchmark(extraArgs = []) {
           syntheticOnly: true,
           rendererClass: software ? "SWIFTSHADER" : headed ? "REAL_GPU" : "HARDWARE_HEADLESS",
           headed,
-          channel: headed ? channel : "playwright-chromium",
+          channel: firefoxRun ? "playwright-firefox" : headed ? channel : "playwright-chromium",
           browserVersion: browser.version(),
           driverVersion: headed
             ? (process.env.BENCH_GPU_DRIVER ?? "NOT_VERIFIED")

@@ -1,5 +1,17 @@
 # Quyết định — Codex hiện hành, các pha trước giữ làm lịch sử
 
+## M2 — Chuẩn bị cô lập trong lúc đo M1
+
+Chuẩn bị build identity, CI và lint trong worktree riêng trong khi M1 đo ma trận A/B; không chạy build/test nặng đồng thời và không sửa source đang đo. Thứ tự chuẩn bị dự kiến M1 rồi M2; quyết định tích hợp cuối bên dưới ghi rõ cổng M1 đang chặn. Phiên bản lấy từ `package.json`; SHA ưu tiên giá trị full SHA hợp lệ do môi trường cấp, rồi Git của checkout, thiếu thì `null`/không xác định. Không thêm plugin Vite trùng và không đưa đường dẫn Git vào client.
+
+Các helper UI không có consumer bên ngoài được giữ nội bộ; hai variant được chia sang module thuần để Fast Refresh đúng quy tắc. Georeference vẫn chỉ đọc trong phiên client, phụ thuộc memo thể hiện đúng trạng thái tham chiếu; không đưa vị trí vào shared store.
+
+## M1 — Sửa theo phép đo, giữ hợp đồng dữ liệu
+
+- K3 dùng TextMetrics ở đúng độ phân giải xuất; gap = 0,6 × line-height nhỏ hơn, line-height = 1,2 × cỡ chữ. Giữ nguyên câu tiêu đề, vùng ảnh R1, kích thước/hạ bậc và metadata guard. Frame geometry dùng chung cho capture/compose/caption để không lệch ROI.
+- K1 profile đầu dùng fixture R7 đóng băng ngày/giờ, tắt lớp sống như receipt R7; có Chromium trace, Long Task, Long Animation Frame và Event Timing. GPU thật: mutation p50 1,3 ms, ghi instance 0,1 ms, DOM commit 83,35 ms; không cộng các khoảng chồng nhau. Bước đầu chỉ memo các thẻ có props ổn định và thu hẹp subscription của viewport về guest bit. Giữ serialize/validate/quota, public projection, IndexedDB và world state nguyên vẹn. Chưa gọi H_MET từ profile 10 cặp có tracing; ma trận A/B đủ mẫu vẫn bắt buộc.
+- Profile sau UI (vẫn 10 cặp có tracing) cho DOM p50 22,95 ms, RAF2 35,5 ms; các lát FunctionCall lớn trước sửa thuộc react-dom. Không tối ưu việc ghi matrix 0,1 ms vì chưa là nút thắt. K2 chọn đường kính tròn 20 CSS px, hit target tròn đường kính 44 CSS px, nearest-centre và tie theo ID ổn định. Billboard dùng một InstancedMesh và shader, không thay hình học world; marker nhà DOM và nhãn giữ ưu tiên. Cần pixel QA và regression trước khi kết luận đạt.
+
 ## M0 — Tiếp quản và đo baseline (28/10/2026)
 
 - Chủ dự án giao Codex M0–M5, quyền PR/merge commit theo §5.2 của `CODEX_HANDOFF.md`; chỉ Notion audit cuối khi chủ dự án yêu cầu. Không Publish/deploy hoặc đổi dịch vụ. Các phân vai/cổng cũ bên dưới là lịch sử.
@@ -89,3 +101,163 @@ Notion AI tạo và kiểm patch. Hermes áp nguyên patch, chạy frozen instal
 - Hash versioned/whitelist chỉ camera/time/ID, không nội dung/tên/world hash/lat-lng. replaceState sau control-end; Clipboard chỉ nút bấm. Public/guest là preview/xuất file, không đăng mạng; nhật ký/marker luôn private.
 - Bưu thiếp 3840×2160/2048×1152 (fallback 1080×608) render đúng vùng ảnh: target HalfFloat tuyến tính → OutputPass ACES/exposure/sRGB → target byte để readback. Three r180 không tone-map offscreen như canvas; chỉ đặt outputColorSpace không đủ. Vùng ảnh chiếm 92% bề ngang. Finally trả camera/renderer, dispose cả hai target/output pass/clear canvas; không đổi canvas/DPR thật. Encode mới/quét metadata; Web Share chỉ nếu canShare(files), còn lại download.
 - Telemetry lỗi chỉ mã tĩnh, không serialize Error/context riêng; giữ mã `CLIENT_RENDER_FAILURE`. Khôi phục đúng ba Google Fonts links của main cho Be Vietnam Pro/Lora; P10 network harness chỉ abort các host `fonts.googleapis.com`/`fonts.gstatic.com` và yêu cầu 0 request ngoài hai host này. Không thay consent weather/Google P7/P8. TopInfo dùng hydration snapshot để ngày UTC+7 không lệch SSR.
+
+### M1 — Lượt tối ưu UI cuối của K1
+
+Ma trận đủ mẫu ở `1331034…` kết thúc `H_NOT_MET_REAL_GPU`: active 300 add/delete p50 102,10/99,95 ms; static 65,45/67,90 ms; smaller 84,30/84,80 ms; zero 85,25/83,85 ms. Trước sửa active là 169,45/165,10 ms. Mỗi condition/source đủ 60 thêm + 60 xoá, không lọc outlier và không lỗi page. Trần 100 ms giữ nguyên.
+
+Trace chỉ ra React DOM; sau memo card, HUD/journal/postcard vẫn subscribe toàn snapshot và render lại khi chỉ thêm/xoá memory. Lượt cuối chỉ thu hẹp subscription về guest/journal/ready/error thực dùng và memo các subtree không đổi props. Không thêm cache giữ tài liệu riêng, không xoá node khỏi DOM hay virtualize để tránh đổi hợp đồng đo. World/persistence/quota/validation giữ nguyên. Kiểm type/unit/E2E và ma trận đủ mẫu mới trước khi chốt H; nếu vẫn vượt thì ghi NOT_MET và chuyển tiếp theo quy tắc ba vòng.
+
+### M1 — Cổng H6 WebKit tách khỏi test success
+
+CI draft 4/4 nhưng H6 WebKit log 1,4 phút, nên budget NOT_MET và chưa merge. Các ca WebKit trước H6 cũng tăng khoảng 1,5 lần, gồm forced-WebGL fallback; đây là dấu hiệu runner/load khác, chưa phải chứng minh hồi quy shader. Không sửa runtime theo phỏng đoán. Thêm reporter ghi duration ms chính xác và làm CI WebKit fail nếu H6 thiếu/skip/fail hoặc ≥70.000 ms; giữ nguyên test/assertion/capability guard và timeout 90 s. Reporter không áp ngưỡng CI WebKit lên Windows/hardware hoặc Firefox không có WebGL2. Kiểm boundary 69.999/70.000, skip, timeout, missing case và scope Chromium đều đúng. Lượt CI tiếp theo chỉ ở head mới có QA receipts/harness, không dispatch lặp cùng head.
+
+### M1 — Bỏ compile shader khi lớp ghim rỗng
+
+Probe WebKit thật trên source 0265a53 đếm 4 lần shaderSource có pinViewport ở scene đầu và vẫn 4 lần sau route remount với 0 ghim; assertion kỳ vọng 0 đỏ đúng cơ chế. Three r180 compile duyệt scene.traverse kể cả mesh invisible, nên chỉ tắt visible không đủ. Giữ một InstancedMesh để tái dùng, chỉ gắn vào group khi có ghim; zero count tháo khỏi group. Không đổi caps, viewport, H6 cycle/assertion/timeout hoặc hình ghim có nội dung.
+
+Đây là vòng sửa budget H6 riêng, không phải nới mục tiêu K1. Probe K1 bổ sung chứng cứ trạng thái rỗng: sau actual main render, mesh count=0 và detached, DOM count=0, rồi vẫn yêu cầu GPU fence và RAF tiếp theo. Dữ liệu ghim dương vẫn phải qua actual draw. Vì runtime/probe đã đổi, cần requalification GPU và related tests ở SHA mới; dữ liệu 0265a53 vẫn giữ với nguồn đúng, không đổi nhãn lịch sử.
+
+### M2 — Cổng CI và coverage (đang triển khai)
+
+Bốn job giữ nguyên tên, pin full SHA action và timeout 25 phút; checkout đúng PR head, quyền contents:read. Gitleaks 8.30.1 là CLI QA độc lập, tải từ release chính thức với SHA256 cố định trên CI; Windows dùng binary đã kiểm M0. M0 đã quét lịch sử đầy đủ; PR quét base..HEAD, push main quét lại đầy đủ cho repo nhỏ. Không thêm quyền hay cài đặt GitHub.
+
+Bundle budget dùng manifest Vite để tính hợp các static import closure của mọi entry/dynamic entry trừ engine riêng. Engine bị static-import vào shell sẽ fail; import chung chỉ đếm một lần. Ngưỡng 250.000 byte gzip (bảo thủ hơn 250 KiB). Script không dựa vào tên chunk hash hay bỏ các route UI khỏi phép tính.
+
+Coverage dùng provider V8 cùng phiên bản Vitest đã khoá (4.1.11), giấy phép MIT, phát hành 18/08/2026 (đã kiểm registry; không lifecycle install script/native ở package). Phạm vi geo, state, logic mô phỏng và khí quyển gồm cả file chưa chạy. Ratchet được thiết lập từ số đo thật, mục tiêu 85% ghi riêng; không tự cập nhật threshold trong CI. Dependency và các dependency bắc cầu sẽ được kiểm trước khi cài; chưa ghi gate đạt cho đến khi đo. Tài liệu chuẩn: [Vitest coverage](https://vitest.dev/config/coverage), [Vite manifest](https://vite.dev/guide/backend-integration.html).
+
+### M2 — Phục hồi scene và sheet
+
+Context loss bất ngờ: dispose scene cũ khi DOM còn gắn, một lần dựng lại tự động sau 250 ms. Không tự retry khi WebGL2 vắng mặt hoặc import lỗi. Loss tiếp theo giữ fallback tĩnh và nút thử lại; người dùng chủ động thử thì cấp lại một lần tự phục hồi. Timer bị huỷ khi unmount; world/memories vẫn ở client session. Minh hoạ tĩnh là SVG hư cấu độc lập, không đọc footprint của package. Test cũ manual retry được giữ sau loss thứ hai, bổ sung assertion tự phục hồi/lifecycle; không nới H6 timeout hay guard.
+
+Sheet đã có callback ẩn map controls ngay trên pointermove ở mã baseline, nên chưa xác nhận lỗi cũ còn tồn tại. Bổ sung kiểm kéo/cancel/focus thực tế; chuẩn hoá capture về currentTarget, hỗ trợ Enter/Space và tắt transition khi reduced-motion. Đây là sửa khả năng thao tác, không thay snap hoặc kích thước viewport để làm test xanh.
+
+### M2 — Chuẩn hoá LF
+
+Đã kiểm `git ls-files --eol`: 368 tệp tracked ở mốc M0, tám JSON evidence M0 đang CRLF (index và worktree), không có mixed endings. `.gitattributes` quy định text LF và binary cho asset. Tám JSON sẽ chỉ đổi newline trong commit riêng, kiểm nội dung JSON không đổi; không chỉnh số đo. Source đã LF. Chưa renormalize khi cây M2 còn đang sửa để tránh trộn thay đổi nội dung.
+
+M2 dependency verification đã hoàn tất: frozen install scripts-disabled, typecheck PASS. Tất cả mười tarball npm mới kiểm SHA512 theo dist.integrity, không có native binary hoặc lifecycle install script. Có Bun-generated Windows parser.exe shim ở nested node_modules/.bin; xác minh không phải binary xuất bản của dependency. Coverage, bundle gate và browser behavior vẫn chưa chạy, không đánh dấu DONE.
+
+### M2 — Gỡ Three.js khỏi import tĩnh của vỏ
+
+Build M1 cho thấy chunk chung tên postcard chứa Three.js (316,71 kB, gzip 88,47 kB). Kiểm dependency: `bridge/deepLink → memories/camera` và `ScaleBar → planCamera` kéo module Three vào vỏ dù scene dùng import động. M2 chuyển `poseToOrbit` dùng Vector3 sang module engine riêng; clamp/lerp thuần giữ đúng công thức Three.js; tách hàm thước tỉ lệ thuần khỏi module dựng OrthographicCamera. API camera/tour/scale và geometry giữ nguyên. Chưa tuyên bố đạt 250 KB cho tới khi build và script manifest đo thật; không loại chunk dùng chung khỏi phép tính chỉ vì tên file.
+
+### M2 — Harness P8/P9 riêng cho cổng hiện hành
+
+Giữ nguyên guard 20 vòng/20 phút của harness P8 lịch sử. Fixture 64 công trình được tách nguyên văn sang module dùng chung; harness mới chỉ đo 14 thao tác P8 hoặc sound-on lạnh/ấm P9, mặc định 30 lần mỗi thao tác. Timestamp bắt từ input thật, xác nhận state của main-frame submission, GPU fence rồi RAF tiếp theo; không gọi đây là thời gian âm thanh đầu tiên nghe được. Audio output được mute để QA không phát tiếng kéo dài, nhưng AudioContext phải chạy sau gesture và chỉ có một context. Clock cố định, seed 81273, nguồn SHA/renderer/driver phải xác minh. Mọi mẫu chậm/censored giữ trong raw; so ngưỡng 100 ms trên toàn bộ mẫu, không chỉ p50. Script mới chỉ syntax-check, chưa đo; không suy DONE từ code.
+
+### M2 — Coverage không được làm sai phép đo CPU
+
+Lượt coverage V8 đầu: 365 test pass, một bài CPU 200 tác nhân đỏ ở p95 6,945 ms (ngưỡng 4 ms). Chạy nguyên bài đó không coverage: PASS; đây là probe riêng 1 pass/5 case không được chọn, không là full-suite pass. Không nới ngưỡng hoặc giảm 600 frame. Tách nguyên văn bài timing sang file riêng, dùng chung fixture giữ nguyên; coverage chạy mọi bài hành vi rồi chạy bài timing không instrumentation trước khi check ratchet. Cổng check vẫn chạy toàn bộ assertion, không bỏ performance test. Diff body được so không thay token ngoài whitespace.
+
+### Tích hợp M1/M2 khi cổng WebKit tuyệt đối chưa đạt
+
+CI `40781481203` tại M1 `b6620382f389545850bb025dbd1d4fff7452ec99`: quality/Chromium/Firefox đạt; 110 ca chức năng WebKit đạt nhưng H6 mất 87.777 ms, vượt ngân sách giữ nguyên 70.000 ms. Baseline cùng runner 88.233 ms (ứng viên −0,52%). Cùng runtime từng đạt ở runner khác không làm head này xanh. Giữ PR #9 draft, không rerun cùng head; merge M1 vào worktree M2 để tiếp tục việc độc lập. M1 còn PARTIAL tới khi đủ cổng, không merge dựa vào suy luận runner chậm.
+
+### M2 — PCM, trạng thái audio, đọc tác nhân và landscape
+
+Profile trên source 0b56c49 cho thấy AudioContext constructor và synthSample/createSyntheticBuffer chiếm phần lớn lần bật đầu; profiler có overhead, không dùng làm số nghiệm thu. Chuẩn bị PCM tổng hợp công khai 48 kHz/6 giây theo lát 2.048 mẫu, nhường event loop giữa các lát; cache tối đa bốn kiểu thời tiết, không có dữ liệu người dùng. Không tạo AudioContext trước gesture. Copy PCM vào AudioBuffer sau gesture, giữ đường fallback gốc khi chưa chuẩn bị. Khi scene cuối gỡ, huỷ timer chuẩn bị; dữ liệu PCM công khai bất biến được dùng lại qua route. Test so toàn bộ mẫu với phép tổng hợp gốc đạt.
+
+AudioContext statechange chủ động render một khung và cập nhật diagnostics, không mở RAF liên tục. Probe trước sửa cho context thật running nhưng dataset vẫn suspended trong cảnh dừng; không gọi timeout của dataset là âm thanh thực bị hỏng. Diorama phóng đại tác nhân 1,6×, người đi bộ 2×; POV trở về tỉ lệ cũ, simulation/collision/graph và số mesh/tam giác giữ nguyên. Landscape chuyển panel local đã thu gọn sang bên phải; SHA vẫn đầy đủ trong text/title, chỉ cắt hiển thị; hàng tilt/status không đè HUD.
+
+Playwright 1.58 Test không hỗ trợ use.reducedMotion trực tiếp: trace xác nhận field bị bỏ qua. Cấu hình chung chuyển sang contextOptions no-preference để giữ đúng điều kiện thực tế cũ của H6; không dùng thay đổi chế độ chuyển động để giảm thời gian benchmark. Ca reduced-motion bật page.emulateMedia rõ ràng và assert media trước khi kiểm chiều cao ổn định qua hai RAF. Đây là sửa harness, không nới timeout, assertion H6 hay ngưỡng hiệu năng.
+
+### M2 — Khép hai P2 từ review độc lập
+
+Reviewer riêng tìm panel thu gọn đè thước Mặt bằng và lỗi hủy kéo lịch sử chưa được test phát hiện. Chỉ đổi vị trí panel sang phải trong POV đi bộ/xe ôm; Mặt bằng giữ anchor trái cũ. Hủy kéo/lost capture và thả về cùng snap phải gán lại height của snap rõ ràng, không xóa style rồi trông chờ React render khi state không đổi. Pointerdown ngăn default focus của WebKit trước khi focus handle; thao tác bàn phím giữ nguyên.
+
+Test bổ sung geometry sau cancel ở peek/half/full, mất capture thật và Mặt bằng. Firefox dùng pointer ID khác Chromium/WebKit nên harness đọc ID thực từ event; không hard-code 1 cho releasePointerCapture. Windows WebKit 26 thực sự không có AudioContext hay biến thể prefixed/OfflineAudioContext, được probe riêng và ghi NOT_VERIFIED_UNSUPPORTED. Không thêm skip vào assertion audio cũ; CI Linux vẫn phải kiểm đầy đủ.
+
+## M3 — Chuẩn bị font và offline trong worktree riêng
+
+Chuẩn bị mã nhẹ trong lúc M1/M2 chạy cổng riêng; không chạy browser/build/benchmark cạnh phép đo GPU. Nghiệm thu và merge vẫn theo thứ tự. Tự host đúng các face đang dùng: Be Vietnam Pro normal300/400/500/600, Lora italic400/500, subset Vietnamese+Latin;12face dùng10woff2,185.248byte tổng, lớn nhất40.772byte. Kiểm SHA256 từ tệp tải; giấy phép OFL giữ cùng font. Không tải nội dung Maps hoặc dữ liệu khu thật. Chưa build/kiểm UI font/PWA/Lighthouse, nên M3 chưa DONE.
+
+### M3 — Kiểm production và tài nguyên offline
+
+PNG icon được rasterize từ SVG tự tạo; ép riêng hai icon thành asset có hash thay vì data URL để manifest có URL thực. Build đầu đã chặn đúng lỗi thiếu icon có hash, build sau đạt với hai shell prerender. QA production đầu bị 404 ở file sinh sau build vì adapter local gọi Nitro trước static assets. Adapter sửa theo thứ tự Static Assets mặc định của Workers; không đổi app để làm test xanh. Sau sửa, ba E2E production thực (offline/allowlist cache, iframe không đăng ký, update có xác nhận và tab khác không reload) đạt. Cấu hình private run_worker_first cần tự phục vụ public ASSETS sau khi chặn endpoint runtime.
+
+Cấu hình reduce của Playwright Test phải đặt trong contextOptions; a11y kiểm media rõ ràng. Không suy Playwright WebKit là Safari thật. Các kiểm này vẫn là bước chuẩn bị trước tích hợp M2, chưa phải cổng head cuối.
+
+### M3 — Giữ nguyên hook build của Cloudflare/Lovable
+
+Bật prerender của TanStack qua wrapper 2.25.3 làm output local không còn wrangler.json và deploy config. Mã wrapper cài compiled hook để tìm thư mục output; preset Cloudflare cũng dùng compiled để sinh các file này. Đây là dấu hiệu xung đột hook cần tránh, không vá hoặc nâng dependency hàng loạt. Bỏ opt-in prerender của app; hậu xử lý dùng chính fetch export đã build để tạo hai HTML shell công khai. Cấu trúc TanStack/Nitro và plugin wrapper giữ nguyên. Script đọc metadata của build mới nhất để hỗ trợ cả .output/public local và dist/client của wrapper Lovable, thay vì hard-code đường dẫn local. Cần kiểm lại build/config/PWA sau thay đổi; chưa coi là đã xác minh Lovable thật.
+
+### M3 — Soak không reload document
+
+Receipt M1 lịch sử dùng navigation đầy đủ mỗi năm vòng; số heap của nó không chứng minh giữ bộ nhớ liên tục trong một document. M3 thêm mode desktop-soak vào harness có sẵn: năm vòng warm-up nhanh, rồi đủ 30 phút đo và ít nhất20vòng đo; bốn viewmode mỗi vòng, route qua link SPA và kiểm performance.timeOrigin không đổi. Không dùng reload để giải phóng leak. Giữ raw mọi mẫu, baseline heap sau warm-up và đo peak/end so với10%; không coi heap/renderer counters là GPU memory.
+
+### M3 — Lỗi a11y đo được
+
+Axe4.14 trênba viewport tìmhai lỗi: chữtrắng trênnútchụpảnh thiếutươngphản, vàtabactive trỏaria-controls tới panelchưatồntạikhi sheetpeek. Chỉ tối màu nềnCTA chụpảnh cùnghue, giữpalette3D; cácpanel luôncócontainerẩnđúngID, chỉmountnộidungkhi activevàđangmở. Khôngmountnộidungkỷniệm riêng trongcáctabẩn. KeyboardtestdùngTab/Shift+Tab thật, khôngsuyfocus-visible từfocus bằngscript.
+
+## M4 — Chuẩn bị runtime riêng trong lúc M1 đo GPU
+
+Chỉ chuẩn bị mã/server contract và runbook trong worktree riêng khi CPU/GPU đang dành cho M1; không chạy build/test/CLI service song song phép đo. Thứ tự nghiệm thu/merge vẫn sau M1–M3; chưa gọi M4 DONE. Bàn giao cho phép đổi thứ tự có lý do: JWT logic độc lập không thay source/browser đang benchmark.
+
+Cùng build mặc định demo. Runtime riêng chỉ trả trạng thái cho phép chọn file cục bộ sau khi xác minh Access JWT bằng WebCrypto RS256, JWKS của team domain đã cấu hình, issuer/audience/thời hạn. Không đưa origin/geometry/package hoặc token vào response/log/store SSR. G1 companion và consent từng lần giữ nguyên. Endpoint private không bao giờ được cache bởi PWA. Khoá ký synthetic chỉ sinh tạm trong unit test như M4 bàn giao cho phép; không tạo credential cho dịch vụ.
+
+Nguồn chuẩn đã đọc: [Cloudflare JWT validation](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/authorization-cookie/validating-json/), [Wrangler configuration](https://developers.cloudflare.com/workers/wrangler/configuration/). Chưa đăng nhập, cấu hình hay deploy dịch vụ nào.
+
+M4 chọn `jose` 6.2.13 (MIT, phát hành 20/10/2026, không dependency bắc cầu hay install script) cho JOSE parsing, JWK import và JWT signature/claim verification, theo ví dụ Cloudflare. Đây là runtime dependency server-only cần thiết để tránh tự duy trì parser/mật mã JWT. Chỉ wrapper giới hạn kích thước/network/cache và zod runtime contract thuộc app; không import server module vào client. Trước PR phải kiểm tarball, guard 24h, các ca ký thật bằng khoá synthetic và đo bundle client/server; chưa có claim bundle đạt cho tới khi chạy.
+
+M4 trust boundary nhận binding thô và xác thực schema đúng một lần bên trong verifier, nên URL JWKS không thể lấy từ token/caller-supplied issuer. Định cỡ: reach dự kiến chỉ gia đình sau Access (ước lượng, chưa có deployment/người dùng đo); capability của người gửi request có thể sửa header; motive là truy cập trái phép nếu sau này có dữ liệu server; blast radius v1 chỉ flag chọn file, dữ liệu riêng vẫn local. Sàn xác thực vẫn bắt buộc theo bàn giao. Chọn boundary server + thư viện JOSE, không thêm DB/rate-limit/quota hay login machinery. Mở lại đánh giá khi thêm R2 hoặc dữ liệu server. Các chỉ dẫn stack Nuxt/npm/Pages không áp vào dự án TanStack/Bun/Workers này; giữ cấu hình Nitro/Lovable, không đổi nodejs_compat có sẵn để theo một stack khác.
+
+### M4 — Fetch JWKS trên runtime thật
+
+Workerd1.20261019.1 từchối redirect:error ngaytrước fetch; unitNodekhôngpháthiệnkhácbiệtnày. Dùng redirect:manual, giữcheckresponse.okđểtừchối3xxkhôngđitheoLocation; unitthêmcase302. HelloWorkerdđạt; auth-onlyvàbundleđầyđủđangkiểm. ChưacoilàREADY_TO_DEPLOY_NOT_DEPLOYEDkhi fullnativeWorkerchưađạt.
+
+## M5 — Chiều cao từ raster cục bộ, không nhập footprint
+
+Chỉ đọc các GeoTIFF chủ dự án chỉ định trong config local; không tự tìm vùng, tải tile hoặc đăng nhập. Chọn năm lớn nhất trong danh sách đã cung cấp, không fallback năm cũ cho vùng thiếu mẫu. Mẫu hợp lệ nằm trong footprint hiện có và ngoài lỗ, có building_presence đạt ngưỡng explicit (không phải xác suất). Trung vị building_height là tổng chiều cao trên nền đất: trừ roofHeight đã biết, còn mái chưa biết giữ nguyên roofType và ghi inferred. Không gán giá trị 0/âm hoặc dữ liệu ngoài 0–100 m.
+
+Bỏ qua footprint chạm bất kỳ lô nào và vùng vuông bảo thủ bao quanh bán kính tâm explicit; không coi vùng bảo vệ là ranh lô. Giữ nguyên geometry, topology, ID, số tầng và thuộc tính khác. Feature có override, số tầng hoặc height có căn cứ được giữ nguyên. Provenance mới dùng open_buildings, inferred, v1/năm và CC-BY-4.0; world không trở thành verified.
+
+GeoTIFF và chuyển UTM dùng thư viện chuyên dụng geotiff 3.0.5/proj4 2.22.0 trong package pipeline riêng; không thêm vào app/browser. Đang chuẩn bị, chưa cài/kiểm nên NOT_VERIFIED. Chỉ metadata công khai và code notebook được đọc; không tải dữ liệu địa lý. Đoạn thực thi với dữ liệu thật vẫn PARTIAL cho tới khi có đường dẫn và mục đích do chủ dự án đưa.
+
+### M5 — Làm trực tiếp trên canonical và giữ G1
+
+Bổ sung CLI enrich:canonical để không phải dựng lại footprint từ nguồn GIS mới. Chỉ đọc package, companion G1 và config/tile do chủ dự án đưa; kiểm hash byte của package khớp companion trước khi dùng origin. Đầu ra chỉ đổi height/provenance/manifest nguồn qua enrichment; tạo companion mới với cùng origin và hash của đúng byte package mới, không tái dùng companion cũ sau khi package thay đổi. Không ghi đè nguồn hoặc file đầu ra đã có; dữ liệu không synthetic phải nằm ngoài repo/OneDrive. stdout chỉ số tổng hợp, không hash, ID, origin, path hoặc nhãn licence tự do. Đây là mã chuẩn bị, chưa chạy trên dữ liệu thật.
+
+Ngân sách chi tiết procedural dành tối đa 70% instance cho mặt tiền trước, phần còn lại cho cây/cột/dây/đèn để khu nhiều nhà không làm mất toàn bộ đạo cụ phố. Tắt mặc định, chỉ Diorama, group tách và non-pickable; không ghi vào canonical.
+
+### Thứ tự kiểm cuối M3–M5
+
+Tíchhợp phầnmềmM3/M4/M5trongnhánh trước khi đo soak30phút vàma trậnGPUcuối,vìfont/PWA/lớpchi tiếtcùngảnhhưởngruntime. KhônggọiM3DONEkhisoak/Lighthousechưachạy; khônggọiM4READYkhifullWorkerdchưađượcxácminh. CácPRvẫnphảiđủcổngtrướcmerge. M5dữliệuthậtvẫnPARTIALvìchưacóđườngdẫn/quyền; khônglấykếtquảfixturelàmnghiệmthuthựcđịa.
+
+### M4 — Kiểm Workerd Linux trong quality
+
+WindowsWorkerdkhởiđộngđượchello/auth-onlynhưngbundleSSRđầyđủlỗiinternal qua3lượt, nên dừngretryWindows. Thêm kiểmLinuxnative vào qualityhiệnhữu (vẫn4job), dùngWrangler4.151.3/Workerd1.20261019.1đúnglock trongthưmụctoolQAriêng, bỏinstallscript/metrics/credentialenv; chỉdeploy --dry-run, khôngupload. JWT/khoá thửsinhtạm;mọifetchJWKSđượcchặn vàtrảpublickeylocal, khôngtruycậptàikhoản haydomainthật. Đây làgatechưađạt, cầnkếtquảCItrướckhibáoREADY.
+
+### M3–M5 — Sửa phát hiện từ review độc lập
+
+PWA chỉ giữ thế hệ hiện hành và thế hệ đã activate liền trước, nhận diện bằng cache marker rỗng. Cache của lần install thất bại bị xóa sau khi mọi write đã kết thúc; version digest bao gồm cả mã Service Worker. Không thêm dữ liệu ứng dụng, request riêng hoặc metadata người dùng vào cache.
+
+Enrichment dùng ranh lô sau khi áp dụng override để loại trừ nhưng vẫn trả base package và override tách biệt. GeoTIFF với một tie-point có raster offset khác zero được đưa về pixel-zero đúng bằng affine; nhiều tie-point chưa hỗ trợ thì từ chối. Chi tiết minh họa đi theo building parts như renderer, dùng elevation của part hoặc kế thừa parent; không trang trí parent ảo nằm trên các part thấp/không có căn cứ chiều cao.
+
+Đã thêm ca hồi quy cho bốn phát hiện. Pipeline đạt 50 test, chi tiết 3 unit test đạt; production PWA và check tích hợp còn đang chạy tại thời điểm ghi mục này. Không lấy static review làm bằng chứng runtime.
+
+Review tiếp phát hiện hai ca rollback PWA: marker cũ không đổi thứ tự và install lỗi có thể xóa cache thế hệ từng activate. Đã đổi sang xác minh toàn bộ response trong RAM trước khi ghi CacheStorage, giữ cache đã activate khi có lỗi copy, và tạo lại marker hiện hành khi activate. Thêm ca A→B→A→C cùng rollback A thất bại lúc B đang chạy, kiểm hash byte cache A còn nguyên. Chỉ asset public đã khóa hash được giữ trong bộ đệm tạm; không có nội dung riêng.
+
+### Cổng cuối trên bản tích hợp
+
+M1/M2 chưa qua đủ cổng merge nên main vẫn ở M0; PR #9/#10 giữ draft parked, có lý do CI cụ thể. Gom bản ứng viên M3–M5 cùng các sửa M1/M2 vào PR tích hợp để đo font, PWA, runtime riêng và lớp chi tiết trên cùng cây mã. Giữ lịch sử merge, không squash/rebase/force. Chỉ được merge sau review, privacy, local gate và bốn job CI đúng head; phải kiểm lại CI main. Bản phát hành công khai vẫn do chủ dự án Publish sau audit.
+
+Axe WCAG 2.2 ở 740×390 phát hiện nút mở bảng riêng chỉ còn 12,8 px chiều cao bấm được khi half sheet che lên. Bảng riêng đã thu gọn được ẩn hoàn toàn trong lúc mobile sheet mở hoặc đang kéo, và hiện lại khi về peek; bảng riêng đang mở và dữ liệu phiên không bị đổi. Giữ nguyên luật target-size và bổ sung kiểm bàn phím thu sheet rồi truy cập lại nút.
+
+M4: lỗi native full Worker là gốc module của harness, không phải bằng chứng build SSR sai. Miniflare 5 convertV4 mặc định lấy cwd làm modulesRoot; bundle nằm ngoài checkout sinh tên bắt đầu bằng ../, Workerd từ chối. Đặt modulesRoot=dirname(bundle); giữ nguyên Wrangler/Lovable build. Fresh dry-run + native Windows đầy đủ đã đạt, Linux cần head CI mới.
+
+Axe CI Firefox không có WebGL2 nên nút âm thanh được disable đúng thiết kế. Test keyboard cũ giả định nút luôn focusable. Giữ nguyên kiểm focus âm thanh khi scene ready; fallback phải chứng minh nút disabled và không focus, đồng thời nút chọn VI luôn qua Tab/ShiftTab/focus-visible. Thêm ca forced fallback để Windows cũng chạy nhánh này; không đổi guard H6, timeout hoặc khả năng của app.
+
+Probe bàn phím universal dùng nút chọn ngôn ngữ (form control), vì WebKit có thiết lập Tab mặc định bỏ qua link; kiểm focus link rồi ShiftTab không phải phép chứng minh form-control keyboard ổn định trên các browser. Giữ nguyên assert focus/focus-visible và kiểm âm thanh khi ready, không bật chức năng âm thanh bị disable ở fallback.
+
+Soak được chốt trước khi chạy: warm6 vòng để baseline quiescent có cùng trạng thái AudioContext đã tạo như cuối phép đo, sau khi vòng5 đã luyện SPA remount. Không chọn baseline theo số heap thu được. Phải có gc được expose thực, đo đủ30phút sau warmup, báo cả tăng heap cuối và cực đại của các mẫu sau GC. Kết quả GPU phát triển và các probe production khác phương pháp được giữ riêng; không chuyển diagnostic thành pass ngân sách.
+
+Quét build production phát hiện /.vite/manifest.json trả200 và chứa đường dẫn build tuyệt đối. Đây là manifest nội bộ phục vụ bundle checker, không phải manifest PWA. Sau build chuyển nó sang output server (client-manifest.json), cập nhật checker đọc đúng đầu vào private và thêm test public URL phải404. Không đổi chunk hoặc bỏ size-limit; vẫn dùng nguyên graph của Vite để tính vỏ lazy engine.
+
+### M1/H6 — Bỏ backdrop blur của panel kính (Notion AI tạm tiếp quản, 31/10/2026)
+
+CI `40836100757` ở `4e5136f`: WebKit 121 ca chức năng đạt, H6 86.957 ms >70.000 ms; ba PR liên tiếp đều 86–89 s trên runner EPYC 7763, baseline cùng runner cũng vậy. Chẩn đoán Linux WebKit 26.0, Playwright Desktop Safari (DPR 2), không GPU, fixture tổng hợp, spec giữ nguyên: mỗi lần chọn chế độ main thread chỉ bận ~140–190 ms, còn ~1 s là Playwright chờ phần tử "stable" vì rAF chỉ chạy 3–4 lần/1,5 s; nghẽn ở compositor. Tắt riêng từng yếu tố bằng CSS inject (chỉ chẩn đoán): bỏ blur −31%, bỏ transition −20%, bỏ box-shadow −9%, ẩn canvas −4%.
+
+Quyết định: bỏ `backdrop-filter: blur(18px) saturate(1.3)` ở utility `glass` và `backdrop-blur` của bảng riêng (nền đã 95% đục); tăng alpha `--glass` 0,72→0,8 để giữ độ đọc chữ trên cảnh. Giữ transition 180 ms (PLAN: motion 150–250 ms), shadow, bố cục, copy và hành vi. ABBA cũ trên GPU thật (Chrome/Intel, DPR 1) không thấy khác biệt FPS nhất quán, nên lần này không tuyên bố lợi ích FPS; lý do duy nhất là chi phí compositor của WebKit khi không có GPU. Không đổi test, ngưỡng 70.000 ms/+10%, timeout 90 s, assertion hay capability guard.
+
+ABBA mã thật `9b12c1d`↔`d4fca77`, cùng máy/harness, 6+6 lượt sau warm-up: vòng chẩn đoán 3 chu kỳ trung bình 25.358→16.894 ms (−33,4%), hai khoảng không chồng nhau (24.521–26.355 so với 16.677–17.289 ms). Spec H6 nguyên vẹn trên máy này vẫn timeout 90 s ở cả hai head (máy chậm hơn runner ~1,9 lần), nhưng trong 90 s hoàn thành 10→14 chu kỳ (chu kỳ ổn định 8,3→6,1 s, −26%). Ước lượng CI ~58–66 s chỉ là phép chiếu, NOT_VERIFIED tới khi có CI đúng head mới. Nếu vẫn ≥70 s thì ghi NOT_MET theo §7.4, không nới cổng; phương án cổng chuẩn hoá theo baseline cùng runner do chủ dự án quyết. Ảnh so sánh 1280×720 DPR 2 đã xem: khác biệt nhỏ ở vùng panel đè cảnh. PLAN cập nhật dòng STYLE.

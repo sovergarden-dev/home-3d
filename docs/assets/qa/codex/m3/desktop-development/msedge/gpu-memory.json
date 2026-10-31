@@ -1,0 +1,538 @@
+{
+    "status":  "MEASURED",
+    "samples":  [
+                    {
+                        "residentAllocationBytes":  58695680,
+                        "committedBytes":  61067264,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  2539,
+                        "sharedBytes":  58695680
+                    },
+                    {
+                        "residentAllocationBytes":  87851008,
+                        "committedBytes":  92368896,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  4305,
+                        "sharedBytes":  87851008
+                    },
+                    {
+                        "residentAllocationBytes":  160772096,
+                        "committedBytes":  164102144,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  6612,
+                        "sharedBytes":  160772096
+                    },
+                    {
+                        "residentAllocationBytes":  160772096,
+                        "committedBytes":  164102144,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  7833,
+                        "sharedBytes":  160772096
+                    },
+                    {
+                        "residentAllocationBytes":  140939264,
+                        "committedBytes":  144080896,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  9033,
+                        "sharedBytes":  140939264
+                    },
+                    {
+                        "residentAllocationBytes":  173690880,
+                        "committedBytes":  178552832,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  10197,
+                        "sharedBytes":  173690880
+                    },
+                    {
+                        "residentAllocationBytes":  165801984,
+                        "committedBytes":  170663936,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  11355,
+                        "sharedBytes":  165801984
+                    },
+                    {
+                        "residentAllocationBytes":  165801984,
+                        "committedBytes":  170663936,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  12501,
+                        "sharedBytes":  165801984
+                    },
+                    {
+                        "residentAllocationBytes":  165801984,
+                        "committedBytes":  170663936,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  13644,
+                        "sharedBytes":  165801984
+                    },
+                    {
+                        "residentAllocationBytes":  156643328,
+                        "committedBytes":  161439744,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  14847,
+                        "sharedBytes":  156643328
+                    },
+                    {
+                        "residentAllocationBytes":  163287040,
+                        "committedBytes":  168083456,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  16180,
+                        "sharedBytes":  163287040
+                    },
+                    {
+                        "residentAllocationBytes":  162897920,
+                        "committedBytes":  167694336,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  17511,
+                        "sharedBytes":  162897920
+                    },
+                    {
+                        "residentAllocationBytes":  162934784,
+                        "committedBytes":  167731200,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  18944,
+                        "sharedBytes":  162934784
+                    },
+                    {
+                        "residentAllocationBytes":  156913664,
+                        "committedBytes":  161710080,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  20271,
+                        "sharedBytes":  156913664
+                    },
+                    {
+                        "residentAllocationBytes":  150376448,
+                        "committedBytes":  155172864,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  21571,
+                        "sharedBytes":  150376448
+                    },
+                    {
+                        "residentAllocationBytes":  156819456,
+                        "committedBytes":  161615872,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  22993,
+                        "sharedBytes":  156819456
+                    },
+                    {
+                        "residentAllocationBytes":  157396992,
+                        "committedBytes":  162193408,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  24390,
+                        "sharedBytes":  157396992
+                    },
+                    {
+                        "residentAllocationBytes":  156594176,
+                        "committedBytes":  161390592,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  25752,
+                        "sharedBytes":  156594176
+                    },
+                    {
+                        "residentAllocationBytes":  157396992,
+                        "committedBytes":  162193408,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  27230,
+                        "sharedBytes":  157396992
+                    },
+                    {
+                        "residentAllocationBytes":  150405120,
+                        "committedBytes":  155201536,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  28577,
+                        "sharedBytes":  150405120
+                    },
+                    {
+                        "residentAllocationBytes":  160575488,
+                        "committedBytes":  165445632,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  29793,
+                        "sharedBytes":  160575488
+                    },
+                    {
+                        "residentAllocationBytes":  160575488,
+                        "committedBytes":  165445632,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  30952,
+                        "sharedBytes":  160575488
+                    },
+                    {
+                        "residentAllocationBytes":  151879680,
+                        "committedBytes":  156749824,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  32089,
+                        "sharedBytes":  151879680
+                    },
+                    {
+                        "residentAllocationBytes":  151879680,
+                        "committedBytes":  156749824,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  33244,
+                        "sharedBytes":  151879680
+                    },
+                    {
+                        "residentAllocationBytes":  151879680,
+                        "committedBytes":  156749824,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  34493,
+                        "sharedBytes":  151879680
+                    },
+                    {
+                        "residentAllocationBytes":  165724160,
+                        "committedBytes":  170610688,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  36009,
+                        "sharedBytes":  165724160
+                    },
+                    {
+                        "residentAllocationBytes":  163401728,
+                        "committedBytes":  168288256,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  37479,
+                        "sharedBytes":  163401728
+                    },
+                    {
+                        "residentAllocationBytes":  163049472,
+                        "committedBytes":  167936000,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  38884,
+                        "sharedBytes":  163049472
+                    },
+                    {
+                        "residentAllocationBytes":  157016064,
+                        "committedBytes":  161902592,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  40295,
+                        "sharedBytes":  157016064
+                    },
+                    {
+                        "residentAllocationBytes":  160534528,
+                        "committedBytes":  165421056,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  41677,
+                        "sharedBytes":  160534528
+                    },
+                    {
+                        "residentAllocationBytes":  157237248,
+                        "committedBytes":  162123776,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  43104,
+                        "sharedBytes":  157237248
+                    },
+                    {
+                        "residentAllocationBytes":  157466624,
+                        "committedBytes":  162353152,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  44463,
+                        "sharedBytes":  157466624
+                    },
+                    {
+                        "residentAllocationBytes":  168144896,
+                        "committedBytes":  173031424,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  45876,
+                        "sharedBytes":  168144896
+                    },
+                    {
+                        "residentAllocationBytes":  157351936,
+                        "committedBytes":  162238464,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  47270,
+                        "sharedBytes":  157351936
+                    },
+                    {
+                        "residentAllocationBytes":  155168768,
+                        "committedBytes":  160055296,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  48632,
+                        "sharedBytes":  155168768
+                    },
+                    {
+                        "residentAllocationBytes":  178778112,
+                        "committedBytes":  183533568,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  50051,
+                        "sharedBytes":  178778112
+                    },
+                    {
+                        "residentAllocationBytes":  176742400,
+                        "committedBytes":  181514240,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  51385,
+                        "sharedBytes":  176742400
+                    },
+                    {
+                        "residentAllocationBytes":  173068288,
+                        "committedBytes":  177840128,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  52679,
+                        "sharedBytes":  173068288
+                    },
+                    {
+                        "residentAllocationBytes":  173068288,
+                        "committedBytes":  177840128,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  53986,
+                        "sharedBytes":  173068288
+                    },
+                    {
+                        "residentAllocationBytes":  168280064,
+                        "committedBytes":  173076480,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  55413,
+                        "sharedBytes":  168280064
+                    },
+                    {
+                        "residentAllocationBytes":  168972288,
+                        "committedBytes":  173768704,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  56736,
+                        "sharedBytes":  168972288
+                    },
+                    {
+                        "residentAllocationBytes":  165818368,
+                        "committedBytes":  170614784,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  58042,
+                        "sharedBytes":  165818368
+                    },
+                    {
+                        "residentAllocationBytes":  176664576,
+                        "committedBytes":  181460992,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  59403,
+                        "sharedBytes":  176664576
+                    },
+                    {
+                        "residentAllocationBytes":  172331008,
+                        "committedBytes":  177127424,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  60720,
+                        "sharedBytes":  172331008
+                    },
+                    {
+                        "residentAllocationBytes":  172101632,
+                        "committedBytes":  176898048,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  62052,
+                        "sharedBytes":  172101632
+                    },
+                    {
+                        "residentAllocationBytes":  160866304,
+                        "committedBytes":  165662720,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  63446,
+                        "sharedBytes":  160866304
+                    },
+                    {
+                        "residentAllocationBytes":  166207488,
+                        "committedBytes":  171003904,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  64766,
+                        "sharedBytes":  166207488
+                    },
+                    {
+                        "residentAllocationBytes":  161730560,
+                        "committedBytes":  166526976,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  66156,
+                        "sharedBytes":  161730560
+                    },
+                    {
+                        "residentAllocationBytes":  168194048,
+                        "committedBytes":  172990464,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  67485,
+                        "sharedBytes":  168194048
+                    },
+                    {
+                        "residentAllocationBytes":  173219840,
+                        "committedBytes":  178016256,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  68784,
+                        "sharedBytes":  173219840
+                    },
+                    {
+                        "residentAllocationBytes":  172077056,
+                        "committedBytes":  176873472,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  70088,
+                        "sharedBytes":  172077056
+                    },
+                    {
+                        "residentAllocationBytes":  167522304,
+                        "committedBytes":  172318720,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  71458,
+                        "sharedBytes":  167522304
+                    },
+                    {
+                        "residentAllocationBytes":  162324480,
+                        "committedBytes":  167120896,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  72883,
+                        "sharedBytes":  162324480
+                    },
+                    {
+                        "residentAllocationBytes":  167034880,
+                        "committedBytes":  171831296,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  74240,
+                        "sharedBytes":  167034880
+                    },
+                    {
+                        "residentAllocationBytes":  160948224,
+                        "committedBytes":  165744640,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  77614,
+                        "sharedBytes":  160948224
+                    },
+                    {
+                        "residentAllocationBytes":  173416448,
+                        "committedBytes":  178229248,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  79059,
+                        "sharedBytes":  173416448
+                    },
+                    {
+                        "residentAllocationBytes":  177123328,
+                        "committedBytes":  181952512,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  80595,
+                        "sharedBytes":  177123328
+                    },
+                    {
+                        "residentAllocationBytes":  170569728,
+                        "committedBytes":  175398912,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  81965,
+                        "sharedBytes":  170569728
+                    },
+                    {
+                        "residentAllocationBytes":  168853504,
+                        "committedBytes":  173682688,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  83349,
+                        "sharedBytes":  168853504
+                    },
+                    {
+                        "residentAllocationBytes":  168517632,
+                        "committedBytes":  173346816,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  84669,
+                        "sharedBytes":  168517632
+                    },
+                    {
+                        "residentAllocationBytes":  176439296,
+                        "committedBytes":  181268480,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  85970,
+                        "sharedBytes":  176439296
+                    },
+                    {
+                        "residentAllocationBytes":  177246208,
+                        "committedBytes":  182075392,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  87388,
+                        "sharedBytes":  177246208
+                    },
+                    {
+                        "residentAllocationBytes":  171589632,
+                        "committedBytes":  176418816,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  88721,
+                        "sharedBytes":  171589632
+                    },
+                    {
+                        "residentAllocationBytes":  172507136,
+                        "committedBytes":  177336320,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  90082,
+                        "sharedBytes":  172507136
+                    },
+                    {
+                        "residentAllocationBytes":  166731776,
+                        "committedBytes":  171560960,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  91447,
+                        "sharedBytes":  166731776
+                    },
+                    {
+                        "residentAllocationBytes":  161280000,
+                        "committedBytes":  166109184,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  92873,
+                        "sharedBytes":  161280000
+                    },
+                    {
+                        "residentAllocationBytes":  160591872,
+                        "committedBytes":  165421056,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  94209,
+                        "sharedBytes":  160591872
+                    },
+                    {
+                        "residentAllocationBytes":  161427456,
+                        "committedBytes":  166256640,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  95648,
+                        "sharedBytes":  161427456
+                    },
+                    {
+                        "residentAllocationBytes":  162344960,
+                        "committedBytes":  167174144,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  96959,
+                        "sharedBytes":  162344960
+                    },
+                    {
+                        "residentAllocationBytes":  167858176,
+                        "committedBytes":  172687360,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  98246,
+                        "sharedBytes":  167858176
+                    },
+                    {
+                        "residentAllocationBytes":  161423360,
+                        "committedBytes":  166252544,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  99741,
+                        "sharedBytes":  161423360
+                    },
+                    {
+                        "residentAllocationBytes":  161767424,
+                        "committedBytes":  166596608,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  101238,
+                        "sharedBytes":  161767424
+                    },
+                    {
+                        "residentAllocationBytes":  162349056,
+                        "committedBytes":  167178240,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  102958,
+                        "sharedBytes":  162349056
+                    },
+                    {
+                        "residentAllocationBytes":  161398784,
+                        "committedBytes":  166227968,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  104830,
+                        "sharedBytes":  161398784
+                    },
+                    {
+                        "residentAllocationBytes":  160595968,
+                        "committedBytes":  165425152,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  106253,
+                        "sharedBytes":  160595968
+                    },
+                    {
+                        "residentAllocationBytes":  161202176,
+                        "committedBytes":  166031360,
+                        "dedicatedBytes":  0,
+                        "elapsedMs":  107601,
+                        "sharedBytes":  161202176
+                    }
+                ],
+    "method":  "Windows WDDM per-process GPU memory counters, summed only for browser descendants of the benchmark process. Includes browser allocation overhead; not app-only texture bytes or a physical VRAM census."
+}
