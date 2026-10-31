@@ -2,6 +2,7 @@ export const vi = {
   appName: "Phố Nhà Mình",
   privateAccessVerified: "Truy cập riêng tư đã xác minh",
   tagline: "Phố nhà mình, một chút thôi.",
+  loadingProgress: "Đang tải phố 3D",
   viewportPlaceholder: "Bản đồ 3D sẽ hiện ở đây",
   demoBadge: "DEMO · Phố hư cấu",
   privatePackageBadge: "GÓI RIÊNG · XEM TRƯỚC",

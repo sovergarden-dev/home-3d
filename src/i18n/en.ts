@@ -4,6 +4,7 @@ export const en: Dict = {
   appName: "Phố Nhà Mình",
   privateAccessVerified: "Private access verified",
   tagline: "Our street, just a little.",
+  loadingProgress: "Loading the 3D street",
   viewportPlaceholder: "The 3D map will appear here",
   demoBadge: "DEMO · Fictional street",
   privatePackageBadge: "PRIVATE PACKAGE · PREVIEW",
