@@ -1,0 +1,33 @@
+{
+  "syntheticOnly": true,
+  "status": "TRANSFER_THROTTLING_OBSERVED",
+  "browserVersion": "152.0.7977.76",
+  "conditions": {
+    "offline": false,
+    "latency": 150,
+    "downloadThroughput": 200000,
+    "uploadThroughput": 93750,
+    "connectionType": "cellular4g"
+  },
+  "rows": [
+    {
+      "label": "unthrottled",
+      "bytes": 524288,
+      "elapsedMs": 15.599999994039536,
+      "serviceWorkerControlled": false
+    },
+    {
+      "label": "requested4G-before-service-worker",
+      "bytes": 524288,
+      "elapsedMs": 2854.199999988079,
+      "serviceWorkerControlled": false
+    },
+    {
+      "label": "requested4G-with-service-worker",
+      "bytes": 524288,
+      "elapsedMs": 2841.5,
+      "serviceWorkerControlled": true
+    }
+  ],
+  "method": "Separate local512KiB uncompressed no-store payload, before/after identical CDP conditions and after public Service Worker control. Confirms substantial transfer throttling; does not substitute for real cellular-network testing."
+}

@@ -2,12 +2,13 @@
 
 ## Hiện trạng
 
-- M0 DONE: PR #8, main `cf3cb262dfa7b69a881bef63c0d9a89dd32668fb`, CI `40717187350` 4/4. Main chưa đóng băng.
-- M1/M2 PARTIAL: PR #9 parked, PR #10 draft. GPU thật đã có H_MET_REAL_GPU ở 300 ghim; P9 còn mẫu >100 ms. CI `40810779896` quality đạt, ba browser còn hồi quy Retry 3D; WebKit H6 85.858 ms vượt 70.000 ms dù baseline cùng runner 88.438 ms. Không merge/rerun cùng head.
-- Bản sửa mới chỉ nâng full sheet lên trên fallback, giữ half sheet phía dưới nút Retry. Kiểm Windows: 9 ca kéo bảng đạt; 8/12 ca fallback/thời tiết đạt, 4 lỗi khởi tạo 5 giây đã giữ lại. Check đầy đủ đang chạy; chưa gọi gate đạt.
-- M3/M4/M5 đã tích hợp trong nhánh kiểm chứng, chưa merge. PWA production 3 ca đạt; axe ban đầu 3 viewport đạt sau sửa contrast/tabpanel. Bản kiểm mở rộng VI/EN đang được hoàn thiện. M5 pipeline 47 ca đạt trên fixture tổng hợp.
-- M4 unit/Bun smoke/dry-run/auth-only Workerd đạt; full Workerd Windows chưa chạy được. CI Linux diagnostic `40812073234` dừng ở lint trước bước Workerd; đã sửa format, chưa có bằng chứng full native Worker.
-- Đang review độc lập M3–M5 và chuẩn bị ma trận GPU, soak liên tục 30 phút, Lighthouse/4G. Không Publish/deploy, đăng nhập hoặc đọc dữ liệu khu thật. `REAL_WORLD_NOT_VERIFIED` giữ nguyên.
+Cập nhật 31/10/2026 (Notion AI tạm tiếp quản theo yêu cầu chủ dự án; chi tiết ở mục cuối). Mục 28–29/10 bên dưới là lịch sử, không phải trạng thái hiện hành.
+
+- Main `cf3cb262dfa7b69a881bef63c0d9a89dd32668fb` (M0 DONE, PR #8, CI main `40717187350` 4/4). Chưa merge M1–M5, chưa đóng băng, chưa tag audit.
+- PR #11 `codex/m5-local-height-detail` là PR tích hợp chính, draft. Head đã push `4e5136f1cfdcd5e69a31af7a7455d5fa2f40c74a`; CI `40836100757` 3/4: quality, Chromium (121 pass, H6 55.090 ms) và Firefox (74 pass/47 skip theo capability) đạt; WebKit 121 ca chức năng đạt nhưng H6 86.957 ms >70.000 ms (baseline cùng runner 87.409 ms). PR #9/#10 draft parked, nội dung đã nằm trong PR #11.
+- Nhánh local đi trước remote: `9b12c1d` (ghi chú tạm dừng), `d4fca77` (bỏ backdrop blur của panel kính để giảm chi phí compositor H6 WebKit) và commit tài liệu này. Chưa push vì phiên tiếp quản không có quyền ghi GitHub; giao bằng git bundle. CI đúng head mới NOT_VERIFIED.
+- M1 PARTIAL (H6 CI, cổng merge); M2 PARTIAL (P9 còn mẫu >100 ms); M3 PARTIAL (FPS/Lighthouse NOT_MET, peak heap >10%, ObjectURL chưa được exercise); M4 PARTIAL (auth fail-closed, Workerd native Windows và Linux CI đạt; còn rà runbook để chốt READY_TO_DEPLOY_NOT_DEPLOYED); M5 PARTIAL (pipeline 50 test, chỉ fixture tổng hợp).
+- Không Publish/deploy, không đăng nhập cloud, không đọc dữ liệu khu thật. `REAL_WORLD_NOT_VERIFIED` giữ nguyên.
 
 ## 28/10/2026 — M0 hoàn tất
 
@@ -200,3 +201,35 @@ Quét endpoint build xác nhận /.vite/manifest.json trả200 kèm đường d�
 Đã dừng phép đo Edge đang chạy và các server/browser QA cục bộ thuộc Home 3D. Mã ứng viên `4e5136f1cfdcd5e69a31af7a7455d5fa2f40c74a` đã push lên PR #11; main vẫn `cf3cb262dfa7b69a881bef63c0d9a89dd32668fb`, chưa merge/freeze/audit tag. CI `40836100757` chạy độc lập trên GitHub: quality success, ba browser còn đang chạy tại thời điểm tạm dừng. Không hủy/rerun CI.
 
 Soak30phút đã hoàn tất và raw được lưu. Lượt Edge full matrix bị ngắt theo yêu cầu chủ dự án: giữ tất cả batch đã ghi, đánh dấu INTERRUPTED, không coi là ma trận hoàn chỉnh. Điểm tiếp tục cục bộ ghi đủ đường dẫn, log, giới hạn và việc còn lại; sau reboot phải xem kết quả CI cũ trước, không tự rerun cùng head. Chưa Publish/deploy hoặc mở dữ liệu khu thật.
+
+## 30–31/10/2026 — Chuyển máy; Notion AI tạm tiếp quản
+
+Codex đóng gói ZIP bàn giao ngày 30/10 để chuyển sang máy mạnh hơn; máy đó bận nên ngày 31/10 chủ dự án yêu cầu Notion AI tạm tiếp quản và làm tiếp từ PR #11, không làm lại M0. Môi trường: Linux sandbox 2 vCPU Xeon 2,5 GHz, 4 GiB RAM, không GPU. Phiên này không có quyền ghi GitHub (không token/gh), nên không push, không mở PR, không chạy CI; kết quả giao bằng git bundle. Không Publish/deploy, không đăng nhập cloud, không dữ liệu khu thật.
+
+### Khôi phục và đọc lại trạng thái
+
+Gói ZIP khớp manifest SHA-256 (1.064 tệp). Bundle khôi phục đúng `9b12c1d8b2581b3a7eaed55af1579a944589b905`, working tree sạch, `git fsck` sạch, tag `baseline/p10-published` đúng. Đọc remote công khai (không cần đăng nhập): main vẫn `cf3cb26`, PR #11 draft head `4e5136f`, PR #9/#10 draft, run `40836100757` vẫn failure như lúc đóng gói. Không rerun hay dispatch.
+
+### Cổng local Linux tại 9b12c1d
+
+Bun 1.4.3 (checksum khớp), Node 24.14.1, `bun install --frozen-lockfile`. `bun run check` đạt trong 108 s: typecheck, lint 0, 400 unit có coverage + 1 bài CPU, ratchet coverage, 50 pipeline, build, bundle 224.385 gzip ≤250.000. Host Amazon Linux 2023 thiếu glibc 2.38 cho Playwright WebKit, nên E2E WebKit chạy trong chroot Ubuntu 24.04 (WebKit 26.0).
+
+### H6 WebKit — nguyên nhân và sửa
+
+Spec H6 nguyên vẹn trên máy này timeout 90 s ở `9b12c1d` (10 chu kỳ trong 90 s); máy chậm hơn runner CI ~1,9 lần nên số này không so trực tiếp với CI. Chẩn đoán: WebKit chạy Desktop Safari DPR 2 (Chromium DPR 1); mỗi lần chọn chế độ main thread chỉ bận ~140–190 ms, nhưng Playwright chờ ~1 s để phần tử "stable" vì rAF chỉ chạy 3–4 lần/1,5 s. Tắt riêng từng yếu tố bằng CSS inject: bỏ backdrop blur −31%, bỏ transition −20%, bỏ box-shadow −9%, ẩn canvas −4%.
+
+`d4fca77` bỏ backdrop blur của panel kính và bảng riêng, tăng alpha nền 0,72→0,8; transition, shadow, test, ngưỡng, timeout và guard giữ nguyên (lý do trong DECISIONS). ABBA mã thật 6+6 lượt: vòng chẩn đoán 3 chu kỳ 25.358→16.894 ms trung bình (−33,4%), hai khoảng không chồng nhau. Spec nguyên vẹn vẫn timeout trên máy này nhưng hoàn thành 14 thay vì 10 chu kỳ (chu kỳ ổn định 8,3→6,1 s). Sau sửa, các yếu tố còn lại đều <10% và nhiễu; DPR 1 nhanh gấp đôi DPR 2. Phép chiếu CI ~58–66 s là NOT_VERIFIED. Bằng chứng: [h6-webkit-linux-2026-10-31](assets/qa/codex/m2/h6-webkit-linux-2026-10-31/README.md).
+
+Theo quy tắc ba vòng: nếu CI đúng head mới vẫn ≥70 s thì dừng tối ưu H6, ghi NOT_MET/PARTIAL và hỏi chủ dự án về cổng chuẩn hoá theo baseline cùng runner; không nới ngưỡng hoặc đổi runner để chọn số.
+
+### Bằng chứng còn thiếu trong repo
+
+Đã chép nguyên văn 20 tệp bằng chứng Codex đã khử thông tin khi đóng gói (soak 30 phút, tải 4G và probe throttle, K1 Chrome active-300, H6 hardware) vào [handoff-2026-10-30](assets/qa/codex/m3/handoff-2026-10-30/README.md). SHA-256 khớp provenance của gói; nhãn giữ nguyên: peak heap và K1 NOT_MET, ObjectURL NOT_EXERCISED, delta H6 hardware NOT_VERIFIED. Edge INTERRUPTED và trace lớn chỉ nằm trong ZIP.
+
+### Cổng local sau sửa (d4fca77)
+
+`bun run check` đạt trong 115 s: 400 unit + 1 bài CPU, 50 pipeline, bundle 224.367 gzip. Workerd native Linux (chroot, wrangler theo lock của repo) PASS 4 nhóm, JWKS chặn cục bộ 1 request; pipeline dry-run hợp lệ, 0 issue. E2E WebKit đầy đủ trong 24,0 phút: 120 pass, 1 fail là H6 20 vòng timeout 90 s do máy chậm (15 chu kỳ trong 90 s; reporter không enforce ngoài CI). Đây không phải kết quả đạt và không thay CI. Gitleaks 8.30.1 (checksum khớp) sạch trên toàn lịch sử local và trên `4e5136f..HEAD`. Chưa chạy Chromium/Firefox local, chưa đo GPU thật; self-review độc lập trước merge vẫn là việc của phiên kế tiếp.
+
+### Bàn giao lại
+
+Không push. Gói tiếp nối gồm git bundle đầy đủ và bundle tăng dần từ `4e5136f`, README hướng dẫn fast-forward lên PR #11 (không force), log/số liệu thô và script chẩn đoán. Việc kế tiếp: push, đọc CI đúng head mới, đi tiếp các cổng §5 nếu đủ 4/4. Việc cần GPU thật: K1 full matrix, H6 hardware, FPS/GPU, P9, Lighthouse ở head mới.

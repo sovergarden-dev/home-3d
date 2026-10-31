@@ -7,11 +7,13 @@ Nguồn phạm vi: [CODEX_HANDOFF.md](CODEX_HANDOFF.md); trạng thái có bằn
 | Mốc | Phạm vi                                                            | Trạng thái                                    |
 | --- | ------------------------------------------------------------------ | --------------------------------------------- |
 | M0  | Môi trường Windows, baseline local/GPU thật, tag, PR tiếp quản     | DONE — PR #8, CI main 4/4                     |
-| M1  | P10.1: độ trễ 300 ghim, kích thước/picking ghim, chữ bưu thiếp     | PARTIAL — QA chính có bằng chứng; PR #9 parked, tích hợp PR #10 |
-| M2  | Phiên bản/build SHA, repo/CI, hồi quy P1.1/P8/P9 và phục hồi WebGL | PARTIAL — phần mềm đã chuẩn bị, đang kiểm tích hợp |
-| M3  | Bench/PWA/font local/a11y/i18n/Lighthouse và ma trận Windows       | PARTIAL — phần mềm đã chuẩn bị, đang kiểm tích hợp |
-| M4  | Bản riêng tư và runbook sẵn sàng deploy, không deploy              | PARTIAL — phần mềm đã chuẩn bị, đang kiểm tích hợp |
-| M5  | Adapter chiều cao và chi tiết procedural tổng hợp                  | PARTIAL — phần mềm đã chuẩn bị, đang kiểm tích hợp |
+| M1  | P10.1: độ trễ 300 ghim, kích thước/picking ghim, chữ bưu thiếp     | PARTIAL — trong PR #11; H6 WebKit CI NOT_MET ở `4e5136f`, ứng viên sửa `d4fca77` chờ CI đúng head |
+| M2  | Phiên bản/build SHA, repo/CI, hồi quy P1.1/P8/P9 và phục hồi WebGL | PARTIAL — trong PR #11; P9 còn mẫu >100 ms; chờ cổng merge |
+| M3  | Bench/PWA/font local/a11y/i18n/Lighthouse và ma trận Windows       | PARTIAL — trong PR #11; FPS/Lighthouse NOT_MET, peak heap >10%, ObjectURL chưa được exercise |
+| M4  | Bản riêng tư và runbook sẵn sàng deploy, không deploy              | PARTIAL — Workerd native Windows/Linux đạt; còn rà runbook để chốt READY_TO_DEPLOY_NOT_DEPLOYED |
+| M5  | Adapter chiều cao và chi tiết procedural tổng hợp                  | PARTIAL — pipeline 50 test trên fixture tổng hợp; dữ liệu khu thật chưa được phép |
+
+Cập nhật 31/10/2026: Notion AI tạm tiếp quản, không quyền ghi GitHub; nhánh local `codex/m5-local-height-detail` đi trước PR #11 và được giao bằng git bundle. Quan sát mới, chưa sửa: gợi ý "Kéo để xoay · Chụm / cuộn để zoom" bị dock che một phần ở 1280×720 (có từ `9b12c1d`, chỉ trang trí, pointer-events-none; nội dung vẫn có trong nhãn điều khiển cảnh).
 
 K1/H đã có H_MET_REAL_GPU ở source 59f6; SwiftShader đối chứng còn H_BLOCKED, ca 0↔1 diagnostic NOT_MET. M1 chờ cổng merge/CI main, không dùng số đo cũ để tuyên bố source mới đạt. G1 được chủ dự án báo GEOREFERENCE_BOUND_PROVEN cho cặp tệp riêng; chưa mở cặp tệp đó trong lượt Codex. REAL_WORLD_NOT_VERIFIED tiếp tục giữ nguyên.
 

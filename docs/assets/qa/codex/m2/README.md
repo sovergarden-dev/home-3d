@@ -13,3 +13,5 @@ Source runtime sau sửa: `487156d0a8a266161f8c00ad1096d5efed081429`; trước: 
 - `dependency-review.json`, `line-endings.json`: kiểm tarball/tuổi/giấy phép và tám JSON M0 chỉ đổi CRLF sang LF, giá trị JSON bằng nhau.
 
 H6 GPU thật đối chiếu mới: de71732 43.434 ms → 6cce959 41.839 ms (−3,67%), cùng harness/DPR1/no-preference; raw JSON đã khử đường dẫn/loopback, metadata GPU giữ nguyên. CI Linux và gate H6 hiện hành vẫn phải đạt; skip không là pass. Kết quả Chromium/Firefox liên quan đã đạt 22/22; WebKit lượt đầu 7 pass/3 fail; hai lỗi focus đã sửa và ba ca layout cuối WebKit đạt. Ca audio còn NOT_VERIFIED_UNSUPPORTED: cả AudioContext và OfflineAudioContext đều không có trong WebKit Windows, gồm tên prefixed. Không đổi assertion/skip guard cũ. Gitleaks source/evidence và kiểm path/token/size đã đạt. Reviewer độc lập đóng hai P2 và một P3; không còn actionable finding tại ff550657. PR/CI head cuối còn phải chốt.
+
+- `h6-webkit-linux-2026-10-31`: chẩn đoán H6 WebKit trên Linux không GPU lúc Notion AI tạm tiếp quản; ABBA bỏ backdrop blur −33,4% vòng chẩn đoán. Không phải kết quả CI.
