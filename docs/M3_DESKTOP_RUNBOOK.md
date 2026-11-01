@@ -1,6 +1,6 @@
 # M3 — Desktop, offline và khả năng tiếp cận
 
-`PARTIAL`: phần mềm đã vào main qua PR #11 (`beacd9b`, CI main 4/4). Trên máy NVIDIA: FPS Chrome/Edge MET, Firefox bộ nhớ GPU NOT_MET, soak 30 phút MET. Trên Intel UHD: Lighthouse Performance NOT_MET ở `a948321` (mobile 26/desktop 60), soak Codex ở `4e5136f` đỉnh +22,16% NOT_MET. Lighthouse ở head cuối và 4G warm NOT_VERIFIED, ObjectURL NOT_EXERCISED (chi tiết ở [AUDIT_PACKET.md](AUDIT_PACKET.md)). Chỉ fixture tổng hợp; không có nghiệm thu khu thật hay thiết bị di động.
+`PARTIAL`: phần mềm đã vào main qua PR #11 (`beacd9b`, CI main 4/4). Trên máy NVIDIA: FPS Chrome/Edge MET, Firefox bộ nhớ GPU NOT_MET, soak 30 phút MET. Lighthouse trên máy NVIDIA: PR #13 `2c21b54` desktop 97 MET, mobile 56 NOT_MET, Accessibility 100 (main `5e6aec5`: desktop 79, mobile 44). Trên Intel UHD: Lighthouse `a948321` mobile 26/desktop 60 NOT_MET, soak Codex ở `4e5136f` đỉnh +22,16% NOT_MET. 4G warm NOT_VERIFIED, ObjectURL NOT_EXERCISED (chi tiết ở [AUDIT_PACKET.md](AUDIT_PACKET.md)). Chỉ fixture tổng hợp; không có nghiệm thu khu thật hay thiết bị di động.
 
 ## Đã kiểm
 
@@ -41,3 +41,5 @@ Build bằng bun run build; server QA dùng cùng Worker và ASSETS local, khôn
 Lighthouse 13.5.0 nằm trong toolchain riêng, chỉ định HOME3D_LIGHTHOUSE_TOOLS. scripts/lighthouse-local.mjs đo root production với cấu hình mobile/desktop chuẩn; JSON gzip chỉ thay origin loopback bằng synthetic.invalid. scripts/load-benchmark.mjs dùng Chrome headed GPU thật, 3 context lạnh mỗi viewport rồi reload cùng context sau khi SW control; 150 ms RTT, 1,6 Mbps down/0,75 Mbps up, không throttle CPU. FCP/vỏ <2 giây, world lạnh <8 giây, world ấm <2 giây; giữ mọi mẫu chậm. Không dùng routing Playwright trong phép tải vì routing tắt HTTP cache.
 
 Ngân sách Lighthouse 90 Performance/95 Accessibility ở cả mobile và desktop giữ nguyên. Các kết quả chưa đo ghi NOT_VERIFIED; số không đạt ghi NOT_MET. Android, iPhone và Safari thật đều NOT_VERIFIED.
+
+Kết quả trên máy NVIDIA, trung vị 3 lượt ([real-gpu-2026-11-01](assets/qa/codex/m3/real-gpu-2026-11-01/README.md)): main `5e6aec5` mobile 44, desktop 79 (TBT 1.562/401,5 ms). PR #13 `2c21b54` cho khung đầu chờ shader biên dịch song song (`KHR_parallel_shader_compile`) và làm ấm 18 biến thể khí quyển sau khung đầu: desktop 97 MET (TBT 112,5 ms), mobile 56 NOT_MET (TBT 654,5 ms, FCP 3.776 ms, LCP 4.820 ms). Mobile còn bị giới hạn bởi đường mạng mô phỏng 1,6 Mbps và task dựng cảnh nhân CPU ×4; muốn đạt cần đổi kiến trúc, không hoãn tải cảnh chỉ để tăng điểm.

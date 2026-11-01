@@ -1,0 +1,193 @@
+{
+  "syntheticOnly": true,
+  "sourceSha": "2c21b549ac507e4fac4de979fdfc593cd2c8702a",
+  "runsRequested": 3,
+  "failures": 0,
+  "provenance": {
+    "node": "v22.14.0",
+    "tools": {
+      "lighthouse": "13.5.0",
+      "chrome-launcher": "1.2.2"
+    },
+    "toolLockSha256": "ec901bd61dcefee85d109a556630eb127d26bbd5ba00e4036156952867b6312e",
+    "toolInstall": "npm install --ignore-scripts --no-audit --no-fund --before=2026-10-31T00:00:00Z (QA-only folder outside the repo, removed after use)",
+    "scriptSha256": {
+      "scripts/lighthouse-local.mjs": "7ffe8064ae87ea0d1cb26d17c893c94efe7a3cc1eb8eddc683c168bb481fba3b",
+      "scripts/production-server.mjs": "a4404f7d3cb28d61065dfaedd00ec93485c8ff570453637373b1ab711726c7f3",
+      "scripts/build-pwa.mjs": "522d94a30f072d00b52a543e3243f036a7ceee32c926826dfe8d69f85790a45d"
+    },
+    "transport": "gzip",
+    "gpuDriver": "32.0.16.1074",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "build": "bun run build with VITE_BUILD_SHA=sourceSha"
+  },
+  "median": {
+    "mobile": {
+      "runs": 3,
+      "performance": 56.00000000000001,
+      "accessibility": 100,
+      "fcpMs": 3776.2708749999997,
+      "lcpMs": 4820.26775,
+      "totalBlockingMs": 654.5000000000005,
+      "performanceTarget90": "NOT_MET",
+      "accessibilityTarget95": "MET"
+    },
+    "desktop": {
+      "runs": 3,
+      "performance": 97,
+      "accessibility": 100,
+      "fcpMs": 737.6622500000001,
+      "lcpMs": 967.06645,
+      "totalBlockingMs": 112.49999999999989,
+      "performanceTarget90": "MET",
+      "accessibilityTarget95": "MET"
+    }
+  },
+  "rows": [
+    {
+      "run": 1,
+      "formFactor": "mobile",
+      "sourceSha": "2c21b549ac507e4fac4de979fdfc593cd2c8702a",
+      "transport": "gzip",
+      "lighthouseVersion": "13.5.0",
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "driverVersion": "32.0.16.1074",
+      "performance": 56.00000000000001,
+      "accessibility": 100,
+      "fcpMs": 3774.473125,
+      "lcpMs": 4820.26775,
+      "totalBlockingMs": 704.5,
+      "externalHosts": [],
+      "runtimeError": null,
+      "warnings": [],
+      "method": "Production root, Lighthouse default mobile/desktop settings; dedicated headless Chrome. Raw JSON gzip changes only loopback origin to synthetic.invalid, preserving all timings/audits.",
+      "benchmarkIndex": 2526,
+      "reportGzipSha256": "853653220021bf31cce1c1c94737d44a5eb5bb529f98eddd173eeb7e6e11da77",
+      "reportGzipBytes": 72969
+    },
+    {
+      "run": 1,
+      "formFactor": "desktop",
+      "sourceSha": "2c21b549ac507e4fac4de979fdfc593cd2c8702a",
+      "transport": "gzip",
+      "lighthouseVersion": "13.5.0",
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "driverVersion": "32.0.16.1074",
+      "performance": 97,
+      "accessibility": 100,
+      "fcpMs": 737.6622500000001,
+      "lcpMs": 964.2947,
+      "totalBlockingMs": 115.99999999999989,
+      "externalHosts": [],
+      "runtimeError": null,
+      "warnings": [],
+      "method": "Production root, Lighthouse default mobile/desktop settings; dedicated headless Chrome. Raw JSON gzip changes only loopback origin to synthetic.invalid, preserving all timings/audits.",
+      "benchmarkIndex": 2626,
+      "reportGzipSha256": "b770b8fadf644558ac95bcd851f5858395c42eb1a66729dfeeec7ab38f55cd83",
+      "reportGzipBytes": 81590
+    },
+    {
+      "run": 2,
+      "formFactor": "mobile",
+      "sourceSha": "2c21b549ac507e4fac4de979fdfc593cd2c8702a",
+      "transport": "gzip",
+      "lighthouseVersion": "13.5.0",
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "driverVersion": "32.0.16.1074",
+      "performance": 56.00000000000001,
+      "accessibility": 100,
+      "fcpMs": 3928.829625,
+      "lcpMs": 5244.295550000001,
+      "totalBlockingMs": 594.4999999999995,
+      "externalHosts": [],
+      "runtimeError": null,
+      "warnings": [],
+      "method": "Production root, Lighthouse default mobile/desktop settings; dedicated headless Chrome. Raw JSON gzip changes only loopback origin to synthetic.invalid, preserving all timings/audits.",
+      "benchmarkIndex": 2498.5,
+      "reportGzipSha256": "696e25bfda8c2ad8911321af1638711c020566b479492037ca05e6a1f832acf2",
+      "reportGzipBytes": 72691
+    },
+    {
+      "run": 2,
+      "formFactor": "desktop",
+      "sourceSha": "2c21b549ac507e4fac4de979fdfc593cd2c8702a",
+      "transport": "gzip",
+      "lighthouseVersion": "13.5.0",
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "driverVersion": "32.0.16.1074",
+      "performance": 97,
+      "accessibility": 100,
+      "fcpMs": 745.81275,
+      "lcpMs": 976.6752999999999,
+      "totalBlockingMs": 112.49999999999989,
+      "externalHosts": [],
+      "runtimeError": null,
+      "warnings": [],
+      "method": "Production root, Lighthouse default mobile/desktop settings; dedicated headless Chrome. Raw JSON gzip changes only loopback origin to synthetic.invalid, preserving all timings/audits.",
+      "benchmarkIndex": 2355.5,
+      "reportGzipSha256": "cb5f591b9b81e0b2f3bec4737804a2fe8d1a1be9789eed7652f0ccb2c39b6565",
+      "reportGzipBytes": 81671
+    },
+    {
+      "run": 3,
+      "formFactor": "mobile",
+      "sourceSha": "2c21b549ac507e4fac4de979fdfc593cd2c8702a",
+      "transport": "gzip",
+      "lighthouseVersion": "13.5.0",
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "driverVersion": "32.0.16.1074",
+      "performance": 57.99999999999999,
+      "accessibility": 100,
+      "fcpMs": 3776.2708749999997,
+      "lcpMs": 4722.42505,
+      "totalBlockingMs": 654.5000000000005,
+      "externalHosts": [],
+      "runtimeError": null,
+      "warnings": [],
+      "method": "Production root, Lighthouse default mobile/desktop settings; dedicated headless Chrome. Raw JSON gzip changes only loopback origin to synthetic.invalid, preserving all timings/audits.",
+      "benchmarkIndex": 2329,
+      "reportGzipSha256": "b429bc024e773b68281e3399e64ff06d3bf04f4da8b68e1f300202d4df30d8f9",
+      "reportGzipBytes": 85962
+    },
+    {
+      "run": 3,
+      "formFactor": "desktop",
+      "sourceSha": "2c21b549ac507e4fac4de979fdfc593cd2c8702a",
+      "transport": "gzip",
+      "lighthouseVersion": "13.5.0",
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "driverVersion": "32.0.16.1074",
+      "performance": 98,
+      "accessibility": 100,
+      "fcpMs": 733.055375,
+      "lcpMs": 967.06645,
+      "totalBlockingMs": 75,
+      "externalHosts": [],
+      "runtimeError": null,
+      "warnings": [],
+      "method": "Production root, Lighthouse default mobile/desktop settings; dedicated headless Chrome. Raw JSON gzip changes only loopback origin to synthetic.invalid, preserving all timings/audits.",
+      "benchmarkIndex": 2533,
+      "reportGzipSha256": "6bf5ad784759a4831dbfba573372be32388578d13c31c06617a9db3417ecb23b",
+      "reportGzipBytes": 87294
+    }
+  ]
+}
