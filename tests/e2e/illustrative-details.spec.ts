@@ -17,6 +17,13 @@ test("illustrative details toggle without changing the synthetic world or leakin
   const revision = await scene.getAttribute("data-world-revision");
   const control = page.getByRole("switch", { name: "Chi tiết minh hoạ", exact: true });
   await expect(control).toHaveAttribute("aria-checked", "false");
+  // WebGL buffers are uploaded the first time a camera draws an object, and Mặt bằng sees
+  // world geometry that Diorama does not. Draw both views once before counting.
+  await page.getByRole("radio", { name: "Mặt bằng", exact: true }).click();
+  await expect(scene).toHaveAttribute("data-camera-type", "OrthographicCamera");
+  await page.getByRole("radio", { name: "Diorama", exact: true }).click();
+  await expect(scene).toHaveAttribute("data-camera-type", "PerspectiveCamera");
+  const baseline = Number(await scene.getAttribute("data-memory-geometries"));
   const counts: number[] = [];
   for (let cycle = 0; cycle < 3; cycle++) {
     await control.click();
@@ -39,9 +46,10 @@ test("illustrative details toggle without changing the synthetic world or leakin
     await control.click();
     await expect(scene).toHaveAttribute("data-illustrative-details", "false");
   }
-  expect(new Set(counts).size).toBe(1);
+  // Attach before asserting so a failing run still shows every count.
   await test.info().attach("detail-resources", {
     contentType: "application/json",
-    body: JSON.stringify({ syntheticOnly: true, geometryCounts: counts, cycles: 3 }),
+    body: JSON.stringify({ syntheticOnly: true, baseline, geometryCounts: counts, cycles: 3 }),
   });
+  expect(new Set(counts).size).toBe(1);
 });
