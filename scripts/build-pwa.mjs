@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { readFile, writeFile, readdir, rename } from "node:fs/promises";
+import { readFile, writeFile, readdir, rename, rm, rmdir, stat } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { readBuildOutput } from "../build/output.mjs";
@@ -56,6 +56,10 @@ for (const file of await readdir(path.join(root, "assets"))) {
     throw Error("HASHED_PUBLIC_ASSET_REQUIRED");
   await add(`assets/${file}`);
 }
+// A rerun renders new shell bytes; drop hashed shells from earlier runs so only referenced ones ship.
+for (const file of await readdir(root)) {
+  if (/^offline-(?:home|about)-[a-f0-9]{16}\.html$/.test(file)) await rm(path.join(root, file));
+}
 const shells = {};
 for (const [route, source] of [
   ["/", "offline-home.html"],
@@ -109,16 +113,26 @@ await writeFile(
 );
 const headers = path.join(root, "_headers");
 const existing = await readFile(headers, "utf8").catch(() => "");
-await writeFile(
-  headers,
-  existing +
-    "\n/sw.js\n  Cache-Control: no-cache\n  Service-Worker-Allowed: /\n/manifest.webmanifest\n  Cache-Control: no-cache\n",
-);
+const pwaHeaders =
+  "\n/sw.js\n  Cache-Control: no-cache\n  Service-Worker-Allowed: /\n/manifest.webmanifest\n  Cache-Control: no-cache\n";
+// Safe to rerun on the same output: the PWA header block is appended once.
+if (!existing.includes(pwaHeaders)) await writeFile(headers, existing + pwaHeaders);
 // Vite's internal manifest may include absolute build paths; it is tooling input, not a public asset.
-await rename(
-  path.join(root, ".vite/manifest.json"),
-  path.join(path.dirname(output.serverEntry), "client-manifest.json"),
-);
+const exists = (file) =>
+  stat(file).then(
+    () => true,
+    () => false,
+  );
+const viteDirectory = path.join(root, ".vite");
+const internalManifest = path.join(viteDirectory, "manifest.json");
+const privateManifest = path.join(path.dirname(output.serverEntry), "client-manifest.json");
+if (await exists(internalManifest)) await rename(internalManifest, privateManifest);
+else if (!(await exists(privateManifest))) throw Error("VITE_CLIENT_MANIFEST_REQUIRED");
+if (await exists(viteDirectory)) {
+  // Never publish other Vite internals; an unexpected file stops the build instead of shipping it.
+  if ((await readdir(viteDirectory)).length) throw Error("UNEXPECTED_PUBLIC_VITE_FILES");
+  await rmdir(viteDirectory);
+}
 console.log(
   JSON.stringify({
     pwa: "generated",

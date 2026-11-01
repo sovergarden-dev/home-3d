@@ -211,6 +211,8 @@ try {
     let measuredStart = continuous ? null : start;
     let measuredCycles = 0;
     let cycle = 0;
+    // Counted only after the scene/world state is observed, never derived from the cycle count.
+    const observed = { modeChanges: 0, audioCycles: 0, packageTransitions: 0 };
     const documentIdentity = await page.evaluate(() => performance.timeOrigin);
     while (
       measuredStart === null ||
@@ -219,7 +221,7 @@ try {
     ) {
       cycle++;
       const began = Date.now();
-      await page.evaluate(
+      const packageTransitions = await page.evaluate(
         async ({ cycle, text }) => {
           const { memorySession: s } = await window.__p10Import("/src/memories/session.ts");
           const { memoryCamera: c } = await window.__p10Import("/src/memories/bridge.ts");
@@ -278,13 +280,19 @@ try {
               await new Promise((r) => setTimeout(r, 10));
             }
           };
+          let transitions = 0;
           w.openText(text.replaceAll("P8_SYNTHETIC_ATMOSPHERE_ONLY", `P10_SOAK_${cycle % 3}`));
           await waitForWorld("private");
+          transitions++;
           w.resetFixture();
           await waitForWorld("fixture");
+          transitions++;
+          return transitions;
         },
         { cycle, text: P8_PACKAGE_TEXT },
       );
+      let cycleModeChanges = 0,
+        cycleAudioCycles = 0;
       if (continuous) {
         await page.getByRole("button", { name: "Tiếng phố", exact: true }).click();
         await page.waitForFunction(
@@ -297,14 +305,46 @@ try {
           const { useAppStore } = await window.__p10Import("/src/state/appStore.ts");
           useAppStore.getState().setIllustrativeDetails(true);
         });
-        for (const name of ["Mặt bằng", "Đi bộ", "Ngồi sau xe ôm", "Diorama"]) {
+        // The radio state alone is UI state; each change also waits for the scene host's camera/POV.
+        for (const [name, expected] of [
+          ["Mặt bằng", { cameraType: "OrthographicCamera" }],
+          ["Đi bộ", { povMode: "walk" }],
+          ["Ngồi sau xe ôm", { povMode: "ride" }],
+          ["Diorama", { cameraType: "PerspectiveCamera", povMode: "none" }],
+        ]) {
           const control = page.getByRole("radio", { name, exact: true });
           await control.click();
           if ((await control.getAttribute("aria-checked")) !== "true")
             throw Error("SOAK_MODE_CHANGE_NOT_OBSERVED");
+          await page
+            .waitForFunction(
+              (expected) => {
+                const scene = document.querySelector('[data-testid="demo-scene"]')?.dataset;
+                return Object.entries(expected).every(([key, value]) => scene?.[key] === value);
+              },
+              expected,
+              { timeout: 10000 },
+            )
+            .catch(() => {
+              throw Error("SOAK_MODE_CHANGE_NOT_OBSERVED");
+            });
+          cycleModeChanges++;
           await page.waitForTimeout(200);
         }
         await page.getByRole("button", { name: "Tiếng phố", exact: true }).click();
+        await page
+          .waitForFunction(
+            () => {
+              const scene = document.querySelector('[data-testid="demo-scene"]')?.dataset;
+              return scene?.audioState !== "running" && scene?.audioVoices === "0";
+            },
+            {},
+            { timeout: 5000 },
+          )
+          .catch(() => {
+            throw Error("SOAK_AUDIO_OFF_NOT_OBSERVED");
+          });
+        cycleAudioCycles++;
       }
       await page.getByRole("button", { name: "Thêm kỷ niệm", exact: true }).click();
       await page.keyboard.press("Escape");
@@ -324,7 +364,12 @@ try {
       }
       await page.evaluate(() => window.gc?.());
       await page.waitForTimeout(500);
-      if (measuredStart !== null) measuredCycles++;
+      if (measuredStart !== null) {
+        measuredCycles++;
+        observed.modeChanges += cycleModeChanges;
+        observed.audioCycles += cycleAudioCycles;
+        observed.packageTransitions += packageTransitions;
+      }
       if (continuous && cycle === warmupCycles) measuredStart = Date.now();
       raw.push({
         cycle,
@@ -344,6 +389,7 @@ try {
         measuredCycles,
         warmupCycles,
         continuousDocument: continuous,
+        observedSoFar: { ...observed },
         cycles: cycle,
         raw,
         errors,
@@ -380,9 +426,9 @@ try {
       measuredCycles,
       warmupCycles,
       continuousDocument: continuous,
-      modeChanges: continuous ? measuredCycles * 4 : null,
-      audioCycles: continuous ? measuredCycles : null,
-      verifiedPackageTransitions: measuredCycles * 2,
+      modeChanges: continuous ? observed.modeChanges : null,
+      audioCycles: continuous ? observed.audioCycles : null,
+      verifiedPackageTransitions: observed.packageTransitions,
       audioOutput:
         "Muted browser output; actual AudioContext/graph is exercised by trusted clicks.",
       cycles: cycle,
