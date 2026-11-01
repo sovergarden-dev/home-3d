@@ -1,6 +1,6 @@
 # M2 — độ tin cậy và cổng chất lượng
 
-`PARTIAL — PR/CI cuối chưa chốt`. Source runtime chính: `6cce9597edfb7ae93790a4a4c4abc0d4b8c415fb`; phép đo P8/P9 desktop tại `487156d0a8a266161f8c00ad1096d5efed081429`, trước sửa riêng giao diện mobile từ review. M1 được tích hợp bằng merge thường; PR #9 giữ draft vì cổng WebKit head cuối chưa đạt. Không Publish/deploy, không dữ liệu khu thật.
+`PARTIAL` — đã vào main qua PR #11 (`beacd9b`, CI main 4/4). Trên GPU NVIDIA ở `a4f0121`, P8 kéo camera còn khung > 50 ms và P9 còn 1/30 mẫu 107,5 ms (`NOT_MET`). Source runtime chính: `6cce9597edfb7ae93790a4a4c4abc0d4b8c415fb`; phép đo P8/P9 desktop tại `487156d0a8a266161f8c00ad1096d5efed081429`, trước sửa riêng giao diện mobile từ review. M1 được tích hợp bằng merge thường; PR #9 giữ draft vì cổng WebKit head cuối chưa đạt; khi PR #11 vào main, GitHub tự đánh dấu PR #9 merged. Không Publish/deploy, không dữ liệu khu thật.
 
 ## Thay đổi
 
@@ -15,18 +15,18 @@
 
 ## Đã chạy bởi Codex
 
-| Phép kiểm | Kết quả |
-| --- | --- |
-| Full Windows check ở 6cce959 | 377 unit có coverage + 1 CPU guard đạt; 39 pipeline; typecheck/build; lint 0 |
-| Shell ở cùng build | 222.305 byte gzip, giới hạn 250.000 |
-| Chromium/Firefox liên quan | 22/22 đạt, gồm mất context thật qua extension, clip local/gesture và OfflineAudioContext mix |
-| Layout sau review ở ba browser | 9/9 đạt; bổ sung 6/6 xác nhận native lost capture phục hồi trước mouseup |
-| Windows WebKit audio | NOT_VERIFIED_UNSUPPORTED: cả AudioContext, OfflineAudioContext và tên prefixed đều undefined; assertion cũ giữ nguyên và thất bại được lưu |
-| H6 20 vòng GPU thật | Baseline 43.434 ms; ứng viên 41.839 ms; −3,67%, trong trần +10% |
-| P8 sau sửa | 420/420 thao tác <100 ms, max 78,4 ms; 0 shader link mới |
-| P8 xoay liên tục | 720 bước, 717 khoảng render; max 44,5 ms, đủ bước; đây là submit cadence, không GPU execution/display scanout |
-| P9 sau sửa | Mỗi loại 30 mẫu đầy đủ; cold p50/p95/max 77,10/92,10/124,20 ms; warm 61,55/76,80/108 ms |
-| P9 ngưỡng mọi mẫu <100 ms | NOT_MET; giữ toàn bộ outlier, không đo mẫu âm thanh nghe được đầu tiên |
+| Phép kiểm                      | Kết quả                                                                                                                                    |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Full Windows check ở 6cce959   | 377 unit có coverage + 1 CPU guard đạt; 39 pipeline; typecheck/build; lint 0                                                               |
+| Shell ở cùng build             | 222.305 byte gzip, giới hạn 250.000                                                                                                        |
+| Chromium/Firefox liên quan     | 22/22 đạt, gồm mất context thật qua extension, clip local/gesture và OfflineAudioContext mix                                               |
+| Layout sau review ở ba browser | 9/9 đạt; bổ sung 6/6 xác nhận native lost capture phục hồi trước mouseup                                                                   |
+| Windows WebKit audio           | NOT_VERIFIED_UNSUPPORTED: cả AudioContext, OfflineAudioContext và tên prefixed đều undefined; assertion cũ giữ nguyên và thất bại được lưu |
+| H6 20 vòng GPU thật            | Baseline 43.434 ms; ứng viên 41.839 ms; −3,67%, trong trần +10%                                                                            |
+| P8 sau sửa                     | 420/420 thao tác <100 ms, max 78,4 ms; 0 shader link mới                                                                                   |
+| P8 xoay liên tục               | 720 bước, 717 khoảng render; max 44,5 ms, đủ bước; đây là submit cadence, không GPU execution/display scanout                              |
+| P9 sau sửa                     | Mỗi loại 30 mẫu đầy đủ; cold p50/p95/max 77,10/92,10/124,20 ms; warm 61,55/76,80/108 ms                                                    |
+| P9 ngưỡng mọi mẫu <100 ms      | NOT_MET; giữ toàn bộ outlier, không đo mẫu âm thanh nghe được đầu tiên                                                                     |
 
 GPU: Intel(R) UHD Graphics, driver 32.0.101.7082, Chrome 152.0.7977.76 headed, ANGLE Direct3D11, DPR1. Cold P9 là AudioContext mới trên page/context mới trong cùng browser process; không đại diện 30 lần khởi động browser/device audio service mới. Raw và hash ở [evidence M2](assets/qa/codex/m2/README.md).
 

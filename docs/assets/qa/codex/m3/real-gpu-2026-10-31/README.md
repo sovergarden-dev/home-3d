@@ -91,7 +91,7 @@ Playwright 1.58.2 với browser bundled, server Vite loopback riêng có `VITE_B
 
 `scripts/p10-benchmark.mjs desktop-soak`, Chrome 156 headed, GPU thật, 1440×900, DPR 1, một document liên tục (SPA navigation mỗi vòng chia hết cho 5, không reload). Warm-up 6 vòng rồi đo 1.803.134 ms (30 phút 3 giây) với 31 vòng; tổng 1.836.996 ms. Bộ đếm theo trạng thái scene quan sát được, không nhân từ số vòng: 124 lần đổi mode, 62 lần chuyển gói đã xác minh, 31 chu kỳ âm thanh. Output âm thanh mute, AudioContext chạy thật. Không page error.
 
-Mỗi vòng đo là một khe khoảng 58 giây (khoảng cách giữa hai vòng 52,2–63,9 s): thao tác chiếm 4,5–10,5 s mỗi vòng, tổng 177.299 ms trên 1.803.134 ms (9,83%). Phần còn lại app vẫn mở và render theo nhu cầu trong cùng document, nên đây là soak theo thời gian với tải thao tác định kỳ, không phải tải liên tục.
+Mỗi vòng đo là một khe khoảng 58 giây (khoảng cách giữa hai vòng 52,2–63,9 s): phần vòng đo chiếm 4,5–10,5 s mỗi vòng, gồm thao tác, `window.gc()` và 500 ms chờ ổn định (`cycleMs` trong raw), tổng 177.299 ms trên 1.803.134 ms (9,83%), trong đó 15,5 s là các lần chờ 500 ms. Phần còn lại app vẫn mở và render theo nhu cầu trong cùng document, nên đây là soak theo thời gian với tải thao tác định kỳ, không phải tải liên tục.
 
 | Chỉ số                            | Giá trị                                                                                                                                                                        |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |

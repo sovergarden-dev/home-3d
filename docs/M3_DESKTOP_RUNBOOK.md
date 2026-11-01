@@ -1,6 +1,6 @@
 # M3 — Desktop, offline và khả năng tiếp cận
 
-`PARTIAL`: phần mềm đã tích hợp; số đo cuối và cổng CI chưa hoàn tất. Chỉ fixture tổng hợp; không có nghiệm thu khu thật hay thiết bị di động.
+`PARTIAL`: phần mềm đã vào main qua PR #11 (`beacd9b`, CI main 4/4). Trên máy NVIDIA: FPS Chrome/Edge MET, Firefox bộ nhớ GPU NOT_MET, soak 30 phút MET; Lighthouse ở head cuối và 4G warm NOT_VERIFIED, ObjectURL NOT_EXERCISED (chi tiết ở [AUDIT_PACKET.md](AUDIT_PACKET.md)). Chỉ fixture tổng hợp; không có nghiệm thu khu thật hay thiết bị di động.
 
 ## Đã kiểm
 

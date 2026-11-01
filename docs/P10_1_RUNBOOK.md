@@ -1,6 +1,6 @@
 # P10.1 — Kỷ niệm, ghim và bưu thiếp
 
-`PARTIAL` — mã và các phép đo chính đã đạt; PR #9 còn chờ receipt cuối, CI đúng head cuối, merge commit và CI main. Chỉ đạo: [CODEX_HANDOFF.md](CODEX_HANDOFF.md). Không Publish/deploy.
+`PARTIAL` — mã đã vào main qua PR #11 (merge commit `beacd9b`, CI main `41263307199` 4/4); PR #9 được GitHub tự đánh dấu merged vì head đã nằm trong main. K1 `H_MET_REAL_GPU` trên NVIDIA ở `fba1e09` (nhãn theo từng máy ghi ở [BACKLOG.md](BACKLOG.md)); diagnostic 0↔1 NOT_MET và audit cuối còn mở. Chỉ đạo: [CODEX_HANDOFF.md](CODEX_HANDOFF.md). Không Publish/deploy.
 
 ## Nguồn kiểm chứng
 

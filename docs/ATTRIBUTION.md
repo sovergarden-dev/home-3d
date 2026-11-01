@@ -41,7 +41,7 @@ M2 giữ công thức scalar clamp/lerp tương đương `three/src/math/MathUti
 
 Be Vietnam Pro (Copyright 2021 The Be Vietnam Pro Project Authors) và Lora (Copyright 2011 The Lora Project Authors, Reserved Font Name Lora), SIL Open Font License1.1. Giữ nguyên file WOFF2 từ nguồn phân phối Google Fonts, chỉ chọn subset Vietnamese/Latin và face đã dùng; không sửa tên hoặc glyph. OFL nguyên văn và bảng SHA256/URL nguồn nằm ở `src/assets/fonts/`. Google Fonts không phải Maps và không dùng làm nguồn hình học.
 
-Ứng dụng bỏ stylesheet/preconnect Google Fonts và dùng URL asset do Vite phát sinh. Các phép kiểm production và axe chạy với font cục bộ; CI đầy đủ ba browser ở head cuối PR #11 và main `beacd9b` đạt. Lighthouse cuối chưa đo.
+Ứng dụng bỏ stylesheet/preconnect Google Fonts và dùng URL asset do Vite phát sinh. Các phép kiểm production và axe chạy với font cục bộ; CI đầy đủ ba browser ở head cuối PR #11 và main `beacd9b` đạt. Lighthouse ở head cuối `NOT_VERIFIED`; lượt `a948321` trên Intel UHD có Performance `NOT_MET`.
 
 ### Kiểm a11y M3
 
