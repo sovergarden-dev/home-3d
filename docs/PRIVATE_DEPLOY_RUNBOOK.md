@@ -1,6 +1,6 @@
 # Bản riêng tư trên Workers + Access
 
-`PARTIAL — NOT_DEPLOYED`: tài liệu và mã đang chuẩn bị. Chưa kiểm xong runtime, CLI và bundle; chưa được coi là `READY_TO_DEPLOY_NOT_DEPLOYED`. Codex không đăng nhập hay deploy. Chỉ chủ dự án thực hiện các bước dịch vụ sau audit.
+`PARTIAL — NOT_DEPLOYED`: mã và tài liệu đã vào main qua PR #11; dry run và Worker native với dữ liệu tổng hợp đã đạt trên Windows và Linux CI. Chưa rà xong runbook nên chưa được coi là `READY_TO_DEPLOY_NOT_DEPLOYED`. Codex không đăng nhập hay deploy. Chỉ chủ dự án thực hiện các bước dịch vụ sau audit.
 
 ## Phạm vi v1
 
@@ -16,7 +16,7 @@ Private entry, cấu hình và lệnh nằm ở `private/entry.ts`, `wrangler.pr
 4. Chạy Worker cục bộ bằng cấu hình riêng với binding tổng hợp; kiểm thiếu/sai JWT chỉ trả demo, response `no-store`, app vẫn mở được. Unit dùng khoá ký sinh tạm, JWKS mock, kiểm signature/issuer/audience/expiry/nbf/rotation/error và không lộ dữ liệu. Không nạp secret thật để test.
 5. Kiểm client bundle không chứa verifier/secret và không thêm host mạng của trình duyệt. Service Worker không cache endpoint runtime, API hay file riêng. Lưu kết quả thật vào CODEX_LOG/AUDIT_PACKET.
 
-Toolchain QA đã kiểm: Wrangler 4.151.3, Workerd 1.20261019.1, Miniflare 5.20261019.1-beta, Node 22.22.0 trên Windows. Dry run và Worker native đầy đủ đã đạt bằng JWT/key sinh tạm, JWKS local và ASSETS file-backed. Linux CI còn pending. Đây không phải xác nhận policy Access hay host thật.
+Toolchain QA đã kiểm: Wrangler 4.151.3, Workerd 1.20261019.1, Miniflare 5.20261019.1-beta, Node 22.22.0 trên Windows. Dry run và Worker native đầy đủ đã đạt trên Windows bằng JWT/key sinh tạm, JWKS local và ASSETS file-backed. Linux CI cũng đạt ở bước `Verify private Worker locally (no deployment)` của job quality (4 nhóm kiểm, 0 outbound bất ngờ; gần nhất CI main `41263307199` ở `beacd9b`). Đây không phải xác nhận policy Access hay host thật.
 
 Khi tái lập native smoke, đặt HOME3D_QA_TOOLS tới toolchain QA đã kiểm ở ngoài repo; dùng scripts/private-workerd-smoke.mjs với ba đối số: checkout, bundle entry.js từ dry run, thư mục evidence tổng hợp. Harness đặt modulesRoot đúng thư mục bundle; không bỏ tham số này khi bundle nằm ngoài checkout. Không cấp credential hoặc chuyển sang upload để sửa lỗi local.
 
@@ -45,4 +45,4 @@ Chủ dự án dùng cơ chế rollback phiên bản của Cloudflare để quay
 
 ## Giới hạn runtime đang điều tra
 
-Ba lỗi startup Windows lịch sử được giữ trong evidence. Linux CI sau đó chỉ rõ module path vượt gốc; đọc source Miniflare xác nhận modulesRoot mặc định là cwd, trong khi bundle QA nằm ngoài repo. Sửa gốc về thư mục bundle, không đổi cấu hình/build Lovable: bundle mới chạy native Windows đầy đủ đạt 4 nhóm kiểm (JWT sai/hết hạn, RS256 hợp lệ, chữ ký sửa, SSR không lộ identity); 1 JWKS local, 0 outbound bất ngờ. Linux với harness sửa vẫn pending; không deploy hoặc dùng tài khoản thật.
+Ba lỗi startup Windows lịch sử được giữ trong evidence. Linux CI sau đó chỉ rõ module path vượt gốc; đọc source Miniflare xác nhận modulesRoot mặc định là cwd, trong khi bundle QA nằm ngoài repo. Sửa gốc về thư mục bundle, không đổi cấu hình/build Lovable: bundle mới chạy native Windows đầy đủ đạt 4 nhóm kiểm (JWT sai/hết hạn, RS256 hợp lệ, chữ ký sửa, SSR không lộ identity); 1 JWKS local, 0 outbound bất ngờ. Linux CI với harness sửa cũng đạt 4 nhóm ở các lượt quality sau bản sửa; không deploy hoặc dùng tài khoản thật.

@@ -41,7 +41,7 @@ M2 giữ công thức scalar clamp/lerp tương đương `three/src/math/MathUti
 
 Be Vietnam Pro (Copyright 2021 The Be Vietnam Pro Project Authors) và Lora (Copyright 2011 The Lora Project Authors, Reserved Font Name Lora), SIL Open Font License1.1. Giữ nguyên file WOFF2 từ nguồn phân phối Google Fonts, chỉ chọn subset Vietnamese/Latin và face đã dùng; không sửa tên hoặc glyph. OFL nguyên văn và bảng SHA256/URL nguồn nằm ở `src/assets/fonts/`. Google Fonts không phải Maps và không dùng làm nguồn hình học.
 
-Ứng dụng bỏ stylesheet/preconnect Google Fonts và dùng URL asset do Vite phát sinh. Các phép kiểm production và axe ban đầu đã chạy với font cục bộ; ma trận tích hợp cuối vẫn pending.
+Ứng dụng bỏ stylesheet/preconnect Google Fonts và dùng URL asset do Vite phát sinh. Các phép kiểm production và axe chạy với font cục bộ; CI đầy đủ ba browser ở head cuối PR #11 và main `beacd9b` đạt. Lighthouse cuối chưa đo.
 
 ### Kiểm a11y M3
 
@@ -53,20 +53,20 @@ axe-core 4.14.0 (MPL-2.0), công cụ dev để kiểm WCAG trong browser; khôn
 
 Dependency chỉ thuộc package pipeline, không vào browser bundle. Tarball khớp integrity, mọi version qua 24 giờ, không native OS binary hay install script. LERC/zstd có WebAssembly portable; không cài driver/native addon.
 
-| Package | Version | Giấy phép |
-| --- | --- | --- |
-| @petamoriken/float16 | 3.9.3 | MIT |
-| geotiff | 3.0.5 | MIT |
-| lerc | 3.0.0 | Apache-2.0 |
-| mgrs | 1.0.0 | MIT |
-| pako | 2.2.0 | (MIT AND Zlib) |
-| parse-headers | 2.0.6 | MIT |
-| proj4 | 2.22.0 | MIT |
-| quick-lru | 6.1.2 | MIT |
-| web-worker | 1.5.0 | Apache-2.0 |
-| wkt-parser | 1.6.0 | MIT |
-| xml-utils | 1.10.2 | CC0-1.0 |
-| zstddec | 0.2.0 | MIT AND BSD-3-Clause |
+| Package              | Version | Giấy phép            |
+| -------------------- | ------- | -------------------- |
+| @petamoriken/float16 | 3.9.3   | MIT                  |
+| geotiff              | 3.0.5   | MIT                  |
+| lerc                 | 3.0.0   | Apache-2.0           |
+| mgrs                 | 1.0.0   | MIT                  |
+| pako                 | 2.2.0   | (MIT AND Zlib)       |
+| parse-headers        | 2.0.6   | MIT                  |
+| proj4                | 2.22.0  | MIT                  |
+| quick-lru            | 6.1.2   | MIT                  |
+| web-worker           | 1.5.0   | Apache-2.0           |
+| wkt-parser           | 1.6.0   | MIT                  |
+| xml-utils            | 1.10.2  | CC0-1.0              |
+| zstddec              | 0.2.0   | MIT AND BSD-3-Clause |
 
 Chi tiết: `docs/assets/qa/codex/m5/dependency-review.json`.
 

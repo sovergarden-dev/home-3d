@@ -4,9 +4,9 @@
 
 Cập nhật 01/11/2026 (Notion AI tạm tiếp quản theo yêu cầu chủ dự án; từ 31/10 làm trên máy Windows GPU thật qua Aki MCP; chi tiết ở mục cuối). Mục 28–30/10 bên dưới là lịch sử, không phải trạng thái hiện hành.
 
-- Main `cf3cb262dfa7b69a881bef63c0d9a89dd32668fb` (M0 DONE, PR #8, CI main `40717187350` 4/4). Chưa đóng băng, chưa tag audit.
-- PR #11 `codex/m5-local-height-detail` là PR tích hợp chính. `a4f01210f9c51c5a363b5f23f0feb97c7b6cf15b`: CI `41209405262` 4/4, H6 WebKit 52.623 ms <70.000 ms (baseline `de71732` cùng runner 69.984 ms). Sau đó `400ab08` (harness soak đếm theo quan sát, `build-pwa` chạy lại được) và commit tài liệu/evidence GPU thật; cổng local ghi ở mục cuối; CI đúng head cuối, review độc lập và merge ghi ở PR tài liệu tiếp theo. PR #9/#10 draft parked, nội dung đã nằm trong PR #11.
-- M1 PARTIAL (H6 WebKit CI đã đạt từ `ec7d6fd`; chưa merge, chưa audit); M2 PARTIAL (P9 còn mẫu >100 ms, cả trên GPU NVIDIA); M3 PARTIAL (Lighthouse chưa đo cuối; FPS và soak < 10% chỉ đạt trên máy NVIDIA, soak Codex trên Intel đỉnh +22,16%; ObjectURL chưa được exercise; 4G warm NOT_VERIFIED); M4 PARTIAL (auth fail-closed, Workerd native Windows và Linux CI đạt; còn rà runbook để chốt READY_TO_DEPLOY_NOT_DEPLOYED); M5 PARTIAL (pipeline 50 test, chỉ fixture tổng hợp).
+- Main có PR #11 qua merge commit `beacd9b48b429db0e22530777e7d335d74369c7d` ngày 01/11/2026, CI push `41263307199` 4/4. Sau đó chỉ thêm PR tài liệu từ nhánh `codex/pr11-merge-receipt` (biên nhận merge và ghi chú review), không đổi mã. Chưa đóng băng, chưa tag audit. Main trước PR #11 là `cf3cb26` (M0 DONE, PR #8, CI main `40717187350` 4/4).
+- PR #11 `codex/m5-local-height-detail` đã merge: head `c6240276a987fae61cdee4dcebca5f44b1345034`, CI `41261238654` 4/4, review độc lập phần delta `MERGE_OK`; chi tiết ở mục cuối. PR #9/#10 draft parked, nội dung đã vào main qua PR #11.
+- M1 PARTIAL (H6 WebKit CI đạt, đã vào main; chưa audit); M2 PARTIAL (trên GPU NVIDIA, P8 kéo camera còn khung > 50 ms và P9 còn mẫu > 100 ms); M3 PARTIAL (Lighthouse chưa đo cuối; FPS và soak < 10% chỉ đạt trên máy NVIDIA, soak Codex trên Intel đỉnh +22,16%; ObjectURL chưa được exercise; 4G warm NOT_VERIFIED); M4 PARTIAL (auth fail-closed, Workerd native Windows và Linux CI đạt; còn rà runbook để chốt READY_TO_DEPLOY_NOT_DEPLOYED); M5 PARTIAL (pipeline 50 test, chỉ fixture tổng hợp).
 - Không Publish/deploy, không đăng nhập cloud, không đọc dữ liệu khu thật. `REAL_WORLD_NOT_VERIFIED` giữ nguyên.
 
 ## 28/10/2026 — M0 hoàn tất
@@ -277,3 +277,20 @@ Lượt đầu ở `a4f0121` dừng sau 6 warm-up và 27 vòng đo (1.570.495 ms
 - Production PWA (`playwright.production.config.ts`) 5/5 trên Windows, vì `400ab08` sửa `build-pwa`.
 - Gitleaks 8.30.1 sạch: toàn lịch sử local 131 commit và `cf3cb26..400ab08` 47 commit; tài liệu/evidence chưa commit quét chế độ `dir` sạch. Quét riêng tư các tệp sắp commit chỉ còn dương tính giả (từ tiếng Việt thông thường, số byte có dạng IPv4); mọi tệp < 1 MB.
 - CI đúng head cuối, review độc lập phần delta và biên nhận merge ghi ở PR tài liệu tiếp theo.
+
+### CI, review và merge PR #11 (01/11/2026)
+
+- CI `41261238654` ở head `c6240276a987fae61cdee4dcebca5f44b1345034` đạt 4/4. Quality: 402 unit + 1 bài CPU, 50 pipeline, bundle 224.410 gzip. Chromium 121 + PWA production 5; Firefox 74 pass/47 skip theo capability; WebKit 121, H6 61.710 ms < 70.000 ms, baseline `de71732` cùng run 89.851 ms (−31,32%, ngưỡng ≤ +10%). Runner lần này chậm hơn lần `a4f0121` (baseline 69.984 ms), nên chỉ so với baseline cùng run.
+- Review độc lập phần delta `a4f0121..c624027` ở phiên mới (Notion AI ẩn danh, chỉ đọc qua Aki MCP): `MERGE_OK`, không có P0–P2. Review xác nhận mọi phát hiện của lượt trước đã sửa hoặc gắn nhãn đúng, số soak khớp raw (sha256 khớp, tính lại được +1,28% và −17,98%), `src/` và `tests/` không đổi từ `a4f0121`, quét riêng tư sạch. Sáu P3 và cách xử lý:
+  - Hai shell không hash vẫn nằm trong public, câu trong DECISIONS nói chỉ còn hai shell: sửa câu, đưa việc bỏ tệp vào BACKLOG.
+  - Kiểm `.vite` chạy sau khi ghi output: ghi trong DECISIONS, đưa vào BACKLOG.
+  - Node DOM tăng 1 sau mỗi lần SPA navigation (797 → 803): ghi trong README soak, đưa vào BACKLOG.
+  - Soak phần lớn thời gian là render nhàn (thao tác 9,83%), phạm vi "bộ nhớ" và nhãn bộ đếm bitmap chưa ghi: bổ sung trong README soak. Nhãn `MET` giữ nguyên theo cách M3.2 định nghĩa.
+  - H6 WebKit của head cuối chưa ghi: ghi ở mục này.
+  - Provenance benchmark phụ thuộc người chạy (có từ trước): đưa vào BACKLOG.
+- PR body cập nhật theo trạng thái cuối, `gh pr ready 11`, rồi `gh pr merge 11 --merge --match-head-commit` đúng head trên lúc 01:59:20Z. Merge commit `beacd9b48b429db0e22530777e7d335d74369c7d` có hai cha `cf3cb26` và `c624027`; không squash/rebase, không force-push, không đổi cài đặt repo.
+- CI push main `41263307199` ở `beacd9b` đạt 4/4: quality 402 unit + 1 bài CPU, 50 pipeline, gitleaks sạch; Chromium 121 + PWA production 5; Firefox 74 pass/47 skip; WebKit 121, H6 61.210 ms < 70.000 ms, baseline `de71732` cùng run 89.656 ms (−31,73%).
+- Dọn máy sau merge: xoá hai worktree đo tạm (`400ab08` và baseline `de71732`). Trước khi xoá đã đối chiếu raw soak gốc với bản đã commit: cùng nội dung JSON, bản commit chỉ thêm ký tự xuống dòng cuối do Prettier, nên sha256 ghi trong `summary.json` là của bản commit.
+- Sửa ghi chú cũ: PRIVATE_DEPLOY_RUNBOOK còn ghi Linux CI pending, trong khi bước `Verify private Worker locally (no deployment)` của job quality đạt (4 nhóm kiểm, 0 outbound bất ngờ) ở CI main `41263307199`; ATTRIBUTION còn ghi ma trận tích hợp cuối pending. Đã cập nhật hai tệp; M4 vẫn PARTIAL vì runbook chưa rà xong, M3 vẫn thiếu Lighthouse cuối.
+- Merge vào main tự cập nhật Lovable Preview; không Publish, không mở hay sửa Lovable. Build của Lovable vẫn NOT_VERIFIED.
+- PR #9 và #10 vẫn draft parked, không đóng; việc đóng để chủ dự án quyết.

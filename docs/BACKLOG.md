@@ -4,18 +4,27 @@
 
 Nguồn phạm vi: [CODEX_HANDOFF.md](CODEX_HANDOFF.md); trạng thái có bằng chứng: [CODEX_LOG.md](CODEX_LOG.md). Các mục dưới là việc phải làm, chưa được gọi DONE.
 
-| Mốc | Phạm vi                                                            | Trạng thái                                    |
-| --- | ------------------------------------------------------------------ | --------------------------------------------- |
-| M0  | Môi trường Windows, baseline local/GPU thật, tag, PR tiếp quản     | DONE — PR #8, CI main 4/4                     |
-| M1  | P10.1: độ trễ 300 ghim, kích thước/picking ghim, chữ bưu thiếp     | PARTIAL — trong PR #11; H6 WebKit CI NOT_MET ở `4e5136f`, ứng viên sửa `d4fca77` chờ CI đúng head |
-| M2  | Phiên bản/build SHA, repo/CI, hồi quy P1.1/P8/P9 và phục hồi WebGL | PARTIAL — trong PR #11; P9 còn mẫu >100 ms; chờ cổng merge |
-| M3  | Bench/PWA/font local/a11y/i18n/Lighthouse và ma trận Windows       | PARTIAL — trong PR #11; FPS/Lighthouse NOT_MET, peak heap >10%, ObjectURL chưa được exercise |
-| M4  | Bản riêng tư và runbook sẵn sàng deploy, không deploy              | PARTIAL — Workerd native Windows/Linux đạt; còn rà runbook để chốt READY_TO_DEPLOY_NOT_DEPLOYED |
-| M5  | Adapter chiều cao và chi tiết procedural tổng hợp                  | PARTIAL — pipeline 50 test trên fixture tổng hợp; dữ liệu khu thật chưa được phép |
+| Mốc | Phạm vi                                                            | Trạng thái                                                                                                                                                                                       |
+| --- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| M0  | Môi trường Windows, baseline local/GPU thật, tag, PR tiếp quản     | DONE — PR #8, CI main 4/4                                                                                                                                                                        |
+| M1  | P10.1: độ trễ 300 ghim, kích thước/picking ghim, chữ bưu thiếp     | PARTIAL — đã vào main qua PR #11 (`beacd9b`); H6 WebKit CI MET (61.710 ms ở head `c624027`); K1 `H_MET_REAL_GPU` trên máy NVIDIA, máy Intel `4e5136f` NOT_MET; diagnostic 0↔1 còn mở; chưa audit |
+| M2  | Phiên bản/build SHA, repo/CI, hồi quy P1.1/P8/P9 và phục hồi WebGL | PARTIAL — đã vào main qua PR #11; trên GPU NVIDIA P8 kéo camera còn khung > 50 ms và P9 còn mẫu > 100 ms                                                                                         |
+| M3  | Bench/PWA/font local/a11y/i18n/Lighthouse và ma trận Windows       | PARTIAL — đã vào main qua PR #11; FPS và soak < 10% chỉ đạt trên máy NVIDIA (soak Intel đỉnh +22,16%), Lighthouse chưa đo cuối, 4G warm NOT_VERIFIED, ObjectURL chưa được exercise               |
+| M4  | Bản riêng tư và runbook sẵn sàng deploy, không deploy              | PARTIAL — đã vào main qua PR #11; Workerd native Windows/Linux đạt; còn rà runbook để chốt READY_TO_DEPLOY_NOT_DEPLOYED                                                                          |
+| M5  | Adapter chiều cao và chi tiết procedural tổng hợp                  | PARTIAL — đã vào main qua PR #11; pipeline 50 test trên fixture tổng hợp; dữ liệu khu thật chưa được phép                                                                                        |
 
-Cập nhật 31/10/2026: Notion AI tạm tiếp quản, không quyền ghi GitHub; nhánh local `codex/m5-local-height-detail` đi trước PR #11 và được giao bằng git bundle. Quan sát mới, chưa sửa: gợi ý "Kéo để xoay · Chụm / cuộn để zoom" bị dock che một phần ở 1280×720 (có từ `9b12c1d`, chỉ trang trí, pointer-events-none; nội dung vẫn có trong nhãn điều khiển cảnh).
+Cập nhật 01/11/2026: Notion AI tạm tiếp quản; từ 31/10 làm trên máy Windows GPU thật qua Aki MCP và push bằng GitHub CLI đã đăng nhập sẵn. PR #11 đã merge vào main bằng merge commit `beacd9b48b429db0e22530777e7d335d74369c7d`; M1–M5 vẫn PARTIAL, chưa `READY_FOR_FINAL_AUDIT`.
 
-K1/H đã có H_MET_REAL_GPU ở source 59f6; SwiftShader đối chứng còn H_BLOCKED, ca 0↔1 diagnostic NOT_MET. M1 chờ cổng merge/CI main, không dùng số đo cũ để tuyên bố source mới đạt. G1 được chủ dự án báo GEOREFERENCE_BOUND_PROVEN cho cặp tệp riêng; chưa mở cặp tệp đó trong lượt Codex. REAL_WORLD_NOT_VERIFIED tiếp tục giữ nguyên.
+Việc mở sau merge PR #11 (P3 từ review độc lập và giới hạn đo đã ghi; chưa sửa, không chặn):
+
+- Soak: số node DOM tăng đúng 1 sau mỗi lần SPA navigation Giới thiệu ↔ Về phố và GC không thu hồi (797 → 803 sau 6 lần). Tìm node được thêm mỗi lần đổi route.
+- `build-pwa`: chuyển kiểm manifest/`.vite` lên trước khi ghi output; không phát hành hai shell không hash `offline-home.html`/`offline-about.html` mà service worker không dùng.
+- Provenance benchmark: ghi cờ cây mã sạch (`git status --porcelain`) cùng SHA harness; đọc version driver từ thông tin GPU của browser thay vì biến `BENCH_GPU_DRIVER` do người chạy gán.
+- Đo lại 4G warm với throttle cả target service worker hoặc proxy giới hạn băng thông; tìm công cụ đo bộ nhớ GPU trên Firefox thay counter WDDM bất thường.
+
+Quan sát từ 31/10, chưa sửa: gợi ý "Kéo để xoay · Chụm / cuộn để zoom" bị dock che một phần ở 1280×720 (có từ `9b12c1d`, chỉ trang trí, pointer-events-none; nội dung vẫn có trong nhãn điều khiển cảnh).
+
+K1/H đã có H_MET_REAL_GPU ở source 59f6; SwiftShader đối chứng còn H_BLOCKED, ca 0↔1 diagnostic NOT_MET. M1 đã vào main nhưng chưa audit; không dùng số đo cũ để tuyên bố source mới đạt. G1 được chủ dự án báo GEOREFERENCE_BOUND_PROVEN cho cặp tệp riêng; chưa mở cặp tệp đó trong lượt Codex. REAL_WORLD_NOT_VERIFIED tiếp tục giữ nguyên.
 
 ## Cần chủ dự án hoặc để sau
 
