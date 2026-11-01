@@ -24,7 +24,7 @@ Việc mở sau merge PR #11 (P3 từ review độc lập và giới hạn đo �
 
 Quan sát từ 31/10, chưa sửa: gợi ý "Kéo để xoay · Chụm / cuộn để zoom" bị dock che một phần ở 1280×720 (có từ `9b12c1d`, chỉ trang trí, pointer-events-none; nội dung vẫn có trong nhãn điều khiển cảnh).
 
-K1/H theo máy: Intel UHD cũ `H_MET_REAL_GPU` ở runtime `59f6` (PR #9); NVIDIA GTX 1660 Ti `H_MET_REAL_GPU` ở `fba1e09`; lượt Intel UHD của Codex ở `4e5136f` chỉ đo active-300 (p50 103,20/101,00 ms, NOT_MET, `DIAGNOSTIC_INSUFFICIENT_SAMPLES`; chưa đủ ma trận để gắn nhãn H). SwiftShader đối chứng còn H_BLOCKED, ca 0↔1 diagnostic NOT_MET. M1 đã vào main nhưng chưa audit; không dùng số đo cũ để tuyên bố source mới đạt. G1 được chủ dự án báo GEOREFERENCE_BOUND_PROVEN cho cặp tệp riêng; chưa mở cặp tệp đó trong lượt Codex. REAL_WORLD_NOT_VERIFIED tiếp tục giữ nguyên.
+K1/H theo máy: Intel UHD cũ `H_MET_REAL_GPU` ở runtime `59f6` (PR #9); NVIDIA GTX 1660 Ti `H_MET_REAL_GPU` ở `fba1e09`; lượt Intel UHD của Codex ở `4e5136f` chỉ đo active-300 (p50 103,20/101,00 ms, NOT_MET, `DIAGNOSTIC_INSUFFICIENT_SAMPLES`; chưa đủ ma trận để gắn nhãn H). SwiftShader đối chứng còn H_BLOCKED. Diagnostic 0↔1: NOT_MET trên Intel UHD `59f6` (103,55/101,85 ms); NVIDIA `fba1e09` < 100 ms nhưng chậm hơn baseline 6,85 ms p50 (+19,7%), chỉ theo dõi. M1 đã vào main nhưng chưa audit; không dùng số đo cũ để tuyên bố source mới đạt. G1 được chủ dự án báo GEOREFERENCE_BOUND_PROVEN cho cặp tệp riêng; chưa mở cặp tệp đó trong lượt Codex. REAL_WORLD_NOT_VERIFIED tiếp tục giữ nguyên.
 
 ## Cần chủ dự án hoặc để sau
 
