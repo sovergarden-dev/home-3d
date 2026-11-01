@@ -161,6 +161,15 @@ test("route roundtrip recreates exactly one canvas and context loss has a recove
     const gl = (canvas as HTMLCanvasElement).getContext("webgl2");
     gl?.getExtension("WEBGL_lose_context")?.loseContext();
   });
+  await expect(page.locator("#scene-root")).toHaveAttribute("data-recovery-attempts", "1");
+  await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "ready");
+  await expect(page.locator("#scene-root canvas")).toHaveCount(1);
+  await page.locator("#scene-root canvas").evaluate((canvas) => {
+    (canvas as HTMLCanvasElement)
+      .getContext("webgl2")
+      ?.getExtension("WEBGL_lose_context")
+      ?.loseContext();
+  });
   await expect(page.getByText("Thiết bị chưa mở được 3D")).toBeVisible();
   await page.getByRole("button", { name: "Thử lại 3D" }).click();
   await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "ready");

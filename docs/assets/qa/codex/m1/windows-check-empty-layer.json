@@ -1,0 +1,20 @@
+{
+  "syntheticOnly": true,
+  "sourceSha": "59f6d6881261a542e1f1b52b4d0d2d6e86f4834a",
+  "status": "PASS",
+  "unit": {
+    "files": 59,
+    "passed": 371
+  },
+  "pipeline": {
+    "files": 6,
+    "passed": 39
+  },
+  "typecheck": "PASS",
+  "lint": {
+    "errors": 0,
+    "warnings": 7
+  },
+  "productionBuild": "PASS",
+  "scope": "After empty-layer warmup fix and same-runner CI calibration tooling. Runtime must be remeasured at this revision."
+}

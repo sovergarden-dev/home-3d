@@ -1,0 +1,58 @@
+{
+  "syntheticOnly": true,
+  "platform": "WINDOWS_LOCAL",
+  "note": "Interpretation of every unexpected row in summary-*.json. Test code, assertions and skip guards are unchanged. Playwright 1.58.2 bundled browsers, headless, workers 1; not native Safari and not CI.",
+  "annotations": [
+    {
+      "project": "webkit",
+      "file": "tests/e2e/p9-life-sound.spec.ts",
+      "title": "sound context is gesture-only, one per scene, local clip manifest stays in session and off releases voices",
+      "heads": ["fba1e09", "a4f0121"],
+      "alsoReproducedAt": ["4e5136f"],
+      "failure": "expect.poll on data-audio-contexts at line 170: expected 1, received 0 after the 5000 ms poll timeout",
+      "label": "NOT_VERIFIED_UNSUPPORTED",
+      "reason": "Playwright WebKit on Windows exposes neither AudioContext nor OfflineAudioContext, including prefixed names (recorded for M2 in docs/assets/qa/codex/m2/README.md). CI WebKit on Linux runs this test."
+    },
+    {
+      "project": "webkit",
+      "file": "tests/e2e/p9-life-sound.spec.ts",
+      "title": "P9 OfflineAudioContext measures the actual eight-voice storm mix below the peak limit",
+      "heads": ["fba1e09", "a4f0121"],
+      "alsoReproducedAt": ["4e5136f"],
+      "failure": "ReferenceError: Can't find variable: OfflineAudioContext, from page.evaluate at line 244",
+      "label": "NOT_VERIFIED_UNSUPPORTED",
+      "reason": "Same missing Web Audio API in Playwright WebKit on Windows. CI WebKit on Linux runs this test."
+    },
+    {
+      "project": "firefox",
+      "file": "tests/e2e/accessibility.spec.ts",
+      "title": "public shell accessibility and keyboard at 390",
+      "heads": ["fba1e09"],
+      "alsoReproducedAt": ["4e5136f"],
+      "failure": "axe aria-prohibited-attr (serious) on the splash progress bar: aria-label on a div without a role",
+      "label": "FIXED",
+      "fixedIn": "a4f0121",
+      "verification": "summary-a4f0121.json has firefox 19/19; src/test/splash-a11y.test.tsx fails on the old markup with the same rule and passes after the fix"
+    },
+    {
+      "project": "firefox",
+      "file": "tests/e2e/accessibility.spec.ts",
+      "title": "public shell accessibility and keyboard at 740",
+      "heads": ["fba1e09"],
+      "alsoReproducedAt": ["4e5136f"],
+      "failure": "axe aria-prohibited-attr (serious) on the splash progress bar: aria-label on a div without a role",
+      "label": "FIXED",
+      "fixedIn": "a4f0121",
+      "verification": "summary-a4f0121.json has firefox 19/19; src/test/splash-a11y.test.tsx fails on the old markup with the same rule and passes after the fix"
+    }
+  ],
+  "h6Durations": {
+    "title": "20 mode/route/package/capture cycles keep one ready canvas and no page errors",
+    "timeoutMs": 90000,
+    "durationsMs": {
+      "fba1e09": { "chromium": 84025, "firefox": 83269, "webkit": 88582 },
+      "a4f0121": { "chromium": 80671, "firefox": 80678, "webkit": 88621 }
+    },
+    "reading": "All three engines run close to the 90 s test timeout on this machine (headless, workers 1, Vite dev server; the repo Chromium project launches with --enable-unsafe-swiftshader). The slowness is not WebKit-specific and these runs are not the H6 gate. The gate is CI WebKit on Linux: 52.623 ms at a4f0121 (run 41209405262) against 69.984 ms for de71732 on the same runner."
+  }
+}

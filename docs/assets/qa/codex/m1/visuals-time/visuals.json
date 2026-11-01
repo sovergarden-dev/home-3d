@@ -1,0 +1,59 @@
+{
+  "syntheticOnly": true,
+  "fixture": "built-in synthetic demo + generated stripes",
+  "pinGalleryTab": "time",
+  "date": "2026-06-21",
+  "minutes": 420,
+  "heading": 28,
+  "zoom": 1,
+  "dpr": 1,
+  "environment": {
+    "sourceSha": "0265a53b9e8b571b18fd19ad496e0c9ccdad181d",
+    "harnessSha": "797512f9a3979af1034720c1d13a48dbe978bb36",
+    "platform": "WINDOWS_LOCAL",
+    "syntheticOnly": true,
+    "rendererClass": "REAL_GPU",
+    "headed": true,
+    "channel": "chrome",
+    "browserVersion": "152.0.7977.76",
+    "driverVersion": "32.0.101.7082",
+    "dprRequest": "1",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x000046D1) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "vendor": "Google Inc. (Intel)",
+    "dpr": 1,
+    "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+  },
+  "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x000046D1) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "postcard": {
+    "width": 2048,
+    "height": 1152,
+    "type": "image/png"
+  },
+  "files": [
+    "pins-diorama-1440x900-zoom0.25.png",
+    "pins-diorama-1440x900-zoom4.png",
+    "pins-topdown-1440x900-zoom0.25.png",
+    "pins-topdown-1440x900-zoom4.png",
+    "pins-diorama-390x844-zoom0.25.png",
+    "pins-diorama-390x844-zoom4.png",
+    "pins-topdown-390x844-zoom0.25.png",
+    "pins-topdown-390x844-zoom4.png",
+    "pins-diorama-740x390-zoom0.25.png",
+    "pins-diorama-740x390-zoom4.png",
+    "pins-topdown-740x390-zoom0.25.png",
+    "pins-topdown-740x390-zoom4.png",
+    "postcard-4k-empty-ward.png",
+    "diorama-pins.png",
+    "topdown-pins.png",
+    "editor-390x844.png",
+    "editor-740x390.png",
+    "tour-card.png",
+    "journal-before-after.png",
+    "postcard-2k.png",
+    "guest.png"
+  ]
+}

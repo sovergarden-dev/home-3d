@@ -1,0 +1,89 @@
+{
+  "syntheticOnly": true,
+  "environment": {
+    "sourceSha": "0265a53b9e8b571b18fd19ad496e0c9ccdad181d",
+    "harnessSha": "797512f9a3979af1034720c1d13a48dbe978bb36",
+    "platform": "WINDOWS_LOCAL",
+    "syntheticOnly": true,
+    "rendererClass": "REAL_GPU",
+    "headed": true,
+    "channel": "chrome",
+    "browserVersion": "152.0.7977.76",
+    "driverVersion": "32.0.101.7082",
+    "dprRequest": "1",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x000046D1) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "vendor": "Google Inc. (Intel)",
+    "dpr": 1,
+    "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+  },
+  "complete": true,
+  "elapsedMs": 600024,
+  "cycles": 11,
+  "errors": [],
+  "counts": {
+    "urls": {
+      "first": 0,
+      "last": 0,
+      "max": 0
+    },
+    "bitmap": {
+      "first": 0,
+      "last": 0,
+      "max": 0
+    },
+    "idb": {
+      "first": 0,
+      "last": 0,
+      "max": 0
+    },
+    "raf": {
+      "first": 1,
+      "last": 1,
+      "max": 1
+    },
+    "audio": {
+      "first": 0,
+      "last": 0,
+      "max": 0
+    }
+  },
+  "renderer": {
+    "memoryTextures": {
+      "first": 3,
+      "last": 3,
+      "min": 3,
+      "max": 3
+    },
+    "memoryGeometries": {
+      "first": 42,
+      "last": 42,
+      "min": 42,
+      "max": 42
+    },
+    "memoryRenderTargets": {
+      "first": 0,
+      "last": 0,
+      "min": 0,
+      "max": 0
+    },
+    "activeWorlds": {
+      "first": 1,
+      "last": 1,
+      "min": 1,
+      "max": 1
+    }
+  },
+  "heapBytes": {
+    "first": 70954468,
+    "last": 56983130,
+    "min": 55496879,
+    "max": 72158021,
+    "growthPct": -19.6905683233366,
+    "meaning": "JavaScript heap after requested GC, not physical GPU memory."
+  },
+  "status": "PASS"
+}

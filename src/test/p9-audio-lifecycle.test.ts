@@ -48,7 +48,7 @@ class FakeSource extends FakeNode {
     this.dispatchEvent(new Event("ended"));
   }
 }
-class FakeContext {
+class FakeContext extends EventTarget {
   state: AudioContextState = "suspended";
   currentTime = 0;
   sampleRate = 100;
@@ -88,15 +88,18 @@ class FakeContext {
   }
   resume() {
     this.state = "running";
+    this.dispatchEvent(new Event("statechange"));
     return Promise.resolve();
   }
   suspend() {
     this.state = "suspended";
+    this.dispatchEvent(new Event("statechange"));
     for (const oscillator of this.oscillators) oscillator.dispatchEvent(new Event("ended"));
     return Promise.resolve();
   }
   close() {
     this.state = "closed";
+    this.dispatchEvent(new Event("statechange"));
     return Promise.resolve();
   }
 }
@@ -175,4 +178,25 @@ describe("P9 audio lifecycle", () => {
       reason: "manifest-mismatch",
     });
   });
+});
+
+it("publishes native audio state changes and removes the callback on disposal", async () => {
+  const context = new FakeContext(),
+    changed = vi.fn();
+  const audio = createDemoAudio({
+    audioContextFactory: () => context as unknown as AudioContext,
+    onStateChange: changed,
+  });
+  audios.push(audio);
+  audio.gesture();
+  audio.set(true, false);
+  await Promise.resolve();
+  expect(changed).toHaveBeenCalled();
+  changed.mockClear();
+  audio.set(false, false);
+  expect(changed).toHaveBeenCalledTimes(1);
+  audio.dispose();
+  changed.mockClear();
+  context.dispatchEvent(new Event("statechange"));
+  expect(changed).not.toHaveBeenCalled();
 });

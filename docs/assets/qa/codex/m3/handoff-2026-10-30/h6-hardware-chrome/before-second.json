@@ -1,0 +1,152 @@
+{
+  "config": {
+    "configFile": "<REPO>\\playwright.hardware.config.ts",
+    "rootDir": "<REPO>/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "<REPO>/test-results/hardware-baseline-second",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chrome-real",
+        "name": "chrome-real",
+        "testDir": "<REPO>/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/hardware/report.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "h6-completion.spec.ts",
+      "file": "h6-completion.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "H6 completion synthetic integration",
+          "file": "h6-completion.spec.ts",
+          "line": 182,
+          "column": 6,
+          "specs": [
+            {
+              "title": "20 mode/route/package/capture cycles keep one ready canvas and no page errors",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chrome-real",
+                  "projectName": "chrome-real",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 102032,
+                      "error": {
+                        "message": "Test timeout of 90000ms exceeded.",
+                        "stack": "Test timeout of 90000ms exceeded."
+                      },
+                      "errors": [
+                        {
+                          "message": "Test timeout of 90000ms exceeded."
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-29T07:09:04.357Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "real-gpu-environment",
+                          "contentType": "application/json",
+                          "body": "eyJzeW50aGV0aWNPbmx5Ijp0cnVlLCJzb3VyY2VTaGEiOiJkZTcxNzMyNjFhOGEzOTI4Njg1NTU1MjUyYzJiNDc5Zjc2YTcxM2ZlIiwiYnJvd3NlclZlcnNpb24iOiIxNTIuMC43OTc3Ljc2IiwiZHJpdmVyVmVyc2lvbiI6IjMyLjAuMTAxLjcwODIiLCJ2aWV3cG9ydCI6eyJ3aWR0aCI6MTQ0MCwiaGVpZ2h0Ijo5MDB9LCJoZWFkZWQiOnRydWUsInJlbmRlcmVyIjoiQU5HTEUgKEludGVsLCBJbnRlbChSKSBVSEQgR3JhcGhpY3MgKDB4MDAwMDQ2RDEpIERpcmVjdDNEMTEgdnNfNV8wIHBzXzVfMCwgRDNEMTEpIiwidmVuZG9yIjoiR29vZ2xlIEluYy4gKEludGVsKSIsImRwciI6MX0="
+                        },
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "<REPO>\\test-results\\hardware-baseline-second\\h6-completion-H6-completio-8fc74-y-canvas-and-no-page-errors-chrome-real\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "<REPO>\\test-results\\hardware-baseline-second\\h6-completion-H6-completio-8fc74-y-canvas-and-no-page-errors-chrome-real\\error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "<REPO>\\test-results\\hardware-baseline-second\\h6-completion-H6-completio-8fc74-y-canvas-and-no-page-errors-chrome-real\\trace.zip"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "f9751c60ec709ed6ee08-cd955f501d12a22ae05c",
+              "file": "h6-completion.spec.ts",
+              "line": 311,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-29T07:09:00.771Z",
+    "duration": 114676.54800000001,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

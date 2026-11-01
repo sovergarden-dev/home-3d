@@ -1,0 +1,29 @@
+{
+  "targetPct": 85,
+  "thresholds": {
+    "geo": {
+      "lines": 93.02,
+      "statements": 90,
+      "functions": 100,
+      "branches": 89.33
+    },
+    "state": {
+      "lines": 78.37,
+      "statements": 72,
+      "functions": 69.04,
+      "branches": 78.57
+    },
+    "simulation": {
+      "lines": 88.53,
+      "statements": 86.17,
+      "functions": 88.52,
+      "branches": 76.06
+    },
+    "atmosphere": {
+      "lines": 98.11,
+      "statements": 95.67,
+      "functions": 100,
+      "branches": 90.06
+    }
+  }
+}

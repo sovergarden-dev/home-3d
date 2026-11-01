@@ -35,6 +35,7 @@ export function TopActions() {
           }}
           disabled={!ready}
           title={t.soundDemo}
+          aria-describedby="sound-demo-description"
           aria-pressed={soundOn}
           aria-label={t.sound}
           className="ctl px-3 text-foreground hover:bg-secondary"
@@ -42,6 +43,9 @@ export function TopActions() {
           {soundOn ? <Volume2 className="h-4 w-4 text-accent" /> : <VolumeX className="h-4 w-4" />}
           <span className="hidden sm:inline">{t.sound}</span>
         </button>
+        <span id="sound-demo-description" className="sr-only">
+          {t.soundDemo}
+        </span>
         <div
           role="radiogroup"
           aria-label={t.language}
@@ -87,7 +91,7 @@ export function TopActions() {
         onClick={capture}
         disabled={!ready}
         aria-label={t.capture}
-        className="ctl bg-accent px-4 text-accent-foreground shadow-[var(--shadow-soft)] hover:brightness-105"
+        className="capture-action ctl bg-accent px-4 text-accent-foreground shadow-[var(--shadow-soft)] hover:brightness-105"
       >
         <Camera className="h-4 w-4" />
         <span className="hidden sm:inline">{t.capture}</span>

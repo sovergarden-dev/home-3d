@@ -1,0 +1,17 @@
+{
+  "syntheticOnly": true,
+  "sourceSha": "708a7a7e161ae60fd610b2c725a35ae90da82a77",
+  "status": "PASS",
+  "runtime": "BUN_LOCAL_WORKER_HARNESS",
+  "deployed": false,
+  "jwksSource": "in-memory synthetic key only",
+  "keyRequests": 1,
+  "anonymousMode": "demo",
+  "invalidMode": "demo",
+  "validMode": "private-local-file",
+  "ssrIdentityLeak": false,
+  "externalHosts": [],
+  "runtimeEndpointCached": false,
+  "errors": [],
+  "limitation": "This exercises the built Worker and real signature verification locally. It does not certify a live Cloudflare account or Access policy."
+}

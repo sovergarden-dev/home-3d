@@ -1,0 +1,54 @@
+{
+  "status": "PASS",
+  "method": "Only CRLF to LF byte replacement; parsed JSON equality verified before staging.",
+  "files": [
+    {
+      "file": "docs/assets/qa/codex/m0/baseline-overview.json",
+      "beforeSha256": "a89e8243a9c1d0d21465f44a96b61684403e68791034539f13d72c6df8b94088",
+      "afterSha256": "4d3b81dac2198080bc471e9935e3fb81004890711d2f1c1079f90c8037e5075a",
+      "jsonValuesEqual": true
+    },
+    {
+      "file": "docs/assets/qa/codex/m0/h6-real.json",
+      "beforeSha256": "c743a8bc92cc418de98bcaddf0fb5b241e2615affe859629725f2b0056d2e31c",
+      "afterSha256": "5dbb78567b6d826bc82d5429075183201675ac4191c0e560ca00700c2093205b",
+      "jsonValuesEqual": true
+    },
+    {
+      "file": "docs/assets/qa/codex/m0/production-smoke.json",
+      "beforeSha256": "fbf8a7636b165bf005ba9f5df1ae240619a61a565fad8e345ceb33be0aaea760",
+      "afterSha256": "95e59f8a9327aba0a8a873919e66d68825aca76a88a892c3a932ebe71749724c",
+      "jsonValuesEqual": true
+    },
+    {
+      "file": "docs/assets/qa/codex/m0/windows-check.json",
+      "beforeSha256": "29d3dc4d021bc33ad22ee871433dd1fcb4a39b9d5070007ee110822ce08bff35",
+      "afterSha256": "084d013767b79e00bb20c3e9b242fe4d6fba6c6455c28ee5fcc02b668635ce36",
+      "jsonValuesEqual": true
+    },
+    {
+      "file": "docs/assets/qa/codex/m0/windows-e2e-chromium.json",
+      "beforeSha256": "cd73d5ee575aa9af650edb377b7ed9bb0c9acc71a3a4f6b98ec6f21233413c64",
+      "afterSha256": "503423113e2ac5dfe746b23a44b7546bc4dcc6f24e3989ffa3954c72852397f9",
+      "jsonValuesEqual": true
+    },
+    {
+      "file": "docs/assets/qa/codex/m0/windows-e2e-firefox.json",
+      "beforeSha256": "74f620c113f794e0bd3f0f3e69c78d308541d704d196de2f0270fc00caa83cc6",
+      "afterSha256": "49dc9b78a083344bc0dd1b1cfcb562e8cf7a46a01f0a1e1ccd133eddb157b070",
+      "jsonValuesEqual": true
+    },
+    {
+      "file": "docs/assets/qa/codex/m0/windows-e2e-overview.json",
+      "beforeSha256": "9b929e9bd685b94b41673f4212b5433634797fbc567e664cd605324b59821e8b",
+      "afterSha256": "d3b4546824ca4382793d621d03cd6ffa94469830213fea2261ccef33a6e580e4",
+      "jsonValuesEqual": true
+    },
+    {
+      "file": "docs/assets/qa/codex/m0/windows-e2e-webkit.json",
+      "beforeSha256": "a78fa6d48fab7eb0397a8a22b1c91eb80fa1642281edcffc12239afb01720871",
+      "afterSha256": "cf8cd3c0603b50de8bb217c20ec03759ff4f7191cc9e8020c646d0a02bedd080",
+      "jsonValuesEqual": true
+    }
+  ]
+}

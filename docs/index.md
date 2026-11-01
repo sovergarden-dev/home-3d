@@ -7,3 +7,5 @@
 - Runbook: [H6](H6_PRIVATE_WORLD_RUNBOOK.md), [P7](P7_REAL_STREET_RUNBOOK.md), [P8](P8_RUNBOOK.md), [P9](P9_RUNBOOK.md), [P10](P10_RUNBOOK.md).
 - [Pipeline cục bộ](../pipeline/README.md).
 - [Roadmap lịch sử](PLAN.md): snapshot, không thay chỉ đạo bàn giao.
+
+- [P10.1 — ghim, độ trễ và bưu thiếp](P10_1_RUNBOOK.md)

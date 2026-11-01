@@ -39,6 +39,7 @@ export interface AppState {
   zoom: number;
   soundOn: boolean;
   lifeEnabled: boolean;
+  illustrativeDetails: boolean;
   lifeDensity: number;
   ridePaused: boolean;
   language: Language;
@@ -74,6 +75,7 @@ export interface AppState {
   requestCameraFrame: (kind: CameraFrame) => void;
   toggleSound: () => void;
   setLifeEnabled: (enabled: boolean) => void;
+  setIllustrativeDetails: (enabled: boolean) => void;
   setLifeDensity: (density: number) => void;
   setRidePaused: (paused: boolean) => void;
   toggleTrees: () => void;
@@ -103,6 +105,7 @@ export const useAppStore = create<AppState>((set) => ({
   zoom: 1,
   soundOn: false,
   lifeEnabled: true,
+  illustrativeDetails: false,
   lifeDensity: 0.65,
   ridePaused: false,
   language: "vi",
@@ -161,6 +164,7 @@ export const useAppStore = create<AppState>((set) => ({
     set((s) => ({ cameraFrame: { kind, request: s.cameraFrame.request + 1 } })),
   toggleSound: () => set((s) => ({ soundOn: !s.soundOn })),
   setLifeEnabled: (lifeEnabled) => set({ lifeEnabled }),
+  setIllustrativeDetails: (illustrativeDetails) => set({ illustrativeDetails }),
   setLifeDensity: (density) =>
     set({ lifeDensity: Math.max(0, Math.min(1, Number.isFinite(density) ? density : 0)) }),
   setRidePaused: (ridePaused) => set({ ridePaused }),

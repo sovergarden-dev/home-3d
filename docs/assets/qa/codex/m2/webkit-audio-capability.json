@@ -1,0 +1,17 @@
+{
+  "syntheticOnly": true,
+  "platform": "WINDOWS_LOCAL",
+  "browser": "Playwright WebKit",
+  "version": "26.0",
+  "nativeSafari": false,
+  "globals": {
+    "AudioContext": "undefined",
+    "webkitAudioContext": "undefined",
+    "OfflineAudioContext": "undefined",
+    "webkitOfflineAudioContext": "undefined"
+  },
+  "constructed": false,
+  "state": null,
+  "errorName": "ReferenceError",
+  "errorMessage": "Can't find variable: AudioContext"
+}

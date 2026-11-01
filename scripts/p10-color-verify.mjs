@@ -1,22 +1,23 @@
-import { chromium, expect } from "@playwright/test";
+import { launchBenchmark } from "./benchmark-browser.mjs";
+import { expect } from "@playwright/test";
 import { mkdir, writeFile } from "node:fs/promises";
-const out = process.argv[2] ?? "/tmp/p10-color-qa";
+const out = process.argv[2] ?? "test-results/p10-color-qa";
 await mkdir(out, { recursive: true });
-const browser = await chromium.launch({ args: ["--enable-unsafe-swiftshader"] });
+const { browser, dpr, environment } = await launchBenchmark();
 const page = await browser.newPage({
   viewport: { width: 1884, height: 804 },
-  deviceScaleFactor: 1,
+  deviceScaleFactor: dpr,
   reducedMotion: "reduce",
   locale: "vi-VN",
 });
 const errors = [];
-page.on("pageerror", (e) => errors.push(e.message));
+page.on("pageerror", (e) => errors.push(e.name));
 await page.addInitScript(() => {
   window.__p10Import = (p) => {
     const e = [...performance.getEntriesByType("resource")]
       .reverse()
       .find((e) => new URL(e.name).pathname === p);
-    return import(e?.name ?? p);
+    return import(e?.name ?? new URL(p, location.href).href);
   };
 });
 await page.route("**/*", (r) =>
@@ -27,6 +28,7 @@ try {
   await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "ready", {
     timeout: 30000,
   });
+  const observed = await environment(page);
   await page.evaluate(async () => {
     (await window.__p10Import("/src/state/appStore.ts")).useAppStore.setState({
       selectedDate: "2026-06-21",
@@ -124,11 +126,12 @@ try {
     JSON.stringify(
       {
         syntheticOnly: true,
-        renderer: "Chromium SwiftShader (not physical GPU)",
+        environment: observed,
+        renderer: observed.renderer,
         scene: "2026-06-21 07:00 Asia/Ho_Chi_Minh",
         camera: { heading: 28, zoom: 1 },
         viewport: [1884, 804],
-        dpr: 1,
+        dpr,
         cardSize: [card.width, card.height],
         photoROI: [82, 82, 1884, 804],
         thresholdPct: 15,

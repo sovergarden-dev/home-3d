@@ -5,8 +5,10 @@ import { MapPin } from "lucide-react";
 import { worldDataProvider } from "@/world/privateWorldSession";
 import { BUILD_SHA, PUBLIC_BUILD_VERSION } from "@/config/buildInfo";
 import { memorySession } from "@/memories/session";
+import { PrivateAccessBadge } from "./PrivateAccessBadge";
 
 const subscribeHydration = () => () => {};
+const readGuest = () => memorySession.getSnapshot().guest;
 
 export function TopInfo() {
   const t = useT();
@@ -15,11 +17,7 @@ export function TopInfo() {
     () => true,
     () => false,
   );
-  const memories = useSyncExternalStore(
-    memorySession.subscribe,
-    memorySession.getSnapshot,
-    memorySession.getSnapshot,
-  );
+  const guest = useSyncExternalStore(memorySession.subscribe, readGuest, readGuest);
   const worldSnapshot = useSyncExternalStore(
     worldDataProvider.subscribe,
     worldDataProvider.getSnapshot,
@@ -53,7 +51,7 @@ export function TopInfo() {
               : t.privatePackageBadge
             : t.demoBadge}
       </p>
-      {!memories.guest && (
+      {!guest && (
         <div className="mt-1 flex items-center gap-1.5 text-sm font-medium text-foreground">
           <MapPin className="h-3.5 w-3.5 shrink-0 text-accent" aria-hidden />
           <span className="truncate">
@@ -71,9 +69,14 @@ export function TopInfo() {
       <p className="mt-1 text-[10px] text-muted-foreground">
         {t.life.label} · {t.life.audio}
       </p>
-      <p className="mt-1 text-[10px] text-muted-foreground" data-testid="build-info">
+      <p
+        className="mt-1 text-[10px] text-muted-foreground"
+        data-testid="build-info"
+        title={`${PUBLIC_BUILD_VERSION} · SHA ${BUILD_SHA ?? t.localPreview.buildUnknown}`}
+      >
         {PUBLIC_BUILD_VERSION} · SHA {BUILD_SHA ?? t.localPreview.buildUnknown}
       </p>
+      <PrivateAccessBadge />
     </div>
   );
 }

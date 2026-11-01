@@ -1,0 +1,35 @@
+{
+  "syntheticOnly": true,
+  "status": "PASS",
+  "platform": "WINDOWS_LOCAL",
+  "bun": "1.4.3",
+  "commands": [
+    "bun install --frozen-lockfile",
+    "bun run check"
+  ],
+  "unit": {
+    "files": 59,
+    "passed": 370,
+    "failed": 0,
+    "durationSeconds": 182.05
+  },
+  "pipeline": {
+    "files": 6,
+    "passed": 39,
+    "failed": 0
+  },
+  "typecheck": "PASS",
+  "lint": {
+    "errors": 0,
+    "warnings": 7,
+    "note": "Existing warnings; M2 handles them."
+  },
+  "productionBuild": "PASS",
+  "earlierAttempt": {
+    "status": "FAIL",
+    "phase": "typecheck",
+    "cause": "Postcard ready selector was missing after narrowing subscription. Fixed without changing the guard; complete check rerun passed."
+  },
+  "sourceSha": "b1d9bb18e8d7355eec3ca70540f6ff9399846860",
+  "scope": "Full check repeated after the H6 budget reporter and numeric caption evidence hooks. Application runtime source remains identical to 0265a53."
+}

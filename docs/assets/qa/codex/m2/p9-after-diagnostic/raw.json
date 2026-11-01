@@ -1,0 +1,65 @@
+{
+  "syntheticOnly": true,
+  "family": "p9",
+  "scriptSha256": "436817cb6105a6e10205ea24fd4731941d2de0ba0c58bcfc97874be40e6e0c5a",
+  "environment": {
+    "sourceSha": "487156d0a8a266161f8c00ad1096d5efed081429",
+    "harnessSha": "487156d0a8a266161f8c00ad1096d5efed081429",
+    "platform": "WINDOWS_LOCAL",
+    "syntheticOnly": true,
+    "rendererClass": "REAL_GPU",
+    "headed": true,
+    "channel": "chrome",
+    "browserVersion": "152.0.7977.76",
+    "driverVersion": "32.0.101.7082",
+    "dprRequest": "native",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x000046D1) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "vendor": "Google Inc. (Intel)",
+    "dpr": 1,
+    "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+  },
+  "fixtureSha256": "built-in-synthetic-demo",
+  "randomSeed": 81273,
+  "clock": {
+    "date": "2026-06-21",
+    "startMinutes": 720,
+    "speed": 0
+  },
+  "rows": [
+    {
+      "round": 0,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 127.90000000596046,
+      "submissionMs": 79.19999998807907,
+      "gpuCompletionObservedMs": 114.19999998807907,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 60.599999994039536,
+      "submissionMs": 22.900000005960464,
+      "gpuCompletionObservedMs": 43.80000001192093,
+      "newProgramLinks": 0
+    }
+  ],
+  "frameRounds": [],
+  "errors": [],
+  "complete": true,
+  "mutedAudioOutput": true,
+  "method": "Real input event to matching main-frame submission, observed GPU fence completion and following RAF. Drag intervals are actual main-frame submissions, not GPU execution time. No first-audible-sample claim; no P8 full-lifecycle certification."
+}

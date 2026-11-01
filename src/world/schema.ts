@@ -4,7 +4,8 @@ export const WORLD_OVERRIDE_IDENTITY_SCHEME = "stable-local-id-v2" as const;
 export type QualityStatus =
   "synthetic" | "verified" | "source_only" | "inferred" | "unknown" | "conflict";
 
-export type SourceKind = "synthetic" | "survey" | "osm" | "overture" | "manual_override";
+export type SourceKind =
+  "synthetic" | "survey" | "osm" | "overture" | "open_buildings" | "manual_override";
 
 export interface Provenance {
   source: SourceKind;

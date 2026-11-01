@@ -70,7 +70,9 @@ export function TimePanel() {
     worldDataProvider.getSnapshot,
   );
   const sunset = useMemo(() => {
-    const reference = worldDataProvider.getGeoreference();
+    const reference = referenceSnapshot.georeferenceReady
+      ? worldDataProvider.getGeoreference()
+      : null;
     return reference ? sunEvents(selectedDate, reference.origin)?.sunsetMinutes : undefined;
   }, [selectedDate, referenceSnapshot]);
 

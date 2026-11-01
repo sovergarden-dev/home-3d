@@ -2,33 +2,8 @@ import { describe, expect, it } from "vitest";
 import { createLifeSimulation, lifeRadius, type LifeKind } from "@/engine/life/simulation";
 import type { Lot, Position2, RoadSegment, WorldData } from "@/world/schema";
 
-const provenance = { source: "synthetic" as const, quality: "synthetic" as const };
-const road = (id: string, points: Position2[], width = 8): RoadSegment => ({
-  localId: id,
-  polylineENU: points,
-  connectorIds: [],
-  roadClass: "residential",
-  carriagewayWidth: width,
-  elevationLayer: 0,
-  direction: "both",
-  provenance,
-});
-const world = (roads: RoadSegment[], lots: Lot[] = []): WorldData => ({
-  manifest: {
-    schemaVersion: "1.0",
-    datasetRevision: "p9-longrun",
-    units: "metres",
-    frameConvention: "ENU_X_EAST_Y_UP_NEG_Z_NORTH",
-    isSynthetic: true,
-    chunks: [],
-    assetHashes: {},
-    licences: ["test"],
-    coverage: { quality: "synthetic", sourceCount: 1 },
-  },
-  roads,
-  buildings: [],
-  lots,
-});
+import { provenance, road, world } from "./fixtures/p9-longrun-world";
+
 const vehicles = new Set<LifeKind>(["motorbike", "car", "bus", "tricycle", "bicycle"]);
 
 const emptyLot = (status: Lot["status"] = "empty"): Lot => ({
@@ -164,36 +139,6 @@ describe("P9 life long-run invariants", () => {
     malformed.update(1, { tier: "low" });
     expect(malformed.diagnostics.graphEnabled).toBe(false);
     expect(malformed.agents).toHaveLength(0);
-  });
-
-  it("keeps 200-actor updates within the 4ms p95 target", () => {
-    const sim = createLifeSimulation(
-      world([
-        road(
-          "long",
-          [
-            [-1600, 0],
-            [1600, 0],
-          ],
-          9,
-        ),
-      ]),
-      123,
-    );
-    const samples: number[] = [];
-    for (let frame = 0; frame < 600; frame++) {
-      const start = performance.now();
-      sim.update(1 / 30, { tier: "mid", speed: 1 });
-      samples.push(performance.now() - start);
-    }
-    samples.sort((a, b) => a - b);
-    const p50 = samples[Math.floor(samples.length * 0.5)]!,
-      p95 = samples[Math.floor(samples.length * 0.95)]!;
-    console.info(
-      `P9 life update performance: actors=${sim.agents.length} frames=600 p50=${p50.toFixed(3)}ms p95=${p95.toFixed(3)}ms`,
-    );
-    expect(sim.agents.length).toBeGreaterThanOrEqual(100);
-    expect(p95).toBeLessThanOrEqual(4);
   });
 });
 

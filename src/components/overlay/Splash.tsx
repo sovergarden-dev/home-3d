@@ -13,6 +13,7 @@ export function Splash() {
     return () => window.clearTimeout(id);
   }, [progress]);
   if (gone) return null;
+  const percent = Math.round(progress * 100);
   return (
     <div
       role="status"
@@ -24,7 +25,11 @@ export function Splash() {
         <p className="mt-2 font-serif italic text-muted-foreground">{t.tagline}</p>
         <div
           className="mx-auto mt-8 h-1 w-48 overflow-hidden rounded-full bg-secondary"
-          aria-label={`${Math.round(progress * 100)}%`}
+          role="progressbar"
+          aria-label={t.loadingProgress}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={percent}
         >
           <div
             className="h-full rounded-full bg-accent transition-[width] duration-150"

@@ -1,0 +1,64 @@
+{
+  "syntheticOnly": true,
+  "status": "PASS",
+  "sameHarness": "Current M2 H6 test/config, 20 unchanged cycles,1440x900,DPR1,explicit no-preference; same Chrome/Intel driver, sequential baseline then candidate.",
+  "rows": [
+    {
+      "phase": "baseline",
+      "title": "20 mode/route/package/capture cycles keep one ready canvas and no page errors",
+      "status": "passed",
+      "durationMs": 43434,
+      "environment": {
+        "syntheticOnly": true,
+        "sourceSha": "de7173261a8a3928685555252c2b479f76a713fe",
+        "browserVersion": "152.0.7977.76",
+        "driverVersion": "32.0.101.7082",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "headed": true,
+        "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x000046D1) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (Intel)",
+        "dpr": 1
+      },
+      "stats": {
+        "expected": 1,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0
+      },
+      "rawReportSha256": "09608fda60e70f6d1cc8c05f7bbe15424cbdbbd4c96727b53756968f4a8e6d59"
+    },
+    {
+      "phase": "after",
+      "title": "20 mode/route/package/capture cycles keep one ready canvas and no page errors",
+      "status": "passed",
+      "durationMs": 41839,
+      "environment": {
+        "syntheticOnly": true,
+        "sourceSha": "6cce9597edfb7ae93790a4a4c4abc0d4b8c415fb",
+        "browserVersion": "152.0.7977.76",
+        "driverVersion": "32.0.101.7082",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "headed": true,
+        "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x000046D1) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (Intel)",
+        "dpr": 1
+      },
+      "stats": {
+        "expected": 1,
+        "unexpected": 0,
+        "flaky": 0,
+        "skipped": 0
+      },
+      "rawReportSha256": "8dbb509e036b2890fe365472285ec60c3b35c6f27f632723d9fc5e2903ddf5c6"
+    }
+  ],
+  "changePct": -3.6722383386287194,
+  "regressionLimitPct": 10,
+  "note": "Physical GPU timing does not replace the CI WebKit <70s gate."
+}

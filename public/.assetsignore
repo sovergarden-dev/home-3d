@@ -1,0 +1,2 @@
+# Vite build metadata can contain absolute build paths; it is never a public asset.
+.vite

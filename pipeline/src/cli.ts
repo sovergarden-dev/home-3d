@@ -1,3 +1,6 @@
+import { publicBuildSummary } from "./report";
+import { enrichOpenBuildingsPackage } from "./open-buildings";
+import { openHeightSampler } from "./open-buildings-geotiff";
 import { dirname, isAbsolute, resolve } from "node:path";
 import type { WorldOverrideDocument } from "../../src/world/schema";
 import type { WorldData } from "../../src/world/schema";
@@ -165,7 +168,24 @@ export async function runPipeline(argumentsList: string[]) {
   if (conflationRules !== undefined) buildOptions.conflationRules = conflationRules;
   if (confirmedEmptyLots !== undefined) buildOptions.confirmedEmptyLots = confirmedEmptyLots;
 
-  const result = buildWorldPackage(source, config, buildOptions);
+  let result = buildWorldPackage(source, config, buildOptions);
+  if (config.openBuildings) {
+    const sampler = await openHeightSampler(
+      config.openBuildings,
+      config.origin,
+      options.configPath,
+    );
+    try {
+      const enriched = await enrichOpenBuildingsPackage(
+        result.package,
+        sampler,
+        config.openBuildings,
+      );
+      result = { ...enriched, report: { ...result.report, ...enriched.report } };
+    } finally {
+      await sampler.close();
+    }
+  }
 
   if (!options.dryRun) {
     const packagePath = relativeToConfig(options.configPath, config.output.packagePath);
@@ -184,7 +204,7 @@ export async function runPipeline(argumentsList: string[]) {
 if (import.meta.main) {
   runPipeline(Bun.argv.slice(2))
     .then((report) => {
-      console.log(JSON.stringify(report));
+      console.log(JSON.stringify(publicBuildSummary(report)));
     })
     .catch((error: unknown) => {
       console.error(JSON.stringify({ status: "error", code: safeErrorCode(error) }));

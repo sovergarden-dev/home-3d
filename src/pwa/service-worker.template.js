@@ -1,0 +1,115 @@
+/* Generated constants are prepended by scripts/build-pwa.mjs. */
+const activatedPrefix = "home3d-public-active-v1-";
+const allowed = new Map(OWNED_ASSETS.map((asset) => [asset.path, asset]));
+const hex = (bytes) =>
+  [...new Uint8Array(bytes)].map((value) => value.toString(16).padStart(2, "0")).join("");
+
+async function ownedResponse(asset) {
+  const response = await fetch(asset.path, {
+    credentials: "same-origin",
+    redirect: "error",
+    cache: "force-cache",
+  });
+  if (!response.ok || response.redirected || !["basic", "default"].includes(response.type))
+    throw Error("PUBLIC_ASSET_UNAVAILABLE");
+  const bytes = await response.arrayBuffer();
+  if (hex(await crypto.subtle.digest("SHA-256", bytes)) !== asset.sha256)
+    throw Error("PUBLIC_ASSET_INTEGRITY_FAILED");
+  return new Response(bytes, {
+    headers: {
+      "Content-Type": asset.contentType,
+      "Cache-Control": "public, max-age=31536000, immutable",
+      "X-Content-Type-Options": "nosniff",
+      "Referrer-Policy": "same-origin",
+    },
+  });
+}
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    (async () => {
+      // Verify every public response in memory before touching any retained generation.
+      const staged = await Promise.allSettled(OWNED_ASSETS.map(ownedResponse));
+      if (staged.some((result) => result.status === "rejected"))
+        throw Error("PUBLIC_ASSET_INSTALL_FAILED");
+      const protectedGeneration = (await caches.keys()).includes(activatedPrefix + CACHE_NAME);
+      const cache = await caches.open(CACHE_NAME);
+      const writes = await Promise.allSettled(
+        staged.map((result, index) => cache.put(OWNED_ASSETS[index].path, result.value)),
+      );
+      if (writes.some((result) => result.status === "rejected")) {
+        if (!protectedGeneration) await caches.delete(CACHE_NAME);
+        throw Error("PUBLIC_ASSET_INSTALL_FAILED");
+      }
+    })(),
+  );
+});
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    (async () => {
+      const names = await caches.keys();
+      const previous = names
+        .filter((name) => name.startsWith(activatedPrefix) && name !== activatedPrefix + CACHE_NAME)
+        .at(-1)
+        ?.slice(activatedPrefix.length);
+      const keep = new Set([CACHE_NAME, previous]);
+      // Empty marker caches contain no requests or private data, only activated generation names.
+      await caches.delete(activatedPrefix + CACHE_NAME);
+      await caches.open(activatedPrefix + CACHE_NAME);
+      await Promise.all(
+        names
+          .filter((name) =>
+            name.startsWith(CACHE_PREFIX)
+              ? !keep.has(name)
+              : name.startsWith(activatedPrefix) && !keep.has(name.slice(activatedPrefix.length)),
+          )
+          .map((name) => caches.delete(name)),
+      );
+      await self.clients.claim();
+    })(),
+  );
+});
+self.addEventListener("message", (event) => {
+  if (event.data?.type === "ACTIVATE_UPDATE") event.waitUntil(self.skipWaiting());
+});
+self.addEventListener("fetch", (event) => {
+  const request = event.request,
+    url = new URL(request.url);
+  if (request.method !== "GET" || url.origin !== self.location.origin) return;
+  if (request.mode === "navigate") {
+    event.respondWith(
+      (async () => {
+        try {
+          return await fetch(request);
+        } catch {
+          const key = OFFLINE_SHELLS[url.pathname.replace(/\/$/, "") || "/"];
+          if (!key) return Response.redirect(new URL("/", self.location.origin).href);
+          return (await (await caches.open(CACHE_NAME)).match(key)) ?? Response.error();
+        }
+      })(),
+    );
+    return;
+  }
+  if (url.search) return;
+  const currentAsset = allowed.get(url.pathname);
+  const hashedPath = /^\/assets\/[\w.-]+-[\w-]{8,}\.(?:js|css|woff2|png|svg|jpg|webp)$/.test(
+    url.pathname,
+  );
+  if (!currentAsset && !hashedPath) return;
+  event.respondWith(
+    (async () => {
+      if (!currentAsset) {
+        for (const name of (await caches.keys()).filter((name) => name.startsWith(CACHE_PREFIX))) {
+          const previous = await (await caches.open(name)).match(url.pathname);
+          if (previous) return previous;
+        }
+        return fetch(request);
+      }
+      const cache = await caches.open(CACHE_NAME);
+      const hit = await cache.match(url.pathname);
+      if (hit) return hit;
+      const response = await ownedResponse(currentAsset);
+      await cache.put(url.pathname, response.clone());
+      return response;
+    })(),
+  );
+});

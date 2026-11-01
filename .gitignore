@@ -34,6 +34,8 @@ dist-ssr
 # Browser test artifacts and private pipeline outputs
 playwright-report/
 test-results/
+coverage/
+.qa-ci/
 pipeline/out/
 pipeline/dist/
 pipeline/cache/

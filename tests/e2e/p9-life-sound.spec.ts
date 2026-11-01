@@ -274,3 +274,49 @@ test("P9 OfflineAudioContext measures the actual eight-voice storm mix below the
     contentType: "application/json",
   });
 });
+
+test("short landscape keeps POV, local package and map controls apart", async ({ page }) => {
+  await page.setViewportSize({ width: 740, height: 390 });
+  const ready = await open(page);
+  test.skip(!ready, "WebGL2 is unavailable in this project");
+  for (const mode of ["Đi bộ", "Ngồi sau xe ôm", "Mặt bằng"]) {
+    const selectedMode = page.getByRole("radio", { name: mode, exact: true });
+    await selectedMode.click();
+    await expect(selectedMode).toHaveAttribute("aria-checked", "true");
+    if (mode === "Mặt bằng") await expect(page.getByTestId("plan-scale-ruler")).toBeVisible();
+    const regions = await page
+      .locator(
+        ".h6-top-info,.private-world-panel,.p9-pov-controls,.plan-scale-bar,.h6-map-controls-anchor",
+      )
+      .evaluateAll((elements) =>
+        elements.map((element) => {
+          const b = element.getBoundingClientRect();
+          return { x: b.x, y: b.y, right: b.right, bottom: b.bottom };
+        }),
+      );
+    expect(regions).toHaveLength(4);
+    for (const box of regions) {
+      expect(box.x).toBeGreaterThanOrEqual(0);
+      expect(box.right).toBeLessThanOrEqual(740);
+      expect(box.y).toBeGreaterThanOrEqual(0);
+      expect(box.bottom).toBeLessThanOrEqual(294);
+    }
+    for (let i = 0; i < regions.length; i++)
+      for (let j = i + 1; j < regions.length; j++) {
+        const a = regions[i]!,
+          b = regions[j]!;
+        expect(
+          Math.max(0, Math.min(a.right, b.right) - Math.max(a.x, b.x)) *
+            Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.y, b.y)),
+        ).toBe(0);
+      }
+    if (mode === "Mặt bằng") {
+      await page.getByRole("radio", { name: "Diorama", exact: true }).click();
+    } else {
+      const exit = page.getByRole("button", { name: "Thoát POV", exact: true });
+      await exit.focus();
+      await expect(exit).toBeFocused();
+      await exit.press("Enter");
+    }
+  }
+});

@@ -41,7 +41,14 @@ function setFieldProvenance(
 
 export function isProvenance(value: unknown): value is Provenance {
   if (!isRecord(value)) return false;
-  const sources: SourceKind[] = ["synthetic", "survey", "osm", "overture", "manual_override"];
+  const sources: SourceKind[] = [
+    "synthetic",
+    "survey",
+    "osm",
+    "overture",
+    "open_buildings",
+    "manual_override",
+  ];
   const qualities: QualityStatus[] = [
     "synthetic",
     "verified",

@@ -55,8 +55,6 @@ test.describe("P10 R2 storage", () => {
         ["blob:", "data:"].includes(url.protocol)
       )
         return route.continue();
-      if (["fonts.googleapis.com", "fonts.gstatic.com"].includes(url.hostname))
-        return route.abort();
       otherExternalRequests.push(url.origin);
       return route.abort();
     });

@@ -1,0 +1,357 @@
+{
+  "syntheticOnly": true,
+  "environment": {
+    "sourceSha": "59f6d6881261a542e1f1b52b4d0d2d6e86f4834a",
+    "harnessSha": "0b56c490b2b04b56294d6742645559b0e459f7b5",
+    "platform": "WINDOWS_LOCAL",
+    "syntheticOnly": true,
+    "rendererClass": "REAL_GPU",
+    "headed": true,
+    "channel": "chrome",
+    "browserVersion": "152.0.7977.76",
+    "driverVersion": "32.0.101.7082",
+    "dprRequest": "native",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x000046D1) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "vendor": "Google Inc. (Intel)",
+    "dpr": 1,
+    "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+  },
+  "rows": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "mode": "diorama",
+      "scene": {
+        "testid": "demo-scene",
+        "tsdSource": "/src/components/overlay/SceneViewport.tsx:115:7",
+        "memoryPinMeshes": "1",
+        "memoryPins": "3",
+        "meshBuildLatencyMs": "24.599999994039536",
+        "memoryRenderTargets": "0",
+        "memoryTextures": "3",
+        "memoryGeometries": "42",
+        "memoryTourActive": "false",
+        "drawCalls": "37",
+        "triangles": "4002",
+        "renderedFrames": "108",
+        "frameP50Ms": "17.19999998807907",
+        "frameP95Ms": "23.700000017881393",
+        "frameLongestMs": "37.60000002384186",
+        "frameSampleCount": "105",
+        "idleRenderedFrames": "10",
+        "worldMode": "fixture",
+        "worldRevision": "0",
+        "activeWorlds": "1",
+        "cameraType": "PerspectiveCamera",
+        "lifeAgents": "24",
+        "lifeClock": "2.033333333333336",
+        "lifeVisible": "true",
+        "lifeCpuP50Ms": "0.10000002384185791",
+        "lifeCpuP95Ms": "0.800000011920929",
+        "lifeCpuSamples": "120",
+        "lifeGraphReady": "true",
+        "lifeTier": "mid",
+        "povMode": "none",
+        "audioContexts": "0",
+        "audioVoices": "0",
+        "audioNodes": "0",
+        "audioTotalNodes": "0",
+        "audioState": "suspended",
+        "audioListeners": "3",
+        "treesVisible": "true",
+        "labelsVisible": "true",
+        "atmosphereEnabled": "true",
+        "season": "wet",
+        "floodLevel": "0",
+        "night": "false",
+        "weather": "sunny",
+        "selectedDate": "2026-06-21",
+        "timeMinutes": "722",
+        "festival": "normal",
+        "astronomySynthetic": "true",
+        "simulationLabel": "simulation"
+      },
+      "controls": [
+        {
+          "class": "private-world-panel pointer-events-auto absolute z-20 flex max-h-[calc(100dvh-8rem)] max-w-sm flex-col overflow-hidden rounded-xl border border-border bg-background/95 p-3.5 shadow-xl backdrop-blur left-4 top-60 w-fit",
+          "rect": {
+            "x": 16,
+            "y": 240,
+            "width": 222.609375,
+            "height": 74
+          }
+        },
+        {
+          "class": "h6-map-controls-anchor absolute right-[max(1rem,env(safe-area-inset-right))] top-1/2 z-30 -translate-y-1/2",
+          "rect": {
+            "x": 1370,
+            "y": 186,
+            "width": 54,
+            "height": 528
+          }
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 740,
+        "height": 390
+      },
+      "mode": "diorama",
+      "scene": {
+        "testid": "demo-scene",
+        "tsdSource": "/src/components/overlay/SceneViewport.tsx:115:7",
+        "memoryPinMeshes": "1",
+        "memoryPins": "3",
+        "meshBuildLatencyMs": "24.599999994039536",
+        "memoryRenderTargets": "0",
+        "memoryTextures": "3",
+        "memoryGeometries": "42",
+        "memoryTourActive": "false",
+        "drawCalls": "37",
+        "triangles": "4002",
+        "renderedFrames": "114",
+        "frameP50Ms": "17.19999998807907",
+        "frameP95Ms": "23.700000017881393",
+        "frameLongestMs": "37.60000002384186",
+        "frameSampleCount": "111",
+        "idleRenderedFrames": "11",
+        "worldMode": "fixture",
+        "worldRevision": "0",
+        "activeWorlds": "1",
+        "cameraType": "PerspectiveCamera",
+        "lifeAgents": "24",
+        "lifeClock": "2.033333333333336",
+        "lifeVisible": "true",
+        "lifeCpuP50Ms": "0.10000002384185791",
+        "lifeCpuP95Ms": "0.800000011920929",
+        "lifeCpuSamples": "120",
+        "lifeGraphReady": "true",
+        "lifeTier": "mid",
+        "povMode": "none",
+        "audioContexts": "0",
+        "audioVoices": "0",
+        "audioNodes": "0",
+        "audioTotalNodes": "0",
+        "audioState": "suspended",
+        "audioListeners": "3",
+        "treesVisible": "true",
+        "labelsVisible": "true",
+        "atmosphereEnabled": "true",
+        "season": "wet",
+        "floodLevel": "0",
+        "night": "false",
+        "weather": "sunny",
+        "selectedDate": "2026-06-21",
+        "timeMinutes": "722",
+        "festival": "normal",
+        "astronomySynthetic": "true",
+        "simulationLabel": "simulation"
+      },
+      "controls": [
+        {
+          "class": "private-world-panel pointer-events-auto absolute z-20 flex max-h-[calc(100dvh-8rem)] max-w-sm flex-col overflow-hidden rounded-xl border border-border bg-background/95 p-3.5 shadow-xl backdrop-blur left-4 top-60 w-fit",
+          "rect": {
+            "x": 16,
+            "y": 176,
+            "width": 222.609375,
+            "height": 74
+          }
+        },
+        {
+          "class": "h6-map-controls-anchor absolute right-[max(1rem,env(safe-area-inset-right))] z-30 transition-[opacity,visibility] duration-200 motion-reduce:transition-none visible opacity-100",
+          "rect": {
+            "x": 426,
+            "y": 182,
+            "width": 298,
+            "height": 100
+          }
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 740,
+        "height": 390
+      },
+      "mode": "walk",
+      "scene": {
+        "testid": "demo-scene",
+        "tsdSource": "/src/components/overlay/SceneViewport.tsx:115:7",
+        "memoryPinMeshes": "1",
+        "memoryPins": "3",
+        "meshBuildLatencyMs": "24.599999994039536",
+        "memoryRenderTargets": "0",
+        "memoryTextures": "3",
+        "memoryGeometries": "42",
+        "memoryTourActive": "false",
+        "drawCalls": "33",
+        "triangles": "3904",
+        "renderedFrames": "114",
+        "frameP50Ms": "17.19999998807907",
+        "frameP95Ms": "23.700000017881393",
+        "frameLongestMs": "37.60000002384186",
+        "frameSampleCount": "111",
+        "idleRenderedFrames": "12",
+        "worldMode": "fixture",
+        "worldRevision": "0",
+        "activeWorlds": "1",
+        "cameraType": "PerspectiveCamera",
+        "lifeAgents": "24",
+        "lifeClock": "2.033333333333336",
+        "lifeVisible": "true",
+        "lifeCpuP50Ms": "0.10000002384185791",
+        "lifeCpuP95Ms": "0.800000011920929",
+        "lifeCpuSamples": "121",
+        "lifeGraphReady": "true",
+        "lifeTier": "mid",
+        "povMode": "walk",
+        "audioContexts": "0",
+        "audioVoices": "0",
+        "audioNodes": "0",
+        "audioTotalNodes": "0",
+        "audioState": "suspended",
+        "audioListeners": "3",
+        "treesVisible": "true",
+        "labelsVisible": "true",
+        "atmosphereEnabled": "true",
+        "season": "wet",
+        "floodLevel": "0",
+        "night": "false",
+        "weather": "sunny",
+        "selectedDate": "2026-06-21",
+        "timeMinutes": "722",
+        "festival": "normal",
+        "astronomySynthetic": "true",
+        "simulationLabel": "simulation"
+      },
+      "controls": [
+        {
+          "class": "private-world-panel pointer-events-auto absolute z-20 flex max-h-[calc(100dvh-8rem)] max-w-sm flex-col overflow-hidden rounded-xl border border-border bg-background/95 p-3.5 shadow-xl backdrop-blur left-4 top-60 w-fit",
+          "rect": {
+            "x": 16,
+            "y": 176,
+            "width": 222.609375,
+            "height": 74
+          }
+        },
+        {
+          "class": "h6-map-controls-anchor absolute right-[max(1rem,env(safe-area-inset-right))] z-30 transition-[opacity,visibility] duration-200 motion-reduce:transition-none visible opacity-100",
+          "rect": {
+            "x": 426,
+            "y": 182,
+            "width": 298,
+            "height": 100
+          }
+        },
+        {
+          "class": "p9-pov-controls pointer-events-auto glass p-2 space-y-1",
+          "rect": {
+            "x": 16,
+            "y": 176,
+            "width": 320,
+            "height": 110
+          }
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 740,
+        "height": 390
+      },
+      "mode": "ride",
+      "scene": {
+        "testid": "demo-scene",
+        "tsdSource": "/src/components/overlay/SceneViewport.tsx:115:7",
+        "memoryPinMeshes": "1",
+        "memoryPins": "3",
+        "meshBuildLatencyMs": "24.599999994039536",
+        "memoryRenderTargets": "0",
+        "memoryTextures": "3",
+        "memoryGeometries": "42",
+        "memoryTourActive": "false",
+        "drawCalls": "33",
+        "triangles": "3904",
+        "renderedFrames": "114",
+        "frameP50Ms": "17.19999998807907",
+        "frameP95Ms": "23.700000017881393",
+        "frameLongestMs": "37.60000002384186",
+        "frameSampleCount": "111",
+        "idleRenderedFrames": "13",
+        "worldMode": "fixture",
+        "worldRevision": "0",
+        "activeWorlds": "1",
+        "cameraType": "PerspectiveCamera",
+        "lifeAgents": "24",
+        "lifeClock": "2.033333333333336",
+        "lifeVisible": "true",
+        "lifeCpuP50Ms": "0.09999999403953552",
+        "lifeCpuP95Ms": "0.800000011920929",
+        "lifeCpuSamples": "122",
+        "lifeGraphReady": "true",
+        "lifeTier": "mid",
+        "povMode": "ride",
+        "audioContexts": "0",
+        "audioVoices": "0",
+        "audioNodes": "0",
+        "audioTotalNodes": "0",
+        "audioState": "suspended",
+        "audioListeners": "3",
+        "treesVisible": "true",
+        "labelsVisible": "true",
+        "atmosphereEnabled": "true",
+        "season": "wet",
+        "floodLevel": "0",
+        "night": "false",
+        "weather": "sunny",
+        "selectedDate": "2026-06-21",
+        "timeMinutes": "722",
+        "festival": "normal",
+        "astronomySynthetic": "true",
+        "simulationLabel": "simulation"
+      },
+      "controls": [
+        {
+          "class": "private-world-panel pointer-events-auto absolute z-20 flex max-h-[calc(100dvh-8rem)] max-w-sm flex-col overflow-hidden rounded-xl border border-border bg-background/95 p-3.5 shadow-xl backdrop-blur left-4 top-60 w-fit",
+          "rect": {
+            "x": 16,
+            "y": 176,
+            "width": 222.609375,
+            "height": 74
+          }
+        },
+        {
+          "class": "h6-map-controls-anchor absolute right-[max(1rem,env(safe-area-inset-right))] z-30 transition-[opacity,visibility] duration-200 motion-reduce:transition-none visible opacity-100",
+          "rect": {
+            "x": 426,
+            "y": 182,
+            "width": 298,
+            "height": 100
+          }
+        },
+        {
+          "class": "p9-pov-controls pointer-events-auto glass p-2 space-y-1",
+          "rect": {
+            "x": 16,
+            "y": 108,
+            "width": 320,
+            "height": 178
+          }
+        }
+      ]
+    }
+  ],
+  "logs": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: net::ERR_FAILED"
+    }
+  ]
+}

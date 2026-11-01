@@ -1,4 +1,5 @@
 import * as THREE from "three";
+export { calculatePlanScaleBar, type PlanScaleBar } from "./planScale";
 
 export interface PlanCameraConfig {
   centre: THREE.Vector3;
@@ -6,11 +7,6 @@ export interface PlanCameraConfig {
   viewportWidthCss: number;
   viewportHeightCss: number;
   zoom: number;
-}
-
-export interface PlanScaleBar {
-  metres: number;
-  cssPixels: number;
 }
 
 const NORTH_UP = new THREE.Vector3(0, 0, -1);
@@ -56,23 +52,6 @@ export function metresPerCssPixel(camera: THREE.OrthographicCamera, viewportHeig
     throw new Error("PLAN_SCALE_INVALID_CAMERA_ZOOM");
   }
   return (camera.top - camera.bottom) / camera.zoom / viewportHeightCss;
-}
-
-export function calculatePlanScaleBar(metresPerPixel: number, targetCssPixels = 120): PlanScaleBar {
-  if (!Number.isFinite(metresPerPixel) || metresPerPixel <= 0) {
-    throw new Error("PLAN_SCALE_INVALID_METRES_PER_PIXEL");
-  }
-  if (!Number.isFinite(targetCssPixels) || targetCssPixels <= 0) {
-    throw new Error("PLAN_SCALE_INVALID_TARGET_WIDTH");
-  }
-
-  const targetMetres = metresPerPixel * targetCssPixels;
-  const exponent = Math.floor(Math.log10(targetMetres));
-  const base = 10 ** exponent;
-  const candidates = [1, 2, 5, 10].map((factor) => factor * base);
-  const metres = candidates.filter((candidate) => candidate <= targetMetres).at(-1) ?? base / 10;
-
-  return { metres, cssPixels: metres / metresPerPixel };
 }
 
 export function projectPlanPoint(camera: THREE.OrthographicCamera, point: THREE.Vector3) {

@@ -1,0 +1,21 @@
+{
+  "syntheticOnly": true,
+  "sourceSha": "59f6d6881261a542e1f1b52b4d0d2d6e86f4834a",
+  "platform": "WINDOWS_LOCAL_WEBKIT",
+  "baselineStatus": "timedOut",
+  "baselineDurationMs": 92844,
+  "candidateResults": [
+    {
+      "test": "demo labels, privacy, noindex and graceful 3D capability branch",
+      "status": "passed",
+      "durationMs": 16781
+    },
+    {
+      "test": "20 mode/route/package/capture cycles keep one ready canvas and no page errors",
+      "status": "timedOut",
+      "durationMs": 91569
+    }
+  ],
+  "comparison": "NOT_VERIFIED_CENSORED",
+  "note": "Both old baseline and candidate exceed the unchanged local H6 test timeout. No passing timing/delta claimed; CI calibration and native GPU checks remain separate."
+}

@@ -1,0 +1,54 @@
+{
+  "syntheticOnly": true,
+  "scriptSha256": "5a771bae5d48a1beb948e738691aca07d8919ca803d7543bd412c7ccbf19647c",
+  "label": "DIAGNOSTIC_INSUFFICIENT_SAMPLES",
+  "goalMs": 100,
+  "batches": 1,
+  "pairs": 1,
+  "ordering": "AB then BA alternating batches",
+  "summary": {
+    "static-300": {
+      "before": {
+        "complete": true,
+        "failures": [],
+        "add": {
+          "n": 1,
+          "min": 671.9000000059605,
+          "p50": 671.9000000059605,
+          "p95": 671.9000000059605,
+          "max": 671.9000000059605
+        },
+        "delete": {
+          "n": 1,
+          "min": 287.89999997615814,
+          "p50": 287.89999997615814,
+          "p95": 287.89999997615814,
+          "max": 287.89999997615814
+        }
+      },
+      "after": {
+        "complete": true,
+        "failures": [],
+        "add": {
+          "n": 1,
+          "min": 211.69999998807907,
+          "p50": 211.69999998807907,
+          "p95": 211.69999998807907,
+          "max": 211.69999998807907
+        },
+        "delete": {
+          "n": 1,
+          "min": 200.2999999821186,
+          "p50": 200.2999999821186,
+          "p95": 200.2999999821186,
+          "max": 200.2999999821186
+        }
+      }
+    }
+  },
+  "files": [
+    "static-300-0-before.json",
+    "static-300-0-after.json"
+  ],
+  "limitation": "Presentation opportunity is an upper bound. GPU completion is fence-observed; no GPU-memory or physical-GPU-time claim. Failed/censored observations remain in raw and prevent complete=true."
+}

@@ -35,6 +35,7 @@ function Home() {
   // The expanded bottom sheet sits on top of the map controls, so hide them until it is back to peek.
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const lang = useAppStore((s) => s.language);
+  const viewMode = useAppStore((s) => s.viewMode);
   useEffect(() => {
     document.documentElement.lang = lang;
   }, [lang]);
@@ -47,7 +48,7 @@ function Home() {
   }, []);
 
   return (
-    <main className="fixed inset-0 overflow-hidden overscroll-none">
+    <main className="fixed inset-0 overflow-hidden overscroll-none" data-view-mode={viewMode}>
       <SceneViewport dockExpanded={mobile && sheetExpanded} />
       <div
         className="pointer-events-none absolute inset-0"

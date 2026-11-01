@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "syntheticOnly": true,
+  "head": "ddc3246b38fea900c3e9413d146061fbaa2a7861",
+  "buildSha": "ddc3246b38fea900c3e9413d146061fbaa2a7861",
+  "runtime": "Bun loopback / built Cloudflare module + ASSETS",
+  "scannedFiles": 48,
+  "errors": [],
+  "externalRequests": 0,
+  "allowedFontAborts": 1,
+  "checks": [
+    "ready WebGL2 SwiftShader",
+    "synthetic add/save/guest/tour/exit UI",
+    "one canvas",
+    "no unconsented IDB",
+    "SSR/build sentinel absent",
+    "no hydration/console shader errors",
+    "no outside requests"
+  ]
+}

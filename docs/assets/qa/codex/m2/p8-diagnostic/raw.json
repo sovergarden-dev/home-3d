@@ -1,0 +1,267 @@
+{
+  "syntheticOnly": true,
+  "family": "p8",
+  "scriptSha256": "436817cb6105a6e10205ea24fd4731941d2de0ba0c58bcfc97874be40e6e0c5a",
+  "environment": {
+    "sourceSha": "0b56c490b2b04b56294d6742645559b0e459f7b5",
+    "harnessSha": "0b56c490b2b04b56294d6742645559b0e459f7b5",
+    "platform": "WINDOWS_LOCAL",
+    "syntheticOnly": true,
+    "rendererClass": "REAL_GPU",
+    "headed": true,
+    "channel": "chrome",
+    "browserVersion": "152.0.7977.76",
+    "driverVersion": "32.0.101.7082",
+    "dprRequest": "native",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x000046D1) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "vendor": "Google Inc. (Intel)",
+    "dpr": 1,
+    "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+  },
+  "fixtureSha256": "01e1eb6847932115caf945b4099a2a1864a86ec508163ac72f94c58a480a3b89",
+  "randomSeed": 81273,
+  "clock": {
+    "date": "2026-06-21",
+    "startMinutes": 720,
+    "speed": 0
+  },
+  "rows": [
+    {
+      "round": 0,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 73.09999999403954,
+      "submissionMs": 23.900000005960464,
+      "gpuCompletionObservedMs": 58.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 69.19999998807907,
+      "submissionMs": 28.900000005960464,
+      "gpuCompletionObservedMs": 54.599999994039536,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 58.29999998211861,
+      "submissionMs": 21.5,
+      "gpuCompletionObservedMs": 44.79999998211861,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 73.59999999403954,
+      "submissionMs": 21.099999994039536,
+      "gpuCompletionObservedMs": 56.80000001192093,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 57.79999998211861,
+      "submissionMs": 19.19999998807907,
+      "gpuCompletionObservedMs": 43.29999998211861,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 55.39999997615814,
+      "submissionMs": 17.899999976158142,
+      "gpuCompletionObservedMs": 38.89999997615814,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 60.80000001192093,
+      "submissionMs": 20.900000005960464,
+      "gpuCompletionObservedMs": 42.400000005960464,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 58.5,
+      "submissionMs": 16.400000005960464,
+      "gpuCompletionObservedMs": 41.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 58.80000001192093,
+      "submissionMs": 16,
+      "gpuCompletionObservedMs": 41.80000001192093,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 72.30000001192093,
+      "submissionMs": 29.5,
+      "gpuCompletionObservedMs": 56.900000005960464,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 60.5,
+      "submissionMs": 21.30000001192093,
+      "gpuCompletionObservedMs": 45.20000001788139,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 80.89999997615814,
+      "submissionMs": 35.79999998211861,
+      "gpuCompletionObservedMs": 64,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 56.89999997615814,
+      "submissionMs": 24.099999994039536,
+      "gpuCompletionObservedMs": 44.599999994039536,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 59.39999997615814,
+      "submissionMs": 21.299999982118607,
+      "gpuCompletionObservedMs": 43.69999998807907,
+      "newProgramLinks": 0
+    }
+  ],
+  "frameRounds": [
+    {
+      "round": 0,
+      "intervalsMs": [
+        57.900000005960464,
+        66,
+        65.19999998807907,
+        56.599999994039536,
+        64.40000000596046,
+        65.90000000596046,
+        56.099999994039536,
+        65.09999999403954,
+        67.90000000596046,
+        53.900000005960464,
+        66,
+        66,
+        57.5,
+        63.80000001192093,
+        67.59999999403954,
+        54,
+        64.5,
+        69,
+        54.19999998807907,
+        65.7000000178814,
+        66.09999999403954,
+        55.29999998211861,
+        65.80000001192093,
+        67.19999998807907,
+        53,
+        65.10000002384186,
+        69.2999999821186,
+        53.70000001788139,
+        67,
+        62.29999998211861,
+        74.40000000596046,
+        66.69999998807907,
+        65.7000000178814,
+        66.90000000596046,
+        56.5,
+        64,
+        69.09999999403954,
+        54.099999994039536,
+        64.90000000596046,
+        54.5,
+        62.19999998807907,
+        68.59999999403954,
+        55.80000001192093,
+        63.099999994039536,
+        78.5,
+        87.30000001192093
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 53,
+        "p50": 65.1000000089407,
+        "p95": 74.40000000596046,
+        "max": 87.30000001192093
+      }
+    }
+  ],
+  "errors": [],
+  "complete": true,
+  "mutedAudioOutput": true,
+  "method": "Real input event to matching main-frame submission, observed GPU fence completion and following RAF. Drag intervals are actual main-frame submissions, not GPU execution time. No first-audible-sample claim; no P8 full-lifecycle certification."
+}

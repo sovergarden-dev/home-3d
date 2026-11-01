@@ -1,0 +1,819 @@
+{
+  "syntheticOnly": true,
+  "family": "p9",
+  "scriptSha256": "436817cb6105a6e10205ea24fd4731941d2de0ba0c58bcfc97874be40e6e0c5a",
+  "environment": {
+    "sourceSha": "487156d0a8a266161f8c00ad1096d5efed081429",
+    "harnessSha": "487156d0a8a266161f8c00ad1096d5efed081429",
+    "platform": "WINDOWS_LOCAL",
+    "syntheticOnly": true,
+    "rendererClass": "REAL_GPU",
+    "headed": true,
+    "channel": "chrome",
+    "browserVersion": "152.0.7977.76",
+    "driverVersion": "32.0.101.7082",
+    "dprRequest": "native",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x000046D1) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "vendor": "Google Inc. (Intel)",
+    "dpr": 1,
+    "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+  },
+  "fixtureSha256": "built-in-synthetic-demo",
+  "randomSeed": 81273,
+  "clock": {
+    "date": "2026-06-21",
+    "startMinutes": 720,
+    "speed": 0
+  },
+  "rows": [
+    {
+      "round": 0,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 124.19999998807907,
+      "submissionMs": 81.19999998807907,
+      "gpuCompletionObservedMs": 110.40000000596046,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 58.79999998211861,
+      "submissionMs": 22.599999994039536,
+      "gpuCompletionObservedMs": 42,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 1,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 77.40000000596046,
+      "submissionMs": 28.80000001192093,
+      "gpuCompletionObservedMs": 62.60000002384186,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 1,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 61.099999994039536,
+      "submissionMs": 21.899999976158142,
+      "gpuCompletionObservedMs": 44.19999998807907,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 2,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 82.09999999403954,
+      "submissionMs": 28.69999998807907,
+      "gpuCompletionObservedMs": 66.2999999821186,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 2,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 61.5,
+      "submissionMs": 21.899999976158142,
+      "gpuCompletionObservedMs": 44.69999998807907,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 3,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 68.90000000596046,
+      "submissionMs": 27.19999998807907,
+      "gpuCompletionObservedMs": 51.900000005960464,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 3,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 60.5,
+      "submissionMs": 22.19999998807907,
+      "gpuCompletionObservedMs": 43.599999994039536,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 4,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 78,
+      "submissionMs": 28.899999976158142,
+      "gpuCompletionObservedMs": 63.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 4,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 61.599999994039536,
+      "submissionMs": 21.299999982118607,
+      "gpuCompletionObservedMs": 44.599999994039536,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 5,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 75,
+      "submissionMs": 28.900000005960464,
+      "gpuCompletionObservedMs": 59.19999998807907,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 5,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 62.19999998807907,
+      "submissionMs": 21.400000005960464,
+      "gpuCompletionObservedMs": 45.30000001192093,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 6,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 92.09999999403954,
+      "submissionMs": 37.400000005960464,
+      "gpuCompletionObservedMs": 77.40000000596046,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 6,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 108,
+      "submissionMs": 68.90000000596046,
+      "gpuCompletionObservedMs": 91.10000002384186,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 7,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 78.10000002384186,
+      "submissionMs": 30.400000005960464,
+      "gpuCompletionObservedMs": 64.7000000178814,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 7,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 59.900000005960464,
+      "submissionMs": 22.69999998807907,
+      "gpuCompletionObservedMs": 43.099999994039536,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 8,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 77.90000000596046,
+      "submissionMs": 28.5,
+      "gpuCompletionObservedMs": 62.80000001192093,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 8,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 61.400000005960464,
+      "submissionMs": 21.80000001192093,
+      "gpuCompletionObservedMs": 44.70000001788139,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 9,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 77,
+      "submissionMs": 29.099999994039536,
+      "gpuCompletionObservedMs": 63.19999998807907,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 9,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 59.70000001788139,
+      "submissionMs": 22.400000005960464,
+      "gpuCompletionObservedMs": 43.400000005960464,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 10,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 72,
+      "submissionMs": 28.200000017881393,
+      "gpuCompletionObservedMs": 57.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 10,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 61.099999994039536,
+      "submissionMs": 22.400000005960464,
+      "gpuCompletionObservedMs": 44.30000001192093,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 11,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 74.90000000596046,
+      "submissionMs": 28.900000005960464,
+      "gpuCompletionObservedMs": 61.30000001192093,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 11,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 61.39999997615814,
+      "submissionMs": 21.899999976158142,
+      "gpuCompletionObservedMs": 44.39999997615814,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 12,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 71.7000000178814,
+      "submissionMs": 28.80000001192093,
+      "gpuCompletionObservedMs": 57.10000002384186,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 12,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 61.900000005960464,
+      "submissionMs": 21.600000023841858,
+      "gpuCompletionObservedMs": 44.70000001788139,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 13,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 76.19999998807907,
+      "submissionMs": 28.599999994039536,
+      "gpuCompletionObservedMs": 62.099999994039536,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 13,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 56.599999994039536,
+      "submissionMs": 21.700000017881393,
+      "gpuCompletionObservedMs": 40.400000005960464,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 14,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 74.09999999403954,
+      "submissionMs": 28.5,
+      "gpuCompletionObservedMs": 60,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 14,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 61.5,
+      "submissionMs": 21.599999994039536,
+      "gpuCompletionObservedMs": 44.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 15,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 74,
+      "submissionMs": 28.899999976158142,
+      "gpuCompletionObservedMs": 59.89999997615814,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 15,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 60.30000001192093,
+      "submissionMs": 22.200000017881393,
+      "gpuCompletionObservedMs": 43.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 16,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 77.5,
+      "submissionMs": 30.599999994039536,
+      "gpuCompletionObservedMs": 62.900000005960464,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 16,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 61.599999994039536,
+      "submissionMs": 21,
+      "gpuCompletionObservedMs": 44.70000001788139,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 17,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 71.5,
+      "submissionMs": 29.099999994039536,
+      "gpuCompletionObservedMs": 56.400000005960464,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 17,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 61,
+      "submissionMs": 21.80000001192093,
+      "gpuCompletionObservedMs": 44,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 18,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 87.90000000596046,
+      "submissionMs": 32.30000001192093,
+      "gpuCompletionObservedMs": 73.59999999403954,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 18,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 62,
+      "submissionMs": 23,
+      "gpuCompletionObservedMs": 45.099999994039536,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 19,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 87.90000000596046,
+      "submissionMs": 36.20000001788139,
+      "gpuCompletionObservedMs": 72.90000000596046,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 19,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 76.80000001192093,
+      "submissionMs": 45.80000001192093,
+      "gpuCompletionObservedMs": 60,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 20,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 77.59999999403954,
+      "submissionMs": 29.5,
+      "gpuCompletionObservedMs": 64.40000000596046,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 20,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 61.30000001192093,
+      "submissionMs": 21.400000005960464,
+      "gpuCompletionObservedMs": 44.400000005960464,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 21,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 77.7999999821186,
+      "submissionMs": 29.899999976158142,
+      "gpuCompletionObservedMs": 63.099999994039536,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 21,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 62.29999998211861,
+      "submissionMs": 21.19999998807907,
+      "gpuCompletionObservedMs": 45.39999997615814,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 22,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 70.5,
+      "submissionMs": 30.299999982118607,
+      "gpuCompletionObservedMs": 54.69999998807907,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 22,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 62,
+      "submissionMs": 22.19999998807907,
+      "gpuCompletionObservedMs": 45,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 23,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 76.69999998807907,
+      "submissionMs": 28.19999998807907,
+      "gpuCompletionObservedMs": 60.599999994039536,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 23,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 61.69999998807907,
+      "submissionMs": 20.5,
+      "gpuCompletionObservedMs": 44.900000005960464,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 24,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 75.09999999403954,
+      "submissionMs": 28.700000017881393,
+      "gpuCompletionObservedMs": 61.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 24,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 61.80000001192093,
+      "submissionMs": 22,
+      "gpuCompletionObservedMs": 44.80000001192093,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 25,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 74.19999998807907,
+      "submissionMs": 29.19999998807907,
+      "gpuCompletionObservedMs": 61.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 25,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 61.69999998807907,
+      "submissionMs": 21.900000005960464,
+      "gpuCompletionObservedMs": 45,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 26,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 78.40000000596046,
+      "submissionMs": 29.599999994039536,
+      "gpuCompletionObservedMs": 63.80000001192093,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 26,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 57.900000005960464,
+      "submissionMs": 23.19999998807907,
+      "gpuCompletionObservedMs": 41.80000001192093,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 27,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 74.2999999821186,
+      "submissionMs": 30,
+      "gpuCompletionObservedMs": 58,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 27,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 62.5,
+      "submissionMs": 21.69999998807907,
+      "gpuCompletionObservedMs": 45.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 28,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 77.40000000596046,
+      "submissionMs": 29.5,
+      "gpuCompletionObservedMs": 63.400000005960464,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 28,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 62.30000001192093,
+      "submissionMs": 21.200000017881393,
+      "gpuCompletionObservedMs": 44.900000005960464,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 29,
+      "name": "cold-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 77.19999998807907,
+      "submissionMs": 28.900000005960464,
+      "gpuCompletionObservedMs": 62.400000005960464,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 29,
+      "name": "warm-sound-on",
+      "expected": {
+        "audioState": "running",
+        "audioContexts": "1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 61.70000001788139,
+      "submissionMs": 21.30000001192093,
+      "gpuCompletionObservedMs": 45,
+      "newProgramLinks": 0
+    }
+  ],
+  "frameRounds": [],
+  "errors": [],
+  "complete": true,
+  "mutedAudioOutput": true,
+  "method": "Real input event to matching main-frame submission, observed GPU fence completion and following RAF. Drag intervals are actual main-frame submissions, not GPU execution time. No first-audible-sample claim; no P8 full-lifecycle certification."
+}

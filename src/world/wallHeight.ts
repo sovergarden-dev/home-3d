@@ -30,7 +30,9 @@ export function assessWallHeight(
   }
   if (
     evidence?.quality === "inferred" &&
-    (feature.levels !== undefined || evidence.source === "manual_override")
+    (feature.levels !== undefined ||
+      evidence.source === "manual_override" ||
+      evidence.source === "open_buildings")
   ) {
     return { status: "inferred", renderedHeight: feature.wallHeight };
   }

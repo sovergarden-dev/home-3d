@@ -1,0 +1,95 @@
+{
+  "cssSource": "https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Lora:ital,wght@1,400;1,500&display=swap",
+  "files": [
+    {
+      "family": "Be Vietnam Pro",
+      "subset": "vietnamese",
+      "file": "be-vietnam-pro-vietnamese-1b48c66409b3.woff2",
+      "bytes": 12252,
+      "sha256": "1b48c66409b3e5a338c672e255aa3419b32d309466ea5b34e801d97601950bb8",
+      "source": "https://fonts.gstatic.com/s/bevietnampro/v12/QdVMSTAyLFyeg_IDWvOJmVES_HScJ286Rb0bcw.woff2",
+      "license": "OFL-1.1"
+    },
+    {
+      "family": "Be Vietnam Pro",
+      "subset": "latin",
+      "file": "be-vietnam-pro-latin-d69da10e8642.woff2",
+      "bytes": 21908,
+      "sha256": "d69da10e86422161a72688d01d139f57ab6923277612c085c977eab79d2d2925",
+      "source": "https://fonts.gstatic.com/s/bevietnampro/v12/QdVMSTAyLFyeg_IDWvOJmVES_HScJ281Rb0.woff2",
+      "license": "OFL-1.1"
+    },
+    {
+      "family": "Be Vietnam Pro",
+      "subset": "vietnamese",
+      "file": "be-vietnam-pro-vietnamese-dc085e2fba34.woff2",
+      "bytes": 11532,
+      "sha256": "dc085e2fba3414e5c5bf1e6172f921a9f81c5859946a4ed3d63c1e470d96a9e2",
+      "source": "https://fonts.gstatic.com/s/bevietnampro/v12/QdVPSTAyLFyeg_IDWvOJmVES_Hw4BXoKZA.woff2",
+      "license": "OFL-1.1"
+    },
+    {
+      "family": "Be Vietnam Pro",
+      "subset": "latin",
+      "file": "be-vietnam-pro-latin-03d1b589cff1.woff2",
+      "bytes": 21168,
+      "sha256": "03d1b589cff172e1a670b3573e731d3380bc326f80cf83b0d3504e3188e2e074",
+      "source": "https://fonts.gstatic.com/s/bevietnampro/v12/QdVPSTAyLFyeg_IDWvOJmVES_Hw3BXo.woff2",
+      "license": "OFL-1.1"
+    },
+    {
+      "family": "Be Vietnam Pro",
+      "subset": "vietnamese",
+      "file": "be-vietnam-pro-vietnamese-86341610cbe9.woff2",
+      "bytes": 12172,
+      "sha256": "86341610cbe907eecf461c9159c168d5efb52bb1a33963813a08f520555d8e66",
+      "source": "https://fonts.gstatic.com/s/bevietnampro/v12/QdVMSTAyLFyeg_IDWvOJmVES_HTEJm86Rb0bcw.woff2",
+      "license": "OFL-1.1"
+    },
+    {
+      "family": "Be Vietnam Pro",
+      "subset": "latin",
+      "file": "be-vietnam-pro-latin-b621f77d35f7.woff2",
+      "bytes": 21892,
+      "sha256": "b621f77d35f777023aa11ca524462d511b4b28a813adbc0e9d15a10fc61dfe4e",
+      "source": "https://fonts.gstatic.com/s/bevietnampro/v12/QdVMSTAyLFyeg_IDWvOJmVES_HTEJm81Rb0.woff2",
+      "license": "OFL-1.1"
+    },
+    {
+      "family": "Be Vietnam Pro",
+      "subset": "vietnamese",
+      "file": "be-vietnam-pro-vietnamese-97658c6f9a38.woff2",
+      "bytes": 12176,
+      "sha256": "97658c6f9a384f29a3005c3d96e2a0d1c810192cf68979071c290f5a377a9f99",
+      "source": "https://fonts.gstatic.com/s/bevietnampro/v12/QdVMSTAyLFyeg_IDWvOJmVES_HToIW86Rb0bcw.woff2",
+      "license": "OFL-1.1"
+    },
+    {
+      "family": "Be Vietnam Pro",
+      "subset": "latin",
+      "file": "be-vietnam-pro-latin-9503dec2a7c5.woff2",
+      "bytes": 22032,
+      "sha256": "9503dec2a7c532c8331e9600bcafea287a4fd208573b8668d85ab8d8de1863c7",
+      "source": "https://fonts.gstatic.com/s/bevietnampro/v12/QdVMSTAyLFyeg_IDWvOJmVES_HToIW81Rb0.woff2",
+      "license": "OFL-1.1"
+    },
+    {
+      "family": "Lora",
+      "subset": "vietnamese",
+      "file": "lora-vietnamese-3acfc1db6992.woff2",
+      "bytes": 9344,
+      "sha256": "3acfc1db6992c092405884cf12763e512e21229cc040a1eea94549869006736a",
+      "source": "https://fonts.gstatic.com/s/lora/v37/0QIhMX1D_JOuMw_LLvtLp_A.woff2",
+      "license": "OFL-1.1"
+    },
+    {
+      "family": "Lora",
+      "subset": "latin",
+      "file": "lora-latin-d824d807d4d8.woff2",
+      "bytes": 40772,
+      "sha256": "d824d807d4d832d12c87932d0b8ec1314dcfd502157a56dee6bb04cf8a3768ae",
+      "source": "https://fonts.gstatic.com/s/lora/v37/0QIhMX1D_JOuMw_LIftL.woff2",
+      "license": "OFL-1.1"
+    }
+  ]
+}

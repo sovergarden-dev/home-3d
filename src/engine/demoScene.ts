@@ -1,3 +1,4 @@
+import { createIllustrativeDetails } from "./illustration/details";
 import { createLifeRuntime } from "./life/runtime";
 import { bindLifeCommands, resetLifeSession, updateLifeStatus } from "./life/session";
 import * as THREE from "three";
@@ -43,9 +44,9 @@ import {
   clampCameraPose,
   DEFAULT_CAMERA_POSE,
   catmullCameraPose,
-  poseToOrbit,
   type CameraPose,
 } from "@/memories/camera";
+import { poseToOrbit } from "./view/memoryOrbit";
 import { buildMemoryHash, parseMemoryHash } from "@/memories/deepLink";
 import { bindPostcardCapture } from "@/memories/postcard";
 
@@ -234,7 +235,12 @@ export function createDemoScene(
   let lastFrame = 0;
   let renderRevision = 0;
   let lastWorldRevision = -1;
-  const audio = createDemoAudio();
+  const audio = createDemoAudio({
+    onStateChange: () => {
+      lastLifeMetricsAt = 0;
+      render();
+    },
+  });
   let life: ReturnType<typeof createLifeRuntime> | null = null;
   let lastLifeMetricsAt = 0;
   let lastPassbyAt = 0;
@@ -546,6 +552,8 @@ export function createDemoScene(
   host.dataset["memoryPinMeshes"] = "1";
   host.dataset["memoryPins"] = String(memoryPins.mesh.count);
 
+  let illustrativeDetails: ReturnType<typeof createIllustrativeDetails> | null = null;
+
   function mountWorld() {
     const snapshot = worldDataProvider.getSnapshot();
     currentWorld = snapshot;
@@ -554,6 +562,8 @@ export function createDemoScene(
     life = null;
     audio.notifyPackageReplaced();
     if (useAppStore.getState().soundOn) useAppStore.setState({ soundOn: false });
+    illustrativeDetails?.dispose();
+    illustrativeDetails = null;
     worldBundle?.dispose();
     const meshBuildStartedAt = performance.now();
     worldBundle = buildWorldMeshes(snapshot.world, materialFactory);
@@ -592,6 +602,8 @@ export function createDemoScene(
     life = null;
     audio.notifyPackageReplaced();
     if (useAppStore.getState().soundOn) useAppStore.setState({ soundOn: false });
+    illustrativeDetails?.dispose();
+    illustrativeDetails = null;
     worldBundle?.dispose();
     worldBundle = null;
   }
@@ -775,6 +787,21 @@ export function createDemoScene(
   }
 
   function updateLayerVisibility() {
+    const showDetails =
+      useAppStore.getState().illustrativeDetails && useAppStore.getState().viewMode === "diorama";
+    if (showDetails && "world" in currentWorld && !illustrativeDetails) {
+      illustrativeDetails = createIllustrativeDetails(
+        currentWorld.world,
+        renderer.capabilities.maxTextureSize <= 4096 ? "low" : "mid",
+      );
+    }
+    if (showDetails && illustrativeDetails) scene.add(illustrativeDetails.group);
+    else illustrativeDetails?.group.removeFromParent();
+    host.dataset["illustrativeDetails"] = String(showDetails);
+    host.dataset["illustrativeInstances"] = String(
+      showDetails ? (illustrativeDetails?.instances ?? 0) : 0,
+    );
+
     if (!worldBundle) return;
     const state = useAppStore.getState();
     worldBundle.setLayerVisible("trees", state.showTrees);
@@ -785,6 +812,10 @@ export function createDemoScene(
 
   function render(activeAnimation = false) {
     if (disposed || document.hidden || !host.clientWidth || !host.clientHeight) return;
+    const pinMode = useAppStore.getState().viewMode;
+    memoryPins.group.visible =
+      worldRenderable() && (pinMode === "diorama" || pinMode === "topdown");
+    memoryPins.setSelected(memoryTour?.memories[memoryTour.index]?.id ?? null);
     if (currentWorld.mode === "private-error" || !worldBundle) {
       marker.style.visibility = "hidden";
       useAppStore.getState().setPlanMeasurement(null);
@@ -1027,6 +1058,7 @@ export function createDemoScene(
 
   function onPlanPointerDown(event: PointerEvent) {
     if (!worldRenderable()) return;
+    if (memoryPins.setHovered(null)) render();
     const isPlan = useAppStore.getState().viewMode === "topdown";
     if (isPlan) canvas.setPointerCapture(event.pointerId);
     if (planPointers.size === 0) pointerGestureWasMultiTouch = false;
@@ -1065,6 +1097,17 @@ export function createDemoScene(
 
   function onPlanPointerMove(event: PointerEvent) {
     if (!worldRenderable()) return;
+    if (planPointers.size === 0) {
+      const rect = canvas.getBoundingClientRect();
+      const hovered = memoryPins.pick(
+        event.clientX - rect.left,
+        event.clientY - rect.top,
+        activeCamera,
+        rect.width,
+        rect.height,
+      );
+      if (memoryPins.setHovered(hovered)) render();
+    }
     if (useAppStore.getState().viewMode !== "topdown") return;
     const previous = planPointers.get(event.pointerId);
     if (!previous) return;
@@ -1103,14 +1146,18 @@ export function createDemoScene(
       const hiddenLayers = new Set<string>();
       if (!worldBundle.layers.trees.visible) hiddenLayers.add("trees");
       if (!worldBundle.layers.labels.visible) hiddenLayers.add("labels");
-      const pinHit = new THREE.Raycaster();
-      pinHit.setFromCamera(pointer, activeCamera);
-      const pinIntersections = pinHit.intersectObject(memoryPins.mesh, false);
-      const pin = pinIntersections[0];
-      if (pin && Number.isInteger(pin.instanceId)) {
-        const memory = memoryPins.memories[pin.instanceId ?? -1];
-        if (memory) flyMemory(memory);
-      } else
+      const pinId = memoryPins.pick(
+        event.clientX - rect.left,
+        event.clientY - rect.top,
+        activeCamera,
+        rect.width,
+        rect.height,
+      );
+      const memory = pinId
+        ? memorySessionSnapshot.memories.find((item) => item.id === pinId)
+        : null;
+      if (memory) flyMemory(memory);
+      else
         selectFeature(
           pickFeature(
             new THREE.Raycaster(),
@@ -1136,6 +1183,10 @@ export function createDemoScene(
     transientInteraction();
     const state = useAppStore.getState();
     state.setZoom(state.zoom * (event.deltaY < 0 ? 1.12 : 0.89));
+  }
+
+  function onPinPointerLeave() {
+    if (memoryPins.setHovered(null)) render();
   }
 
   let memoryPausedAt = 0;
@@ -1325,6 +1376,7 @@ export function createDemoScene(
   canvas.addEventListener("keydown", onKey);
   canvas.addEventListener("pointerdown", onPlanPointerDown);
   canvas.addEventListener("pointermove", onPlanPointerMove);
+  canvas.addEventListener("pointerleave", onPinPointerLeave);
   canvas.addEventListener("pointerup", onPlanPointerEnd);
   canvas.addEventListener("pointercancel", onPlanPointerEnd);
   canvas.addEventListener("wheel", onPlanWheel, { passive: false });
@@ -1389,7 +1441,12 @@ export function createDemoScene(
     ) {
       if (!syncingControlsState) applyView(state.viewMode === previous.viewMode);
     }
-    if (state.showTrees !== previous.showTrees || state.showLabels !== previous.showLabels) {
+    if (
+      state.showTrees !== previous.showTrees ||
+      state.showLabels !== previous.showLabels ||
+      state.illustrativeDetails !== previous.illustrativeDetails ||
+      state.viewMode !== previous.viewMode
+    ) {
       updateLayerVisibility();
       render();
     }
@@ -1581,6 +1638,7 @@ export function createDemoScene(
       canvas.removeEventListener("keydown", onKey);
       canvas.removeEventListener("pointerdown", onPlanPointerDown);
       canvas.removeEventListener("pointermove", onPlanPointerMove);
+      canvas.removeEventListener("pointerleave", onPinPointerLeave);
       canvas.removeEventListener("pointerup", onPlanPointerEnd);
       canvas.removeEventListener("pointercancel", onPlanPointerEnd);
       canvas.removeEventListener("wheel", onPlanWheel);

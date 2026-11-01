@@ -1,5 +1,5 @@
 import { memoryId } from "@/memories/id";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { memo, useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import {
   Download,
   ImagePlus,
@@ -195,7 +195,7 @@ function RedactionPhoto({
     </div>
   );
 }
-function MomentGallery() {
+const MomentGallery = memo(function MomentGallery() {
   const t = useT();
   const moments = useAppStore((s) => s.moments);
   const clear = useAppStore((s) => s.clearMoments);
@@ -273,7 +273,108 @@ function MomentGallery() {
       )}
     </div>
   );
-}
+});
+const MemoryCard = memo(function MemoryCard({
+  memory,
+  guest,
+  t,
+  u,
+  tourAllowed,
+  onCopy,
+  onEdit,
+  onDelete,
+  onPlay,
+}: {
+  memory: Memory;
+  guest: boolean;
+  t: ReturnType<typeof useT>;
+  u: (typeof p10UI)[keyof typeof p10UI];
+  tourAllowed: boolean;
+  onCopy: (id?: string) => Promise<void>;
+  onEdit: (memory: Memory) => void;
+  onDelete: (id: string) => void;
+  onPlay: (audio: NonNullable<Memory["audio"]>) => void;
+}) {
+  return (
+    <article
+      className="space-y-2 rounded-xl border border-border bg-secondary/40 p-3"
+      data-testid="memory-card"
+    >
+      <button
+        className="min-h-12 w-full text-left font-medium text-primary"
+        disabled={!tourAllowed}
+        onClick={() => memoryCamera.flyTo(memory)}
+      >
+        {memory.title || t.memories.untitled}
+      </button>
+      <p className="text-xs text-muted-foreground">
+        {memory.date} · {t.memories[memory.preset]}
+      </p>
+      <p className="whitespace-pre-wrap break-words text-sm">{memory.body}</p>
+      {memory.photos.length > 0 && (
+        <div className="grid grid-cols-2 gap-2">
+          {memory.photos.map((photo) => (
+            <img
+              key={photo.id}
+              src={photo.thumbnail}
+              alt={u.photo}
+              className="aspect-video w-full rounded-lg object-cover"
+            />
+          ))}
+        </div>
+      )}
+      <div className="flex flex-wrap gap-2">
+        <Button
+          disabled={!tourAllowed}
+          aria-label={`${u.fly}: ${memory.title}`}
+          onClick={() => memoryCamera.flyTo(memory)}
+        >
+          {u.fly}
+        </Button>
+        <Button
+          disabled={!tourAllowed}
+          onClick={() => {
+            memoryCamera.flyTo(memory);
+            void onCopy(memory.id);
+          }}
+        >
+          {u.copy}
+        </Button>
+        {!guest && memory.audio && (
+          <Button
+            onClick={() => {
+              onPlay(memory.audio!);
+            }}
+          >
+            <Play className="h-4 w-4" />
+            {t.memories.playAudio}
+          </Button>
+        )}
+        {!guest && (
+          <>
+            <Button
+              onClick={() => {
+                onEdit(memory);
+              }}
+            >
+              {t.memories.edit}
+            </Button>
+            <Button
+              aria-label={`${t.memories.delete}: ${memory.title}`}
+              onClick={() => {
+                onDelete(memory.id);
+              }}
+            >
+              <Trash2 className="h-4 w-4" />
+              {t.memories.delete}
+            </Button>
+          </>
+        )}
+      </div>
+    </article>
+  );
+});
+
 export function MemoriesPanel() {
   const t = useT();
   const lang = useAppStore((s) => s.language);
@@ -416,17 +517,34 @@ export function MemoriesPanel() {
       if (importFile.current) importFile.current.value = "";
     }
   }
-  async function copy(id?: string) {
-    try {
-      await memoryCamera.copyLink({
-        time: useAppStore.getState().timeOfDayMinutes,
-        ...(id ? { id } : {}),
-      });
-      setMessage(u.copied);
-    } catch {
-      setMessage(u.linkError);
-    }
-  }
+  const copy = useCallback(
+    async (id?: string) => {
+      try {
+        await memoryCamera.copyLink({
+          time: useAppStore.getState().timeOfDayMinutes,
+          ...(id ? { id } : {}),
+        });
+        setMessage(u.copied);
+      } catch {
+        setMessage(u.linkError);
+      }
+    },
+    [u],
+  );
+  const editMemory = useCallback((memory: Memory) => {
+    setMessage("");
+    setEditing(structuredClone(memory));
+  }, []);
+  const deleteMemory = useCallback((id: string) => {
+    memorySession.deleteMemory(id);
+    setUndo(true);
+  }, []);
+  const playAudio = useCallback(
+    (audio: NonNullable<Memory["audio"]>) => {
+      void playMemoryAudio(audio).catch(() => setMessage(u.audioError));
+    },
+    [u.audioError],
+  );
   return (
     <div className="space-y-4" data-testid="memories-panel">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -516,85 +634,18 @@ export function MemoriesPanel() {
       )}
       <div className="space-y-3">
         {visible.map((memory) => (
-          <article
+          <MemoryCard
             key={memory.id}
-            className="space-y-2 rounded-xl border border-border bg-secondary/40 p-3"
-            data-testid="memory-card"
-          >
-            <button
-              className="min-h-12 w-full text-left font-medium text-primary"
-              disabled={!tourAllowed}
-              onClick={() => memoryCamera.flyTo(memory)}
-            >
-              {memory.title || t.memories.untitled}
-            </button>
-            <p className="text-xs text-muted-foreground">
-              {memory.date} · {t.memories[memory.preset]}
-            </p>
-            <p className="whitespace-pre-wrap break-words text-sm">{memory.body}</p>
-            {memory.photos.length > 0 && (
-              <div className="grid grid-cols-2 gap-2">
-                {memory.photos.map((photo) => (
-                  <img
-                    key={photo.id}
-                    src={photo.thumbnail}
-                    alt={u.photo}
-                    className="aspect-video w-full rounded-lg object-cover"
-                  />
-                ))}
-              </div>
-            )}
-            <div className="flex flex-wrap gap-2">
-              <Button
-                disabled={!tourAllowed}
-                aria-label={`${u.fly}: ${memory.title}`}
-                onClick={() => memoryCamera.flyTo(memory)}
-              >
-                {u.fly}
-              </Button>
-              <Button
-                disabled={!tourAllowed}
-                onClick={() => {
-                  memoryCamera.flyTo(memory);
-                  void copy(memory.id);
-                }}
-              >
-                {u.copy}
-              </Button>
-              {!snapshot.guest && memory.audio && (
-                <Button
-                  onClick={() => {
-                    void playMemoryAudio(memory.audio!).catch(() => setMessage(u.audioError));
-                  }}
-                >
-                  <Play className="h-4 w-4" />
-                  {t.memories.playAudio}
-                </Button>
-              )}
-              {!snapshot.guest && (
-                <>
-                  <Button
-                    onClick={() => {
-                      setMessage("");
-                      setEditing(structuredClone(memory));
-                    }}
-                  >
-                    {t.memories.edit}
-                  </Button>
-                  <Button
-                    aria-label={`${t.memories.delete}: ${memory.title}`}
-                    onClick={() => {
-                      memorySession.deleteMemory(memory.id);
-                      setUndo(true);
-                    }}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    {t.memories.delete}
-                  </Button>
-                </>
-              )}
-            </div>
-          </article>
+            memory={memory}
+            guest={snapshot.guest}
+            t={t}
+            u={u}
+            tourAllowed={tourAllowed}
+            onCopy={copy}
+            onEdit={editMemory}
+            onDelete={deleteMemory}
+            onPlay={playAudio}
+          />
         ))}
       </div>
       {undo && !snapshot.guest && (

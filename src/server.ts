@@ -2,6 +2,7 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
+import { DEMO_RUNTIME, PRIVATE_RUNTIME_PATH, runtimeResponse } from "./private/contract";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -46,6 +47,8 @@ function isH3SwallowedErrorBody(body: string): boolean {
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    if (new URL(request.url).pathname === PRIVATE_RUNTIME_PATH)
+      return runtimeResponse(DEMO_RUNTIME, request.method);
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);

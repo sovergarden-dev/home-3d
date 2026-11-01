@@ -1,0 +1,39 @@
+{
+  "syntheticOnly": true,
+  "platform": "WINDOWS_LOCAL_REAL_GPU",
+  "sourceSha": "0265a53b9e8b571b18fd19ad496e0c9ccdad181d",
+  "driverVersion": "32.0.101.7082",
+  "baselineDurationMs": 44351,
+  "durationMs": 46820,
+  "changePct": 5.56695452188225,
+  "limitPct": 10,
+  "status": "PASS",
+  "rows": [
+    {
+      "title": "20 mode/route/package/capture cycles keep one ready canvas and no page errors",
+      "browser": "chrome-real",
+      "status": "passed",
+      "durationMs": 46820,
+      "attachments": [
+        {
+          "name": "real-gpu-environment",
+          "data": {
+            "syntheticOnly": true,
+            "sourceSha": "0265a53b9e8b571b18fd19ad496e0c9ccdad181d",
+            "browserVersion": "152.0.7977.76",
+            "driverVersion": "32.0.101.7082",
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "headed": true,
+            "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x000046D1) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+            "vendor": "Google Inc. (Intel)",
+            "dpr": 1
+          }
+        }
+      ]
+    }
+  ],
+  "note": "Windows hardware comparison; historic Linux runner timing is a separate environment. Earlier selector typo ran zero tests and is NOT_MEASURED."
+}

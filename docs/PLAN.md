@@ -373,7 +373,7 @@ MOBILE (under 768px)
 - The dock becomes a draggable bottom sheet (peek / half / full). Controls move to bottom-right above the sheet and hide while the sheet is expanded above peek. Respect safe-area insets, 44px touch targets, no hover-only UI, no page scroll or pinch-zoom over the viewport.
 
 STYLE
-- Calm, premium, warm. Cream #F3F1EA, deep green #1F4D3F, terracotta #C2643B. Translucent blurred panels, 16px radius, soft shadows.
+- Calm, premium, warm. Cream #F3F1EA, deep green #1F4D3F, terracotta #C2643B. Translucent panels (no backdrop blur over the live 3D canvas), 16px radius, soft shadows.
 - Fonts: Be Vietnam Pro for UI, Lora italic for title and tagline.
 - Motion 150–250ms, respect prefers-reduced-motion. Keyboard accessible, aria-labels, visible focus.
 - Do not generate images.

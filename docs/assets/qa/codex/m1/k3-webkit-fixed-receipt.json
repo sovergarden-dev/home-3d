@@ -1,0 +1,141 @@
+{
+  "syntheticOnly": true,
+  "sourceReport": "k3-webkit-fixed-report.json",
+  "scope": "Renderer pixels/ink boxes; no physical performance certification implied. Every result retained, including previous setup failures.",
+  "rows": [
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in vi with empty",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 3704,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in vi with maximum width",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 4086,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in vi with Vietnamese accents",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 3491,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in en with empty",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 3386,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in en with maximum width",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 3282,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 3840px in en with Vietnamese accents",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 3277,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in vi with empty",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 3365,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in vi with maximum width",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 2624,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in vi with Vietnamese accents",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 2567,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in en with empty",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 2705,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in en with maximum width",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 3023,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 2048px in en with Vietnamese accents",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 5038,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in vi with empty",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 3048,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in vi with maximum width",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 2260,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in vi with Vietnamese accents",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 2303,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in en with empty",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 2298,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in en with maximum width",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 2161,
+      "measurements": []
+    },
+    {
+      "test": "postcard caption ink boxes stay separated at 1920px in en with Vietnamese accents",
+      "browser": "webkit",
+      "status": "passed",
+      "durationMs": 2304,
+      "measurements": []
+    }
+  ],
+  "stats": {
+    "startTime": "2026-10-28T15:46:50.800Z",
+    "duration": 59258.045,
+    "expected": 18,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

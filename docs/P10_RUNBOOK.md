@@ -1,5 +1,7 @@
 # P10 — Kỷ niệm của một ngôi nhà
 
+> P10.1 hiện hành: xem [P10_1_RUNBOOK.md](P10_1_RUNBOOK.md). H đã được đo đạt trên GPU thật ở runtime59f6; các nhãn/receipt P10 phía dưới là lịch sử, không bị đổi thành số đo mới.
+
 P10 bổ sung câu chuyện riêng tư vào world đang có: ghim, tour, nhật ký và bưu thiếp. Nhánh `feat/p10-memories` xuất phát từ `72dd2bed1d58c558018538a51aae02f74304bc7d`; không phải một bản phát hành. G1 không chặn P10. `BLOCKED_MISSING_GEOREFERENCE` và `REAL_WORLD_NOT_VERIFIED` vẫn giữ nguyên. Không merge, Publish, deploy hay thay đổi đồng bộ.
 
 Nguồn chốt phạm vi: [trang P10 của Notion AI](https://app.notion.com/p/7592ff65db1f411db4d7cc8e36c2b691). Ba tiêu chí roadmap: thêm kỷ niệm có ảnh ≤6 thao tác và dưới hai phút; kiểm tự động GPS/metadata đã bị loại; bưu thiếp 4K desktop/2K mobile không crash. Receipt duy nhất ở đầu trang P10 phải ghi base/full head/worktree/delta riêng P10, A–H DONE hoặc BLOCKED theo bằng chứng, counts pass/fail/skip thật, production smoke cùng mã cuối, CI event workflow_dispatch ở full SHA với đủ bốn job success. Board chỉ tóm tắt và trỏ về receipt. Không gọi GPU skip là pass GPU, không tự đặt SOFTWARE_TECHNICAL_REVIEW_PASSED.

@@ -82,6 +82,15 @@ function installCanvas() {
       fillRect: vi.fn(),
       strokeRect: vi.fn(),
       fillText: vi.fn(),
+      save: vi.fn(),
+      restore: vi.fn(),
+      measureText: vi.fn(() => ({
+        width: 120,
+        actualBoundingBoxLeft: 0,
+        actualBoundingBoxRight: 120,
+        actualBoundingBoxAscent: 20,
+        actualBoundingBoxDescent: 4,
+      })),
       imageSmoothingEnabled: true,
     };
     const canvas = {
@@ -353,7 +362,7 @@ describe("postcard capture and sharing", () => {
     vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:scene");
     vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
     const capture = vi.fn(async (width: number, height: number) => {
-      if (width === 3840) throw new Error("GPU_LIMIT");
+      if (width === 3532) throw new Error("GPU_LIMIT");
       expect(Math.max(width, height)).toBeLessThanOrEqual(2048);
       return asBlob(cleanPng(), "image/png");
     });
@@ -361,6 +370,10 @@ describe("postcard capture and sharing", () => {
     const result = await createPostcard({ ward: "Ward 7", date: "2026-01-01", minutes: 60 });
     expect(result.degraded).toBe(true);
     expect(Math.max(result.width, result.height)).toBeLessThanOrEqual(2048);
+    expect(capture.mock.calls).toEqual([
+      [3532, 1506],
+      [1884, 804],
+    ]);
   });
 
   it("downloads when canShare is false and eventually revokes the object URL", async () => {

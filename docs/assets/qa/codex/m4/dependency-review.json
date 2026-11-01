@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "method": "Integrity-matched npm tarball contents plus registry release times; no extraction or package script execution.",
+  "packages": [
+    {
+      "name": "jose",
+      "version": "6.2.13",
+      "published": "2026-10-20T06:21:48.616Z",
+      "license": "MIT",
+      "integrity": "sha512-7TIg10ZE1x82YediN+lcrPNvGMKge9yFHQD+Qho/b8y2adfugU3AsvvHfxV0fzyFllT6l9xCjf4RWY9g/Z9PJQ==",
+      "integrityVerified": true,
+      "ageOver24Hours": true,
+      "nativeFiles": [],
+      "installScripts": {},
+      "portableWasmFiles": []
+    }
+  ]
+}

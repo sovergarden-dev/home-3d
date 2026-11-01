@@ -1,0 +1,59 @@
+{
+  "syntheticOnly": true,
+  "status": "PRELIMINARY",
+  "source": "M2 worktree before M1 integration",
+  "unitSemantic": {
+    "passed": 365,
+    "failed": 0,
+    "coverageEnabled": true
+  },
+  "cpuPerformance": {
+    "passed": 1,
+    "failed": 0,
+    "frames": 600,
+    "p95LimitMs": 4,
+    "coverageEnabled": false
+  },
+  "typecheck": "PASS",
+  "lint": {
+    "errors": 0,
+    "warnings": 0
+  },
+  "bundle": {
+    "status": "PASS",
+    "limitBytes": 250000,
+    "gzipBytes": 221427,
+    "method": "Sum of gzip level 9 sizes for all client entry/dynamic-entry static closures except the separately loaded engine; shared imports counted once.",
+    "files": [
+      {
+        "file": "assets/index-DaTonhzi.js",
+        "bytes": 373522,
+        "gzipBytes": 116694
+      },
+      {
+        "file": "assets/gioi-thieu-BpnZnXwL.js",
+        "bytes": 854,
+        "gzipBytes": 491
+      },
+      {
+        "file": "assets/i18n-BWbFH4Tq.js",
+        "bytes": 63257,
+        "gzipBytes": 22089
+      },
+      {
+        "file": "assets/routes-bXRNwBBm.js",
+        "bytes": 187872,
+        "gzipBytes": 56893
+      },
+      {
+        "file": "assets/postcard-Cw1jR0M3.js",
+        "bytes": 90566,
+        "gzipBytes": 25260
+      }
+    ]
+  },
+  "limitations": [
+    "Preliminary source not final PR head.",
+    "Coverage target 85 is not met for every state/simulation metric."
+  ]
+}

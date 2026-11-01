@@ -1,0 +1,146 @@
+{
+  "status": "MEASURED",
+  "samples": [
+    {
+      "residentAllocationBytes": 77594624,
+      "committedBytes": 78282752,
+      "dedicatedBytes": 72454144,
+      "elapsedMs": 4856,
+      "sharedBytes": 5140480
+    },
+    {
+      "residentAllocationBytes": 176943104,
+      "committedBytes": 177999872,
+      "dedicatedBytes": 157388800,
+      "elapsedMs": 6961,
+      "sharedBytes": 19554304
+    },
+    {
+      "residentAllocationBytes": 172457984,
+      "committedBytes": 173383680,
+      "dedicatedBytes": 162156544,
+      "elapsedMs": 8934,
+      "sharedBytes": 10301440
+    },
+    {
+      "residentAllocationBytes": 171929600,
+      "committedBytes": 172855296,
+      "dedicatedBytes": 162152448,
+      "elapsedMs": 10941,
+      "sharedBytes": 9777152
+    },
+    {
+      "residentAllocationBytes": 158953472,
+      "committedBytes": 159879168,
+      "dedicatedBytes": 149901312,
+      "elapsedMs": 13163,
+      "sharedBytes": 9052160
+    },
+    {
+      "residentAllocationBytes": 157589504,
+      "committedBytes": 158515200,
+      "dedicatedBytes": 148242432,
+      "elapsedMs": 15225,
+      "sharedBytes": 9347072
+    },
+    {
+      "residentAllocationBytes": 166547456,
+      "committedBytes": 167473152,
+      "dedicatedBytes": 156618752,
+      "elapsedMs": 17299,
+      "sharedBytes": 9928704
+    },
+    {
+      "residentAllocationBytes": 166019072,
+      "committedBytes": 166944768,
+      "dedicatedBytes": 156614656,
+      "elapsedMs": 19334,
+      "sharedBytes": 9404416
+    },
+    {
+      "residentAllocationBytes": 166019072,
+      "committedBytes": 166944768,
+      "dedicatedBytes": 156614656,
+      "elapsedMs": 21295,
+      "sharedBytes": 9404416
+    },
+    {
+      "residentAllocationBytes": 154439680,
+      "committedBytes": 155365376,
+      "dedicatedBytes": 145207296,
+      "elapsedMs": 23502,
+      "sharedBytes": 9232384
+    },
+    {
+      "residentAllocationBytes": 151097344,
+      "committedBytes": 152023040,
+      "dedicatedBytes": 143110144,
+      "elapsedMs": 25588,
+      "sharedBytes": 7987200
+    },
+    {
+      "residentAllocationBytes": 167677952,
+      "committedBytes": 168345600,
+      "dedicatedBytes": 157794304,
+      "elapsedMs": 27651,
+      "sharedBytes": 9883648
+    },
+    {
+      "residentAllocationBytes": 164659200,
+      "committedBytes": 165326848,
+      "dedicatedBytes": 155561984,
+      "elapsedMs": 29760,
+      "sharedBytes": 9097216
+    },
+    {
+      "residentAllocationBytes": 170803200,
+      "committedBytes": 171470848,
+      "dedicatedBytes": 151056384,
+      "elapsedMs": 31851,
+      "sharedBytes": 19746816
+    },
+    {
+      "residentAllocationBytes": 164728832,
+      "committedBytes": 165396480,
+      "dedicatedBytes": 151306240,
+      "elapsedMs": 33927,
+      "sharedBytes": 13422592
+    },
+    {
+      "residentAllocationBytes": 163930112,
+      "committedBytes": 164597760,
+      "dedicatedBytes": 153128960,
+      "elapsedMs": 36040,
+      "sharedBytes": 10801152
+    },
+    {
+      "residentAllocationBytes": 162390016,
+      "committedBytes": 163057664,
+      "dedicatedBytes": 153128960,
+      "elapsedMs": 38223,
+      "sharedBytes": 9261056
+    },
+    {
+      "residentAllocationBytes": 158810112,
+      "committedBytes": 159477760,
+      "dedicatedBytes": 149712896,
+      "elapsedMs": 40258,
+      "sharedBytes": 9097216
+    },
+    {
+      "residentAllocationBytes": 162103296,
+      "committedBytes": 162770944,
+      "dedicatedBytes": 151695360,
+      "elapsedMs": 42368,
+      "sharedBytes": 10407936
+    },
+    {
+      "residentAllocationBytes": 170242048,
+      "committedBytes": 170909696,
+      "dedicatedBytes": 151445504,
+      "elapsedMs": 44490,
+      "sharedBytes": 18796544
+    }
+  ],
+  "method": "Windows WDDM per-process GPU memory counters, summed only for browser descendants of the benchmark process. Includes browser allocation overhead; not app-only texture bytes or a physical VRAM census."
+}

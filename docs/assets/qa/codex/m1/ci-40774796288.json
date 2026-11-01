@@ -1,0 +1,49 @@
+{
+  "syntheticOnly": true,
+  "runId": 40774796288,
+  "headSha": "59f6d6881261a542e1f1b52b4d0d2d6e86f4834a",
+  "jobs": {
+    "quality": "success",
+    "chromium": "success",
+    "firefox": "success",
+    "webkit": "failure"
+  },
+  "unit": {
+    "files": 59,
+    "passed": 371
+  },
+  "pipeline": {
+    "passed": 39
+  },
+  "e2e": {
+    "chromium": {
+      "pass": 110,
+      "fail": 0,
+      "skip": 0
+    },
+    "webkit": {
+      "pass": 110,
+      "fail": 0,
+      "skip": 0
+    },
+    "firefox": {
+      "pass": 66,
+      "fail": 0,
+      "skip": 44
+    }
+  },
+  "h6": {
+    "chromiumMs": 52429,
+    "webkitMs": 67841,
+    "webkitAbsoluteLimitMs": 70000,
+    "webkitAbsoluteStatus": "MET",
+    "sameRunnerComparison": "NOT_VERIFIED_BASELINE_READINESS_BUG"
+  },
+  "baseline": {
+    "status": "BASELINE_DIAGNOSTIC_FAILED",
+    "durationMs": null,
+    "cpuModel": "AMD EPYC 9V74 80-Core Processor",
+    "logicalCpus": 4
+  },
+  "mergeGate": "NOT_READY_TOOLING_FIX_REQUIRED"
+}

@@ -1,4 +1,5 @@
 import { assertNoMetadata } from "./metadata";
+import { drawPostcardCaption, postcardFrame } from "./postcardLayout";
 export interface PostcardOptions {
   ward: string;
   date: string;
@@ -72,6 +73,7 @@ async function compose(
   const c = document.createElement("canvas");
   c.width = width;
   c.height = height;
+  const frame = postcardFrame(width, height);
   try {
     const ctx = c.getContext("2d");
     if (!ctx) throw new Error("CANVAS_UNAVAILABLE");
@@ -79,27 +81,23 @@ async function compose(
     ctx.fillRect(0, 0, width, height);
     const image = await decode(scene);
     try {
-      const pad = Math.round(width * 0.04),
-        footer = Math.round(height * 0.16);
-      const scale = Math.min(
-        (width - pad * 2) / image.width,
-        (height - footer - pad * 2) / image.height,
-      );
+      const scale = Math.min(frame.photoWidth / image.width, frame.photoHeight / image.height);
       const w = Math.max(1, Math.round(image.width * scale)),
         h = Math.max(1, Math.round(image.height * scale));
-      ctx.drawImage(image, Math.round((width - w) / 2), pad, w, h);
+      ctx.drawImage(image, Math.round((width - w) / 2), frame.padding, w, h);
     } finally {
       if ("close" in image) image.close();
     }
     ctx.strokeStyle = "#27342e";
-    ctx.lineWidth = Math.max(4, width / 320);
-    ctx.strokeRect(24, 24, width - 48, height - 48);
+    ctx.lineWidth = frame.borderWidth;
+    ctx.strokeRect(
+      frame.borderInset,
+      frame.borderInset,
+      width - frame.borderInset * 2,
+      height - frame.borderInset * 2,
+    );
     ctx.fillStyle = "#27342e";
-    const size = Math.max(24, width / 34);
-    ctx.font = `bold ${size}px sans-serif`;
-    ctx.fillText("Phố Nhà Mình · ảnh dựng 3D mô phỏng", 64, height - 105);
-    ctx.font = `${Math.max(20, width / 52)}px sans-serif`;
-    ctx.fillText(`${ward} · ${o.date} · ${timeLabel(o.minutes)}`, 64, height - 58);
+    drawPostcardCaption(ctx, frame, `${ward} · ${o.date} · ${timeLabel(o.minutes)}`);
     const out = await new Promise<Blob>((res, rej) =>
       c.toBlob((b) => (b ? res(b) : rej(new Error("ENCODE_FAILED"))), "image/png"),
     );
@@ -125,9 +123,8 @@ export async function createPostcard(options: PostcardOptions): Promise<Postcard
       abort(options.signal);
       // Render to the actual photo area, not the full postcard aspect ratio.
       // Otherwise fitting the footer compresses the scene to ~70% of the width.
-      const pad = Math.round(width * 0.04);
-      const footer = Math.round(height * 0.16);
-      const scene = await capture(width - 2 * pad, height - footer - 2 * pad);
+      const frame = postcardFrame(width, height);
+      const scene = await capture(frame.photoWidth, frame.photoHeight);
       if (!(scene instanceof Blob) || scene.size <= 0) throw new Error("CAPTURE_INVALID");
       const blob = await compose(scene, width, height, options, ward);
       abort(options.signal);

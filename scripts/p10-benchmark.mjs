@@ -8,7 +8,10 @@ const port = Number(process.env.P10_PORT ?? 4178);
 fs.mkdirSync(out, { recursive: true });
 const write = (name, value) =>
   fs.writeFileSync(path.join(out, name), JSON.stringify(value, null, 2));
-const { browser, dpr, environment } = await launchBenchmark(["--js-flags=--expose-gc"]);
+const { browser, dpr, environment } = await launchBenchmark([
+  "--js-flags=--expose-gc",
+  "--mute-audio",
+]);
 let rendererEvidence;
 const page = await browser.newPage({
   viewport: { width: 1440, height: 900 },
@@ -25,7 +28,7 @@ await page.addInitScript(() => {
     const e = [...performance.getEntriesByType("resource")]
       .reverse()
       .find((e) => new URL(e.name).pathname === path);
-    return import(e?.name ?? path);
+    return import(e?.name ?? new URL(path, location.href).href);
   };
   const state = {
     urls: 0,
@@ -126,8 +129,8 @@ await page.addInitScript(() => {
     });
   }
 });
-async function open() {
-  await page.goto(`http://127.0.0.1:${port}/?local-preview=1`);
+async function open(navigate = true) {
+  if (navigate) await page.goto(`http://127.0.0.1:${port}/?local-preview=1`);
   await page.waitForFunction(
     () => document.querySelector("#scene-root")?.dataset.sceneState === "ready",
     {},
@@ -169,6 +172,8 @@ async function samples(ms = 10000) {
 async function resources() {
   return page.evaluate(async () => ({
     elapsed: performance.now(),
+    documentTimeOrigin: performance.timeOrigin,
+    documentVisibility: document.visibilityState,
     counts: { ...window.__p10ResourceCounts },
     canvas: document.querySelectorAll('[data-testid="demo-scene"] canvas').length,
     scene: { ...document.querySelector('[data-testid="demo-scene"]')?.dataset },
@@ -183,19 +188,40 @@ async function resources() {
   }));
 }
 try {
-  if (mode === "soak") {
+  if (mode === "soak" || mode === "desktop-soak") {
+    const continuous = mode === "desktop-soak";
     await open();
+    if (continuous && !(await page.evaluate(() => typeof window.gc === "function")))
+      throw Error("EXPOSED_GC_REQUIRED_FOR_QUIESCENT_HEAP_METHOD");
     await page.getByRole("button", { name: "Thu gọn bảng riêng", exact: true }).click();
     await page.getByRole("tab", { name: "Kỷ niệm", exact: true }).click();
     const cdp = await page.context().newCDPSession(page);
     const raw = [];
     const start = Date.now();
-    const duration = Number(process.env.P10_SOAK_MS ?? 1200000);
+    const duration = Number(process.env.P10_SOAK_MS ?? (continuous ? 1800000 : 1200000));
+    const warmupCycles = continuous ? 6 : 0;
+    const minCycles = Number(process.env.P10_MIN_CYCLES ?? 20);
+    if (
+      !Number.isFinite(duration) ||
+      duration < (continuous ? 1800000 : 1) ||
+      !Number.isInteger(minCycles) ||
+      minCycles < (continuous ? 20 : 1)
+    )
+      throw Error("INVALID_SOAK_TARGET");
+    let measuredStart = continuous ? null : start;
+    let measuredCycles = 0;
     let cycle = 0;
-    while (Date.now() - start < duration || cycle < Number(process.env.P10_MIN_CYCLES ?? 20)) {
+    // Counted only after the scene/world state is observed, never derived from the cycle count.
+    const observed = { modeChanges: 0, audioCycles: 0, packageTransitions: 0 };
+    const documentIdentity = await page.evaluate(() => performance.timeOrigin);
+    while (
+      measuredStart === null ||
+      Date.now() - measuredStart < duration ||
+      measuredCycles < minCycles
+    ) {
       cycle++;
       const began = Date.now();
-      await page.evaluate(
+      const packageTransitions = await page.evaluate(
         async ({ cycle, text }) => {
           const { memorySession: s } = await window.__p10Import("/src/memories/session.ts");
           const { memoryCamera: c } = await window.__p10Import("/src/memories/bridge.ts");
@@ -238,42 +264,132 @@ try {
           s.setGuest(false);
           await s.setPersistent(true);
           await s.setPersistent(false);
+          const waitForWorld = async (mode) => {
+            const deadline = performance.now() + 10000;
+            while (true) {
+              const snapshot = w.getSnapshot();
+              const scene = document.querySelector('[data-testid="demo-scene"]')?.dataset;
+              if (
+                snapshot.mode === mode &&
+                s.getSnapshot().ready &&
+                scene?.worldMode === mode &&
+                scene.worldRevision === String(snapshot.revision)
+              )
+                return;
+              if (performance.now() >= deadline) throw Error("SOAK_WORLD_TRANSITION_NOT_OBSERVED");
+              await new Promise((r) => setTimeout(r, 10));
+            }
+          };
+          let transitions = 0;
           w.openText(text.replaceAll("P8_SYNTHETIC_ATMOSPHERE_ONLY", `P10_SOAK_${cycle % 3}`));
-          for (let i = 0; i < 100 && !s.getSnapshot().ready; i++)
-            await new Promise((r) => setTimeout(r, 10));
+          await waitForWorld("private");
+          transitions++;
           w.resetFixture();
-          for (let i = 0; i < 100 && !s.getSnapshot().ready; i++)
-            await new Promise((r) => setTimeout(r, 10));
+          await waitForWorld("fixture");
+          transitions++;
+          return transitions;
         },
         { cycle, text: P8_PACKAGE_TEXT },
       );
+      let cycleModeChanges = 0,
+        cycleAudioCycles = 0;
+      if (continuous) {
+        await page.getByRole("button", { name: "Tiếng phố", exact: true }).click();
+        await page.waitForFunction(
+          () =>
+            document.querySelector('[data-testid="demo-scene"]')?.dataset.audioState === "running",
+          {},
+          { timeout: 5000 },
+        );
+        await page.evaluate(async () => {
+          const { useAppStore } = await window.__p10Import("/src/state/appStore.ts");
+          useAppStore.getState().setIllustrativeDetails(true);
+        });
+        // The radio state alone is UI state; each change also waits for the scene host's camera/POV.
+        for (const [name, expected] of [
+          ["Mặt bằng", { cameraType: "OrthographicCamera" }],
+          ["Đi bộ", { povMode: "walk" }],
+          ["Ngồi sau xe ôm", { povMode: "ride" }],
+          ["Diorama", { cameraType: "PerspectiveCamera", povMode: "none" }],
+        ]) {
+          const control = page.getByRole("radio", { name, exact: true });
+          await control.click();
+          if ((await control.getAttribute("aria-checked")) !== "true")
+            throw Error("SOAK_MODE_CHANGE_NOT_OBSERVED");
+          await page
+            .waitForFunction(
+              (expected) => {
+                const scene = document.querySelector('[data-testid="demo-scene"]')?.dataset;
+                return Object.entries(expected).every(([key, value]) => scene?.[key] === value);
+              },
+              expected,
+              { timeout: 10000 },
+            )
+            .catch(() => {
+              throw Error("SOAK_MODE_CHANGE_NOT_OBSERVED");
+            });
+          cycleModeChanges++;
+          await page.waitForTimeout(200);
+        }
+        await page.getByRole("button", { name: "Tiếng phố", exact: true }).click();
+        await page
+          .waitForFunction(
+            () => {
+              const scene = document.querySelector('[data-testid="demo-scene"]')?.dataset;
+              return scene?.audioState !== "running" && scene?.audioVoices === "0";
+            },
+            {},
+            { timeout: 5000 },
+          )
+          .catch(() => {
+            throw Error("SOAK_AUDIO_OFF_NOT_OBSERVED");
+          });
+        cycleAudioCycles++;
+      }
       await page.getByRole("button", { name: "Thêm kỷ niệm", exact: true }).click();
       await page.keyboard.press("Escape");
       if (cycle % 5 === 0) {
-        await page
-          .getByRole("link", { name: "Phố Nhà Mình", exact: true })
-          .count()
-          .then(async (n) => {
-            if (n)
-              await page.getByRole("link", { name: "Phố Nhà Mình", exact: true }).first().click();
-          });
-        await page.goto(`http://127.0.0.1:${port}/about`);
-        await open();
+        if (continuous) {
+          await page.getByRole("link", { name: "Giới thiệu", exact: true }).click();
+          await page.getByRole("link", { name: "Về phố", exact: true }).click();
+          await open(false);
+          if ((await page.evaluate(() => performance.timeOrigin)) !== documentIdentity)
+            throw Error("SOAK_MUST_NOT_RELOAD_DOCUMENT");
+        } else {
+          await page.goto(`http://127.0.0.1:${port}/gioi-thieu`);
+          await open();
+        }
         await page.getByRole("button", { name: "Thu gọn bảng riêng", exact: true }).click();
         await page.getByRole("tab", { name: "Kỷ niệm", exact: true }).click();
       }
       await page.evaluate(() => window.gc?.());
       await page.waitForTimeout(500);
+      if (measuredStart !== null) {
+        measuredCycles++;
+        observed.modeChanges += cycleModeChanges;
+        observed.audioCycles += cycleAudioCycles;
+        observed.packageTransitions += packageTransitions;
+      }
+      if (continuous && cycle === warmupCycles) measuredStart = Date.now();
       raw.push({
         cycle,
+        phase: cycle <= warmupCycles ? "warmup" : "measured",
+        measuredMs: measuredStart === null ? 0 : Date.now() - measuredStart,
         wallMs: Date.now() - start,
         cycleMs: Date.now() - began,
         ...(await resources()),
         dom: await cdp.send("Memory.getDOMCounters"),
       });
       write("soak-raw.json", {
+        complete: false,
+        environment: rendererEvidence,
         durationTarget: duration,
-        elapsedMs: Date.now() - start,
+        elapsedMs: measuredStart === null ? 0 : Date.now() - measuredStart,
+        totalElapsedMs: Date.now() - start,
+        measuredCycles,
+        warmupCycles,
+        continuousDocument: continuous,
+        observedSoFar: { ...observed },
         cycles: cycle,
         raw,
         errors,
@@ -281,14 +397,40 @@ try {
       console.log(
         `soak ${cycle} cycles; ${(Date.now() - start) / 1000}s; openURLs=${raw.at(-1).counts.urls}; bitmaps=${raw.at(-1).counts.bitmap}`,
       );
-      const next = Math.min(start + duration, start + cycle * 58000);
-      if (Date.now() < next) await page.waitForTimeout(next - Date.now());
+      if (measuredStart !== null) {
+        const next = Math.min(
+          measuredStart + duration,
+          measuredStart + (measuredCycles + (continuous ? 1 : 0)) * 58000,
+        );
+        if (Date.now() < next) await page.waitForTimeout(next - Date.now());
+      }
+    }
+    if (continuous) {
+      await page.evaluate(() => window.gc?.());
+      await page.waitForTimeout(500);
+      raw.push({
+        cycle,
+        phase: "final",
+        measuredMs: Date.now() - measuredStart,
+        wallMs: Date.now() - start,
+        ...(await resources()),
+        dom: await cdp.send("Memory.getDOMCounters"),
+      });
     }
     write("soak-raw.json", {
       complete: true,
       environment: rendererEvidence,
       durationTarget: duration,
-      elapsedMs: Date.now() - start,
+      elapsedMs: Date.now() - measuredStart,
+      totalElapsedMs: Date.now() - start,
+      measuredCycles,
+      warmupCycles,
+      continuousDocument: continuous,
+      modeChanges: continuous ? observed.modeChanges : null,
+      audioCycles: continuous ? observed.audioCycles : null,
+      verifiedPackageTransitions: observed.packageTransitions,
+      audioOutput:
+        "Muted browser output; actual AudioContext/graph is exercised by trusted clicks.",
       cycles: cycle,
       raw,
       errors,

@@ -1,0 +1,3375 @@
+{
+  "syntheticOnly": true,
+  "phase": "before",
+  "sourcePort": 4184,
+  "environment": {
+    "sourceSha": "de7173261a8a3928685555252c2b479f76a713fe",
+    "harnessSha": "2209bb36ac8a5746db2834cb9c3100390652a846",
+    "platform": "WINDOWS_LOCAL",
+    "syntheticOnly": true,
+    "rendererClass": "REAL_GPU",
+    "headed": true,
+    "channel": "chrome",
+    "browserVersion": "152.0.7977.76",
+    "driverVersion": "32.0.101.7082",
+    "dprRequest": "1",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x000046D1) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "vendor": "Google Inc. (Intel)",
+    "dpr": 1,
+    "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+  },
+  "scriptSha256": "946b5eb915a3ef31ff381f49c886649190d23c6b4598c537abc9eb5ec9ca6026",
+  "startedAt": "2026-10-28T16:20:58.415Z",
+  "finishedAt": "2026-10-28T16:21:31.126Z",
+  "viewport": [
+    1440,
+    900
+  ],
+  "dpr": 1,
+  "lifeEnabled": false,
+  "reducedMotion": true,
+  "date": "2026-06-21",
+  "timeMinutes": 420,
+  "heading": 28,
+  "zoom": 1,
+  "warmupMs": 5000,
+  "postPopulationWarmupMs": 5000,
+  "fixturePopulation": "299→300→299",
+  "sampleDesign": "1 runs × 10 add/delete pairs (20 samples)",
+  "instrumentation": "Diagnostic wrappers and PerformanceObservers; traced runs are not acceptance latency samples.",
+  "measurement": "real saveMemory/deleteMemory call; structuredClone/MemoryDocument Map.set wrappers; React MutationObserver card timestamps; InstancedMesh.setMatrixAt wrapper; two RAF upper-bound/compositor residue",
+  "latencyGoalMs": 100,
+  "raw": [
+    {
+      "run": 0,
+      "samples": [
+        {
+          "kind": "add",
+          "index": 0,
+          "count": 300,
+          "totalMutationCpuMs": 2.0999999940395355,
+          "structuredCloneCpuMs": 0,
+          "structuredCloneCount": 0,
+          "memoryDocumentMapSetCpuMs": 0,
+          "memoryDocumentMapSetCount": 1,
+          "reactDomMutationMs": 242.59999999403954,
+          "domMutationCount": 1,
+          "cardAdded": 1,
+          "cardRemoved": 0,
+          "rebuildPinInstanceCpuMs": 0,
+          "rebuildPinInstanceCalls": 300,
+          "raf1UpperBoundMs": 246.59999999403954,
+          "raf2UpperBoundMs": 254.90000000596046,
+          "compositorResidueMs": 8.300000011920929
+        },
+        {
+          "kind": "delete",
+          "index": 0,
+          "count": 299,
+          "totalMutationCpuMs": 0.9000000059604645,
+          "structuredCloneCpuMs": 0,
+          "structuredCloneCount": 0,
+          "memoryDocumentMapSetCpuMs": 0,
+          "memoryDocumentMapSetCount": 1,
+          "reactDomMutationMs": 96.40000000596046,
+          "domMutationCount": 1,
+          "cardAdded": 0,
+          "cardRemoved": 1,
+          "rebuildPinInstanceCpuMs": 0.09999999403953552,
+          "rebuildPinInstanceCalls": 299,
+          "raf1UpperBoundMs": 106.5,
+          "raf2UpperBoundMs": 116.5,
+          "compositorResidueMs": 10
+        },
+        {
+          "kind": "add",
+          "index": 1,
+          "count": 300,
+          "totalMutationCpuMs": 2.7999999821186066,
+          "structuredCloneCpuMs": 0,
+          "structuredCloneCount": 0,
+          "memoryDocumentMapSetCpuMs": 0,
+          "memoryDocumentMapSetCount": 1,
+          "reactDomMutationMs": 90.5,
+          "domMutationCount": 1,
+          "cardAdded": 1,
+          "cardRemoved": 0,
+          "rebuildPinInstanceCpuMs": 0,
+          "rebuildPinInstanceCalls": 300,
+          "raf1UpperBoundMs": 97.5,
+          "raf2UpperBoundMs": 102.7999999821186,
+          "compositorResidueMs": 5.299999982118607
+        },
+        {
+          "kind": "delete",
+          "index": 1,
+          "count": 299,
+          "totalMutationCpuMs": 1.2000000178813934,
+          "structuredCloneCpuMs": 0,
+          "structuredCloneCount": 0,
+          "memoryDocumentMapSetCpuMs": 0,
+          "memoryDocumentMapSetCount": 1,
+          "reactDomMutationMs": 89.2000000178814,
+          "domMutationCount": 1,
+          "cardAdded": 0,
+          "cardRemoved": 1,
+          "rebuildPinInstanceCpuMs": 0,
+          "rebuildPinInstanceCalls": 299,
+          "raf1UpperBoundMs": 96.40000000596046,
+          "raf2UpperBoundMs": 113.7000000178814,
+          "compositorResidueMs": 17.30000001192093
+        },
+        {
+          "kind": "add",
+          "index": 2,
+          "count": 300,
+          "totalMutationCpuMs": 1.4000000059604645,
+          "structuredCloneCpuMs": 0,
+          "structuredCloneCount": 0,
+          "memoryDocumentMapSetCpuMs": 0,
+          "memoryDocumentMapSetCount": 1,
+          "reactDomMutationMs": 77.09999999403954,
+          "domMutationCount": 1,
+          "cardAdded": 1,
+          "cardRemoved": 0,
+          "rebuildPinInstanceCpuMs": 0.10000002384185791,
+          "rebuildPinInstanceCalls": 300,
+          "raf1UpperBoundMs": 84.59999999403954,
+          "raf2UpperBoundMs": 91,
+          "compositorResidueMs": 6.4000000059604645
+        },
+        {
+          "kind": "delete",
+          "index": 2,
+          "count": 299,
+          "totalMutationCpuMs": 0.5,
+          "structuredCloneCpuMs": 0,
+          "structuredCloneCount": 0,
+          "memoryDocumentMapSetCpuMs": 0,
+          "memoryDocumentMapSetCount": 1,
+          "reactDomMutationMs": 77.80000001192093,
+          "domMutationCount": 1,
+          "cardAdded": 0,
+          "cardRemoved": 1,
+          "rebuildPinInstanceCpuMs": 0.09999999403953552,
+          "rebuildPinInstanceCalls": 299,
+          "raf1UpperBoundMs": 86.90000000596046,
+          "raf2UpperBoundMs": 100.90000000596046,
+          "compositorResidueMs": 14
+        },
+        {
+          "kind": "add",
+          "index": 3,
+          "count": 300,
+          "totalMutationCpuMs": 2.4000000059604645,
+          "structuredCloneCpuMs": 0,
+          "structuredCloneCount": 0,
+          "memoryDocumentMapSetCpuMs": 0,
+          "memoryDocumentMapSetCount": 1,
+          "reactDomMutationMs": 81.59999999403954,
+          "domMutationCount": 1,
+          "cardAdded": 1,
+          "cardRemoved": 0,
+          "rebuildPinInstanceCpuMs": 0.09999999403953552,
+          "rebuildPinInstanceCalls": 300,
+          "raf1UpperBoundMs": 90.40000000596046,
+          "raf2UpperBoundMs": 100.90000000596046,
+          "compositorResidueMs": 10.5
+        },
+        {
+          "kind": "delete",
+          "index": 3,
+          "count": 299,
+          "totalMutationCpuMs": 0.7000000178813934,
+          "structuredCloneCpuMs": 0,
+          "structuredCloneCount": 0,
+          "memoryDocumentMapSetCpuMs": 0,
+          "memoryDocumentMapSetCount": 1,
+          "reactDomMutationMs": 76.5,
+          "domMutationCount": 1,
+          "cardAdded": 0,
+          "cardRemoved": 1,
+          "rebuildPinInstanceCpuMs": 0.09999999403953552,
+          "rebuildPinInstanceCalls": 299,
+          "raf1UpperBoundMs": 84.7000000178814,
+          "raf2UpperBoundMs": 87.2000000178814,
+          "compositorResidueMs": 2.5
+        },
+        {
+          "kind": "add",
+          "index": 4,
+          "count": 300,
+          "totalMutationCpuMs": 3.2000000178813934,
+          "structuredCloneCpuMs": 0,
+          "structuredCloneCount": 0,
+          "memoryDocumentMapSetCpuMs": 0,
+          "memoryDocumentMapSetCount": 1,
+          "reactDomMutationMs": 92.5,
+          "domMutationCount": 1,
+          "cardAdded": 1,
+          "cardRemoved": 0,
+          "rebuildPinInstanceCpuMs": 0.09999999403953552,
+          "rebuildPinInstanceCalls": 300,
+          "raf1UpperBoundMs": 101.30000001192093,
+          "raf2UpperBoundMs": 104.7000000178814,
+          "compositorResidueMs": 3.4000000059604645
+        },
+        {
+          "kind": "delete",
+          "index": 4,
+          "count": 299,
+          "totalMutationCpuMs": 0.7999999821186066,
+          "structuredCloneCpuMs": 0,
+          "structuredCloneCount": 0,
+          "memoryDocumentMapSetCpuMs": 0,
+          "memoryDocumentMapSetCount": 1,
+          "reactDomMutationMs": 347.59999999403954,
+          "domMutationCount": 1,
+          "cardAdded": 0,
+          "cardRemoved": 1,
+          "rebuildPinInstanceCpuMs": 0.09999999403953552,
+          "rebuildPinInstanceCalls": 299,
+          "raf1UpperBoundMs": 359.39999997615814,
+          "raf2UpperBoundMs": 376.7999999821186,
+          "compositorResidueMs": 17.400000005960464
+        },
+        {
+          "kind": "add",
+          "index": 5,
+          "count": 300,
+          "totalMutationCpuMs": 1.7000000178813934,
+          "structuredCloneCpuMs": 0,
+          "structuredCloneCount": 0,
+          "memoryDocumentMapSetCpuMs": 0,
+          "memoryDocumentMapSetCount": 1,
+          "reactDomMutationMs": 83.10000002384186,
+          "domMutationCount": 1,
+          "cardAdded": 1,
+          "cardRemoved": 0,
+          "rebuildPinInstanceCpuMs": 0.20000001788139343,
+          "rebuildPinInstanceCalls": 300,
+          "raf1UpperBoundMs": 90.60000002384186,
+          "raf2UpperBoundMs": 96.2000000178814,
+          "compositorResidueMs": 5.5999999940395355
+        },
+        {
+          "kind": "delete",
+          "index": 5,
+          "count": 299,
+          "totalMutationCpuMs": 0.699999988079071,
+          "structuredCloneCpuMs": 0,
+          "structuredCloneCount": 0,
+          "memoryDocumentMapSetCpuMs": 0,
+          "memoryDocumentMapSetCount": 1,
+          "reactDomMutationMs": 77.30000001192093,
+          "domMutationCount": 1,
+          "cardAdded": 0,
+          "cardRemoved": 1,
+          "rebuildPinInstanceCpuMs": 0.09999999403953552,
+          "rebuildPinInstanceCalls": 299,
+          "raf1UpperBoundMs": 85.19999998807907,
+          "raf2UpperBoundMs": 87.40000000596046,
+          "compositorResidueMs": 2.2000000178813934
+        },
+        {
+          "kind": "add",
+          "index": 6,
+          "count": 300,
+          "totalMutationCpuMs": 2.699999988079071,
+          "structuredCloneCpuMs": 0,
+          "structuredCloneCount": 0,
+          "memoryDocumentMapSetCpuMs": 0,
+          "memoryDocumentMapSetCount": 1,
+          "reactDomMutationMs": 84.69999998807907,
+          "domMutationCount": 1,
+          "cardAdded": 1,
+          "cardRemoved": 0,
+          "rebuildPinInstanceCpuMs": 0,
+          "rebuildPinInstanceCalls": 300,
+          "raf1UpperBoundMs": 91.59999999403954,
+          "raf2UpperBoundMs": 99.80000001192093,
+          "compositorResidueMs": 8.200000017881393
+        },
+        {
+          "kind": "delete",
+          "index": 6,
+          "count": 299,
+          "totalMutationCpuMs": 0.8999999761581421,
+          "structuredCloneCpuMs": 0,
+          "structuredCloneCount": 0,
+          "memoryDocumentMapSetCpuMs": 0,
+          "memoryDocumentMapSetCount": 1,
+          "reactDomMutationMs": 111.7999999821186,
+          "domMutationCount": 1,
+          "cardAdded": 0,
+          "cardRemoved": 1,
+          "rebuildPinInstanceCpuMs": 0.30000001192092896,
+          "rebuildPinInstanceCalls": 299,
+          "raf1UpperBoundMs": 120.5,
+          "raf2UpperBoundMs": 134.69999998807907,
+          "compositorResidueMs": 14.199999988079071
+        },
+        {
+          "kind": "add",
+          "index": 7,
+          "count": 300,
+          "totalMutationCpuMs": 1.800000011920929,
+          "structuredCloneCpuMs": 0,
+          "structuredCloneCount": 0,
+          "memoryDocumentMapSetCpuMs": 0,
+          "memoryDocumentMapSetCount": 1,
+          "reactDomMutationMs": 79.90000000596046,
+          "domMutationCount": 1,
+          "cardAdded": 1,
+          "cardRemoved": 0,
+          "rebuildPinInstanceCpuMs": 0,
+          "rebuildPinInstanceCalls": 300,
+          "raf1UpperBoundMs": 89.2000000178814,
+          "raf2UpperBoundMs": 100.59999999403954,
+          "compositorResidueMs": 11.399999976158142
+        },
+        {
+          "kind": "delete",
+          "index": 7,
+          "count": 299,
+          "totalMutationCpuMs": 0.9000000059604645,
+          "structuredCloneCpuMs": 0,
+          "structuredCloneCount": 0,
+          "memoryDocumentMapSetCpuMs": 0,
+          "memoryDocumentMapSetCount": 1,
+          "reactDomMutationMs": 74.59999999403954,
+          "domMutationCount": 1,
+          "cardAdded": 0,
+          "cardRemoved": 1,
+          "rebuildPinInstanceCpuMs": 0.20000001788139343,
+          "rebuildPinInstanceCalls": 299,
+          "raf1UpperBoundMs": 80.80000001192093,
+          "raf2UpperBoundMs": 86.80000001192093,
+          "compositorResidueMs": 6
+        },
+        {
+          "kind": "add",
+          "index": 8,
+          "count": 300,
+          "totalMutationCpuMs": 1.5999999940395355,
+          "structuredCloneCpuMs": 0,
+          "structuredCloneCount": 0,
+          "memoryDocumentMapSetCpuMs": 0,
+          "memoryDocumentMapSetCount": 1,
+          "reactDomMutationMs": 79.09999999403954,
+          "domMutationCount": 1,
+          "cardAdded": 1,
+          "cardRemoved": 0,
+          "rebuildPinInstanceCpuMs": 0.20000001788139343,
+          "rebuildPinInstanceCalls": 300,
+          "raf1UpperBoundMs": 87.2000000178814,
+          "raf2UpperBoundMs": 102.30000001192093,
+          "compositorResidueMs": 15.099999994039536
+        },
+        {
+          "kind": "delete",
+          "index": 8,
+          "count": 299,
+          "totalMutationCpuMs": 0.699999988079071,
+          "structuredCloneCpuMs": 0,
+          "structuredCloneCount": 0,
+          "memoryDocumentMapSetCpuMs": 0,
+          "memoryDocumentMapSetCount": 1,
+          "reactDomMutationMs": 257.69999998807907,
+          "domMutationCount": 1,
+          "cardAdded": 0,
+          "cardRemoved": 1,
+          "rebuildPinInstanceCpuMs": 0,
+          "rebuildPinInstanceCalls": 299,
+          "raf1UpperBoundMs": 263.90000000596046,
+          "raf2UpperBoundMs": 269.90000000596046,
+          "compositorResidueMs": 6
+        },
+        {
+          "kind": "add",
+          "index": 9,
+          "count": 300,
+          "totalMutationCpuMs": 1.5999999940395355,
+          "structuredCloneCpuMs": 0,
+          "structuredCloneCount": 0,
+          "memoryDocumentMapSetCpuMs": 0,
+          "memoryDocumentMapSetCount": 1,
+          "reactDomMutationMs": 74.09999999403954,
+          "domMutationCount": 1,
+          "cardAdded": 1,
+          "cardRemoved": 0,
+          "rebuildPinInstanceCpuMs": 0.09999999403953552,
+          "rebuildPinInstanceCalls": 300,
+          "raf1UpperBoundMs": 80.59999999403954,
+          "raf2UpperBoundMs": 86,
+          "compositorResidueMs": 5.4000000059604645
+        },
+        {
+          "kind": "delete",
+          "index": 9,
+          "count": 299,
+          "totalMutationCpuMs": 0.6000000238418579,
+          "structuredCloneCpuMs": 0,
+          "structuredCloneCount": 0,
+          "memoryDocumentMapSetCpuMs": 0,
+          "memoryDocumentMapSetCount": 1,
+          "reactDomMutationMs": 83.60000002384186,
+          "domMutationCount": 1,
+          "cardAdded": 0,
+          "cardRemoved": 1,
+          "rebuildPinInstanceCpuMs": 0.09999999403953552,
+          "rebuildPinInstanceCalls": 299,
+          "raf1UpperBoundMs": 90.10000002384186,
+          "raf2UpperBoundMs": 99.80000001192093,
+          "compositorResidueMs": 9.699999988079071
+        }
+      ],
+      "otherExternalCount": 0,
+      "fontAborts": [
+        "fonts.googleapis.com"
+      ],
+      "pageErrors": [],
+      "performanceEntries": {
+        "supported": [
+          "element",
+          "event",
+          "first-input",
+          "interaction-contentful-paint",
+          "largest-contentful-paint",
+          "layout-shift",
+          "long-animation-frame",
+          "longtask",
+          "mark",
+          "measure",
+          "navigation",
+          "paint",
+          "resource",
+          "soft-navigation",
+          "visibility-state"
+        ],
+        "entries": [
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 324.5,
+            "duration": 440.7000000178814,
+            "navigationId": 3181,
+            "paintTime": 765.2000000178814,
+            "presentationTime": 1248,
+            "renderStart": 616.7000000178814,
+            "styleAndLayoutStart": 616.8000000119209,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 109.3,
+            "scripts": []
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 853.0999999940395,
+            "duration": 389.40000000596046,
+            "navigationId": 3181,
+            "paintTime": 1242.5,
+            "presentationTime": 1384,
+            "renderStart": 1242.300000011921,
+            "styleAndLayoutStart": 1242.4000000059605,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 0,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 937.2000000178814,
+                "duration": 9.599999994039536,
+                "navigationId": 3181,
+                "invoker": "[loopback]/@id/virtual:tanstack-start-dev-client-entry",
+                "invokerType": "module-script",
+                "windowAttribution": "self",
+                "executionStart": 937.2000000178814,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "[loopback]/@id/virtual:tanstack-start-dev-client-entry",
+                "sourceFunctionName": "",
+                "sourceCharPosition": 0
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 2212.7000000178814,
+            "duration": 87,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 2212.7000000178814,
+            "duration": 88,
+            "navigationId": 3181,
+            "paintTime": 2300.7000000178814,
+            "presentationTime": 2304,
+            "renderStart": 2300,
+            "styleAndLayoutStart": 2300,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 37.8,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 2213.9000000059605,
+                "duration": 85.90000000596046,
+                "navigationId": 3181,
+                "invoker": "[loopback]/node_modules/@tanstack/react-start/dist/plugin/default-entry/client.tsx",
+                "invokerType": "module-script",
+                "windowAttribution": "self",
+                "executionStart": 2213.9000000059605,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "[loopback]/node_modules/@tanstack/react-start/dist/plugin/default-entry/client.tsx",
+                "sourceFunctionName": "",
+                "sourceCharPosition": 0
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 3027.300000011921,
+            "duration": 72,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 3027.300000011921,
+            "duration": 72.7,
+            "navigationId": 3181,
+            "renderStart": 0,
+            "styleAndLayoutStart": 0,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 22.7,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 3029.5,
+                "duration": 69.09999999403954,
+                "navigationId": 3181,
+                "invoker": "[loopback]/src/routes/index.tsx?tsr-split=component",
+                "invokerType": "module-script",
+                "windowAttribution": "self",
+                "executionStart": 3029.5,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "[loopback]/src/routes/index.tsx?tsr-split=component",
+                "sourceFunctionName": "",
+                "sourceCharPosition": 0
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 3244.5999999940395,
+            "duration": 100,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 3244.5999999940395,
+            "duration": 144.60000002384186,
+            "navigationId": 3181,
+            "paintTime": 3389.2000000178814,
+            "presentationTime": 3408,
+            "renderStart": 3346.2000000178814,
+            "styleAndLayoutStart": 3346.300000011921,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 93.6,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 3244.5999999940395,
+                "duration": 100.7000000178814,
+                "navigationId": 3181,
+                "invoker": "MessagePort.onmessage",
+                "invokerType": "event-listener",
+                "windowAttribution": "self",
+                "executionStart": 3244.5999999940395,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "[loopback]/node_modules/.vite/deps/react-dom_client.js?v=1a04ca0a",
+                "sourceFunctionName": "performWorkUntilDeadline",
+                "sourceCharPosition": 703
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 3591.0999999940395,
+            "duration": 1750,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 3591.0999999940395,
+            "duration": 1777.9000000059605,
+            "navigationId": 3181,
+            "paintTime": 5369,
+            "presentationTime": 5432,
+            "renderStart": 5342,
+            "styleAndLayoutStart": 5342,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 1727.4,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 3591.0999999940395,
+                "duration": 1750.300000011921,
+                "navigationId": 3181,
+                "invoker": "import.then",
+                "invokerType": "resolve-promise",
+                "windowAttribution": "self",
+                "executionStart": 3591.0999999940395,
+                "forcedStyleAndLayoutDuration": 2.9,
+                "pauseDuration": 0,
+                "sourceURL": "[loopback]/src/components/overlay/SceneViewport.tsx",
+                "sourceFunctionName": "",
+                "sourceCharPosition": 3428
+              },
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 5344.0999999940395,
+                "duration": 24.5,
+                "navigationId": 3181,
+                "invoker": "ResizeObserverCallback",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 5344.0999999940395,
+                "forcedStyleAndLayoutDuration": 0.1,
+                "pauseDuration": 0,
+                "sourceURL": "[loopback]/src/engine/demoScene.ts",
+                "sourceFunctionName": "resize",
+                "sourceCharPosition": 32681
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 5449.5,
+            "duration": 693.8000000119209,
+            "navigationId": 3181,
+            "paintTime": 6143.300000011921,
+            "presentationTime": 6196,
+            "renderStart": 6142.5999999940395,
+            "styleAndLayoutStart": 6143.0999999940395,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 0,
+            "scripts": []
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 6294.300000011921,
+            "duration": 119,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "pointerover",
+            "entryType": "event",
+            "startTime": 6216.800000011921,
+            "duration": 64,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6217.9000000059605,
+            "processingEnd": 6219.200000017881,
+            "cancelable": true
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6216.800000011921,
+            "duration": 64,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6219.200000017881,
+            "processingEnd": 6219.200000017881,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6216.800000011921,
+            "duration": 64,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6219.200000017881,
+            "processingEnd": 6219.200000017881,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6216.800000011921,
+            "duration": 64,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6219.200000017881,
+            "processingEnd": 6219.200000017881,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6216.800000011921,
+            "duration": 64,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6219.200000017881,
+            "processingEnd": 6219.200000017881,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6216.800000011921,
+            "duration": 64,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6219.200000017881,
+            "processingEnd": 6219.200000017881,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6216.800000011921,
+            "duration": 64,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6219.200000017881,
+            "processingEnd": 6219.200000017881,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6216.800000011921,
+            "duration": 64,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6219.200000017881,
+            "processingEnd": 6219.200000017881,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6216.800000011921,
+            "duration": 64,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6219.200000017881,
+            "processingEnd": 6219.200000017881,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6216.800000011921,
+            "duration": 64,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6219.200000017881,
+            "processingEnd": 6219.200000017881,
+            "cancelable": false
+          },
+          {
+            "name": "mouseover",
+            "entryType": "event",
+            "startTime": 6216.800000011921,
+            "duration": 64,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6219.200000017881,
+            "processingEnd": 6219.4000000059605,
+            "cancelable": true
+          },
+          {
+            "name": "pointerdown",
+            "entryType": "event",
+            "startTime": 6217.0999999940395,
+            "duration": 64,
+            "navigationId": 3181,
+            "interactionId": 4868,
+            "processingStart": 6220.9000000059605,
+            "processingEnd": 6222.9000000059605,
+            "cancelable": true
+          },
+          {
+            "name": "mousedown",
+            "entryType": "event",
+            "startTime": 6217.0999999940395,
+            "duration": 64,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6222.9000000059605,
+            "processingEnd": 6223,
+            "cancelable": true
+          },
+          {
+            "name": "pointerup",
+            "entryType": "event",
+            "startTime": 6217.300000011921,
+            "duration": 64,
+            "navigationId": 3181,
+            "interactionId": 4868,
+            "processingStart": 6225.0999999940395,
+            "processingEnd": 6225.4000000059605,
+            "cancelable": true
+          },
+          {
+            "name": "mouseup",
+            "entryType": "event",
+            "startTime": 6217.300000011921,
+            "duration": 64,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6225.4000000059605,
+            "processingEnd": 6225.700000017881,
+            "cancelable": true
+          },
+          {
+            "name": "click",
+            "entryType": "event",
+            "startTime": 6217.300000011921,
+            "duration": 64,
+            "navigationId": 3181,
+            "interactionId": 4868,
+            "processingStart": 6225.800000011921,
+            "processingEnd": 6236.800000011921,
+            "cancelable": true
+          },
+          {
+            "name": "pointerover",
+            "entryType": "event",
+            "startTime": 6240.300000011921,
+            "duration": 40,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6240.5999999940395,
+            "processingEnd": 6241.0999999940395,
+            "cancelable": true
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6240.300000011921,
+            "duration": 40,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6241.0999999940395,
+            "processingEnd": 6241.0999999940395,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6240.300000011921,
+            "duration": 40,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6241.0999999940395,
+            "processingEnd": 6241.0999999940395,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6240.300000011921,
+            "duration": 40,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6241.0999999940395,
+            "processingEnd": 6241.0999999940395,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6240.300000011921,
+            "duration": 40,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6241.0999999940395,
+            "processingEnd": 6241.0999999940395,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6240.300000011921,
+            "duration": 40,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6241.0999999940395,
+            "processingEnd": 6241.0999999940395,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6240.300000011921,
+            "duration": 40,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6241.0999999940395,
+            "processingEnd": 6241.0999999940395,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6240.300000011921,
+            "duration": 40,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6241.0999999940395,
+            "processingEnd": 6241.0999999940395,
+            "cancelable": false
+          },
+          {
+            "name": "mouseover",
+            "entryType": "event",
+            "startTime": 6240.300000011921,
+            "duration": 40,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6241.0999999940395,
+            "processingEnd": 6241.300000011921,
+            "cancelable": true
+          },
+          {
+            "name": "pointerout",
+            "entryType": "event",
+            "startTime": 6293.800000011921,
+            "duration": 136,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6294.5999999940395,
+            "processingEnd": 6295.200000017881,
+            "cancelable": true
+          },
+          {
+            "name": "pointerleave",
+            "entryType": "event",
+            "startTime": 6293.800000011921,
+            "duration": 136,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6295.200000017881,
+            "processingEnd": 6295.200000017881,
+            "cancelable": false
+          },
+          {
+            "name": "pointerleave",
+            "entryType": "event",
+            "startTime": 6293.800000011921,
+            "duration": 136,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6295.200000017881,
+            "processingEnd": 6295.200000017881,
+            "cancelable": false
+          },
+          {
+            "name": "pointerleave",
+            "entryType": "event",
+            "startTime": 6293.800000011921,
+            "duration": 136,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6295.200000017881,
+            "processingEnd": 6295.200000017881,
+            "cancelable": false
+          },
+          {
+            "name": "pointerover",
+            "entryType": "event",
+            "startTime": 6293.800000011921,
+            "duration": 136,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6295.200000017881,
+            "processingEnd": 6295.4000000059605,
+            "cancelable": true
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6293.800000011921,
+            "duration": 136,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6295.4000000059605,
+            "processingEnd": 6295.4000000059605,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6293.800000011921,
+            "duration": 136,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6295.4000000059605,
+            "processingEnd": 6295.4000000059605,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6293.800000011921,
+            "duration": 136,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6295.4000000059605,
+            "processingEnd": 6295.4000000059605,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6293.800000011921,
+            "duration": 136,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6295.4000000059605,
+            "processingEnd": 6295.4000000059605,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6293.800000011921,
+            "duration": 136,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6295.4000000059605,
+            "processingEnd": 6295.4000000059605,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 6293.800000011921,
+            "duration": 136,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6295.4000000059605,
+            "processingEnd": 6295.4000000059605,
+            "cancelable": false
+          },
+          {
+            "name": "mouseout",
+            "entryType": "event",
+            "startTime": 6293.800000011921,
+            "duration": 136,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6295.4000000059605,
+            "processingEnd": 6295.5,
+            "cancelable": true
+          },
+          {
+            "name": "mouseover",
+            "entryType": "event",
+            "startTime": 6293.800000011921,
+            "duration": 136,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6295.5,
+            "processingEnd": 6295.5,
+            "cancelable": true
+          },
+          {
+            "name": "pointerdown",
+            "entryType": "event",
+            "startTime": 6293.9000000059605,
+            "duration": 136,
+            "navigationId": 3181,
+            "interactionId": 4875,
+            "processingStart": 6300.0999999940395,
+            "processingEnd": 6302.5,
+            "cancelable": true
+          },
+          {
+            "name": "mousedown",
+            "entryType": "event",
+            "startTime": 6293.9000000059605,
+            "duration": 136,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6302.5999999940395,
+            "processingEnd": 6302.700000017881,
+            "cancelable": true
+          },
+          {
+            "name": "pointerup",
+            "entryType": "event",
+            "startTime": 6294,
+            "duration": 136,
+            "navigationId": 3181,
+            "interactionId": 4875,
+            "processingStart": 6303.9000000059605,
+            "processingEnd": 6304,
+            "cancelable": true
+          },
+          {
+            "name": "mouseup",
+            "entryType": "event",
+            "startTime": 6294,
+            "duration": 136,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 6304,
+            "processingEnd": 6304.0999999940395,
+            "cancelable": true
+          },
+          {
+            "name": "click",
+            "entryType": "event",
+            "startTime": 6294,
+            "duration": 136,
+            "navigationId": 3181,
+            "interactionId": 4875,
+            "processingStart": 6304.0999999940395,
+            "processingEnd": 6379.4000000059605,
+            "cancelable": true
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 6294.300000011921,
+            "duration": 120,
+            "navigationId": 3181,
+            "paintTime": 6414.300000011921,
+            "presentationTime": 6436,
+            "renderStart": 6413.700000017881,
+            "styleAndLayoutStart": 6414.200000017881,
+            "firstUIEventTimestamp": 6293.800000011921,
+            "blockingDuration": 69.8,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 6304.200000017881,
+                "duration": 75,
+                "navigationId": 3181,
+                "invoker": "#document.onclick",
+                "invokerType": "event-listener",
+                "windowAttribution": "self",
+                "executionStart": 6304.200000017881,
+                "forcedStyleAndLayoutDuration": 6,
+                "pauseDuration": 0,
+                "sourceURL": "[loopback]/node_modules/.vite/deps/react-dom_client.js?v=1a04ca0a",
+                "sourceFunctionName": "dispatchDiscreteEvent",
+                "sourceCharPosition": 674261
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 6420.200000017881,
+            "duration": 51.89999997615814,
+            "navigationId": 3181,
+            "paintTime": 6472.0999999940395,
+            "presentationTime": 6536,
+            "renderStart": 6464.9000000059605,
+            "styleAndLayoutStart": 6468.9000000059605,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 0,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 6431.200000017881,
+                "duration": 33.5,
+                "navigationId": 3181,
+                "invoker": "import.then",
+                "invokerType": "resolve-promise",
+                "windowAttribution": "self",
+                "executionStart": 6431.200000017881,
+                "forcedStyleAndLayoutDuration": 0.2,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": 1166
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 11484.200000017881,
+            "duration": 488,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 11972.700000017881,
+            "duration": 66,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 11484.200000017881,
+            "duration": 551.6999999880791,
+            "navigationId": 3181,
+            "paintTime": 12035.90000000596,
+            "presentationTime": 12064,
+            "renderStart": 11972.800000011921,
+            "styleAndLayoutStart": 12027.40000000596,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 501.7,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 11484.200000017881,
+                "duration": 488.5,
+                "navigationId": 3181,
+                "invoker": "import.then",
+                "invokerType": "resolve-promise",
+                "windowAttribution": "self",
+                "executionStart": 11484.200000017881,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": 1166
+              },
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 11972.90000000596,
+                "duration": 54.5,
+                "navigationId": 3181,
+                "invoker": "FrameRequestCallback",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 11972.90000000596,
+                "forcedStyleAndLayoutDuration": 50.8,
+                "pauseDuration": 0,
+                "sourceURL": "[loopback]/src/engine/demoScene.ts",
+                "sourceFunctionName": "tick",
+                "sourceCharPosition": 30122
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 16677.30000001192,
+            "duration": 242,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 16927.59999999404,
+            "duration": 108,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 16677.30000001192,
+            "duration": 248.5,
+            "navigationId": 3181,
+            "paintTime": 16925.80000001192,
+            "presentationTime": 16948,
+            "renderStart": 16920.30000001192,
+            "styleAndLayoutStart": 16924.09999999404,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 198.4,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 16677.40000000596,
+                "duration": 242.80000001192093,
+                "navigationId": 3181,
+                "invoker": "TimerHandler:setTimeout",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 16677.40000000596,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": -1
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 16927.30000001192,
+            "duration": 107.09999999403954,
+            "navigationId": 3181,
+            "paintTime": 17034.40000000596,
+            "presentationTime": 17036,
+            "renderStart": 16927.59999999404,
+            "styleAndLayoutStart": 17029.20000001788,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 57,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 16932.20000001788,
+                "duration": 96.89999997615814,
+                "navigationId": 3181,
+                "invoker": "FrameRequestCallback",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 16932.20000001788,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": -1
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 17047.80000001192,
+            "duration": 96,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 17040.70000001788,
+            "duration": 101.7999999821186,
+            "navigationId": 3181,
+            "paintTime": 17142.5,
+            "presentationTime": 17144,
+            "renderStart": 17047.90000000596,
+            "styleAndLayoutStart": 17139.70000001788,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 44.7,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 17048.90000000596,
+                "duration": 90.80000001192093,
+                "navigationId": 3181,
+                "invoker": "FrameRequestCallback",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 17048.90000000596,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": -1
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 17150.80000001192,
+            "duration": 94,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 17150.40000000596,
+            "duration": 93.40000000596046,
+            "navigationId": 3181,
+            "paintTime": 17243.80000001192,
+            "presentationTime": 17248,
+            "renderStart": 17150.80000001192,
+            "styleAndLayoutStart": 17241.40000000596,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 43,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 17152,
+                "duration": 89.30000001192093,
+                "navigationId": 3181,
+                "invoker": "FrameRequestCallback",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 17152,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": -1
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 17265.5,
+            "duration": 81,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 17356.5,
+            "duration": 83,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 17250,
+            "duration": 95.80000001192093,
+            "navigationId": 3181,
+            "paintTime": 17345.80000001192,
+            "presentationTime": 17348,
+            "renderStart": 17265.59999999404,
+            "styleAndLayoutStart": 17343.09999999404,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 30.3,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 17265.80000001192,
+                "duration": 77.19999998807907,
+                "navigationId": 3181,
+                "invoker": "FrameRequestCallback",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 17265.80000001192,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": -1
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 17356.5,
+            "duration": 80.80000001192093,
+            "navigationId": 3181,
+            "paintTime": 17437.30000001192,
+            "presentationTime": 17440,
+            "renderStart": 17356.5,
+            "styleAndLayoutStart": 17434.80000001192,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 30.8,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 17356.90000000596,
+                "duration": 77.90000000596046,
+                "navigationId": 3181,
+                "invoker": "FrameRequestCallback",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 17356.90000000596,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": -1
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 17456.80000001192,
+            "duration": 88,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 17445.70000001788,
+            "duration": 98.5,
+            "navigationId": 3181,
+            "paintTime": 17544.20000001788,
+            "presentationTime": 17548,
+            "renderStart": 17457,
+            "styleAndLayoutStart": 17539.59999999404,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 37.4,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 17457.80000001192,
+                "duration": 81.7999999821186,
+                "navigationId": 3181,
+                "invoker": "FrameRequestCallback",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 17457.80000001192,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": -1
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 17557.90000000596,
+            "duration": 81,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 17645.90000000596,
+            "duration": 97,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 17551.20000001788,
+            "duration": 87,
+            "navigationId": 3181,
+            "paintTime": 17638.20000001788,
+            "presentationTime": 17640,
+            "renderStart": 17558,
+            "styleAndLayoutStart": 17635.59999999404,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 30.3,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 17558.90000000596,
+                "duration": 76.69999998807907,
+                "navigationId": 3181,
+                "invoker": "FrameRequestCallback",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 17558.90000000596,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": -1
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 17646.09999999404,
+            "duration": 95.90000000596046,
+            "navigationId": 3181,
+            "paintTime": 17742,
+            "presentationTime": 17744,
+            "renderStart": 17646.09999999404,
+            "styleAndLayoutStart": 17739.09999999404,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 46.1,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 17646.30000001192,
+                "duration": 92.69999998807907,
+                "navigationId": 3181,
+                "invoker": "FrameRequestCallback",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 17646.30000001192,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": -1
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 17750.80000001192,
+            "duration": 355,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 17750.80000001192,
+            "duration": 351.7999999821186,
+            "navigationId": 3181,
+            "paintTime": 18102.59999999404,
+            "presentationTime": 18108,
+            "renderStart": 17750.90000000596,
+            "styleAndLayoutStart": 18098.90000000596,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 301.6,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 17751.09999999404,
+                "duration": 347.80000001192093,
+                "navigationId": 3181,
+                "invoker": "FrameRequestCallback",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 17751.09999999404,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": -1
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 18127.70000001788,
+            "duration": 88,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 18112.30000001192,
+            "duration": 102.2999999821186,
+            "navigationId": 3181,
+            "paintTime": 18214.59999999404,
+            "presentationTime": 18220,
+            "renderStart": 18127.70000001788,
+            "styleAndLayoutStart": 18211.30000001192,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 37.1,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 18128,
+                "duration": 83.30000001192093,
+                "navigationId": 3181,
+                "invoker": "FrameRequestCallback",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 18128,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": -1
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 18223.59999999404,
+            "duration": 82,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 18223.59999999404,
+            "duration": 80.60000002384186,
+            "navigationId": 3181,
+            "paintTime": 18304.20000001788,
+            "presentationTime": 18308,
+            "renderStart": 18223.70000001788,
+            "styleAndLayoutStart": 18301.90000000596,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 30.6,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 18224.30000001192,
+                "duration": 77.5,
+                "navigationId": 3181,
+                "invoker": "FrameRequestCallback",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 18224.30000001192,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": -1
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 18311.30000001192,
+            "duration": 89,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 18311.30000001192,
+            "duration": 88.2999999821186,
+            "navigationId": 3181,
+            "paintTime": 18399.59999999404,
+            "presentationTime": 18404,
+            "renderStart": 18311.40000000596,
+            "styleAndLayoutStart": 18396.59999999404,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 38.3,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 18311.70000001788,
+                "duration": 84.89999997615814,
+                "navigationId": 3181,
+                "invoker": "FrameRequestCallback",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 18311.70000001788,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": -1
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 18410.59999999404,
+            "duration": 118,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 18406.40000000596,
+            "duration": 119.90000000596046,
+            "navigationId": 3181,
+            "paintTime": 18526.30000001192,
+            "presentationTime": 18532,
+            "renderStart": 18411,
+            "styleAndLayoutStart": 18523.59999999404,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 65.7,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 18411.59999999404,
+                "duration": 111.90000000596046,
+                "navigationId": 3181,
+                "invoker": "FrameRequestCallback",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 18411.59999999404,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": -1
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 18545.30000001192,
+            "duration": 87,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 18534,
+            "duration": 96.80000001192093,
+            "navigationId": 3181,
+            "paintTime": 18630.80000001192,
+            "presentationTime": 18636,
+            "renderStart": 18545.40000000596,
+            "styleAndLayoutStart": 18626.5,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 35.5,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 18546.30000001192,
+                "duration": 80.09999999403954,
+                "navigationId": 3181,
+                "invoker": "FrameRequestCallback",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 18546.30000001192,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": -1
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 18646.40000000596,
+            "duration": 79,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 18638.90000000596,
+            "duration": 85.59999999403954,
+            "navigationId": 3181,
+            "paintTime": 18724.5,
+            "presentationTime": 18728,
+            "renderStart": 18646.5,
+            "styleAndLayoutStart": 18722.09999999404,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 28.1,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 18647,
+                "duration": 75.09999999403954,
+                "navigationId": 3181,
+                "invoker": "FrameRequestCallback",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 18647,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": -1
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 18731.5,
+            "duration": 88,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 18729.70000001788,
+            "duration": 88.09999999403954,
+            "navigationId": 3181,
+            "paintTime": 18817.80000001192,
+            "presentationTime": 18820,
+            "renderStart": 18731.5,
+            "styleAndLayoutStart": 18813.59999999404,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 36.4,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 18734.20000001788,
+                "duration": 79.39999997615814,
+                "navigationId": 3181,
+                "invoker": "FrameRequestCallback",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 18734.20000001788,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": -1
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 18834,
+            "duration": 264,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 18824.5,
+            "duration": 272.59999999403954,
+            "navigationId": 3181,
+            "paintTime": 19097.09999999404,
+            "presentationTime": 19100,
+            "renderStart": 18834.20000001788,
+            "styleAndLayoutStart": 19094.70000001788,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 213,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 18836.80000001192,
+                "duration": 257.90000000596046,
+                "navigationId": 3181,
+                "invoker": "FrameRequestCallback",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 18836.80000001192,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": -1
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 19106,
+            "duration": 79,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 19192.20000001788,
+            "duration": 88,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 19102.30000001192,
+            "duration": 81.7999999821186,
+            "navigationId": 3181,
+            "paintTime": 19184.09999999404,
+            "presentationTime": 19188,
+            "renderStart": 19106.09999999404,
+            "styleAndLayoutStart": 19181.09999999404,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 28.1,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 19106.70000001788,
+                "duration": 74.39999997615814,
+                "navigationId": 3181,
+                "invoker": "FrameRequestCallback",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 19106.70000001788,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": -1
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 19192.40000000596,
+            "duration": 87.19999998807907,
+            "navigationId": 3181,
+            "paintTime": 19279.59999999404,
+            "presentationTime": 19284,
+            "renderStart": 19192.40000000596,
+            "styleAndLayoutStart": 19276.90000000596,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 37.4,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 19192.90000000596,
+                "duration": 84,
+                "navigationId": 3181,
+                "invoker": "FrameRequestCallback",
+                "invokerType": "user-callback",
+                "windowAttribution": "self",
+                "executionStart": 19192.90000000596,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "",
+                "sourceFunctionName": "",
+                "sourceCharPosition": -1
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 19315.09999999404,
+            "duration": 145.7000000178814,
+            "navigationId": 3181,
+            "paintTime": 19460.80000001192,
+            "presentationTime": 19464,
+            "renderStart": 19459,
+            "styleAndLayoutStart": 19460.80000001192,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 0,
+            "scripts": []
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 19487.09999999404,
+            "duration": 232,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 19766.09999999404,
+            "duration": 99,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "pointerout",
+            "entryType": "event",
+            "startTime": 19486.09999999404,
+            "duration": 264,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19486.40000000596,
+            "processingEnd": 19486.70000001788,
+            "cancelable": true
+          },
+          {
+            "name": "pointerleave",
+            "entryType": "event",
+            "startTime": 19486.09999999404,
+            "duration": 264,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19486.70000001788,
+            "processingEnd": 19486.70000001788,
+            "cancelable": false
+          },
+          {
+            "name": "pointerleave",
+            "entryType": "event",
+            "startTime": 19486.09999999404,
+            "duration": 264,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19486.70000001788,
+            "processingEnd": 19486.70000001788,
+            "cancelable": false
+          },
+          {
+            "name": "pointerleave",
+            "entryType": "event",
+            "startTime": 19486.09999999404,
+            "duration": 264,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19486.70000001788,
+            "processingEnd": 19486.70000001788,
+            "cancelable": false
+          },
+          {
+            "name": "pointerover",
+            "entryType": "event",
+            "startTime": 19486.09999999404,
+            "duration": 264,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19486.70000001788,
+            "processingEnd": 19486.80000001192,
+            "cancelable": true
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 19486.09999999404,
+            "duration": 264,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19486.80000001192,
+            "processingEnd": 19486.80000001192,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 19486.09999999404,
+            "duration": 264,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19486.80000001192,
+            "processingEnd": 19486.80000001192,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 19486.09999999404,
+            "duration": 264,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19486.80000001192,
+            "processingEnd": 19486.80000001192,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 19486.09999999404,
+            "duration": 264,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19486.80000001192,
+            "processingEnd": 19486.80000001192,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 19486.09999999404,
+            "duration": 264,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19486.80000001192,
+            "processingEnd": 19486.80000001192,
+            "cancelable": false
+          },
+          {
+            "name": "mouseout",
+            "entryType": "event",
+            "startTime": 19486.09999999404,
+            "duration": 264,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19486.80000001192,
+            "processingEnd": 19486.80000001192,
+            "cancelable": true
+          },
+          {
+            "name": "mouseover",
+            "entryType": "event",
+            "startTime": 19486.09999999404,
+            "duration": 264,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19486.80000001192,
+            "processingEnd": 19486.80000001192,
+            "cancelable": true
+          },
+          {
+            "name": "pointerdown",
+            "entryType": "event",
+            "startTime": 19486.20000001788,
+            "duration": 264,
+            "navigationId": 3181,
+            "interactionId": 4882,
+            "processingStart": 19487.30000001192,
+            "processingEnd": 19489.80000001192,
+            "cancelable": true
+          },
+          {
+            "name": "mousedown",
+            "entryType": "event",
+            "startTime": 19486.20000001788,
+            "duration": 264,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19489.80000001192,
+            "processingEnd": 19489.90000000596,
+            "cancelable": true
+          },
+          {
+            "name": "pointerup",
+            "entryType": "event",
+            "startTime": 19486.40000000596,
+            "duration": 264,
+            "navigationId": 3181,
+            "interactionId": 4882,
+            "processingStart": 19490.5,
+            "processingEnd": 19490.59999999404,
+            "cancelable": true
+          },
+          {
+            "name": "mouseup",
+            "entryType": "event",
+            "startTime": 19486.40000000596,
+            "duration": 264,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19490.59999999404,
+            "processingEnd": 19490.59999999404,
+            "cancelable": true
+          },
+          {
+            "name": "click",
+            "entryType": "event",
+            "startTime": 19486.40000000596,
+            "duration": 264,
+            "navigationId": 3181,
+            "interactionId": 4882,
+            "processingStart": 19490.59999999404,
+            "processingEnd": 19709.30000001192,
+            "cancelable": true
+          },
+          {
+            "name": "pointerout",
+            "entryType": "event",
+            "startTime": 19719.40000000596,
+            "duration": 32,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19719.70000001788,
+            "processingEnd": 19720.20000001788,
+            "cancelable": true
+          },
+          {
+            "name": "pointerleave",
+            "entryType": "event",
+            "startTime": 19719.40000000596,
+            "duration": 32,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19720.20000001788,
+            "processingEnd": 19720.20000001788,
+            "cancelable": false
+          },
+          {
+            "name": "pointerleave",
+            "entryType": "event",
+            "startTime": 19719.40000000596,
+            "duration": 32,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19720.20000001788,
+            "processingEnd": 19720.20000001788,
+            "cancelable": false
+          },
+          {
+            "name": "pointerleave",
+            "entryType": "event",
+            "startTime": 19719.40000000596,
+            "duration": 32,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19720.20000001788,
+            "processingEnd": 19720.20000001788,
+            "cancelable": false
+          },
+          {
+            "name": "pointerleave",
+            "entryType": "event",
+            "startTime": 19719.40000000596,
+            "duration": 32,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19720.20000001788,
+            "processingEnd": 19720.20000001788,
+            "cancelable": false
+          },
+          {
+            "name": "pointerleave",
+            "entryType": "event",
+            "startTime": 19719.40000000596,
+            "duration": 32,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19720.20000001788,
+            "processingEnd": 19720.20000001788,
+            "cancelable": false
+          },
+          {
+            "name": "pointerleave",
+            "entryType": "event",
+            "startTime": 19719.40000000596,
+            "duration": 32,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19720.20000001788,
+            "processingEnd": 19720.20000001788,
+            "cancelable": false
+          },
+          {
+            "name": "pointerleave",
+            "entryType": "event",
+            "startTime": 19719.40000000596,
+            "duration": 32,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19720.20000001788,
+            "processingEnd": 19720.20000001788,
+            "cancelable": false
+          },
+          {
+            "name": "pointerleave",
+            "entryType": "event",
+            "startTime": 19719.40000000596,
+            "duration": 32,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19720.20000001788,
+            "processingEnd": 19720.20000001788,
+            "cancelable": false
+          },
+          {
+            "name": "pointerleave",
+            "entryType": "event",
+            "startTime": 19719.40000000596,
+            "duration": 32,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19720.20000001788,
+            "processingEnd": 19720.20000001788,
+            "cancelable": false
+          },
+          {
+            "name": "pointerover",
+            "entryType": "event",
+            "startTime": 19719.40000000596,
+            "duration": 32,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19720.20000001788,
+            "processingEnd": 19720.30000001192,
+            "cancelable": true
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 19719.40000000596,
+            "duration": 32,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19720.30000001192,
+            "processingEnd": 19720.30000001192,
+            "cancelable": false
+          },
+          {
+            "name": "mouseout",
+            "entryType": "event",
+            "startTime": 19719.40000000596,
+            "duration": 32,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19720.30000001192,
+            "processingEnd": 19720.40000000596,
+            "cancelable": true
+          },
+          {
+            "name": "mouseover",
+            "entryType": "event",
+            "startTime": 19719.40000000596,
+            "duration": 32,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19720.40000000596,
+            "processingEnd": 19720.40000000596,
+            "cancelable": true
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 19486.30000001192,
+            "duration": 234.59999999403954,
+            "navigationId": 3181,
+            "paintTime": 19720.90000000596,
+            "presentationTime": 19752,
+            "renderStart": 19719.40000000596,
+            "styleAndLayoutStart": 19720.90000000596,
+            "firstUIEventTimestamp": 19486.09999999404,
+            "blockingDuration": 183.4,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 19490.70000001788,
+                "duration": 218.59999999403954,
+                "navigationId": 3181,
+                "invoker": "#document.onclick",
+                "invokerType": "event-listener",
+                "windowAttribution": "self",
+                "executionStart": 19490.70000001788,
+                "forcedStyleAndLayoutDuration": 124.7,
+                "pauseDuration": 0,
+                "sourceURL": "[loopback]/node_modules/.vite/deps/react-dom_client.js?v=1a04ca0a",
+                "sourceFunctionName": "dispatchDiscreteEvent",
+                "sourceCharPosition": 674261
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 19869.09999999404,
+            "duration": 51,
+            "navigationId": 3181,
+            "paintTime": 19920.09999999404,
+            "presentationTime": 19924,
+            "renderStart": 19918.30000001192,
+            "styleAndLayoutStart": 19920,
+            "firstUIEventTimestamp": 0,
+            "blockingDuration": 0,
+            "scripts": []
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 19942.80000001192,
+            "duration": 297,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "pointerout",
+            "entryType": "event",
+            "startTime": 19732.80000001192,
+            "duration": 192,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19737.30000001192,
+            "processingEnd": 19738.20000001788,
+            "cancelable": true
+          },
+          {
+            "name": "pointerleave",
+            "entryType": "event",
+            "startTime": 19732.80000001192,
+            "duration": 192,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19738.20000001788,
+            "processingEnd": 19738.20000001788,
+            "cancelable": false
+          },
+          {
+            "name": "pointerover",
+            "entryType": "event",
+            "startTime": 19732.80000001192,
+            "duration": 192,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19738.20000001788,
+            "processingEnd": 19738.40000000596,
+            "cancelable": true
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 19732.80000001192,
+            "duration": 192,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19738.40000000596,
+            "processingEnd": 19738.40000000596,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 19732.80000001192,
+            "duration": 192,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19738.40000000596,
+            "processingEnd": 19738.40000000596,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 19732.80000001192,
+            "duration": 192,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19738.40000000596,
+            "processingEnd": 19738.40000000596,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 19732.80000001192,
+            "duration": 192,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19738.40000000596,
+            "processingEnd": 19738.40000000596,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 19732.80000001192,
+            "duration": 192,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19738.40000000596,
+            "processingEnd": 19738.40000000596,
+            "cancelable": false
+          },
+          {
+            "name": "mouseout",
+            "entryType": "event",
+            "startTime": 19732.80000001192,
+            "duration": 192,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19738.40000000596,
+            "processingEnd": 19738.59999999404,
+            "cancelable": true
+          },
+          {
+            "name": "mouseover",
+            "entryType": "event",
+            "startTime": 19732.80000001192,
+            "duration": 192,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19738.59999999404,
+            "processingEnd": 19738.59999999404,
+            "cancelable": true
+          },
+          {
+            "name": "beforeinput",
+            "entryType": "event",
+            "startTime": 19766.09999999404,
+            "duration": 168,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19766.09999999404,
+            "processingEnd": 19766.20000001788,
+            "cancelable": true
+          },
+          {
+            "name": "input",
+            "entryType": "event",
+            "startTime": 19767.59999999404,
+            "duration": 168,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19768.30000001192,
+            "processingEnd": 19865.09999999404,
+            "cancelable": false
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 19766.09999999404,
+            "duration": 100,
+            "navigationId": 3181,
+            "paintTime": 19866.09999999404,
+            "presentationTime": 19940,
+            "renderStart": 19865.30000001192,
+            "styleAndLayoutStart": 19866,
+            "firstUIEventTimestamp": 19766.20000001788,
+            "blockingDuration": 49.9,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 19768.59999999404,
+                "duration": 96.40000000596046,
+                "navigationId": 3181,
+                "invoker": "BODY.oninput",
+                "invokerType": "event-listener",
+                "windowAttribution": "self",
+                "executionStart": 19768.59999999404,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "[loopback]/node_modules/.vite/deps/react-dom_client.js?v=1a04ca0a",
+                "sourceFunctionName": "dispatchDiscreteEvent",
+                "sourceCharPosition": 674261
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 20269.40000000596,
+            "duration": 105,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          },
+          {
+            "name": "pointerout",
+            "entryType": "event",
+            "startTime": 19935.40000000596,
+            "duration": 328,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19935.80000001192,
+            "processingEnd": 19936.09999999404,
+            "cancelable": true
+          },
+          {
+            "name": "pointerleave",
+            "entryType": "event",
+            "startTime": 19935.40000000596,
+            "duration": 328,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19936.09999999404,
+            "processingEnd": 19936.09999999404,
+            "cancelable": false
+          },
+          {
+            "name": "pointerleave",
+            "entryType": "event",
+            "startTime": 19935.40000000596,
+            "duration": 328,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19936.09999999404,
+            "processingEnd": 19936.09999999404,
+            "cancelable": false
+          },
+          {
+            "name": "pointerleave",
+            "entryType": "event",
+            "startTime": 19935.40000000596,
+            "duration": 328,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19936.09999999404,
+            "processingEnd": 19936.09999999404,
+            "cancelable": false
+          },
+          {
+            "name": "pointerover",
+            "entryType": "event",
+            "startTime": 19935.40000000596,
+            "duration": 328,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19936.09999999404,
+            "processingEnd": 19936.20000001788,
+            "cancelable": true
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 19935.40000000596,
+            "duration": 328,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19936.20000001788,
+            "processingEnd": 19936.20000001788,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 19935.40000000596,
+            "duration": 328,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19936.20000001788,
+            "processingEnd": 19936.20000001788,
+            "cancelable": false
+          },
+          {
+            "name": "mouseout",
+            "entryType": "event",
+            "startTime": 19935.40000000596,
+            "duration": 328,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19936.20000001788,
+            "processingEnd": 19936.30000001192,
+            "cancelable": true
+          },
+          {
+            "name": "mouseover",
+            "entryType": "event",
+            "startTime": 19935.40000000596,
+            "duration": 328,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19936.30000001192,
+            "processingEnd": 19936.40000000596,
+            "cancelable": true
+          },
+          {
+            "name": "pointerdown",
+            "entryType": "event",
+            "startTime": 19935.5,
+            "duration": 328,
+            "navigationId": 3181,
+            "interactionId": 4889,
+            "processingStart": 19936.80000001192,
+            "processingEnd": 19940.90000000596,
+            "cancelable": true
+          },
+          {
+            "name": "mousedown",
+            "entryType": "event",
+            "startTime": 19935.5,
+            "duration": 328,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19940.90000000596,
+            "processingEnd": 19941.09999999404,
+            "cancelable": true
+          },
+          {
+            "name": "pointerup",
+            "entryType": "event",
+            "startTime": 19935.59999999404,
+            "duration": 328,
+            "navigationId": 3181,
+            "interactionId": 4889,
+            "processingStart": 19942.90000000596,
+            "processingEnd": 19943.09999999404,
+            "cancelable": true
+          },
+          {
+            "name": "mouseup",
+            "entryType": "event",
+            "startTime": 19935.59999999404,
+            "duration": 328,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 19943.09999999404,
+            "processingEnd": 19943.20000001788,
+            "cancelable": true
+          },
+          {
+            "name": "click",
+            "entryType": "event",
+            "startTime": 19935.59999999404,
+            "duration": 328,
+            "navigationId": 3181,
+            "interactionId": 4889,
+            "processingStart": 19943.20000001788,
+            "processingEnd": 20235.30000001192,
+            "cancelable": true
+          },
+          {
+            "name": "pointerover",
+            "entryType": "event",
+            "startTime": 20239.90000000596,
+            "duration": 24,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 20240.09999999404,
+            "processingEnd": 20240.70000001788,
+            "cancelable": true
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 20239.90000000596,
+            "duration": 24,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 20240.70000001788,
+            "processingEnd": 20240.70000001788,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 20239.90000000596,
+            "duration": 24,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 20240.70000001788,
+            "processingEnd": 20240.70000001788,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 20239.90000000596,
+            "duration": 24,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 20240.70000001788,
+            "processingEnd": 20240.70000001788,
+            "cancelable": false
+          },
+          {
+            "name": "pointerenter",
+            "entryType": "event",
+            "startTime": 20239.90000000596,
+            "duration": 24,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 20240.70000001788,
+            "processingEnd": 20240.70000001788,
+            "cancelable": false
+          },
+          {
+            "name": "mouseover",
+            "entryType": "event",
+            "startTime": 20239.90000000596,
+            "duration": 24,
+            "navigationId": 3181,
+            "interactionId": 0,
+            "processingStart": 20240.70000001788,
+            "processingEnd": 20241.20000001788,
+            "cancelable": true
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 19935.5,
+            "duration": 307.59999999403954,
+            "navigationId": 3181,
+            "paintTime": 20243.09999999404,
+            "presentationTime": 20264,
+            "renderStart": 20239.90000000596,
+            "styleAndLayoutStart": 20243.09999999404,
+            "firstUIEventTimestamp": 19935.40000000596,
+            "blockingDuration": 250.2,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 19943.30000001192,
+                "duration": 291.90000000596046,
+                "navigationId": 3181,
+                "invoker": "BODY.onclick",
+                "invokerType": "event-listener",
+                "windowAttribution": "self",
+                "executionStart": 19943.30000001192,
+                "forcedStyleAndLayoutDuration": 4.9,
+                "pauseDuration": 0,
+                "sourceURL": "[loopback]/node_modules/.vite/deps/react-dom_client.js?v=1a04ca0a",
+                "sourceFunctionName": "dispatchDiscreteEvent",
+                "sourceCharPosition": 674261
+              }
+            ]
+          },
+          {
+            "name": "long-animation-frame",
+            "entryType": "long-animation-frame",
+            "startTime": 20256.70000001788,
+            "duration": 118.89999997615814,
+            "navigationId": 3181,
+            "paintTime": 20375.59999999404,
+            "presentationTime": 20380,
+            "renderStart": 20375.09999999404,
+            "styleAndLayoutStart": 20375.59999999404,
+            "firstUIEventTimestamp": 20375.09999999404,
+            "blockingDuration": 56.2,
+            "scripts": [
+              {
+                "name": "script",
+                "entryType": "script",
+                "startTime": 20258.40000000596,
+                "duration": 10.800000011920929,
+                "navigationId": 3181,
+                "invoker": "MessagePort.onmessage",
+                "invokerType": "event-listener",
+                "windowAttribution": "self",
+                "executionStart": 20258.40000000596,
+                "forcedStyleAndLayoutDuration": 0,
+                "pauseDuration": 0,
+                "sourceURL": "[loopback]/node_modules/.vite/deps/react-dom_client.js?v=1a04ca0a",
+                "sourceFunctionName": "performWorkUntilDeadline",
+                "sourceCharPosition": 703
+              }
+            ]
+          },
+          {
+            "name": "self",
+            "entryType": "longtask",
+            "startTime": 20440.09999999404,
+            "duration": 87,
+            "navigationId": 3181,
+            "attribution": [
+              {
+                "name": "unknown",
+                "entryType": "taskattribution",
+                "startTime": 0,
+                "duration": 0,
+                "navigationId": 3181,
+                "containerType": "window",
+                "containerSrc": "",
+                "containerId": "",
+                "containerName": ""
+              }
+            ]
+          }
+        ]
+      },
+      "trace": {
+        "events": 155862,
+        "parts": [
+          {
+            "name": "before-trace-0-0.json.gz",
+            "events": 38965,
+            "sha256": "04bd6a568ada7839a16d8d6088b698075c1a7914d8e887c1d15a814407fa88f4"
+          },
+          {
+            "name": "before-trace-0-1.json.gz",
+            "events": 38966,
+            "sha256": "18e29877df9318260571f2ef6fa186ae09364e51e96ef95deb3f6f5a1f4a3923"
+          },
+          {
+            "name": "before-trace-0-2.json.gz",
+            "events": 38965,
+            "sha256": "3b8b81b1197b75cb2ddb2550ca0180d4d32b9235846eba322e48b15df74016ac"
+          },
+          {
+            "name": "before-trace-0-3.json.gz",
+            "events": 38966,
+            "sha256": "b99516af104156e6f3d608e7e50926ab223dcd158d4fc8d8dfb019f5b40b9f27"
+          }
+        ],
+        "redaction": "Loopback HTTP/WebSocket origins, ephemeral Vite HMR query tokens and workspace prefixes only; all timing events retained."
+      },
+      "uiDiagnostic": {
+        "start": 19309.59999999404,
+        "end": 20559.40000000596,
+        "purpose": "Actual input event timing, excluded from API latency samples."
+      }
+    }
+  ],
+  "privacyPostprocess": "Before public commit, removed loopback WebSocket query strings missed by initial HTTP-only scrub; event counts/timestamps/durations unchanged. Original compressed trace retained only in local QA storage."
+}

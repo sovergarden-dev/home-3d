@@ -521,6 +521,13 @@ test.describe("H6 completion synthetic integration", () => {
       !supported,
       "WEBGL_lose_context extension unavailable; native context-loss NOT_VERIFIED",
     );
+    await expect(page.locator("#scene-root")).toHaveAttribute("data-recovery-attempts", "1");
+    await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "ready");
+    await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-active-worlds", "1");
+    await expect(page.getByText("Đã mở gói cục bộ", { exact: false })).toBeVisible();
+    await page.locator("#scene-root canvas").evaluate((canvas: HTMLCanvasElement) => {
+      canvas.getContext("webgl2")?.getExtension("WEBGL_lose_context")?.loseContext();
+    });
     await expect(page.getByText("Thiết bị chưa mở được 3D", { exact: true })).toBeVisible();
     await page.getByRole("button", { name: "Thử lại 3D", exact: true }).click();
     await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "ready");

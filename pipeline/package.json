@@ -7,6 +7,11 @@
     "test": "bun test src",
     "typecheck": "bun x tsc --noEmit --project tsconfig.json",
     "check": "bun run typecheck && bun run test",
-    "build": "bun build ./src/cli.ts --outdir ./dist --target bun"
+    "build": "bun build ./src/cli.ts --outdir ./dist --target bun",
+    "enrich:canonical": "bun src/enrich-canonical.ts"
+  },
+  "dependencies": {
+    "geotiff": "3.0.5",
+    "proj4": "2.22.0"
   }
 }

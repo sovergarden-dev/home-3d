@@ -1,0 +1,512 @@
+{
+  "syntheticOnly": true,
+  "scriptSha256": "5a771bae5d48a1beb948e738691aca07d8919ca803d7543bd412c7ccbf19647c",
+  "label": "H_BLOCKED",
+  "goalMs": 100,
+  "batches": 6,
+  "pairs": 10,
+  "ordering": "AB then BA alternating batches",
+  "summary": {
+    "active-300": {
+      "before": {
+        "complete": false,
+        "failures": [
+          {
+            "pair": 0,
+            "kind": "delete",
+            "expected": 299,
+            "count": 299,
+            "cpuMs": 0.800000011920929,
+            "raf1Ms": 3392.699999988079,
+            "raf2Ms": 3549.300000011921,
+            "domCommitMs": 3381.300000011921,
+            "renderEndMs": 3392.300000011921,
+            "gpuCompletionObservedMs": null,
+            "reflectedMs": null,
+            "elapsedMs": 5166.300000011921,
+            "status": "TIMED_OUT"
+          },
+          {
+            "pair": 0,
+            "kind": "delete",
+            "expected": 299,
+            "count": 299,
+            "cpuMs": 1.9000000059604645,
+            "raf1Ms": 3208,
+            "raf2Ms": 3546.5999999940395,
+            "domCommitMs": 3037.4000000059605,
+            "renderEndMs": 3204.2999999821186,
+            "gpuCompletionObservedMs": null,
+            "reflectedMs": null,
+            "elapsedMs": 5046.0999999940395,
+            "status": "TIMED_OUT"
+          },
+          {
+            "pair": 0,
+            "kind": "add",
+            "expected": 300,
+            "count": 300,
+            "cpuMs": 2.699999988079071,
+            "raf1Ms": 3465.699999988079,
+            "raf2Ms": 3645.7999999821186,
+            "domCommitMs": 3352.0999999940395,
+            "renderEndMs": 3465,
+            "gpuCompletionObservedMs": null,
+            "reflectedMs": null,
+            "elapsedMs": 5207,
+            "status": "TIMED_OUT"
+          },
+          {
+            "pair": 0,
+            "kind": "add",
+            "expected": 300,
+            "count": 300,
+            "cpuMs": 2.5,
+            "raf1Ms": 2942.4000000059605,
+            "raf2Ms": 3073.2000000178814,
+            "domCommitMs": 2937.5,
+            "renderEndMs": 2942,
+            "gpuCompletionObservedMs": null,
+            "reflectedMs": null,
+            "elapsedMs": 5141.300000011921,
+            "status": "TIMED_OUT"
+          },
+          {
+            "pair": 0,
+            "kind": "delete",
+            "expected": 299,
+            "count": 299,
+            "cpuMs": 0.4000000059604645,
+            "raf1Ms": 3139.2000000178814,
+            "raf2Ms": 3264.9000000059605,
+            "domCommitMs": 3079.0999999940395,
+            "renderEndMs": 3138.7000000178814,
+            "gpuCompletionObservedMs": null,
+            "reflectedMs": null,
+            "elapsedMs": 5130,
+            "status": "TIMED_OUT"
+          }
+        ],
+        "add": {
+          "n": 13,
+          "min": 1303.2000000178814,
+          "p50": 1646.5999999940395,
+          "p95": 5834.5,
+          "max": 5834.5
+        },
+        "delete": {
+          "n": 10,
+          "min": 1268.9000000059605,
+          "p50": 1404.6499999910593,
+          "p95": 2485.5,
+          "max": 2485.5
+        }
+      },
+      "after": {
+        "complete": false,
+        "failures": [
+          {
+            "pair": 0,
+            "kind": "add",
+            "expected": 300,
+            "count": 300,
+            "cpuMs": 2.199999988079071,
+            "raf1Ms": 329.19999998807907,
+            "raf2Ms": 479.69999998807907,
+            "domCommitMs": 304.69999998807907,
+            "renderEndMs": 328.89999997615814,
+            "gpuCompletionObservedMs": null,
+            "reflectedMs": null,
+            "elapsedMs": 5103.299999982119,
+            "status": "TIMED_OUT"
+          },
+          {
+            "pair": 0,
+            "kind": "delete",
+            "expected": 299,
+            "count": 299,
+            "cpuMs": 0.4000000059604645,
+            "raf1Ms": 380.40000000596046,
+            "raf2Ms": 561.5999999940395,
+            "domCommitMs": 30.5,
+            "renderEndMs": 380.09999999403954,
+            "gpuCompletionObservedMs": null,
+            "reflectedMs": null,
+            "elapsedMs": 5071.4000000059605,
+            "status": "TIMED_OUT"
+          },
+          {
+            "pair": 0,
+            "kind": "add",
+            "expected": 300,
+            "count": 300,
+            "cpuMs": 2.699999988079071,
+            "raf1Ms": 340.5,
+            "raf2Ms": 387.19999998807907,
+            "domCommitMs": 189.89999997615814,
+            "renderEndMs": 340.19999998807907,
+            "gpuCompletionObservedMs": null,
+            "reflectedMs": null,
+            "elapsedMs": 5130,
+            "status": "TIMED_OUT"
+          },
+          {
+            "pair": 0,
+            "kind": "add",
+            "expected": 300,
+            "count": 300,
+            "cpuMs": 2.7000000178813934,
+            "raf1Ms": 499,
+            "raf2Ms": 864.8000000119209,
+            "domCommitMs": 361.30000001192093,
+            "renderEndMs": 485.80000001192093,
+            "gpuCompletionObservedMs": null,
+            "reflectedMs": null,
+            "elapsedMs": 5099.200000017881,
+            "status": "TIMED_OUT"
+          },
+          {
+            "pair": 0,
+            "kind": "add",
+            "expected": 300,
+            "count": 300,
+            "cpuMs": 1.899999976158142,
+            "raf1Ms": 138.69999998807907,
+            "raf2Ms": 324.09999999403954,
+            "domCommitMs": 85.2999999821186,
+            "renderEndMs": 138.5,
+            "gpuCompletionObservedMs": null,
+            "reflectedMs": null,
+            "elapsedMs": 5169.399999976158,
+            "status": "TIMED_OUT"
+          },
+          {
+            "pair": 0,
+            "kind": "add",
+            "expected": 300,
+            "count": 300,
+            "cpuMs": 2.0999999940395355,
+            "raf1Ms": 71.90000000596046,
+            "raf2Ms": 424.7000000178814,
+            "domCommitMs": 66.09999999403954,
+            "renderEndMs": 71.2000000178814,
+            "gpuCompletionObservedMs": null,
+            "reflectedMs": null,
+            "elapsedMs": 5026.800000011921,
+            "status": "TIMED_OUT"
+          }
+        ],
+        "add": {
+          "n": 1,
+          "min": 5324,
+          "p50": 5324,
+          "p95": 5324,
+          "max": 5324
+        },
+        "delete": null
+      }
+    },
+    "static-300": {
+      "before": {
+        "complete": true,
+        "failures": [],
+        "add": {
+          "n": 60,
+          "min": 215.90000000596046,
+          "p50": 268.00000001490116,
+          "p95": 565.3000000119209,
+          "max": 699.2000000178814
+        },
+        "delete": {
+          "n": 60,
+          "min": 199,
+          "p50": 254.74999998509884,
+          "p95": 583,
+          "max": 732.7999999821186
+        }
+      },
+      "after": {
+        "complete": true,
+        "failures": [],
+        "add": {
+          "n": 60,
+          "min": 158.89999997615814,
+          "p50": 199.74999998509884,
+          "p95": 217.10000002384186,
+          "max": 232.59999999403954
+        },
+        "delete": {
+          "n": 60,
+          "min": 165.19999998807907,
+          "p50": 198.75,
+          "p95": 217.69999998807907,
+          "max": 233
+        }
+      }
+    },
+    "smaller-300": {
+      "before": {
+        "complete": true,
+        "failures": [],
+        "add": {
+          "n": 60,
+          "min": 355.10000002384186,
+          "p50": 683.4999999850988,
+          "p95": 2321.899999976158,
+          "max": 2569.699999988079
+        },
+        "delete": {
+          "n": 60,
+          "min": 413.30000001192093,
+          "p50": 778.6499999910593,
+          "p95": 1090.7999999821186,
+          "max": 1639.5
+        }
+      },
+      "after": {
+        "complete": true,
+        "failures": [],
+        "add": {
+          "n": 60,
+          "min": 2334.7000000178814,
+          "p50": 2525.5999999940395,
+          "p95": 2634.0999999940395,
+          "max": 2761.199999988079
+        },
+        "delete": {
+          "n": 60,
+          "min": 2299.699999988079,
+          "p50": 2551.0499999970198,
+          "p95": 2693.5,
+          "max": 2731
+        }
+      }
+    },
+    "active-empty": {
+      "before": {
+        "complete": false,
+        "failures": [
+          {
+            "pair": 3,
+            "kind": "delete",
+            "expected": 0,
+            "count": 0,
+            "cpuMs": 0.29999998211860657,
+            "raf1Ms": 1053.0999999940395,
+            "raf2Ms": 1056.2999999821186,
+            "domCommitMs": 584.7999999821186,
+            "renderEndMs": 819,
+            "gpuCompletionObservedMs": null,
+            "reflectedMs": null,
+            "elapsedMs": 5185.799999982119,
+            "status": "TIMED_OUT"
+          },
+          {
+            "pair": 0,
+            "kind": "delete",
+            "expected": 0,
+            "count": 0,
+            "cpuMs": 0.699999988079071,
+            "raf1Ms": 319,
+            "raf2Ms": 492.09999999403954,
+            "domCommitMs": 60.900000005960464,
+            "renderEndMs": 318.59999999403954,
+            "gpuCompletionObservedMs": null,
+            "reflectedMs": null,
+            "elapsedMs": 5069.300000011921,
+            "status": "TIMED_OUT"
+          },
+          {
+            "pair": 0,
+            "kind": "delete",
+            "expected": 0,
+            "count": 0,
+            "cpuMs": 0.19999998807907104,
+            "raf1Ms": 694,
+            "raf2Ms": 706.5,
+            "domCommitMs": 202.89999997615814,
+            "renderEndMs": 693.5999999940395,
+            "gpuCompletionObservedMs": null,
+            "reflectedMs": null,
+            "elapsedMs": 5093.299999982119,
+            "status": "TIMED_OUT"
+          },
+          {
+            "pair": 0,
+            "kind": "delete",
+            "expected": 0,
+            "count": 0,
+            "cpuMs": 0.09999999403953552,
+            "raf1Ms": 222.59999999403954,
+            "raf2Ms": 574,
+            "domCommitMs": 56.70000001788139,
+            "renderEndMs": 222.09999999403954,
+            "gpuCompletionObservedMs": null,
+            "reflectedMs": null,
+            "elapsedMs": 5038.5,
+            "status": "TIMED_OUT"
+          },
+          {
+            "pair": 0,
+            "kind": "delete",
+            "expected": 0,
+            "count": 0,
+            "cpuMs": 0.20000001788139343,
+            "raf1Ms": 471.7000000178814,
+            "raf2Ms": 519.4000000059605,
+            "domCommitMs": 28.30000001192093,
+            "renderEndMs": 307.90000000596046,
+            "gpuCompletionObservedMs": null,
+            "reflectedMs": null,
+            "elapsedMs": 5050.9000000059605,
+            "status": "TIMED_OUT"
+          }
+        ],
+        "add": {
+          "n": 18,
+          "min": 3965.2000000178814,
+          "p50": 4760.1500000059605,
+          "p95": 5115.9000000059605,
+          "max": 5115.9000000059605
+        },
+        "delete": {
+          "n": 13,
+          "min": 4450.5,
+          "p50": 4695.5999999940395,
+          "p95": 4967.799999982119,
+          "max": 4967.799999982119
+        }
+      },
+      "after": {
+        "complete": false,
+        "failures": [
+          {
+            "pair": 0,
+            "kind": "add",
+            "expected": 1,
+            "count": 1,
+            "cpuMs": 5.200000017881393,
+            "raf1Ms": 25.30000001192093,
+            "raf2Ms": 353.5,
+            "domCommitMs": 13.900000005960464,
+            "renderEndMs": 24.900000005960464,
+            "gpuCompletionObservedMs": null,
+            "reflectedMs": null,
+            "elapsedMs": 5039.5,
+            "status": "TIMED_OUT"
+          },
+          {
+            "pair": 2,
+            "kind": "add",
+            "expected": 1,
+            "count": 1,
+            "cpuMs": 3.7000000178813934,
+            "raf1Ms": 328.5,
+            "raf2Ms": 332.60000002384186,
+            "domCommitMs": 158.10000002384186,
+            "renderEndMs": 328,
+            "gpuCompletionObservedMs": null,
+            "reflectedMs": null,
+            "elapsedMs": 5005,
+            "status": "TIMED_OUT"
+          },
+          {
+            "pair": 1,
+            "kind": "add",
+            "expected": 1,
+            "count": 1,
+            "cpuMs": 1.5999999940395355,
+            "raf1Ms": 459.7000000178814,
+            "raf2Ms": 624.4000000059605,
+            "domCommitMs": 24.099999994039536,
+            "renderEndMs": 141.2000000178814,
+            "gpuCompletionObservedMs": null,
+            "reflectedMs": null,
+            "elapsedMs": 5017.0999999940395,
+            "status": "TIMED_OUT"
+          },
+          {
+            "pair": 4,
+            "kind": "add",
+            "expected": 1,
+            "count": 1,
+            "cpuMs": 0.5999999940395355,
+            "raf1Ms": 352.40000000596046,
+            "raf2Ms": 535.7000000178814,
+            "domCommitMs": 13.800000011920929,
+            "renderEndMs": 351.90000000596046,
+            "gpuCompletionObservedMs": null,
+            "reflectedMs": null,
+            "elapsedMs": 5056.200000017881,
+            "status": "TIMED_OUT"
+          }
+        ],
+        "add": {
+          "n": 27,
+          "min": 4297.4000000059605,
+          "p50": 4741.4000000059605,
+          "p95": 5487.4000000059605,
+          "max": 5593.4000000059605
+        },
+        "delete": {
+          "n": 27,
+          "min": 4200.800000011921,
+          "p50": 4811.5999999940395,
+          "p95": 5348.5,
+          "max": 5361.300000011921
+        }
+      }
+    }
+  },
+  "files": [
+    "active-300-0-before.json",
+    "active-300-0-after.json",
+    "active-300-1-after.json",
+    "active-300-1-before.json",
+    "active-300-2-before.json",
+    "active-300-2-after.json",
+    "active-300-3-after.json",
+    "active-300-3-before.json",
+    "active-300-4-before.json",
+    "active-300-4-after.json",
+    "active-300-5-after.json",
+    "active-300-5-before.json",
+    "static-300-0-before.json",
+    "static-300-0-after.json",
+    "static-300-1-after.json",
+    "static-300-1-before.json",
+    "static-300-2-before.json",
+    "static-300-2-after.json",
+    "static-300-3-after.json",
+    "static-300-3-before.json",
+    "static-300-4-before.json",
+    "static-300-4-after.json",
+    "static-300-5-after.json",
+    "static-300-5-before.json",
+    "smaller-300-0-before.json",
+    "smaller-300-0-after.json",
+    "smaller-300-1-after.json",
+    "smaller-300-1-before.json",
+    "smaller-300-2-before.json",
+    "smaller-300-2-after.json",
+    "smaller-300-3-after.json",
+    "smaller-300-3-before.json",
+    "smaller-300-4-before.json",
+    "smaller-300-4-after.json",
+    "smaller-300-5-after.json",
+    "smaller-300-5-before.json",
+    "active-empty-0-before.json",
+    "active-empty-0-after.json",
+    "active-empty-1-after.json",
+    "active-empty-1-before.json",
+    "active-empty-2-before.json",
+    "active-empty-2-after.json",
+    "active-empty-3-after.json",
+    "active-empty-3-before.json",
+    "active-empty-4-before.json",
+    "active-empty-4-after.json",
+    "active-empty-5-after.json",
+    "active-empty-5-before.json"
+  ],
+  "limitation": "Presentation opportunity is an upper bound. GPU completion is fence-observed; no GPU-memory or physical-GPU-time claim. Failed/censored observations remain in raw and prevent complete=true."
+}

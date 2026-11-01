@@ -1,0 +1,23 @@
+{
+  "syntheticOnly": true,
+  "method": "Independent Codex CLI read-only review sessions; no tests run by reviewer. Full local logs kept outside repo.",
+  "reviews": [
+    {
+      "head": "797512f9a3979af1034720c1d13a48dbe978bb36",
+      "result": "NO_ACTIONABLE_FINDINGS",
+      "scope": "M1 runtime, privacy and evidence protocol; pending validation stated separately"
+    },
+    {
+      "head": "59f6d6881261a542e1f1b52b4d0d2d6e86f4834a",
+      "result": "P1_FOUND",
+      "file": "scripts/h6-ci-baseline.mjs",
+      "finding": "ANSI styling of the printed URL can prevent readiness detection in CI."
+    },
+    {
+      "head": "ddc3246b38fea900c3e9413d146061fbaa2a7861",
+      "result": "P1_CLOSED_NO_NEW_FINDINGS",
+      "fix": "Bound-port check, plain ASCII readiness marker, chunk-safe detection and independent full-SHA endpoint check."
+    }
+  ],
+  "mergeAuthorization": "Only the owner handoff gates authorize a merge; reviewer result is not merge approval."
+}

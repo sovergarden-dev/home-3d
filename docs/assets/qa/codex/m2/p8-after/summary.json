@@ -1,0 +1,189 @@
+{
+  "syntheticOnly": true,
+  "family": "p8",
+  "targetMs": 100,
+  "rounds": 30,
+  "summary": {
+    "Nhiều mây": {
+      "statistics": {
+        "n": 30,
+        "min": 58.30000001192093,
+        "p50": 60.30000001192093,
+        "p95": 61.5,
+        "max": 72.09999999403954
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0
+    },
+    "Mưa": {
+      "statistics": {
+        "n": 30,
+        "min": 58.5,
+        "p50": 61.30000001192093,
+        "p95": 61.900000005960464,
+        "max": 77.10000002384186
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0
+    },
+    "Mưa to": {
+      "statistics": {
+        "n": 30,
+        "min": 58.79999998211861,
+        "p50": 61.20000000298023,
+        "p95": 61.80000001192093,
+        "max": 61.900000005960464
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0
+    },
+    "Nắng nhẹ": {
+      "statistics": {
+        "n": 30,
+        "min": 59.79999998211861,
+        "p50": 61.29999998211861,
+        "p95": 62,
+        "max": 62.10000002384186
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0
+    },
+    "Mùa mưa": {
+      "statistics": {
+        "n": 30,
+        "min": 59.60000002384186,
+        "p50": 61.599999994039536,
+        "p95": 62.19999998807907,
+        "max": 62.5
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0
+    },
+    "Mùa khô": {
+      "statistics": {
+        "n": 30,
+        "min": 57.89999997615814,
+        "p50": 61.69999998807907,
+        "p95": 62.30000001192093,
+        "max": 62.39999997615814
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0
+    },
+    "Tết": {
+      "statistics": {
+        "n": 30,
+        "min": 58.599999994039536,
+        "p50": 60.6499999910593,
+        "p95": 61.30000001192093,
+        "max": 61.5
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0
+    },
+    "Trung Thu": {
+      "statistics": {
+        "n": 30,
+        "min": 44.5,
+        "p50": 60.79999999701977,
+        "p95": 61.80000001192093,
+        "max": 62
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0
+    },
+    "Thường ngày": {
+      "statistics": {
+        "n": 30,
+        "min": 44,
+        "p50": 44.95000000298023,
+        "p95": 61.20000001788139,
+        "max": 61.69999998807907
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0
+    },
+    "Khuya": {
+      "statistics": {
+        "n": 30,
+        "min": 58.20000001788139,
+        "p50": 60.150000005960464,
+        "p95": 77.19999998807907,
+        "max": 78.39999997615814
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0
+    },
+    "Ngày đang xem": {
+      "statistics": {
+        "n": 30,
+        "min": 51.900000005960464,
+        "p50": 56.1499999910593,
+        "p95": 68.2999999821186,
+        "max": 70.89999997615814
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0
+    },
+    "Ngập mô phỏng": {
+      "statistics": {
+        "n": 30,
+        "min": 51.69999998807907,
+        "p50": 66.09999999403954,
+        "p95": 73,
+        "max": 76.7999999821186
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0
+    },
+    "Tắt lớp": {
+      "statistics": {
+        "n": 30,
+        "min": 59.599999994039536,
+        "p50": 60.29999998211861,
+        "p95": 73,
+        "max": 73.30000001192093
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0
+    },
+    "Bật lớp": {
+      "statistics": {
+        "n": 30,
+        "min": 52.89999997615814,
+        "p50": 61.79999999701977,
+        "p95": 62.599999994039536,
+        "max": 62.69999998807907
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0
+    }
+  },
+  "frames": {
+    "targetMaxMs": 50,
+    "statistics": {
+      "n": 1380,
+      "min": 35.400000005960464,
+      "p50": 51.5,
+      "p95": 64.7999999821186,
+      "max": 99.19999998807907
+    },
+    "complete": true,
+    "allAtMost50Ms": false
+  },
+  "status": "NOT_MET"
+}

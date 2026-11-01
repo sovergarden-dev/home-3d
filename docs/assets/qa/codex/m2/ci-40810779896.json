@@ -1,0 +1,23 @@
+{
+  "syntheticOnly": true,
+  "head": "46b1fd87da630bcc8aa509de2e9bd8d449bf099a",
+  "runId": 40810779896,
+  "quality": "success",
+  "chromium": "failure: expanded half sheet intercepts Retry 3D in English landscape",
+  "firefox": {
+    "passed": 69,
+    "skipped": 46,
+    "failed": 1,
+    "reason": "same Retry 3D overlap"
+  },
+  "webkit": {
+    "passed": 115,
+    "failed": 1,
+    "reason": "same Retry 3D overlap",
+    "h6Ms": 85858,
+    "sameRunnerBaselineMs": 88438,
+    "absoluteGateMs": 70000,
+    "budgetStatus": "NOT_MET"
+  },
+  "sameHeadRerun": false
+}

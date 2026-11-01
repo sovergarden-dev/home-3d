@@ -57,7 +57,8 @@ export async function importLocalAudioFile(
     const data = await readBytes(file);
     const cryptoApi = globalThis.crypto;
     if (!cryptoApi?.subtle) return { ok: false, status: "fallback", reason: "hash-unavailable" };
-    const digest = await cryptoApi.subtle.digest("SHA-256", data);
+    // Hash a byte view: some runtimes reject an ArrayBuffer created in another realm.
+    const digest = await cryptoApi.subtle.digest("SHA-256", new Uint8Array(data));
     const sha256 = Array.from(new Uint8Array(digest), (byte) =>
       byte.toString(16).padStart(2, "0"),
     ).join("");
