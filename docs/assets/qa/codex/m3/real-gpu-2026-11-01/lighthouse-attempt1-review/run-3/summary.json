@@ -1,0 +1,70 @@
+{
+  "syntheticOnly": true,
+  "buildManifest": {
+    "id": "/",
+    "name": "Phố Nhà Mình",
+    "short_name": "Phố Nhà Mình",
+    "lang": "vi",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#F3F1EA",
+    "theme_color": "#F3F1EA",
+    "icons": [
+      {
+        "src": "/assets/icon-192-BlrIBbrK.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "any maskable"
+      },
+      {
+        "src": "/assets/icon-512-lSlHSDRT.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "any maskable"
+      }
+    ]
+  },
+  "rows": [
+    {
+      "formFactor": "mobile",
+      "sourceSha": "07fc66e14f89461fb74e348db1371b0b047f4979",
+      "transport": "gzip",
+      "lighthouseVersion": "13.5.0",
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "driverVersion": "32.0.16.1074",
+      "performance": 57.99999999999999,
+      "accessibility": 100,
+      "fcpMs": 3770.4922500000002,
+      "lcpMs": 4772.5907,
+      "totalBlockingMs": 616.9999999999995,
+      "externalHosts": [],
+      "runtimeError": null,
+      "warnings": [],
+      "method": "Production root, Lighthouse default mobile/desktop settings; dedicated headless Chrome. Raw JSON gzip changes only loopback origin to synthetic.invalid, preserving all timings/audits."
+    },
+    {
+      "formFactor": "desktop",
+      "sourceSha": "07fc66e14f89461fb74e348db1371b0b047f4979",
+      "transport": "gzip",
+      "lighthouseVersion": "13.5.0",
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "driverVersion": "32.0.16.1074",
+      "performance": 97,
+      "accessibility": 100,
+      "fcpMs": 733.679625,
+      "lcpMs": 969.4155500000002,
+      "totalBlockingMs": 84,
+      "externalHosts": [],
+      "runtimeError": null,
+      "warnings": [],
+      "method": "Production root, Lighthouse default mobile/desktop settings; dedicated headless Chrome. Raw JSON gzip changes only loopback origin to synthetic.invalid, preserving all timings/audits."
+    }
+  ]
+}
