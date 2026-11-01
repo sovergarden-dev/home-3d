@@ -7,7 +7,7 @@ const runtime = vi.hoisted(() => ({
   disposed: [] as { connected: boolean; rootIsDocument: boolean }[],
   cleanupListeners: [] as (() => void)[],
   losses: [] as (() => void)[],
-  ready: null as Promise<void> | null,
+  ready: null as Promise<"interactive" | "stopped"> | null,
 }));
 vi.mock("@tanstack/react-router", () => ({
   ClientOnly: ({ children }: { children: ReactNode }) => children,
@@ -25,7 +25,7 @@ vi.mock("@/engine/demoScene", () => ({
     root.addEventListener("keydown", listener, true);
     runtime.cleanupListeners.push(() => root.removeEventListener("keydown", listener, true));
     return {
-      ready: runtime.ready ?? Promise.resolve(),
+      ready: runtime.ready ?? Promise.resolve("interactive" as const),
       setLabel: () => {},
       dispose: () => {
         // OrbitControls r180 disconnects from getRootNode(), not ownerDocument.
@@ -41,6 +41,7 @@ vi.mock("@/engine/demoScene", () => ({
   },
 }));
 import { SceneViewport } from "@/components/overlay/SceneViewport";
+import { Splash } from "@/components/overlay/Splash";
 import { useAppStore } from "@/state/appStore";
 
 describe("scene DOM lifecycle", () => {
@@ -83,9 +84,9 @@ describe("scene DOM lifecycle", () => {
     expect(runtime.disposed).toHaveLength(3);
     expect(runtime.disposed.every((row) => row.connected && row.rootIsDocument)).toBe(true);
   });
-  it("reports ready only after the scene draws its first frame", async () => {
+  it("reports ready only after startup has drawn and warmed every variant", async () => {
     let release = () => {};
-    runtime.ready = new Promise<void>((resolve) => (release = resolve));
+    runtime.ready = new Promise((resolve) => (release = () => resolve("interactive")));
     const mounted = render(<SceneViewport />);
     await waitFor(() => expect(runtime.created).toBe(1));
     expect(useAppStore.getState().sceneStatus).toBe("loading");
@@ -93,6 +94,38 @@ describe("scene DOM lifecycle", () => {
     await act(async () => release());
     expect(useAppStore.getState().sceneStatus).toBe("ready");
     expect(useAppStore.getState().loadingProgress).toBe(1);
+    mounted.unmount();
+  });
+  it("does not report ready for a startup that stopped", async () => {
+    let stop = () => {};
+    runtime.ready = new Promise((resolve) => (stop = () => resolve("stopped")));
+    const mounted = render(<SceneViewport />);
+    await waitFor(() => expect(runtime.created).toBe(1));
+    await act(async () => stop());
+    expect(useAppStore.getState().sceneStatus).toBe("loading");
+    expect(useAppStore.getState().loadingProgress).toBeLessThan(1);
+    mounted.unmount();
+  });
+  it("removes the splash when the context is lost again before startup finishes", async () => {
+    // Startup never finishes here: both scenes lose their context on the loading screen.
+    runtime.ready = new Promise(() => {});
+    const mounted = render(
+      <>
+        <Splash />
+        <SceneViewport />
+      </>,
+    );
+    await waitFor(() => expect(runtime.created).toBe(1));
+    expect(screen.getByRole("progressbar")).toBeTruthy();
+    act(() => runtime.losses[0]!());
+    expect(useAppStore.getState().loadingProgress).toBe(1);
+    await waitFor(() => expect(runtime.created).toBe(2));
+    act(() => runtime.losses[1]!());
+    expect(useAppStore.getState().sceneStatus).toBe("fallback");
+    expect(useAppStore.getState().loadingProgress).toBe(1);
+    await waitFor(() => expect(screen.queryByRole("progressbar")).toBeNull());
+    const retry = screen.getByRole("button", { name: "Thử lại 3D" }) as HTMLButtonElement;
+    expect(retry.disabled).toBe(false);
     mounted.unmount();
   });
   it("falls back and disposes the scene when its first frame fails", async () => {

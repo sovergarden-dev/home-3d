@@ -49,6 +49,7 @@ import {
 import { poseToOrbit } from "./view/memoryOrbit";
 import { buildMemoryHash, parseMemoryHash } from "@/memories/deepLink";
 import { bindPostcardCapture } from "@/memories/postcard";
+import { runStartupSequence, type StartupOutcome } from "./startupSequence";
 
 const STARTUP_PROGRAM_POLL_MS = 10;
 const STARTUP_PROGRAM_TIMEOUT_MS = 10_000;
@@ -56,8 +57,14 @@ const STARTUP_PROGRAM_TIMEOUT_MS = 10_000;
 export interface SceneRuntime {
   setLabel: (label: string) => void;
   dispose: () => void;
-  /** Resolves after the first frame is drawn, or without drawing once disposed. */
-  ready: Promise<void>;
+  /**
+   * Settles "interactive" once input may start: the first frame was drawn (or skipped while
+   * the page is hidden or the host has no size; the next visibility change or resize draws
+   * it) and every weather/festival variant was compiled. Each wait for shader programs is
+   * capped by STARTUP_PROGRAM_TIMEOUT_MS. Settles "stopped" when the scene is disposed or its
+   * context is lost, which onContextLost reports. Rejects when a startup step throws.
+   */
+  ready: Promise<StartupOutcome>;
 }
 
 function worldCentre(world: WorldData) {
@@ -236,9 +243,8 @@ export function createDemoScene(
   const planPointerStarts = new Map<number, THREE.Vector2>();
   let lastPinchDistance: number | null = null;
   let disposed = false;
-  // Startup draws only after its shader programs are ready; see startupProgramsReady().
+  // Nothing draws before the startup sequence's first frame; see runStartupSequence().
   let firstFrameReady = false;
-  let atmosphereWarmTimer = 0;
   let animationFrame = 0;
   let lastFrame = 0;
   let renderRevision = 0;
@@ -1304,6 +1310,7 @@ export function createDemoScene(
   }
 
   bindPostcardCapture(async (width, height) => {
+    if (!firstFrameReady) throw new Error("CAPTURE_UNAVAILABLE");
     if (width * height > renderer.capabilities.maxTextureSize ** 2)
       throw new Error("POSTCARD_TOO_LARGE");
     // Scene targets are linear/HDR in Three r180. Merely setting outputColorSpace
@@ -1512,8 +1519,8 @@ export function createDemoScene(
       );
       controls.enabled = false;
       marker.style.visibility = "hidden";
-      renderer.clear();
-      renderer.render(scene, activeCamera);
+      // render() clears to the empty private-error frame, but not before startup's first frame.
+      render();
       host.dataset["worldMode"] = snapshot.mode;
       host.dataset["activeWorlds"] = "0";
       useAppStore.getState().setPlanMeasurement(null);
@@ -1523,6 +1530,8 @@ export function createDemoScene(
     applyEnvironment();
     updateLayerVisibility();
     // Rebuilt bundles own new label/material program maps, not the disposed demo's cache.
+    // A world swap stays one synchronous warm-up so input never meets an uncompiled variant;
+    // during startup render() below does not draw before the first frame.
     atmosphere.warm(renderer, activeCamera);
     render();
     if (atmosphere.rainVisible || lifeActive()) scheduleFrame();
@@ -1581,56 +1590,44 @@ export function createDemoScene(
     }
   };
   const onHashChange = () => applyLink(parseMemoryHash(window.location.hash));
-  // A cold shader link blocks the first draw for hundreds of milliseconds. Queue the
-  // programs for the visible state, poll their completion without blocking where the
-  // browser supports it, then draw. Other browsers keep the synchronous first draw.
-  function startupProgramsReady() {
-    renderer.compile(scene, activeCamera);
-    if (!renderer.extensions.has("KHR_parallel_shader_compile")) return Promise.resolve();
-    const gl = renderer.getContext();
-    const deadline = performance.now() + STARTUP_PROGRAM_TIMEOUT_MS;
-    return new Promise<void>((resolve) => {
-      const poll = () => {
-        let pending = false;
-        try {
-          pending =
-            !disposed &&
-            !gl.isContextLost() &&
-            performance.now() < deadline &&
-            (renderer.info.programs ?? []).some(
-              (program) => !(program as unknown as { isReady: () => boolean }).isReady(),
-            );
-        } catch {
-          // A failed status query must not keep the scene behind the loading screen.
-        }
-        if (pending) window.setTimeout(poll, STARTUP_PROGRAM_POLL_MS);
-        else resolve();
-      };
-      poll();
-    });
-  }
-  // Weather and festival variants are warmed one per task after the first frame.
-  function warmAtmosphereSlice(start: number) {
-    atmosphereWarmTimer = 0;
-    if (disposed || renderer.getContext().isContextLost()) return;
-    const total = atmosphere.warm(renderer, activeCamera, { start, end: start + 1 });
-    if (start + 1 < total)
-      atmosphereWarmTimer = window.setTimeout(() => warmAtmosphereSlice(start + 1), 0);
-  }
   mountWorld();
   updateLayerVisibility();
   applyEnvironment();
   resize();
-  const ready = startupProgramsReady().then(() => {
-    if (disposed) return;
-    firstFrameReady = true;
-    render();
-    // Read the hash now: it may have changed while startup programs compiled.
-    window.addEventListener("hashchange", onHashChange);
-    applyLink(parseMemoryHash(window.location.hash));
-    if (atmosphere.rainVisible || lifeActive()) scheduleFrame();
-    warmAtmosphereSlice(0);
-  });
+  // Queue the visible state's programs; the startup sequence waits for them, then draws.
+  renderer.compile(scene, activeCamera);
+  const parallelCompile = renderer.extensions.has("KHR_parallel_shader_compile");
+  const startup = runStartupSequence(
+    {
+      // Without the extension a program reports ready at once and links on first use.
+      programsPending: () =>
+        parallelCompile &&
+        (renderer.info.programs ?? []).some(
+          (program) => !(program as unknown as { isReady: () => boolean }).isReady(),
+        ),
+      stopped: () => disposed || renderer.getContext().isContextLost(),
+      firstFrame: () => {
+        firstFrameReady = true;
+        render();
+        // Read the hash now: it may have changed while startup programs compiled.
+        window.addEventListener("hashchange", onHashChange);
+        applyLink(parseMemoryHash(window.location.hash));
+        if (atmosphere.rainVisible || lifeActive()) scheduleFrame();
+      },
+      warmVariant: (index) => {
+        const total = atmosphere.warm(renderer, activeCamera, { start: index, end: index + 1 });
+        host.dataset["startupVariants"] = `${Math.min(index + 1, total)}/${total}`;
+        return total;
+      },
+    },
+    {
+      pollMs: STARTUP_PROGRAM_POLL_MS,
+      timeoutMs: STARTUP_PROGRAM_TIMEOUT_MS,
+      now: () => performance.now(),
+      setTimer: (callback, ms) => window.setTimeout(callback, ms),
+      clearTimer: (id) => window.clearTimeout(id),
+    },
+  );
   bindRealStreetView(() => {
     if (disposed || !worldRenderable()) return null;
     const mode = useAppStore.getState().viewMode;
@@ -1659,7 +1656,7 @@ export function createDemoScene(
   });
 
   return {
-    ready,
+    ready: startup.ready,
     setLabel(label) {
       canvas.setAttribute("aria-label", label);
     },
@@ -1669,7 +1666,7 @@ export function createDemoScene(
       bindCapture(null);
       bindRealStreetView(null);
       window.clearTimeout(interactionTimer);
-      window.clearTimeout(atmosphereWarmTimer);
+      startup.stop();
       cancelAnimationFrame(animationFrame);
       unsubscribeStore();
       unsubscribeMemorySession();

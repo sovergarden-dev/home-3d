@@ -77,6 +77,8 @@ function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
             runtime.current = null;
             setFailed(true);
             useAppStore.setState({ sceneStatus: "fallback" });
+            // A loss during startup must not leave the splash over the recovery card.
+            store.setLoadingProgress(1);
             if (recoveryAttempts.current === 0) {
               recoveryAttempts.current++;
               setRecovering(true);
@@ -89,10 +91,11 @@ function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
           setRecovering(false);
           setFailed(false);
           store.setLoadingProgress(0.85);
-          // Controls and the splash wait for the first drawn frame, not just construction.
+          // Controls and the splash wait until startup drew and compiled every variant.
+          // A stopped startup was disposed or lost its context; that path owns the UI.
           created.ready.then(
-            () => {
-              if (cancelled || runtime.current !== created) return;
+            (outcome) => {
+              if (cancelled || runtime.current !== created || outcome !== "interactive") return;
               useAppStore.setState({ sceneStatus: "ready" });
               store.setLoadingProgress(1);
             },
