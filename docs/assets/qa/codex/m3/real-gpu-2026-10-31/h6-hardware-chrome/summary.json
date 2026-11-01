@@ -1,0 +1,346 @@
+{
+  "syntheticOnly": true,
+  "title": "20 mode/route/package/capture cycles keep one ready canvas and no page errors",
+  "design": "One warm-up run per source (excluded by design, kept in raw), then balanced order base,cand,prev,prev,cand,base. Same harness (candidate checkout), Chrome headed, 1440x900, DPR 1, real GPU; dev servers from pinned commits with VITE_BUILD_SHA.",
+  "harnessSha": "fba1e09f8093ea77fa79355f9a5098926fdc1b3e",
+  "driverVersion": "32.0.16.1074",
+  "perSource": {
+    "base": {
+      "sha": "de7173261a8a3928685555252c2b479f76a713fe",
+      "runs": 2,
+      "passed": 2,
+      "durationsMs": [
+        47427,
+        46437
+      ],
+      "meanMs": 46932
+    },
+    "cand": {
+      "sha": "fba1e09f8093ea77fa79355f9a5098926fdc1b3e",
+      "runs": 2,
+      "passed": 2,
+      "durationsMs": [
+        49296,
+        48191
+      ],
+      "meanMs": 48743.5
+    },
+    "prev": {
+      "sha": "4e5136f1cfdcd5e69a31af7a7455d5fa2f40c74a",
+      "runs": 2,
+      "passed": 2,
+      "durationsMs": [
+        49368,
+        47993
+      ],
+      "meanMs": 48680.5
+    }
+  },
+  "changePct": {
+    "candVsBase": 3.859839768175232,
+    "prevVsBase": 3.72560300008523,
+    "candVsPrev": 0.1294152689475252
+  },
+  "regressionLimitPct": 10,
+  "status": "PASS",
+  "rows": [
+    {
+      "label": "warmup-base",
+      "source": "base",
+      "sourceSha": "de7173261a8a3928685555252c2b479f76a713fe",
+      "exitCode": 0,
+      "status": "passed",
+      "durationMs": 52223,
+      "environment": {
+        "syntheticOnly": true,
+        "sourceSha": "de7173261a8a3928685555252c2b479f76a713fe",
+        "browserVersion": "156.0.8078.47",
+        "driverVersion": "32.0.16.1074",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "headed": true,
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "dpr": 1
+      },
+      "stats": {
+        "startTime": "2026-10-31T13:20:40.420Z",
+        "duration": 56499.259000000005,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "rawFile": "warmup-base.json",
+      "rawSha256": "056e3575d2d457b84d65474ec6fa52cfac57a171dbd61d9344c8522e2cd19852",
+      "warmup": true
+    },
+    {
+      "label": "warmup-cand",
+      "source": "cand",
+      "sourceSha": "fba1e09f8093ea77fa79355f9a5098926fdc1b3e",
+      "exitCode": 0,
+      "status": "passed",
+      "durationMs": 53537,
+      "environment": {
+        "syntheticOnly": true,
+        "sourceSha": "fba1e09f8093ea77fa79355f9a5098926fdc1b3e",
+        "browserVersion": "156.0.8078.47",
+        "driverVersion": "32.0.16.1074",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "headed": true,
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "dpr": 1
+      },
+      "stats": {
+        "startTime": "2026-10-31T13:21:38.901Z",
+        "duration": 56488.683,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "rawFile": "warmup-cand.json",
+      "rawSha256": "064071ac8c8d8c1984e95d4219fca0293700dfe228a9a46fb4987515caa93e37",
+      "warmup": true
+    },
+    {
+      "label": "warmup-prev",
+      "source": "prev",
+      "sourceSha": "4e5136f1cfdcd5e69a31af7a7455d5fa2f40c74a",
+      "exitCode": 0,
+      "status": "passed",
+      "durationMs": 52699,
+      "environment": {
+        "syntheticOnly": true,
+        "sourceSha": "4e5136f1cfdcd5e69a31af7a7455d5fa2f40c74a",
+        "browserVersion": "156.0.8078.47",
+        "driverVersion": "32.0.16.1074",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "headed": true,
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "dpr": 1
+      },
+      "stats": {
+        "startTime": "2026-10-31T13:22:37.304Z",
+        "duration": 55487.391,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "rawFile": "warmup-prev.json",
+      "rawSha256": "d3806346ded65be638586f2226569fff9f79843677d33e933d738bae6e8c8c28",
+      "warmup": true
+    },
+    {
+      "label": "run1-base",
+      "source": "base",
+      "sourceSha": "de7173261a8a3928685555252c2b479f76a713fe",
+      "exitCode": 0,
+      "status": "passed",
+      "durationMs": 47427,
+      "environment": {
+        "syntheticOnly": true,
+        "sourceSha": "de7173261a8a3928685555252c2b479f76a713fe",
+        "browserVersion": "156.0.8078.47",
+        "driverVersion": "32.0.16.1074",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "headed": true,
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "dpr": 1
+      },
+      "stats": {
+        "startTime": "2026-10-31T13:23:34.711Z",
+        "duration": 50264.456,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "rawFile": "run1-base.json",
+      "rawSha256": "21e0be5050d55cdf9f7f36d87bd01884651b4f020c9e8e4f7987a4a5fdfbffe0",
+      "warmup": false
+    },
+    {
+      "label": "run2-cand",
+      "source": "cand",
+      "sourceSha": "fba1e09f8093ea77fa79355f9a5098926fdc1b3e",
+      "exitCode": 0,
+      "status": "passed",
+      "durationMs": 49296,
+      "environment": {
+        "syntheticOnly": true,
+        "sourceSha": "fba1e09f8093ea77fa79355f9a5098926fdc1b3e",
+        "browserVersion": "156.0.8078.47",
+        "driverVersion": "32.0.16.1074",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "headed": true,
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "dpr": 1
+      },
+      "stats": {
+        "startTime": "2026-10-31T13:24:26.839Z",
+        "duration": 52326.943,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "rawFile": "run2-cand.json",
+      "rawSha256": "e7f259a564890d99e27a7b8bc420fe39e8a429770edb3fee7445f4c256554d6c",
+      "warmup": false
+    },
+    {
+      "label": "run3-prev",
+      "source": "prev",
+      "sourceSha": "4e5136f1cfdcd5e69a31af7a7455d5fa2f40c74a",
+      "exitCode": 0,
+      "status": "passed",
+      "durationMs": 49368,
+      "environment": {
+        "syntheticOnly": true,
+        "sourceSha": "4e5136f1cfdcd5e69a31af7a7455d5fa2f40c74a",
+        "browserVersion": "156.0.8078.47",
+        "driverVersion": "32.0.16.1074",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "headed": true,
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "dpr": 1
+      },
+      "stats": {
+        "startTime": "2026-10-31T13:25:21.327Z",
+        "duration": 52435.21,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "rawFile": "run3-prev.json",
+      "rawSha256": "1204deeee4552d2ad1d1f27ca2107a4dd095edc62d183430b774e23fad62dd6c",
+      "warmup": false
+    },
+    {
+      "label": "run4-prev",
+      "source": "prev",
+      "sourceSha": "4e5136f1cfdcd5e69a31af7a7455d5fa2f40c74a",
+      "exitCode": 0,
+      "status": "passed",
+      "durationMs": 47993,
+      "environment": {
+        "syntheticOnly": true,
+        "sourceSha": "4e5136f1cfdcd5e69a31af7a7455d5fa2f40c74a",
+        "browserVersion": "156.0.8078.47",
+        "driverVersion": "32.0.16.1074",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "headed": true,
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "dpr": 1
+      },
+      "stats": {
+        "startTime": "2026-10-31T13:26:15.841Z",
+        "duration": 51109.709,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "rawFile": "run4-prev.json",
+      "rawSha256": "cc715c1212b3823d07844d505dbdb6acdf7c5023deea3089ea8789b8f7fa577b",
+      "warmup": false
+    },
+    {
+      "label": "run5-cand",
+      "source": "cand",
+      "sourceSha": "fba1e09f8093ea77fa79355f9a5098926fdc1b3e",
+      "exitCode": 0,
+      "status": "passed",
+      "durationMs": 48191,
+      "environment": {
+        "syntheticOnly": true,
+        "sourceSha": "fba1e09f8093ea77fa79355f9a5098926fdc1b3e",
+        "browserVersion": "156.0.8078.47",
+        "driverVersion": "32.0.16.1074",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "headed": true,
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "dpr": 1
+      },
+      "stats": {
+        "startTime": "2026-10-31T13:27:08.978Z",
+        "duration": 51078.056,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "rawFile": "run5-cand.json",
+      "rawSha256": "52acc275986a81cbfb154e879e711883cacf247c833fc4b751c0cc159338451b",
+      "warmup": false
+    },
+    {
+      "label": "run6-base",
+      "source": "base",
+      "sourceSha": "de7173261a8a3928685555252c2b479f76a713fe",
+      "exitCode": 0,
+      "status": "passed",
+      "durationMs": 46437,
+      "environment": {
+        "syntheticOnly": true,
+        "sourceSha": "de7173261a8a3928685555252c2b479f76a713fe",
+        "browserVersion": "156.0.8078.47",
+        "driverVersion": "32.0.16.1074",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "headed": true,
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "dpr": 1
+      },
+      "stats": {
+        "startTime": "2026-10-31T13:28:01.980Z",
+        "duration": 49212.280000000006,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "rawFile": "run6-base.json",
+      "rawSha256": "edc80fba2af11dae1d4ba52e1c3a100d0b1e684bec5955f1b5fca801a94af444",
+      "warmup": false
+    }
+  ],
+  "note": "Physical GPU timing does not replace the CI WebKit <70s gate."
+}

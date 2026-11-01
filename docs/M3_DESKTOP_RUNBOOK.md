@@ -8,6 +8,7 @@
 - 5 test PWA production đạt tại `5e093ccc471464e9cd5d8bae86335b87afdae6be`: offline, iframe không đăng ký, xác nhận cập nhật/giữ tab khác, install lỗi, rollback giữ cache đã activate. Review độc lập đã đóng các phát hiện source; không thay bằng chứng browser bằng review.
 - Font Be Vietnam Pro/Lora Vietnamese + Latin tự host, giữ OFL và nguồn/hash. Test mạng chỉ cho loopback, không ngoại lệ Google Fonts.
 - Axe mở rộng đã sửa nút bị panel che ở landscape; cả 9 ca (3 viewport × 3 browser) đạt, gồm VI/EN và kiểm bàn phím. Không thay kiểm thiết bị/Safari thật bằng kết quả này.
+- GPU thật NVIDIA GTX 1660 Ti (Notion AI, 31/10–01/11, DPR 1), không trộn với máy Intel: `a4f0121` check đạt 402 unit + 1 CPU, 50 pipeline, phần vỏ 224.418 byte gzip. FPS/khung/hình học đạt cả 12 kịch bản trên Chrome 156, Edge 156 và Firefox 146.0.1; bộ nhớ GPU Chrome/Edge `MET`, Firefox `NOT_MET` với counter WDDM bất thường (23 GB, vượt VRAM 6 GB) nên cần công cụ khác. Controls Chrome: 14 control P8 < 100 ms nhưng kéo camera 4/1.380 khoảng khung > 50 ms `NOT_MET`; P9 bật âm ấm 1/30 mẫu 107,5 ms `NOT_MET`. Soak liên tục `400ab08` 30 phút/31 vòng: heap cuối −17,98%, đỉnh +1,28% (< 10%, `MET` trên máy này), cùng mức trạng thái vẫn trôi +1,42% đến +2,97%; ObjectURL `NOT_EXERCISED`. Chi tiết: [real-gpu-2026-10-31](assets/qa/codex/m3/real-gpu-2026-10-31/README.md).
 
 ## Lệnh tái lập
 

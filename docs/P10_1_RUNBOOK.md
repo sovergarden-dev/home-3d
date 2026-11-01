@@ -25,6 +25,19 @@ SwiftShader: `H_BLOCKED` ở matrix đối chứng source 0265a53. Static và vi
 
 Các lượt trước đều giữ: setup viewport tạo mid 120 pin bị dừng; source 1331034 đủ mẫu nhưng active add 102,10 ms chưa đạt; source 0265a53 đạt 86,50/84,75 ms; source 59f6 đo lại sau sửa lifecycle và đạt như bảng. Không thay nhãn hoặc xoá outlier cũ.
 
+### K1 trên GPU NVIDIA — 31/10/2026 (Notion AI)
+
+Máy khác, không gộp với bảng trên: GTX 1660 Ti / ANGLE D3D11, driver 32.0.16.1074, Chrome 156.0.8078.47 headed, DPR 1. Cùng harness (sha256 `e925947c…`) và bốn điều kiện; before `de71732`, after `fba1e09`. 48 batch complete, mọi mẫu `REFLECTED`, không lọc mẫu chậm. `H_MET_REAL_GPU` chỉ đúng cho máy này.
+
+| Điều kiện (p50 / p95, ms)    | Before add     | Before delete  | After add     | After delete  |
+| ---------------------------- | -------------- | -------------- | ------------- | ------------- |
+| Active · 300 ghim · 1440×900 | 69,30 / 201,10 | 62,95 / 194,50 | 27,70 / 35,10 | 27,80 / 34,70 |
+| Static · 300 ghim · 1440×900 | 69,00 / 194,50 | 62,50 / 76,40  | 33,80 / 41,20 | 34,05 / 35,50 |
+| Active · 300 ghim · 960×600  | 62,50 / 187,80 | 61,05 / 74,70  | 27,90 / 42,80 | 27,60 / 34,90 |
+| Active · 0↔1 ghim · 1440×900 | 34,75 / 46,70  | 34,80 / 42,70  | 41,60 / 48,70 | 41,60 / 48,80 |
+
+After không có mẫu nào > 50 ms. Diagnostic 0↔1 vẫn dưới 100 ms nhưng chậm hơn baseline 6,85 ms p50 (+19,7%); nguyên nhân chưa xác định, ghi để theo dõi. K1 chưa đo lại từ `a4f0121` (runtime chỉ đổi splash, đã unmount khi K1 chạy). Raw, `summary.json` và `provenance.json`: [real-gpu-2026-10-31](assets/qa/codex/m3/real-gpu-2026-10-31/README.md).
+
 ## K2 — Ghim hiển thị và chọn
 
 Một InstancedMesh, caps 40/120/300/300. Vòng tròn danh nghĩa20 CSS px, hit target44 CSS px; gần điểm chạm nhất thắng, tie theo ID ổn định. Hover/selection có viền trắng, active instance được vẽ cuối trong cùng batch. Chỉ hiện ở Diorama/Mặt bằng; marker nhà và nhãn giữ ưu tiên. Không sửa geometry canonical.

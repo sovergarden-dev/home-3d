@@ -1,0 +1,846 @@
+{
+  "syntheticOnly": true,
+  "sourceSha": "a4f01210f9c51c5a363b5f23f0feb97c7b6cf15b",
+  "platform": "WINDOWS_LOCAL",
+  "note": "Playwright bundled browsers (chromium/firefox/webkit) from playwright 1.58.2 against an owned loopback Vite dev server with VITE_BUILD_SHA; repo playwright.config.ts projects unchanged. Not native Safari. Local run does not replace CI.",
+  "specs": [
+    "tests/e2e/p9-life-sound.spec.ts",
+    "tests/e2e/accessibility.spec.ts",
+    "tests/e2e/h6-completion.spec.ts"
+  ],
+  "exitCode": 1,
+  "stats": {
+    "startTime": "2026-10-31T14:15:46.003Z",
+    "duration": 572182.8910000001,
+    "expected": 55,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  },
+  "projects": {
+    "chromium": {
+      "expected": 19,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "firefox": {
+      "expected": 19,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "webkit": {
+      "expected": 17,
+      "skipped": 0,
+      "unexpected": 2,
+      "flaky": 0
+    }
+  },
+  "rows": [
+    {
+      "file": "accessibility.spec.ts",
+      "title": "public shell accessibility and keyboard at 1440",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 8278,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "accessibility.spec.ts",
+      "title": "public shell accessibility and keyboard at 390",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 4237,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "accessibility.spec.ts",
+      "title": "public shell accessibility and keyboard at 740",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 4244,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "accessibility.spec.ts",
+      "title": "keyboard remains available when 3D and sound are unavailable",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 1268,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "accessibility.spec.ts",
+      "title": "public shell accessibility and keyboard at 1440",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 7369,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "accessibility.spec.ts",
+      "title": "public shell accessibility and keyboard at 390",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 5816,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "accessibility.spec.ts",
+      "title": "public shell accessibility and keyboard at 740",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 6067,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "accessibility.spec.ts",
+      "title": "keyboard remains available when 3D and sound are unavailable",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 1966,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "accessibility.spec.ts",
+      "title": "public shell accessibility and keyboard at 1440",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 13677,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "accessibility.spec.ts",
+      "title": "public shell accessibility and keyboard at 390",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 7231,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "accessibility.spec.ts",
+      "title": "public shell accessibility and keyboard at 740",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 7043,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "accessibility.spec.ts",
+      "title": "keyboard remains available when 3D and sound are unavailable",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 1780,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "h6-completion.spec.ts",
+      "title": "root and legacy query expose local file action with noindex and neutral fiction",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 3469,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "h6-completion.spec.ts",
+      "title": "sentinel open/edit/capture/export/reload never reaches request attempts, console, storage or SSR",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 6589,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "h6-completion.spec.ts",
+      "title": "sentinel unavailable renderer retains edit/export/privacy and never claims capture",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 2932,
+          "retry": 0
+        }
+      ],
+      "annotations": [
+        "capability: WebGL2 intentionally unavailable: disabled capture asserted; no rendered-capture claim."
+      ]
+    },
+    {
+      "file": "h6-completion.spec.ts",
+      "title": "portrait/landscape keyboard and VI/EN retain a reachable compact panel",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 2094,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "h6-completion.spec.ts",
+      "title": "20 mode/route/package/capture cycles keep one ready canvas and no page errors",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 80671,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "h6-completion.spec.ts",
+      "title": "canvas part picking, hidden layers and camera framing preserve the package",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 4448,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "h6-completion.spec.ts",
+      "title": "context loss then real retry preserves the loaded package and one world",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 4993,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "h6-completion.spec.ts",
+      "title": "root and legacy query expose local file action with noindex and neutral fiction",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 7623,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "h6-completion.spec.ts",
+      "title": "sentinel open/edit/capture/export/reload never reaches request attempts, console, storage or SSR",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 9529,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "h6-completion.spec.ts",
+      "title": "sentinel unavailable renderer retains edit/export/privacy and never claims capture",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 5237,
+          "retry": 0
+        }
+      ],
+      "annotations": [
+        "capability: WebGL2 intentionally unavailable: disabled capture asserted; no rendered-capture claim."
+      ]
+    },
+    {
+      "file": "h6-completion.spec.ts",
+      "title": "portrait/landscape keyboard and VI/EN retain a reachable compact panel",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 4009,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "h6-completion.spec.ts",
+      "title": "20 mode/route/package/capture cycles keep one ready canvas and no page errors",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 80678,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "h6-completion.spec.ts",
+      "title": "canvas part picking, hidden layers and camera framing preserve the package",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 4941,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "h6-completion.spec.ts",
+      "title": "context loss then real retry preserves the loaded package and one world",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 8794,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "h6-completion.spec.ts",
+      "title": "root and legacy query expose local file action with noindex and neutral fiction",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 4562,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "h6-completion.spec.ts",
+      "title": "sentinel open/edit/capture/export/reload never reaches request attempts, console, storage or SSR",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 9065,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "h6-completion.spec.ts",
+      "title": "sentinel unavailable renderer retains edit/export/privacy and never claims capture",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 5954,
+          "retry": 0
+        }
+      ],
+      "annotations": [
+        "capability: WebGL2 intentionally unavailable: disabled capture asserted; no rendered-capture claim."
+      ]
+    },
+    {
+      "file": "h6-completion.spec.ts",
+      "title": "portrait/landscape keyboard and VI/EN retain a reachable compact panel",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 2990,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "h6-completion.spec.ts",
+      "title": "20 mode/route/package/capture cycles keep one ready canvas and no page errors",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 88621,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "h6-completion.spec.ts",
+      "title": "canvas part picking, hidden layers and camera framing preserve the package",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 6497,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "h6-completion.spec.ts",
+      "title": "context loss then real retry preserves the loaded package and one world",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 5699,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "P9 OfflineAudioContext measures the actual eight-voice storm mix below the peak limit",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 435,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "short landscape keeps POV, local package and map controls apart",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 4979,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "P9 OfflineAudioContext measures the actual eight-voice storm mix below the peak limit",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 1175,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "short landscape keeps POV, local package and map controls apart",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 6618,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "P9 OfflineAudioContext measures the actual eight-voice storm mix below the peak limit",
+      "project": "webkit",
+      "status": "unexpected",
+      "results": [
+        {
+          "status": "failed",
+          "durationMs": 966,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "short landscape keeps POV, local package and map controls apart",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 5676,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "local fixture, life toggle, walk, ride and sound send no data; real activation stays blocked",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 6221,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "life is visible in real pixels, Plan hides it and Pause does not advance simulation",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 6139,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "POV is eye level, exit keeps package and camera, keyboard releases; ride pause and tilt remain optional",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 5881,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "sound context is gesture-only, one per scene, local clip manifest stays in session and off releases voices",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 5090,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "VI/EN touch and exit controls at 390x844",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 5307,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "VI/EN touch and exit controls at 740x390",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 5248,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "local fixture, life toggle, walk, ride and sound send no data; real activation stays blocked",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 7205,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "life is visible in real pixels, Plan hides it and Pause does not advance simulation",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 7674,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "POV is eye level, exit keeps package and camera, keyboard releases; ride pause and tilt remain optional",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 7104,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "sound context is gesture-only, one per scene, local clip manifest stays in session and off releases voices",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 6944,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "VI/EN touch and exit controls at 390x844",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 6798,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "VI/EN touch and exit controls at 740x390",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 7101,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "local fixture, life toggle, walk, ride and sound send no data; real activation stays blocked",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 8686,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "life is visible in real pixels, Plan hides it and Pause does not advance simulation",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 6368,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "POV is eye level, exit keeps package and camera, keyboard releases; ride pause and tilt remain optional",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 7610,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "sound context is gesture-only, one per scene, local clip manifest stays in session and off releases voices",
+      "project": "webkit",
+      "status": "unexpected",
+      "results": [
+        {
+          "status": "failed",
+          "durationMs": 9969,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "VI/EN touch and exit controls at 390x844",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 6284,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    },
+    {
+      "file": "p9-life-sound.spec.ts",
+      "title": "VI/EN touch and exit controls at 740x390",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "durationMs": 6035,
+          "retry": 0
+        }
+      ],
+      "annotations": []
+    }
+  ]
+}

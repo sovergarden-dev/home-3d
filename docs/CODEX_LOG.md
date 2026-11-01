@@ -2,12 +2,11 @@
 
 ## Hiện trạng
 
-Cập nhật 31/10/2026 (Notion AI tạm tiếp quản theo yêu cầu chủ dự án; chi tiết ở mục cuối). Mục 28–29/10 bên dưới là lịch sử, không phải trạng thái hiện hành.
+Cập nhật 01/11/2026 (Notion AI tạm tiếp quản theo yêu cầu chủ dự án; từ 31/10 làm trên máy Windows GPU thật qua Aki MCP; chi tiết ở mục cuối). Mục 28–30/10 bên dưới là lịch sử, không phải trạng thái hiện hành.
 
-- Main `cf3cb262dfa7b69a881bef63c0d9a89dd32668fb` (M0 DONE, PR #8, CI main `40717187350` 4/4). Chưa merge M1–M5, chưa đóng băng, chưa tag audit.
-- PR #11 `codex/m5-local-height-detail` là PR tích hợp chính, draft. Head đã push `4e5136f1cfdcd5e69a31af7a7455d5fa2f40c74a`; CI `40836100757` 3/4: quality, Chromium (121 pass, H6 55.090 ms) và Firefox (74 pass/47 skip theo capability) đạt; WebKit 121 ca chức năng đạt nhưng H6 86.957 ms >70.000 ms (baseline cùng runner 87.409 ms). PR #9/#10 draft parked, nội dung đã nằm trong PR #11.
-- Nhánh local đi trước remote: `9b12c1d` (ghi chú tạm dừng), `d4fca77` (bỏ backdrop blur của panel kính để giảm chi phí compositor H6 WebKit) và commit tài liệu này. Chưa push vì phiên tiếp quản không có quyền ghi GitHub; giao bằng git bundle. CI đúng head mới NOT_VERIFIED.
-- M1 PARTIAL (H6 CI, cổng merge); M2 PARTIAL (P9 còn mẫu >100 ms); M3 PARTIAL (FPS/Lighthouse NOT_MET, peak heap >10%, ObjectURL chưa được exercise); M4 PARTIAL (auth fail-closed, Workerd native Windows và Linux CI đạt; còn rà runbook để chốt READY_TO_DEPLOY_NOT_DEPLOYED); M5 PARTIAL (pipeline 50 test, chỉ fixture tổng hợp).
+- Main `cf3cb262dfa7b69a881bef63c0d9a89dd32668fb` (M0 DONE, PR #8, CI main `40717187350` 4/4). Chưa đóng băng, chưa tag audit.
+- PR #11 `codex/m5-local-height-detail` là PR tích hợp chính. `a4f01210f9c51c5a363b5f23f0feb97c7b6cf15b`: CI `41209405262` 4/4, H6 WebKit 52.623 ms <70.000 ms (baseline `de71732` cùng runner 69.984 ms). Sau đó `400ab08` (harness soak đếm theo quan sát, `build-pwa` chạy lại được) và commit tài liệu/evidence GPU thật; cổng local ghi ở mục cuối; CI đúng head cuối, review độc lập và merge ghi ở PR tài liệu tiếp theo. PR #9/#10 draft parked, nội dung đã nằm trong PR #11.
+- M1 PARTIAL (H6 WebKit CI đã đạt từ `ec7d6fd`; chưa merge, chưa audit); M2 PARTIAL (P9 còn mẫu >100 ms, cả trên GPU NVIDIA); M3 PARTIAL (Lighthouse chưa đo cuối; FPS và soak < 10% chỉ đạt trên máy NVIDIA, soak Codex trên Intel đỉnh +22,16%; ObjectURL chưa được exercise; 4G warm NOT_VERIFIED); M4 PARTIAL (auth fail-closed, Workerd native Windows và Linux CI đạt; còn rà runbook để chốt READY_TO_DEPLOY_NOT_DEPLOYED); M5 PARTIAL (pipeline 50 test, chỉ fixture tổng hợp).
 - Không Publish/deploy, không đăng nhập cloud, không đọc dữ liệu khu thật. `REAL_WORLD_NOT_VERIFIED` giữ nguyên.
 
 ## 28/10/2026 — M0 hoàn tất
@@ -233,3 +232,48 @@ Theo quy tắc ba vòng: nếu CI đúng head mới vẫn ≥70 s thì dừng t�
 ### Bàn giao lại
 
 Không push. Gói tiếp nối gồm git bundle đầy đủ và bundle tăng dần từ `4e5136f`, README hướng dẫn fast-forward lên PR #11 (không force), log/số liệu thô và script chẩn đoán. Việc kế tiếp: push, đọc CI đúng head mới, đi tiếp các cổng §5 nếu đủ 4/4. Việc cần GPU thật: K1 full matrix, H6 hardware, FPS/GPU, P9, Lighthouse ở head mới.
+
+## 31/10–01/11/2026 — Máy Windows GPU thật (Notion AI qua Aki MCP)
+
+Chủ dự án cho Notion AI làm trên máy Windows có GPU thật qua Aki MCP, với allowlist lệnh do chủ dự án cấp (`powershell` và `cmd` có sẵn từ trước). GitHub CLI đã đăng nhập sẵn nên phiên này push được nhánh PR #11; không force-push, không đổi cài đặt repo. Không Publish/deploy, không đăng nhập cloud, không dữ liệu khu thật. Số của máy này không trộn với máy Intel UHD (M0–M1), sandbox Linux hay runner CI.
+
+### Môi trường
+
+NVIDIA GeForce GTX 1660 Ti 6 GB (driver 32.0.16.1074, ANGLE D3D11), i7-10700, 29 GiB, Windows 10.0.26200, màn hình 144 Hz. Chrome 156.0.8078.47, Edge 156.0.4314.50; Playwright 1.58.2 với Firefox 146.0.1 và WebKit 26.0 (cài vào cache người dùng). Node 22.14.0; Bun 1.4.3 chỉ qua `npx`; mỗi checkout `bun install --frozen-lockfile`. GPU có tải nền khoảng 32% từ ứng dụng khác; các nguồn được đo xen kẽ nên nhiễu chia đều.
+
+### Push, CI và sửa trên Windows
+
+Fast-forward nhánh lên `ec7d6fd` (gồm `9b12c1d`, `d4fca77` và commit tài liệu từ sandbox Linux) rồi push. CI `41187853749` 4/4; H6 WebKit 60.422 ms, nên `d4fca77` đã gỡ chặn H6.
+
+- `fba1e09` — Node 22.14 trên Windows: webcrypto từ chối ArrayBuffer tạo trong realm jsdom nên ba unit test nhập âm thanh fail. Hash qua view `Uint8Array` của cùng byte, giống các chỗ gọi digest khác.
+- `a4f0121` — axe trên Firefox Windows báo `aria-prohibited-attr` (serious) ở 390 và 740 px: thanh tiến trình splash là `div` có `aria-label` mà không có role, có từ trước baseline; máy nhanh quét shell khi splash còn mờ dần. Chuyển thành `role="progressbar"` có tên dịch VI/EN và giá trị 0–100; test jsdom axe mới fail trên markup cũ và pass sau sửa.
+- `bun run check` Windows ở `a4f0121` đạt: typecheck, lint 0, 402 unit + 1 bài CPU, 50 pipeline, build, bundle 224.418 gzip. CI `41209405262` ở `a4f0121` 4/4: quality; Chromium 121 + PWA 5; Firefox 74 pass/47 skip; WebKit 121, H6 52.623 ms so với `de71732` cùng runner 69.984 ms (−24,81%).
+
+### Bằng chứng GPU thật
+
+Chi tiết, raw và cách tái lập: [real-gpu-2026-10-31](assets/qa/codex/m3/real-gpu-2026-10-31/README.md). Baseline luôn là `de71732` (baseline chính thức của P10/M1); `4e5136f` chỉ là head cũ để thấy tác động của `d4fca77`.
+
+- H6 hardware (Chrome headed, harness `fba1e09`, 2 lượt mỗi nguồn sau warm-up, thứ tự cân bằng): `de71732` 46.932 ms, `fba1e09` 48.743,5 ms (+3,86%, `PASS` ≤ +10%), `4e5136f` 48.680,5 ms. Bỏ blur không đổi thời gian trên Chrome có GPU.
+- K1 full matrix (48 batch, before `de71732`, after `fba1e09`): `H_MET_REAL_GPU` chỉ cho máy này; after p50 27,6–34,1 ms, không mẫu nào > 50 ms; baseline có mẫu ≥ 100 ms ở mọi nhóm 300 ghim. Diagnostic 0↔1 chậm hơn baseline 6,85 ms p50 (+19,7%), chưa rõ nguyên nhân.
+- FPS/GPU ở `a4f0121`: Chrome và Edge đạt mọi ngân sách (bộ nhớ GPU đỉnh 176.943.104 / 181.006.336 byte). Firefox đạt FPS/khung/hình học nhưng bộ nhớ GPU `NOT_MET`; counter WDDM tăng tới 23,2 GB, vượt VRAM 6 GB, nên cần công cụ khác trước khi kết luận.
+- Controls Chrome ở `a4f0121`: P8 420/420 < 100 ms (max 65,8 ms) nhưng kéo camera 4/1.380 khoảng khung > 50 ms `NOT_MET`; P9 60/60, một mẫu warm 107,5 ms `NOT_MET`.
+- E2E liên quan (Playwright bundled): `a4f0121` Chromium 19/19, Firefox 19/19, WebKit 17/19. Hai ca WebKit fail là Web Audio không có trong WebKit Windows (`NOT_VERIFIED_UNSUPPORTED`, như M2); CI WebKit Linux chạy đủ. Spec H6 chạy sát timeout 90 s ở cả ba engine trên máy này (headless, workers 1), không riêng WebKit và không phải cổng.
+
+### Review độc lập và sửa sau review
+
+Review ở phiên mới (Notion AI ẩn danh, chỉ đọc repo qua Aki MCP) cho phạm vi `7179e01..a4f0121` và evidence chưa commit: `MERGE_BLOCKED` với 1 P1, 5 P2, 4 P3. Xử lý:
+
+- P1, chưa có bằng chứng CI/check ở `a4f0121` trong repo: đã ghi ở trên và trong AUDIT_PACKET; head cuối chạy lại check và CI.
+- P2: AUDIT_PACKET còn nói không có quyền ghi GitHub và head `4e5136f` — đã cập nhật. 4G warm bị ghi đạt quá tay — đã kiểm raw: navigation warm đi qua service worker (network-first) nên nằm ngoài throttle, hạ xuống NOT_VERIFIED; cold giữ kết luận. K1 thiếu môi trường/hash — thêm `provenance.json`, giới hạn nhãn trong máy này. E2E fail chưa chú thích — thêm `annotations.json`. Evidence chưa commit — commit cùng README.
+- P3: ghi giới hạn H6 (ứng viên `fba1e09`, Vite dev, 2 lượt/nguồn). Soak tính `modeChanges`/`audioCycles`/`verifiedPackageTransitions` bằng phép nhân — `400ab08` đếm theo trạng thái scene quan sát được, thiếu quan sát thì dừng. `build-pwa` không chạy lại được và để `.vite/manifest.json` trong public — `400ab08` sửa, thêm `public/.assetsignore`, xoá shell có hash cũ khi chạy lại. Script chẩn đoán H6 Linux không có trong repo — gắn `NOT_REPRODUCIBLE_FROM_REPO`, ghi CI đã thay phép chiếu.
+
+### Soak liên tục
+
+Lượt đầu ở `a4f0121` dừng sau 6 warm-up và 27 vòng đo (1.570.495 ms) vì cửa sổ Chrome bị đóng giữa chừng; raw giữ với `complete: false`, không dùng cho kết luận. Lượt hai ở `400ab08` (harness đếm theo trạng thái quan sát), Chrome 156 GPU thật, một document: 6 warm-up + 31 vòng trong 1.803.134 ms; 124 lần đổi mode, 62 lần chuyển gói, 31 chu kỳ âm thanh; không page error; tối đa 1 canvas/1 RAF/1 AudioContext, ImageBitmap 74 tạo/74 đóng. Heap cuối −17,98%, đỉnh +1,28% so baseline 79.955.818 byte: tiêu chí < 10% `MET` trên máy này. Heap nằm ở ba mức theo trạng thái vòng nên số âm chủ yếu do khác mức; cùng mức vẫn trôi +1,42% đến +2,97% sau 30 phút, chưa chứng minh không rò rỉ. ObjectURL `NOT_EXERCISED`. Soak Intel của Codex (đỉnh +22,16% `NOT_MET`) giữ nguyên, không bị thay.
+
+### Cổng local trước merge (`400ab08`)
+
+- `bun install --frozen-lockfile` không đổi; `bun run check` đạt: typecheck, lint, 402 unit + 1 bài CPU, 50 pipeline, build, bundle 224.408 gzip < 250.000. Commit tài liệu sau đó không đổi mã.
+- Production PWA (`playwright.production.config.ts`) 5/5 trên Windows, vì `400ab08` sửa `build-pwa`.
+- Gitleaks 8.30.1 sạch: toàn lịch sử local 131 commit và `cf3cb26..400ab08` 47 commit; tài liệu/evidence chưa commit quét chế độ `dir` sạch. Quét riêng tư các tệp sắp commit chỉ còn dương tính giả (từ tiếng Việt thông thường, số byte có dạng IPv4); mọi tệp < 1 MB.
+- CI đúng head cuối, review độc lập phần delta và biên nhận merge ghi ở PR tài liệu tiếp theo.

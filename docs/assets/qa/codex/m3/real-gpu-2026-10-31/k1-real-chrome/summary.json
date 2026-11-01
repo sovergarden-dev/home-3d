@@ -1,0 +1,214 @@
+{
+  "syntheticOnly": true,
+  "scriptSha256": "e925947cdfc246ee598186ca03e076acdf8742c89ffe81a63f7286aadb450f99",
+  "label": "H_MET_REAL_GPU",
+  "goalMs": 100,
+  "batches": 6,
+  "pairs": 10,
+  "ordering": "AB then BA alternating batches",
+  "summary": {
+    "active-300": {
+      "before": {
+        "complete": true,
+        "failures": [],
+        "add": {
+          "n": 60,
+          "min": 55.60000002384186,
+          "p50": 69.30000007152557,
+          "p95": 201.10000002384186,
+          "max": 221.80000007152557
+        },
+        "delete": {
+          "n": 60,
+          "min": 55.5,
+          "p50": 62.94999998807907,
+          "p95": 194.5,
+          "max": 216.89999997615814
+        }
+      },
+      "after": {
+        "complete": true,
+        "failures": [],
+        "add": {
+          "n": 60,
+          "min": 20.5,
+          "p50": 27.700000047683716,
+          "p95": 35.10000002384186,
+          "max": 43.799999952316284
+        },
+        "delete": {
+          "n": 60,
+          "min": 20.700000047683716,
+          "p50": 27.799999952316284,
+          "p95": 34.699999928474426,
+          "max": 41.5
+        }
+      }
+    },
+    "static-300": {
+      "before": {
+        "complete": true,
+        "failures": [],
+        "add": {
+          "n": 60,
+          "min": 55.5,
+          "p50": 69,
+          "p95": 194.5,
+          "max": 208.30000007152557
+        },
+        "delete": {
+          "n": 60,
+          "min": 55.39999997615814,
+          "p50": 62.5,
+          "p95": 76.40000009536743,
+          "max": 208.5
+        }
+      },
+      "after": {
+        "complete": true,
+        "failures": [],
+        "add": {
+          "n": 60,
+          "min": 20.5,
+          "p50": 33.80000001192093,
+          "p95": 41.200000047683716,
+          "max": 47.700000047683716
+        },
+        "delete": {
+          "n": 60,
+          "min": 18.799999952316284,
+          "p50": 34.049999952316284,
+          "p95": 35.5,
+          "max": 41.60000002384186
+        }
+      }
+    },
+    "smaller-300": {
+      "before": {
+        "complete": true,
+        "failures": [],
+        "add": {
+          "n": 60,
+          "min": 55.300000071525574,
+          "p50": 62.5,
+          "p95": 187.79999995231628,
+          "max": 207.80000007152557
+        },
+        "delete": {
+          "n": 60,
+          "min": 55.200000047683716,
+          "p50": 61.049999952316284,
+          "p95": 74.70000004768372,
+          "max": 194.5
+        }
+      },
+      "after": {
+        "complete": true,
+        "failures": [],
+        "add": {
+          "n": 60,
+          "min": 20.399999976158142,
+          "p50": 27.90000009536743,
+          "p95": 42.799999952316284,
+          "max": 48.700000047683716
+        },
+        "delete": {
+          "n": 60,
+          "min": 19.399999976158142,
+          "p50": 27.600000023841858,
+          "p95": 34.89999997615814,
+          "max": 48.5
+        }
+      }
+    },
+    "active-empty": {
+      "before": {
+        "complete": true,
+        "failures": [],
+        "add": {
+          "n": 60,
+          "min": 27.399999976158142,
+          "p50": 34.75,
+          "p95": 46.699999928474426,
+          "max": 48.799999952316284
+        },
+        "delete": {
+          "n": 60,
+          "min": 27.59999990463257,
+          "p50": 34.799999952316284,
+          "p95": 42.700000047683716,
+          "max": 48.700000047683716
+        }
+      },
+      "after": {
+        "complete": true,
+        "failures": [],
+        "add": {
+          "n": 60,
+          "min": 30,
+          "p50": 41.60000002384186,
+          "p95": 48.699999928474426,
+          "max": 48.89999997615814
+        },
+        "delete": {
+          "n": 60,
+          "min": 34.40000009536743,
+          "p50": 41.60000002384186,
+          "p95": 48.799999952316284,
+          "max": 48.800000071525574
+        }
+      }
+    }
+  },
+  "files": [
+    "active-300-0-before.json",
+    "active-300-0-after.json",
+    "active-300-1-after.json",
+    "active-300-1-before.json",
+    "active-300-2-before.json",
+    "active-300-2-after.json",
+    "active-300-3-after.json",
+    "active-300-3-before.json",
+    "active-300-4-before.json",
+    "active-300-4-after.json",
+    "active-300-5-after.json",
+    "active-300-5-before.json",
+    "static-300-0-before.json",
+    "static-300-0-after.json",
+    "static-300-1-after.json",
+    "static-300-1-before.json",
+    "static-300-2-before.json",
+    "static-300-2-after.json",
+    "static-300-3-after.json",
+    "static-300-3-before.json",
+    "static-300-4-before.json",
+    "static-300-4-after.json",
+    "static-300-5-after.json",
+    "static-300-5-before.json",
+    "smaller-300-0-before.json",
+    "smaller-300-0-after.json",
+    "smaller-300-1-after.json",
+    "smaller-300-1-before.json",
+    "smaller-300-2-before.json",
+    "smaller-300-2-after.json",
+    "smaller-300-3-after.json",
+    "smaller-300-3-before.json",
+    "smaller-300-4-before.json",
+    "smaller-300-4-after.json",
+    "smaller-300-5-after.json",
+    "smaller-300-5-before.json",
+    "active-empty-0-before.json",
+    "active-empty-0-after.json",
+    "active-empty-1-after.json",
+    "active-empty-1-before.json",
+    "active-empty-2-before.json",
+    "active-empty-2-after.json",
+    "active-empty-3-after.json",
+    "active-empty-3-before.json",
+    "active-empty-4-before.json",
+    "active-empty-4-after.json",
+    "active-empty-5-after.json",
+    "active-empty-5-before.json"
+  ],
+  "limitation": "Presentation opportunity is an upper bound. GPU completion is fence-observed; no GPU-memory or physical-GPU-time claim. Failed/censored observations remain in raw and prevent complete=true."
+}

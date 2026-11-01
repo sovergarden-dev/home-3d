@@ -1,0 +1,6850 @@
+{
+  "syntheticOnly": true,
+  "family": "p8",
+  "scriptSha256": "436817cb6105a6e10205ea24fd4731941d2de0ba0c58bcfc97874be40e6e0c5a",
+  "environment": {
+    "sourceSha": "a4f01210f9c51c5a363b5f23f0feb97c7b6cf15b",
+    "harnessSha": "a4f01210f9c51c5a363b5f23f0feb97c7b6cf15b",
+    "platform": "WINDOWS_LOCAL",
+    "syntheticOnly": true,
+    "rendererClass": "REAL_GPU",
+    "headed": true,
+    "channel": "chrome",
+    "browserVersion": "156.0.8078.47",
+    "driverVersion": "32.0.16.1074",
+    "dprRequest": "1",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "vendor": "Google Inc. (NVIDIA)",
+    "dpr": 1,
+    "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+  },
+  "fixtureSha256": "01e1eb6847932115caf945b4099a2a1864a86ec508163ac72f94c58a480a3b89",
+  "randomSeed": 81273,
+  "clock": {
+    "date": "2026-06-21",
+    "startMinutes": 720,
+    "speed": 0
+  },
+  "rows": [
+    {
+      "round": 0,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24,
+      "submissionMs": 9.299999952316284,
+      "gpuCompletionObservedMs": 17.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.200000047683716,
+      "submissionMs": 12.700000047683716,
+      "gpuCompletionObservedMs": 24.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.700000047683716,
+      "submissionMs": 12.100000023841858,
+      "gpuCompletionObservedMs": 23.90000009536743,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.100000023841858,
+      "submissionMs": 9.700000047683716,
+      "gpuCompletionObservedMs": 17.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.200000047683716,
+      "submissionMs": 9,
+      "gpuCompletionObservedMs": 17.300000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.899999976158142,
+      "submissionMs": 8.199999928474426,
+      "gpuCompletionObservedMs": 17,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.100000023841858,
+      "submissionMs": 7.800000071525574,
+      "gpuCompletionObservedMs": 17.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.5,
+      "submissionMs": 6.899999976158142,
+      "gpuCompletionObservedMs": 10.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.700000047683716,
+      "submissionMs": 6.399999976158142,
+      "gpuCompletionObservedMs": 10.800000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.100000023841858,
+      "submissionMs": 10.800000071525574,
+      "gpuCompletionObservedMs": 23.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 20.700000047683716,
+      "submissionMs": 8.799999952316284,
+      "gpuCompletionObservedMs": 13.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 28.5,
+      "submissionMs": 12.699999928474426,
+      "gpuCompletionObservedMs": 21.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.700000047683716,
+      "submissionMs": 9.200000047683716,
+      "gpuCompletionObservedMs": 17,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 0,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.100000023841858,
+      "submissionMs": 10.200000047683716,
+      "gpuCompletionObservedMs": 17.300000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 1,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.09999990463257,
+      "submissionMs": 9.299999952316284,
+      "gpuCompletionObservedMs": 17.699999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 1,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.299999952316284,
+      "submissionMs": 10.600000023841858,
+      "gpuCompletionObservedMs": 17.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 1,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.100000023841858,
+      "submissionMs": 9.400000095367432,
+      "gpuCompletionObservedMs": 17.40000009536743,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 1,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24,
+      "submissionMs": 9.400000095367432,
+      "gpuCompletionObservedMs": 17.300000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 1,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.100000023841858,
+      "submissionMs": 8.600000023841858,
+      "gpuCompletionObservedMs": 17.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 1,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.5,
+      "submissionMs": 7.899999976158142,
+      "gpuCompletionObservedMs": 16.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 1,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24,
+      "submissionMs": 8.400000095367432,
+      "gpuCompletionObservedMs": 17.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 1,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.199999928474426,
+      "submissionMs": 6.799999952316284,
+      "gpuCompletionObservedMs": 10.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 1,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.399999976158142,
+      "submissionMs": 6.200000047683716,
+      "gpuCompletionObservedMs": 10.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 1,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.100000023841858,
+      "submissionMs": 10.5,
+      "gpuCompletionObservedMs": 24.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 1,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 21.5,
+      "submissionMs": 8.799999952316284,
+      "gpuCompletionObservedMs": 14.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 1,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 28.799999952316284,
+      "submissionMs": 11,
+      "gpuCompletionObservedMs": 21.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 1,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.90000009536743,
+      "submissionMs": 9.300000071525574,
+      "gpuCompletionObservedMs": 17,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 1,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.5,
+      "submissionMs": 8.600000023841858,
+      "gpuCompletionObservedMs": 17.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 2,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 58.700000047683716,
+      "submissionMs": 9.300000071525574,
+      "gpuCompletionObservedMs": 51.800000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 2,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 38.10000002384186,
+      "submissionMs": 10.899999976158142,
+      "gpuCompletionObservedMs": 31.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 2,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.300000071525574,
+      "submissionMs": 8.900000095367432,
+      "gpuCompletionObservedMs": 17.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 2,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.399999976158142,
+      "submissionMs": 9.699999928474426,
+      "gpuCompletionObservedMs": 16.59999990463257,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 2,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.399999976158142,
+      "submissionMs": 8.099999904632568,
+      "gpuCompletionObservedMs": 17.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 2,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.600000023841858,
+      "submissionMs": 7.600000023841858,
+      "gpuCompletionObservedMs": 17.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 2,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24,
+      "submissionMs": 8,
+      "gpuCompletionObservedMs": 17.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 2,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.5,
+      "submissionMs": 6.799999952316284,
+      "gpuCompletionObservedMs": 17.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 2,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17,
+      "submissionMs": 6.100000023841858,
+      "gpuCompletionObservedMs": 10.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 2,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.600000023841858,
+      "submissionMs": 11.300000071525574,
+      "gpuCompletionObservedMs": 16.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 2,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 21.199999928474426,
+      "submissionMs": 9.5,
+      "gpuCompletionObservedMs": 14.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 2,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 28,
+      "submissionMs": 10.799999952316284,
+      "gpuCompletionObservedMs": 21.09999990463257,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 2,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.699999928474426,
+      "submissionMs": 10.899999976158142,
+      "gpuCompletionObservedMs": 16.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 2,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.899999976158142,
+      "submissionMs": 8.899999976158142,
+      "gpuCompletionObservedMs": 17.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 3,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31,
+      "submissionMs": 10,
+      "gpuCompletionObservedMs": 24.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 3,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.699999928474426,
+      "submissionMs": 12,
+      "gpuCompletionObservedMs": 23.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 3,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.5,
+      "submissionMs": 11,
+      "gpuCompletionObservedMs": 24.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 3,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.799999952316284,
+      "submissionMs": 10.299999952316284,
+      "gpuCompletionObservedMs": 17.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 3,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.899999976158142,
+      "submissionMs": 9.899999976158142,
+      "gpuCompletionObservedMs": 17.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 3,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 22.199999928474426,
+      "submissionMs": 8.099999904632568,
+      "gpuCompletionObservedMs": 15.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 3,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 29.700000047683716,
+      "submissionMs": 11.200000047683716,
+      "gpuCompletionObservedMs": 22.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 3,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 22.200000047683716,
+      "submissionMs": 8.299999952316284,
+      "gpuCompletionObservedMs": 15.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 3,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.300000071525574,
+      "submissionMs": 6.200000047683716,
+      "gpuCompletionObservedMs": 10.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 3,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.800000071525574,
+      "submissionMs": 11.200000047683716,
+      "gpuCompletionObservedMs": 17,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 3,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 20.799999952316284,
+      "submissionMs": 9.600000023841858,
+      "gpuCompletionObservedMs": 14,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 3,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 27.899999976158142,
+      "submissionMs": 12.800000071525574,
+      "gpuCompletionObservedMs": 20.800000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 3,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 26.199999928474426,
+      "submissionMs": 11.699999928474426,
+      "gpuCompletionObservedMs": 19.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 3,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 36.199999928474426,
+      "submissionMs": 16.09999990463257,
+      "gpuCompletionObservedMs": 29.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 4,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.100000023841858,
+      "submissionMs": 9.399999976158142,
+      "gpuCompletionObservedMs": 17.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 4,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.09999990463257,
+      "submissionMs": 10.899999976158142,
+      "gpuCompletionObservedMs": 17.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 4,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.5,
+      "submissionMs": 8.800000071525574,
+      "gpuCompletionObservedMs": 17.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 4,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.5,
+      "submissionMs": 8.800000071525574,
+      "gpuCompletionObservedMs": 17.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 4,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.299999952316284,
+      "submissionMs": 8.199999928474426,
+      "gpuCompletionObservedMs": 17.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 4,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.5,
+      "submissionMs": 8.200000047683716,
+      "gpuCompletionObservedMs": 17.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 4,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.100000023841858,
+      "submissionMs": 8.100000023841858,
+      "gpuCompletionObservedMs": 17.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 4,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.399999976158142,
+      "submissionMs": 6.800000071525574,
+      "gpuCompletionObservedMs": 10.800000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 4,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17,
+      "submissionMs": 6.399999976158142,
+      "gpuCompletionObservedMs": 10.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 4,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.5,
+      "submissionMs": 11.800000071525574,
+      "gpuCompletionObservedMs": 16.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 4,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 27.200000047683716,
+      "submissionMs": 9,
+      "gpuCompletionObservedMs": 20.300000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 4,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.899999976158142,
+      "submissionMs": 13.399999976158142,
+      "gpuCompletionObservedMs": 24,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 4,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 29.700000047683716,
+      "submissionMs": 12.900000095367432,
+      "gpuCompletionObservedMs": 23.90000009536743,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 4,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 29.899999976158142,
+      "submissionMs": 11.399999976158142,
+      "gpuCompletionObservedMs": 23.09999990463257,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 5,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 45,
+      "submissionMs": 10.200000047683716,
+      "gpuCompletionObservedMs": 38.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 5,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 38.5,
+      "submissionMs": 10.600000023841858,
+      "gpuCompletionObservedMs": 31.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 5,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.100000023841858,
+      "submissionMs": 9.299999952316284,
+      "gpuCompletionObservedMs": 24.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 5,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.200000047683716,
+      "submissionMs": 9.100000023841858,
+      "gpuCompletionObservedMs": 24.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 5,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.800000071525574,
+      "submissionMs": 8.5,
+      "gpuCompletionObservedMs": 23.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 5,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31,
+      "submissionMs": 9.199999928474426,
+      "gpuCompletionObservedMs": 24.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 5,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 33.39999997615814,
+      "submissionMs": 8.100000023841858,
+      "gpuCompletionObservedMs": 24,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 5,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.100000023841858,
+      "submissionMs": 7,
+      "gpuCompletionObservedMs": 17.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 5,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 25.59999990463257,
+      "submissionMs": 6,
+      "gpuCompletionObservedMs": 17.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 5,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.799999952316284,
+      "submissionMs": 10.5,
+      "gpuCompletionObservedMs": 23.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 5,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 21.5,
+      "submissionMs": 8.599999904632568,
+      "gpuCompletionObservedMs": 14.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 5,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.899999976158142,
+      "submissionMs": 11.699999928474426,
+      "gpuCompletionObservedMs": 17.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 5,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 26.800000071525574,
+      "submissionMs": 9.899999976158142,
+      "gpuCompletionObservedMs": 19.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 5,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.399999976158142,
+      "submissionMs": 9.5,
+      "gpuCompletionObservedMs": 16.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 6,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.300000071525574,
+      "submissionMs": 10.900000095367432,
+      "gpuCompletionObservedMs": 23.40000009536743,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 6,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.399999976158142,
+      "submissionMs": 13.299999952316284,
+      "gpuCompletionObservedMs": 23.699999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 6,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.100000023841858,
+      "submissionMs": 9.399999976158142,
+      "gpuCompletionObservedMs": 24.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 6,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.899999976158142,
+      "submissionMs": 9.399999976158142,
+      "gpuCompletionObservedMs": 17.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 6,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.100000023841858,
+      "submissionMs": 8.600000023841858,
+      "gpuCompletionObservedMs": 24.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 6,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.399999976158142,
+      "submissionMs": 9.399999976158142,
+      "gpuCompletionObservedMs": 24.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 6,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.699999928474426,
+      "submissionMs": 8.100000023841858,
+      "gpuCompletionObservedMs": 16.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 6,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.399999976158142,
+      "submissionMs": 6.5,
+      "gpuCompletionObservedMs": 10.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 6,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.299999952316284,
+      "submissionMs": 6.600000023841858,
+      "gpuCompletionObservedMs": 17.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 6,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 28.299999952316284,
+      "submissionMs": 11.600000023841858,
+      "gpuCompletionObservedMs": 21.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 6,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 27,
+      "submissionMs": 8.800000071525574,
+      "gpuCompletionObservedMs": 20.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 6,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 33.59999990463257,
+      "submissionMs": 15.699999928474426,
+      "gpuCompletionObservedMs": 26.59999990463257,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 6,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.09999990463257,
+      "submissionMs": 13,
+      "gpuCompletionObservedMs": 23.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 6,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.100000023841858,
+      "submissionMs": 9.200000047683716,
+      "gpuCompletionObservedMs": 17.300000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 7,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 38.39999997615814,
+      "submissionMs": 9.300000071525574,
+      "gpuCompletionObservedMs": 31.300000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 7,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.700000047683716,
+      "submissionMs": 11.200000047683716,
+      "gpuCompletionObservedMs": 23.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 7,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.5,
+      "submissionMs": 10.199999928474426,
+      "gpuCompletionObservedMs": 23.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 7,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 59.89999997615814,
+      "submissionMs": 9.099999904632568,
+      "gpuCompletionObservedMs": 51.89999997615814,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 7,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 43.89999997615814,
+      "submissionMs": 12.399999976158142,
+      "gpuCompletionObservedMs": 37.09999990463257,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 7,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.200000047683716,
+      "submissionMs": 10.200000047683716,
+      "gpuCompletionObservedMs": 17.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 7,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.899999976158142,
+      "submissionMs": 9.5,
+      "gpuCompletionObservedMs": 17.199999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 7,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.700000047683716,
+      "submissionMs": 8.399999976158142,
+      "gpuCompletionObservedMs": 16.800000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 7,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.100000023841858,
+      "submissionMs": 7.799999952316284,
+      "gpuCompletionObservedMs": 16.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 7,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30,
+      "submissionMs": 13.600000023841858,
+      "gpuCompletionObservedMs": 23.300000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 7,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 21.100000023841858,
+      "submissionMs": 9.899999976158142,
+      "gpuCompletionObservedMs": 14.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 7,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.399999976158142,
+      "submissionMs": 12.599999904632568,
+      "gpuCompletionObservedMs": 16.59999990463257,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 7,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.200000047683716,
+      "submissionMs": 9.100000023841858,
+      "gpuCompletionObservedMs": 16.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 7,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.100000023841858,
+      "submissionMs": 9.100000023841858,
+      "gpuCompletionObservedMs": 17.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 8,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.299999952316284,
+      "submissionMs": 10.799999952316284,
+      "gpuCompletionObservedMs": 17.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 8,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.600000023841858,
+      "submissionMs": 11.600000023841858,
+      "gpuCompletionObservedMs": 17.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 8,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.59999990463257,
+      "submissionMs": 9.399999976158142,
+      "gpuCompletionObservedMs": 17.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 8,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.40000009536743,
+      "submissionMs": 9.700000047683716,
+      "gpuCompletionObservedMs": 17.90000009536743,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 8,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.100000023841858,
+      "submissionMs": 9.5,
+      "gpuCompletionObservedMs": 17.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 8,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.899999976158142,
+      "submissionMs": 8.600000023841858,
+      "gpuCompletionObservedMs": 17.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 8,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.59999990463257,
+      "submissionMs": 10.099999904632568,
+      "gpuCompletionObservedMs": 16.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 8,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.699999928474426,
+      "submissionMs": 8.399999976158142,
+      "gpuCompletionObservedMs": 16.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 8,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.200000047683716,
+      "submissionMs": 6.799999952316284,
+      "gpuCompletionObservedMs": 10.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 8,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.700000047683716,
+      "submissionMs": 11.300000071525574,
+      "gpuCompletionObservedMs": 17.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 8,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 21.399999976158142,
+      "submissionMs": 9.100000023841858,
+      "gpuCompletionObservedMs": 14.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 8,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23,
+      "submissionMs": 12.600000023841858,
+      "gpuCompletionObservedMs": 16.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 8,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.200000047683716,
+      "submissionMs": 9.400000095367432,
+      "gpuCompletionObservedMs": 16.40000009536743,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 8,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.200000047683716,
+      "submissionMs": 8.700000047683716,
+      "gpuCompletionObservedMs": 17.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 9,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 29.700000047683716,
+      "submissionMs": 10.200000047683716,
+      "gpuCompletionObservedMs": 22.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 9,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31,
+      "submissionMs": 14.299999952316284,
+      "gpuCompletionObservedMs": 24.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 9,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.399999976158142,
+      "submissionMs": 9.699999928474426,
+      "gpuCompletionObservedMs": 23.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 9,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.100000023841858,
+      "submissionMs": 9.399999976158142,
+      "gpuCompletionObservedMs": 23.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 9,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.200000047683716,
+      "submissionMs": 8.400000095367432,
+      "gpuCompletionObservedMs": 17.300000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 9,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.699999928474426,
+      "submissionMs": 8.799999952316284,
+      "gpuCompletionObservedMs": 23.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 9,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.699999928474426,
+      "submissionMs": 8,
+      "gpuCompletionObservedMs": 16.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 9,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.09999990463257,
+      "submissionMs": 6.799999952316284,
+      "gpuCompletionObservedMs": 16.199999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 9,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.699999928474426,
+      "submissionMs": 7.5,
+      "gpuCompletionObservedMs": 16.699999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 9,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.700000047683716,
+      "submissionMs": 10.800000071525574,
+      "gpuCompletionObservedMs": 23.800000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 9,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 28,
+      "submissionMs": 9.700000047683716,
+      "gpuCompletionObservedMs": 20.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 9,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 26.800000071525574,
+      "submissionMs": 11.700000047683716,
+      "gpuCompletionObservedMs": 19.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 9,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.699999928474426,
+      "submissionMs": 11.899999976158142,
+      "gpuCompletionObservedMs": 16.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 9,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.5,
+      "submissionMs": 8.899999976158142,
+      "gpuCompletionObservedMs": 17.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 10,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 38.799999952316284,
+      "submissionMs": 9.099999904632568,
+      "gpuCompletionObservedMs": 31.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 10,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.59999990463257,
+      "submissionMs": 11.199999928474426,
+      "gpuCompletionObservedMs": 23.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 10,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.59999990463257,
+      "submissionMs": 9.199999928474426,
+      "gpuCompletionObservedMs": 23.59999990463257,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 10,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.09999990463257,
+      "submissionMs": 9.299999952316284,
+      "gpuCompletionObservedMs": 24.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 10,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.399999976158142,
+      "submissionMs": 10.899999976158142,
+      "gpuCompletionObservedMs": 23.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 10,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31,
+      "submissionMs": 8.5,
+      "gpuCompletionObservedMs": 24.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 10,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24,
+      "submissionMs": 8.899999976158142,
+      "gpuCompletionObservedMs": 17.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 10,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.399999976158142,
+      "submissionMs": 7.5,
+      "gpuCompletionObservedMs": 17.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 10,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.100000023841858,
+      "submissionMs": 6,
+      "gpuCompletionObservedMs": 10.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 10,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.200000047683716,
+      "submissionMs": 10,
+      "gpuCompletionObservedMs": 17.40000009536743,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 10,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 22.100000023841858,
+      "submissionMs": 8.399999976158142,
+      "gpuCompletionObservedMs": 15.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 10,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 22.299999952316284,
+      "submissionMs": 11.399999976158142,
+      "gpuCompletionObservedMs": 15.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 10,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.600000023841858,
+      "submissionMs": 9.899999976158142,
+      "gpuCompletionObservedMs": 16.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 10,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.300000071525574,
+      "submissionMs": 8.5,
+      "gpuCompletionObservedMs": 17.300000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 11,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.100000023841858,
+      "submissionMs": 9.899999976158142,
+      "gpuCompletionObservedMs": 17.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 11,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24,
+      "submissionMs": 11,
+      "gpuCompletionObservedMs": 17.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 11,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.200000047683716,
+      "submissionMs": 9.600000023841858,
+      "gpuCompletionObservedMs": 17.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 11,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.09999990463257,
+      "submissionMs": 10.099999904632568,
+      "gpuCompletionObservedMs": 17.199999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 11,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.200000047683716,
+      "submissionMs": 9.100000023841858,
+      "gpuCompletionObservedMs": 17.40000009536743,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 11,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.700000047683716,
+      "submissionMs": 8.399999976158142,
+      "gpuCompletionObservedMs": 17.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 11,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24,
+      "submissionMs": 8.600000023841858,
+      "gpuCompletionObservedMs": 17.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 11,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.899999976158142,
+      "submissionMs": 7.399999976158142,
+      "gpuCompletionObservedMs": 16.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 11,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.100000023841858,
+      "submissionMs": 6.5,
+      "gpuCompletionObservedMs": 10.400000095367432,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 11,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.700000047683716,
+      "submissionMs": 11.900000095367432,
+      "gpuCompletionObservedMs": 16.800000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 11,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 28.199999928474426,
+      "submissionMs": 10,
+      "gpuCompletionObservedMs": 21.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 11,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 27.5,
+      "submissionMs": 11.299999952316284,
+      "gpuCompletionObservedMs": 20.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 11,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.59999990463257,
+      "submissionMs": 8.899999976158142,
+      "gpuCompletionObservedMs": 17.199999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 11,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.299999952316284,
+      "submissionMs": 10.600000023841858,
+      "gpuCompletionObservedMs": 16.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 12,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 37.89999997615814,
+      "submissionMs": 10.700000047683716,
+      "gpuCompletionObservedMs": 31,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 12,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.799999952316284,
+      "submissionMs": 13.100000023841858,
+      "gpuCompletionObservedMs": 23.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 12,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.800000071525574,
+      "submissionMs": 9.300000071525574,
+      "gpuCompletionObservedMs": 24,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 12,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.5,
+      "submissionMs": 8.5,
+      "gpuCompletionObservedMs": 24.40000009536743,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 12,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.300000071525574,
+      "submissionMs": 14.400000095367432,
+      "gpuCompletionObservedMs": 24.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 12,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.300000071525574,
+      "submissionMs": 7.800000071525574,
+      "gpuCompletionObservedMs": 24.40000009536743,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 12,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 36.89999997615814,
+      "submissionMs": 7.699999928474426,
+      "gpuCompletionObservedMs": 30.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 12,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.600000023841858,
+      "submissionMs": 6.600000023841858,
+      "gpuCompletionObservedMs": 16.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 12,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.299999952316284,
+      "submissionMs": 6.699999928474426,
+      "gpuCompletionObservedMs": 10.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 12,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.699999928474426,
+      "submissionMs": 10.699999928474426,
+      "gpuCompletionObservedMs": 23.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 12,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 21.600000023841858,
+      "submissionMs": 8.899999976158142,
+      "gpuCompletionObservedMs": 14.699999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 12,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.399999976158142,
+      "submissionMs": 13,
+      "gpuCompletionObservedMs": 16.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 12,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.199999928474426,
+      "submissionMs": 9.799999952316284,
+      "gpuCompletionObservedMs": 16.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 12,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.600000023841858,
+      "submissionMs": 9.700000047683716,
+      "gpuCompletionObservedMs": 17.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 13,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.399999976158142,
+      "submissionMs": 10.899999976158142,
+      "gpuCompletionObservedMs": 23.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 13,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.40000009536743,
+      "submissionMs": 12.900000095367432,
+      "gpuCompletionObservedMs": 23.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 13,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.40000009536743,
+      "submissionMs": 9.5,
+      "gpuCompletionObservedMs": 24.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 13,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.100000023841858,
+      "submissionMs": 9.199999928474426,
+      "gpuCompletionObservedMs": 17.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 13,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.40000009536743,
+      "submissionMs": 8.100000023841858,
+      "gpuCompletionObservedMs": 17.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 13,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.799999952316284,
+      "submissionMs": 8.299999952316284,
+      "gpuCompletionObservedMs": 17.699999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 13,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24,
+      "submissionMs": 7.899999976158142,
+      "gpuCompletionObservedMs": 17.199999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 13,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.399999976158142,
+      "submissionMs": 6.5,
+      "gpuCompletionObservedMs": 10.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 13,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.600000023841858,
+      "submissionMs": 6,
+      "gpuCompletionObservedMs": 11,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 13,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.899999976158142,
+      "submissionMs": 11,
+      "gpuCompletionObservedMs": 17.199999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 13,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 20.700000047683716,
+      "submissionMs": 9.200000047683716,
+      "gpuCompletionObservedMs": 13.900000095367432,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 13,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.699999928474426,
+      "submissionMs": 12.5,
+      "gpuCompletionObservedMs": 17.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 13,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.700000047683716,
+      "submissionMs": 9.100000023841858,
+      "gpuCompletionObservedMs": 16.90000009536743,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 13,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.300000071525574,
+      "submissionMs": 8.899999976158142,
+      "gpuCompletionObservedMs": 17.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 14,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 38.60000002384186,
+      "submissionMs": 10,
+      "gpuCompletionObservedMs": 31.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 14,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.799999952316284,
+      "submissionMs": 10.799999952316284,
+      "gpuCompletionObservedMs": 23.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 14,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.199999928474426,
+      "submissionMs": 11.199999928474426,
+      "gpuCompletionObservedMs": 24.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 14,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.199999928474426,
+      "submissionMs": 10.399999976158142,
+      "gpuCompletionObservedMs": 24.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 14,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.5,
+      "submissionMs": 8,
+      "gpuCompletionObservedMs": 25.09999990463257,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 14,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.299999952316284,
+      "submissionMs": 9.299999952316284,
+      "gpuCompletionObservedMs": 17.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 14,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.800000071525574,
+      "submissionMs": 8,
+      "gpuCompletionObservedMs": 17.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 14,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.700000047683716,
+      "submissionMs": 6.700000047683716,
+      "gpuCompletionObservedMs": 16.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 14,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.600000023841858,
+      "submissionMs": 6,
+      "gpuCompletionObservedMs": 10.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 14,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.09999990463257,
+      "submissionMs": 10.799999952316284,
+      "gpuCompletionObservedMs": 17.199999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 14,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 21.5,
+      "submissionMs": 9.200000047683716,
+      "gpuCompletionObservedMs": 14.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 14,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 26.699999928474426,
+      "submissionMs": 12.199999928474426,
+      "gpuCompletionObservedMs": 20.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 14,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.200000047683716,
+      "submissionMs": 9.800000071525574,
+      "gpuCompletionObservedMs": 16.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 14,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24,
+      "submissionMs": 10.299999952316284,
+      "gpuCompletionObservedMs": 17.199999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 15,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 37.800000071525574,
+      "submissionMs": 9.5,
+      "gpuCompletionObservedMs": 30.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 15,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.899999976158142,
+      "submissionMs": 11.5,
+      "gpuCompletionObservedMs": 24,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 15,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.300000071525574,
+      "submissionMs": 9.100000023841858,
+      "gpuCompletionObservedMs": 24.40000009536743,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 15,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.5,
+      "submissionMs": 9.199999928474426,
+      "gpuCompletionObservedMs": 24.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 15,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.299999952316284,
+      "submissionMs": 8.299999952316284,
+      "gpuCompletionObservedMs": 24.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 15,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.600000023841858,
+      "submissionMs": 8,
+      "gpuCompletionObservedMs": 17.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 15,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.799999952316284,
+      "submissionMs": 7.799999952316284,
+      "gpuCompletionObservedMs": 17,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 15,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 21,
+      "submissionMs": 6.600000023841858,
+      "gpuCompletionObservedMs": 14.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 15,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.600000023841858,
+      "submissionMs": 6.300000071525574,
+      "gpuCompletionObservedMs": 10.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 15,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31,
+      "submissionMs": 11.800000071525574,
+      "gpuCompletionObservedMs": 24,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 15,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 21.399999976158142,
+      "submissionMs": 9.299999952316284,
+      "gpuCompletionObservedMs": 14.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 15,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 26.300000071525574,
+      "submissionMs": 13.5,
+      "gpuCompletionObservedMs": 19.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 15,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.200000047683716,
+      "submissionMs": 12.300000071525574,
+      "gpuCompletionObservedMs": 23.300000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 15,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.399999976158142,
+      "submissionMs": 9.300000071525574,
+      "gpuCompletionObservedMs": 17.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 16,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.299999952316284,
+      "submissionMs": 9.199999928474426,
+      "gpuCompletionObservedMs": 24.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 16,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.199999928474426,
+      "submissionMs": 10.600000023841858,
+      "gpuCompletionObservedMs": 24.199999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 16,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.200000047683716,
+      "submissionMs": 8.899999976158142,
+      "gpuCompletionObservedMs": 24.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 16,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.800000071525574,
+      "submissionMs": 9.399999976158142,
+      "gpuCompletionObservedMs": 23.800000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 16,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.5,
+      "submissionMs": 8.199999928474426,
+      "gpuCompletionObservedMs": 17.59999990463257,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 16,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 22.799999952316284,
+      "submissionMs": 7.700000047683716,
+      "gpuCompletionObservedMs": 15.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 16,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24,
+      "submissionMs": 7.799999952316284,
+      "gpuCompletionObservedMs": 17.199999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 16,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.600000023841858,
+      "submissionMs": 6.100000023841858,
+      "gpuCompletionObservedMs": 10.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 16,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 25.200000047683716,
+      "submissionMs": 5.899999976158142,
+      "gpuCompletionObservedMs": 17.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 16,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.100000023841858,
+      "submissionMs": 12.399999976158142,
+      "gpuCompletionObservedMs": 24.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 16,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 21.799999952316284,
+      "submissionMs": 9.100000023841858,
+      "gpuCompletionObservedMs": 14.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 16,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 32.299999952316284,
+      "submissionMs": 13.299999952316284,
+      "gpuCompletionObservedMs": 25.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 16,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.200000047683716,
+      "submissionMs": 9.5,
+      "gpuCompletionObservedMs": 16.300000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 16,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.600000023841858,
+      "submissionMs": 9.100000023841858,
+      "gpuCompletionObservedMs": 16.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 17,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.600000023841858,
+      "submissionMs": 11.699999928474426,
+      "gpuCompletionObservedMs": 23.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 17,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.899999976158142,
+      "submissionMs": 12.100000023841858,
+      "gpuCompletionObservedMs": 16.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 17,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.200000047683716,
+      "submissionMs": 9.299999952316284,
+      "gpuCompletionObservedMs": 17.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 17,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.40000009536743,
+      "submissionMs": 9.900000095367432,
+      "gpuCompletionObservedMs": 17.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 17,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.300000071525574,
+      "submissionMs": 7.900000095367432,
+      "gpuCompletionObservedMs": 17.40000009536743,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 17,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.5,
+      "submissionMs": 7.699999928474426,
+      "gpuCompletionObservedMs": 17.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 17,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 22.700000047683716,
+      "submissionMs": 8.600000023841858,
+      "gpuCompletionObservedMs": 16,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 17,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.300000071525574,
+      "submissionMs": 7,
+      "gpuCompletionObservedMs": 17.40000009536743,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 17,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.600000023841858,
+      "submissionMs": 6.600000023841858,
+      "gpuCompletionObservedMs": 10.699999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 17,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.5,
+      "submissionMs": 11.199999928474426,
+      "gpuCompletionObservedMs": 16.59999990463257,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 17,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 20.799999952316284,
+      "submissionMs": 8.5,
+      "gpuCompletionObservedMs": 13.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 17,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 26.699999928474426,
+      "submissionMs": 11.600000023841858,
+      "gpuCompletionObservedMs": 19.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 17,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.700000047683716,
+      "submissionMs": 8.700000047683716,
+      "gpuCompletionObservedMs": 17,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 17,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.5,
+      "submissionMs": 8.600000023841858,
+      "gpuCompletionObservedMs": 17.699999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 18,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.899999976158142,
+      "submissionMs": 12.700000047683716,
+      "gpuCompletionObservedMs": 24.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 18,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 37,
+      "submissionMs": 12.100000023841858,
+      "gpuCompletionObservedMs": 30.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 18,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 29.899999976158142,
+      "submissionMs": 9.600000023841858,
+      "gpuCompletionObservedMs": 23,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 18,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.200000047683716,
+      "submissionMs": 9,
+      "gpuCompletionObservedMs": 17.40000009536743,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 18,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.899999976158142,
+      "submissionMs": 8.100000023841858,
+      "gpuCompletionObservedMs": 24.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 18,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 25.700000047683716,
+      "submissionMs": 8.700000047683716,
+      "gpuCompletionObservedMs": 17.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 18,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 22.59999990463257,
+      "submissionMs": 8.799999952316284,
+      "gpuCompletionObservedMs": 15.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 18,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.299999952316284,
+      "submissionMs": 6.5,
+      "gpuCompletionObservedMs": 17.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 18,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.299999952316284,
+      "submissionMs": 6.599999904632568,
+      "gpuCompletionObservedMs": 10.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 18,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.299999952316284,
+      "submissionMs": 10.5,
+      "gpuCompletionObservedMs": 16.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 18,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 21.600000023841858,
+      "submissionMs": 8.600000023841858,
+      "gpuCompletionObservedMs": 14.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 18,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 22.399999976158142,
+      "submissionMs": 11,
+      "gpuCompletionObservedMs": 15.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 18,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.5,
+      "submissionMs": 9.100000023841858,
+      "gpuCompletionObservedMs": 16.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 18,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.5,
+      "submissionMs": 8.899999976158142,
+      "gpuCompletionObservedMs": 17.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 19,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 37.800000071525574,
+      "submissionMs": 8.900000095367432,
+      "gpuCompletionObservedMs": 30.800000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 19,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.700000047683716,
+      "submissionMs": 10.899999976158142,
+      "gpuCompletionObservedMs": 23.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 19,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.399999976158142,
+      "submissionMs": 9.100000023841858,
+      "gpuCompletionObservedMs": 24.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 19,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.200000047683716,
+      "submissionMs": 9.300000071525574,
+      "gpuCompletionObservedMs": 17.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 19,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.399999976158142,
+      "submissionMs": 8.299999952316284,
+      "gpuCompletionObservedMs": 17.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 19,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 25.100000023841858,
+      "submissionMs": 8,
+      "gpuCompletionObservedMs": 17.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 19,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.5,
+      "submissionMs": 7.600000023841858,
+      "gpuCompletionObservedMs": 16.800000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 19,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.700000047683716,
+      "submissionMs": 7.200000047683716,
+      "gpuCompletionObservedMs": 17.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 19,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.700000047683716,
+      "submissionMs": 6.600000023841858,
+      "gpuCompletionObservedMs": 10.900000095367432,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 19,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 29.899999976158142,
+      "submissionMs": 11.200000047683716,
+      "gpuCompletionObservedMs": 23.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 19,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 21.90000009536743,
+      "submissionMs": 8.5,
+      "gpuCompletionObservedMs": 15,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 19,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30,
+      "submissionMs": 12.399999976158142,
+      "gpuCompletionObservedMs": 23.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 19,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.699999928474426,
+      "submissionMs": 9.799999952316284,
+      "gpuCompletionObservedMs": 17,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 19,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.600000023841858,
+      "submissionMs": 9.299999952316284,
+      "gpuCompletionObservedMs": 17.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 20,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31,
+      "submissionMs": 10.299999952316284,
+      "gpuCompletionObservedMs": 24.09999990463257,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 20,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.200000047683716,
+      "submissionMs": 10.600000023841858,
+      "gpuCompletionObservedMs": 24.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 20,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.699999928474426,
+      "submissionMs": 9.299999952316284,
+      "gpuCompletionObservedMs": 23.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 20,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.5,
+      "submissionMs": 8.5,
+      "gpuCompletionObservedMs": 24.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 20,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.800000071525574,
+      "submissionMs": 9.5,
+      "gpuCompletionObservedMs": 24.800000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 20,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.299999952316284,
+      "submissionMs": 7.699999928474426,
+      "gpuCompletionObservedMs": 24.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 20,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 36.89999997615814,
+      "submissionMs": 7.800000071525574,
+      "gpuCompletionObservedMs": 30,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 20,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.5,
+      "submissionMs": 6.5,
+      "gpuCompletionObservedMs": 10.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 20,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 18.100000023841858,
+      "submissionMs": 6.799999952316284,
+      "gpuCompletionObservedMs": 11,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 20,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.100000023841858,
+      "submissionMs": 10.200000047683716,
+      "gpuCompletionObservedMs": 17.300000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 20,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 21.700000047683716,
+      "submissionMs": 8.399999976158142,
+      "gpuCompletionObservedMs": 14.800000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 20,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.600000023841858,
+      "submissionMs": 12.700000047683716,
+      "gpuCompletionObservedMs": 17.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 20,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.59999990463257,
+      "submissionMs": 9.099999904632568,
+      "gpuCompletionObservedMs": 16.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 20,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.199999928474426,
+      "submissionMs": 8.899999976158142,
+      "gpuCompletionObservedMs": 17.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 21,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.100000023841858,
+      "submissionMs": 9.299999952316284,
+      "gpuCompletionObservedMs": 24.199999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 21,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.899999976158142,
+      "submissionMs": 10.799999952316284,
+      "gpuCompletionObservedMs": 24,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 21,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.799999952316284,
+      "submissionMs": 9.199999928474426,
+      "gpuCompletionObservedMs": 24.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 21,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.100000023841858,
+      "submissionMs": 8.800000071525574,
+      "gpuCompletionObservedMs": 24.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 21,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.299999952316284,
+      "submissionMs": 8.299999952316284,
+      "gpuCompletionObservedMs": 17.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 21,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31,
+      "submissionMs": 8.300000071525574,
+      "gpuCompletionObservedMs": 24.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 21,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.799999952316284,
+      "submissionMs": 7.899999976158142,
+      "gpuCompletionObservedMs": 23.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 21,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.700000047683716,
+      "submissionMs": 6.5,
+      "gpuCompletionObservedMs": 10.800000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 21,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 18,
+      "submissionMs": 6.100000023841858,
+      "gpuCompletionObservedMs": 11.300000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 21,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.199999928474426,
+      "submissionMs": 10.599999904632568,
+      "gpuCompletionObservedMs": 17.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 21,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 22.100000023841858,
+      "submissionMs": 8.600000023841858,
+      "gpuCompletionObservedMs": 15.199999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 21,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 29.5,
+      "submissionMs": 11.600000023841858,
+      "gpuCompletionObservedMs": 22.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 21,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.600000023841858,
+      "submissionMs": 9.600000023841858,
+      "gpuCompletionObservedMs": 17.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 21,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.399999976158142,
+      "submissionMs": 8.799999952316284,
+      "gpuCompletionObservedMs": 17.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 22,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 65.79999995231628,
+      "submissionMs": 9.099999904632568,
+      "gpuCompletionObservedMs": 58.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 22,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 44.59999990463257,
+      "submissionMs": 10.699999928474426,
+      "gpuCompletionObservedMs": 37.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 22,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.300000071525574,
+      "submissionMs": 8.700000047683716,
+      "gpuCompletionObservedMs": 24.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 22,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.300000071525574,
+      "submissionMs": 8.800000071525574,
+      "gpuCompletionObservedMs": 17.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 22,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.699999928474426,
+      "submissionMs": 8,
+      "gpuCompletionObservedMs": 17.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 22,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.699999928474426,
+      "submissionMs": 7.699999928474426,
+      "gpuCompletionObservedMs": 10.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 22,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.800000071525574,
+      "submissionMs": 7.5,
+      "gpuCompletionObservedMs": 10.800000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 22,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.40000009536743,
+      "submissionMs": 6.5,
+      "gpuCompletionObservedMs": 10.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 22,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.399999976158142,
+      "submissionMs": 6.799999952316284,
+      "gpuCompletionObservedMs": 10.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 22,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.100000023841858,
+      "submissionMs": 11.400000095367432,
+      "gpuCompletionObservedMs": 17.300000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 22,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 22,
+      "submissionMs": 9.199999928474426,
+      "gpuCompletionObservedMs": 14.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 22,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 28.5,
+      "submissionMs": 11.299999952316284,
+      "gpuCompletionObservedMs": 21.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 22,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 22.700000047683716,
+      "submissionMs": 8.899999976158142,
+      "gpuCompletionObservedMs": 16,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 22,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24,
+      "submissionMs": 8.800000071525574,
+      "gpuCompletionObservedMs": 17.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 23,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 37.89999997615814,
+      "submissionMs": 9.700000047683716,
+      "gpuCompletionObservedMs": 30.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 23,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.399999976158142,
+      "submissionMs": 10.600000023841858,
+      "gpuCompletionObservedMs": 24.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 23,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.600000023841858,
+      "submissionMs": 9.100000023841858,
+      "gpuCompletionObservedMs": 17.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 23,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.399999976158142,
+      "submissionMs": 9.600000023841858,
+      "gpuCompletionObservedMs": 24.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 23,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.100000023841858,
+      "submissionMs": 8,
+      "gpuCompletionObservedMs": 17.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 23,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.700000047683716,
+      "submissionMs": 8.100000023841858,
+      "gpuCompletionObservedMs": 17.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 23,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24,
+      "submissionMs": 8,
+      "gpuCompletionObservedMs": 17.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 23,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.799999952316284,
+      "submissionMs": 6.599999904632568,
+      "gpuCompletionObservedMs": 17.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 23,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.800000071525574,
+      "submissionMs": 6.100000023841858,
+      "gpuCompletionObservedMs": 11,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 23,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31,
+      "submissionMs": 11.100000023841858,
+      "gpuCompletionObservedMs": 24.300000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 23,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 21.800000071525574,
+      "submissionMs": 8.700000047683716,
+      "gpuCompletionObservedMs": 15,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 23,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23,
+      "submissionMs": 11.5,
+      "gpuCompletionObservedMs": 15.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 23,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.799999952316284,
+      "submissionMs": 9.700000047683716,
+      "gpuCompletionObservedMs": 17,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 23,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.5,
+      "submissionMs": 9,
+      "gpuCompletionObservedMs": 17.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 24,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.100000023841858,
+      "submissionMs": 9.399999976158142,
+      "gpuCompletionObservedMs": 24.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 24,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.299999952316284,
+      "submissionMs": 11.299999952316284,
+      "gpuCompletionObservedMs": 24.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 24,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.100000023841858,
+      "submissionMs": 9,
+      "gpuCompletionObservedMs": 24.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 24,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31,
+      "submissionMs": 8.699999928474426,
+      "gpuCompletionObservedMs": 23.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 24,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.199999928474426,
+      "submissionMs": 8.599999904632568,
+      "gpuCompletionObservedMs": 24.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 24,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.09999990463257,
+      "submissionMs": 8.299999952316284,
+      "gpuCompletionObservedMs": 24.199999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 24,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.100000023841858,
+      "submissionMs": 9.100000023841858,
+      "gpuCompletionObservedMs": 24.199999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 24,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.200000047683716,
+      "submissionMs": 6.600000023841858,
+      "gpuCompletionObservedMs": 24.300000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 24,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.600000023841858,
+      "submissionMs": 6,
+      "gpuCompletionObservedMs": 10.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 24,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.300000071525574,
+      "submissionMs": 10.5,
+      "gpuCompletionObservedMs": 17.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 24,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 21.5,
+      "submissionMs": 8.600000023841858,
+      "gpuCompletionObservedMs": 14.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 24,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 29,
+      "submissionMs": 12.100000023841858,
+      "gpuCompletionObservedMs": 22,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 24,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 29,
+      "submissionMs": 12.899999976158142,
+      "gpuCompletionObservedMs": 22.300000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 24,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24,
+      "submissionMs": 11,
+      "gpuCompletionObservedMs": 17,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 25,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.399999976158142,
+      "submissionMs": 9.299999952316284,
+      "gpuCompletionObservedMs": 17.699999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 25,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 40.10000002384186,
+      "submissionMs": 10.5,
+      "gpuCompletionObservedMs": 31.800000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 25,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.399999976158142,
+      "submissionMs": 9.299999952316284,
+      "gpuCompletionObservedMs": 24.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 25,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 28.199999928474426,
+      "submissionMs": 9.5,
+      "gpuCompletionObservedMs": 21.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 25,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.699999928474426,
+      "submissionMs": 8.199999928474426,
+      "gpuCompletionObservedMs": 24.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 25,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.699999928474426,
+      "submissionMs": 8.099999904632568,
+      "gpuCompletionObservedMs": 17.699999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 25,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.799999952316284,
+      "submissionMs": 7.5,
+      "gpuCompletionObservedMs": 23.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 25,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.899999976158142,
+      "submissionMs": 6.600000023841858,
+      "gpuCompletionObservedMs": 23.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 25,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.799999952316284,
+      "submissionMs": 6.600000023841858,
+      "gpuCompletionObservedMs": 17.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 25,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.899999976158142,
+      "submissionMs": 11.199999928474426,
+      "gpuCompletionObservedMs": 23.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 25,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 21.5,
+      "submissionMs": 9.300000071525574,
+      "gpuCompletionObservedMs": 14.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 25,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 26.799999952316284,
+      "submissionMs": 13.399999976158142,
+      "gpuCompletionObservedMs": 19.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 25,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.5,
+      "submissionMs": 8.899999976158142,
+      "gpuCompletionObservedMs": 16.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 25,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.700000047683716,
+      "submissionMs": 8.800000071525574,
+      "gpuCompletionObservedMs": 17.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 26,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 38.199999928474426,
+      "submissionMs": 9.100000023841858,
+      "gpuCompletionObservedMs": 31.199999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 26,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 38.300000071525574,
+      "submissionMs": 11.600000023841858,
+      "gpuCompletionObservedMs": 31.300000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 26,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.700000047683716,
+      "submissionMs": 9,
+      "gpuCompletionObservedMs": 17.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 26,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.5,
+      "submissionMs": 9.199999928474426,
+      "gpuCompletionObservedMs": 17.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 26,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.300000071525574,
+      "submissionMs": 8.300000071525574,
+      "gpuCompletionObservedMs": 17.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 26,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.300000071525574,
+      "submissionMs": 8.5,
+      "gpuCompletionObservedMs": 17.40000009536743,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 26,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.100000023841858,
+      "submissionMs": 7.5,
+      "gpuCompletionObservedMs": 17.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 26,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.5,
+      "submissionMs": 6.899999976158142,
+      "gpuCompletionObservedMs": 10.600000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 26,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.800000071525574,
+      "submissionMs": 6.700000047683716,
+      "gpuCompletionObservedMs": 17.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 26,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.199999928474426,
+      "submissionMs": 12.5,
+      "gpuCompletionObservedMs": 23.199999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 26,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 21.90000009536743,
+      "submissionMs": 10,
+      "gpuCompletionObservedMs": 15,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 26,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.600000023841858,
+      "submissionMs": 15.200000047683716,
+      "gpuCompletionObservedMs": 23.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 26,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.699999928474426,
+      "submissionMs": 9.699999928474426,
+      "gpuCompletionObservedMs": 17.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 26,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 22.899999976158142,
+      "submissionMs": 9.600000023841858,
+      "gpuCompletionObservedMs": 16.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 27,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 37.59999990463257,
+      "submissionMs": 10.899999976158142,
+      "gpuCompletionObservedMs": 30.699999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 27,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.5,
+      "submissionMs": 10.799999952316284,
+      "gpuCompletionObservedMs": 23.59999990463257,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 27,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24,
+      "submissionMs": 8.899999976158142,
+      "gpuCompletionObservedMs": 17.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 27,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.5,
+      "submissionMs": 8.899999976158142,
+      "gpuCompletionObservedMs": 24.699999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 27,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.299999952316284,
+      "submissionMs": 8.200000047683716,
+      "gpuCompletionObservedMs": 17.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 27,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.200000047683716,
+      "submissionMs": 8.100000023841858,
+      "gpuCompletionObservedMs": 17.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 27,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.600000023841858,
+      "submissionMs": 7.700000047683716,
+      "gpuCompletionObservedMs": 16.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 27,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.200000047683716,
+      "submissionMs": 6.700000047683716,
+      "gpuCompletionObservedMs": 17.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 27,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.800000071525574,
+      "submissionMs": 6,
+      "gpuCompletionObservedMs": 10.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 27,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.200000047683716,
+      "submissionMs": 10,
+      "gpuCompletionObservedMs": 17.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 27,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 21.899999976158142,
+      "submissionMs": 9.200000047683716,
+      "gpuCompletionObservedMs": 15,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 27,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 25,
+      "submissionMs": 12.700000047683716,
+      "gpuCompletionObservedMs": 18,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 27,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.799999952316284,
+      "submissionMs": 9.599999904632568,
+      "gpuCompletionObservedMs": 17,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 27,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.399999976158142,
+      "submissionMs": 8.700000047683716,
+      "gpuCompletionObservedMs": 17.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 28,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.40000009536743,
+      "submissionMs": 10,
+      "gpuCompletionObservedMs": 24.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 28,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 37.39999997615814,
+      "submissionMs": 11.699999928474426,
+      "gpuCompletionObservedMs": 30.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 28,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.299999952316284,
+      "submissionMs": 11.699999928474426,
+      "gpuCompletionObservedMs": 24.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 28,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.899999976158142,
+      "submissionMs": 9.399999976158142,
+      "gpuCompletionObservedMs": 23.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 28,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.699999928474426,
+      "submissionMs": 8,
+      "gpuCompletionObservedMs": 23.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 28,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.59999990463257,
+      "submissionMs": 8.399999976158142,
+      "gpuCompletionObservedMs": 23.699999928474426,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 28,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.600000023841858,
+      "submissionMs": 8,
+      "gpuCompletionObservedMs": 23.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 28,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 25.09999990463257,
+      "submissionMs": 6.399999976158142,
+      "gpuCompletionObservedMs": 17.59999990463257,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 28,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 17.399999976158142,
+      "submissionMs": 6.299999952316284,
+      "gpuCompletionObservedMs": 10.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 28,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.300000071525574,
+      "submissionMs": 10.700000047683716,
+      "gpuCompletionObservedMs": 23.40000009536743,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 28,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 27.199999928474426,
+      "submissionMs": 10.699999928474426,
+      "gpuCompletionObservedMs": 20.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 28,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 25.90000009536743,
+      "submissionMs": 11.600000023841858,
+      "gpuCompletionObservedMs": 19,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 28,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.5,
+      "submissionMs": 9,
+      "gpuCompletionObservedMs": 16.700000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 28,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 22.200000047683716,
+      "submissionMs": 8.600000023841858,
+      "gpuCompletionObservedMs": 15.300000071525574,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 29,
+      "name": "Nhiều mây",
+      "expected": {
+        "weather": "cloudy"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.199999928474426,
+      "submissionMs": 10,
+      "gpuCompletionObservedMs": 24.299999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 29,
+      "name": "Mưa",
+      "expected": {
+        "weather": "rain"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 36.700000047683716,
+      "submissionMs": 14.5,
+      "gpuCompletionObservedMs": 29.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 29,
+      "name": "Mưa to",
+      "expected": {
+        "weather": "storm"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.90000009536743,
+      "submissionMs": 8.800000071525574,
+      "gpuCompletionObservedMs": 23.90000009536743,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 29,
+      "name": "Nắng nhẹ",
+      "expected": {
+        "weather": "sunny"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.600000023841858,
+      "submissionMs": 9.199999928474426,
+      "gpuCompletionObservedMs": 16.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 29,
+      "name": "Mùa mưa",
+      "expected": {
+        "season": "wet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.200000047683716,
+      "submissionMs": 8.700000047683716,
+      "gpuCompletionObservedMs": 24.200000047683716,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 29,
+      "name": "Mùa khô",
+      "expected": {
+        "season": "dry"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.299999952316284,
+      "submissionMs": 7.899999976158142,
+      "gpuCompletionObservedMs": 23.399999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 29,
+      "name": "Tết",
+      "expected": {
+        "festival": "tet"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.699999928474426,
+      "submissionMs": 8.799999952316284,
+      "gpuCompletionObservedMs": 23.799999952316284,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 29,
+      "name": "Trung Thu",
+      "expected": {
+        "festival": "midautumn"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31,
+      "submissionMs": 7.200000047683716,
+      "gpuCompletionObservedMs": 24.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 29,
+      "name": "Thường ngày",
+      "expected": {
+        "festival": "normal"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 31.5,
+      "submissionMs": 6.800000071525574,
+      "gpuCompletionObservedMs": 24.5,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 29,
+      "name": "Khuya",
+      "expected": {
+        "timeMinutes": "1380"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 30.600000023841858,
+      "submissionMs": 11.5,
+      "gpuCompletionObservedMs": 23.90000009536743,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 29,
+      "name": "Ngày đang xem",
+      "expected": {
+        "selectedDate": "2026-12-25"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 21.899999976158142,
+      "submissionMs": 8.700000047683716,
+      "gpuCompletionObservedMs": 14.899999976158142,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 29,
+      "name": "Ngập mô phỏng",
+      "expected": {
+        "floodLevel": "0.1"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 26.90000009536743,
+      "submissionMs": 11.300000071525574,
+      "gpuCompletionObservedMs": 20,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 29,
+      "name": "Tắt lớp",
+      "expected": {
+        "atmosphereEnabled": "false"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 23.799999952316284,
+      "submissionMs": 11.399999976158142,
+      "gpuCompletionObservedMs": 17.100000023841858,
+      "newProgramLinks": 0
+    },
+    {
+      "round": 29,
+      "name": "Bật lớp",
+      "expected": {
+        "atmosphereEnabled": "true"
+      },
+      "status": "REFLECTED",
+      "latencyMs": 24.200000047683716,
+      "submissionMs": 8.900000095367432,
+      "gpuCompletionObservedMs": 17.5,
+      "newProgramLinks": 0
+    }
+  ],
+  "frameRounds": [
+    {
+      "round": 0,
+      "intervalsMs": [
+        30.399999976158142,
+        31.299999952316284,
+        30.800000071525574,
+        33.09999990463257,
+        31,
+        37.700000047683716,
+        41.60000002384186,
+        32.199999928474426,
+        28.600000023841858,
+        30.899999976158142,
+        30.600000023841858,
+        39.200000047683716,
+        40.199999928474426,
+        30,
+        31.600000023841858,
+        30.600000023841858,
+        30.700000047683716,
+        30.59999990463257,
+        32.300000071525574,
+        30.799999952316284,
+        32,
+        29.700000047683716,
+        31.199999928474426,
+        30,
+        31.700000047683716,
+        32.200000047683716,
+        29.5,
+        29.59999990463257,
+        38.700000047683716,
+        40.60000002384186,
+        26.699999928474426,
+        31.200000047683716,
+        34.799999952316284,
+        34.90000009536743,
+        30,
+        30.59999990463257,
+        29.90000009536743,
+        38.299999952316284,
+        41.89999997615814,
+        42.800000071525574,
+        30.299999952316284,
+        37.89999997615814,
+        41.300000071525574,
+        30.899999976158142,
+        31.199999928474426,
+        30.5
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 26.699999928474426,
+        "p50": 31.199999928474426,
+        "p95": 41.60000002384186,
+        "max": 42.800000071525574
+      }
+    },
+    {
+      "round": 1,
+      "intervalsMs": [
+        30.899999976158142,
+        37.89999997615814,
+        41.299999952316284,
+        30.200000047683716,
+        30.899999976158142,
+        32.5,
+        32,
+        29.700000047683716,
+        31.600000023841858,
+        32,
+        30.399999976158142,
+        31.5,
+        31,
+        53.5,
+        40,
+        30,
+        38.39999997615814,
+        41.10000002384186,
+        28.799999952316284,
+        31.700000047683716,
+        64.79999995231628,
+        29.600000023841858,
+        31.200000047683716,
+        36.09999990463257,
+        47.60000002384186,
+        47.10000002384186,
+        44.39999997615814,
+        43.200000047683716,
+        35.60000002384186,
+        44.699999928474426,
+        27.600000023841858,
+        35,
+        33,
+        45.89999997615814,
+        46.700000047683716,
+        45.89999997615814,
+        44.799999952316284,
+        30.90000009536743,
+        39.699999928474426,
+        40.800000071525574,
+        29.59999990463257,
+        30.200000047683716,
+        38,
+        40.299999952316284,
+        29.5,
+        31.600000023841858
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 27.600000023841858,
+        "p50": 34,
+        "p95": 47.60000002384186,
+        "max": 64.79999995231628
+      }
+    },
+    {
+      "round": 2,
+      "intervalsMs": [
+        30.600000023841858,
+        30.299999952316284,
+        31.100000023841858,
+        30.700000047683716,
+        31.699999928474426,
+        31,
+        31.600000023841858,
+        35,
+        42.300000071525574,
+        30.299999952316284,
+        31.899999976158142,
+        38.39999997615814,
+        41.800000071525574,
+        33,
+        28.799999952316284,
+        31.200000047683716,
+        31,
+        31,
+        32.39999997615814,
+        31.299999952316284,
+        31.5,
+        33.10000002384186,
+        30.300000071525574,
+        32.89999997615814,
+        30,
+        33.39999997615814,
+        29.5,
+        30.299999952316284,
+        37,
+        38.700000047683716,
+        33.39999997615814,
+        26.100000023841858,
+        36.60000002384186,
+        30,
+        31.299999952316284,
+        32,
+        31.200000047683716,
+        31,
+        31.799999952316284,
+        30.600000023841858,
+        30.600000023841858,
+        30.699999928474426,
+        36.5,
+        28.300000071525574,
+        29.699999928474426,
+        30.600000023841858
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 26.100000023841858,
+        "p50": 31.200000047683716,
+        "p95": 38.700000047683716,
+        "max": 42.300000071525574
+      }
+    },
+    {
+      "round": 3,
+      "intervalsMs": [
+        45.39999997615814,
+        36.89999997615814,
+        42.300000071525574,
+        31.399999976158142,
+        45.699999928474426,
+        32.300000071525574,
+        47.299999952316284,
+        44.10000002384186,
+        30.399999976158142,
+        32.60000002384186,
+        31.100000023841858,
+        35.39999997615814,
+        47,
+        50.200000047683716,
+        47.299999952316284,
+        40.60000002384186,
+        46,
+        45.89999997615814,
+        35.5,
+        47,
+        43.799999952316284,
+        47.800000071525574,
+        50.60000002384186,
+        46.299999952316284,
+        47,
+        40.89999997615814,
+        43.39999997615814,
+        29.600000023841858,
+        32.300000071525574,
+        29.59999990463257,
+        31.700000047683716,
+        35,
+        28.399999976158142,
+        30.899999976158142,
+        31.100000023841858,
+        31.600000023841858,
+        30.100000023841858,
+        30.699999928474426,
+        32.10000002384186,
+        30.800000071525574,
+        31.199999928474426,
+        29.800000071525574,
+        38.09999990463257,
+        42,
+        29.200000047683716,
+        29.899999976158142
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 28.399999976158142,
+        "p50": 35.44999998807907,
+        "p95": 47.800000071525574,
+        "max": 50.60000002384186
+      }
+    },
+    {
+      "round": 4,
+      "intervalsMs": [
+        31.100000023841858,
+        31.300000071525574,
+        30.899999976158142,
+        31.199999928474426,
+        30.600000023841858,
+        32.10000002384186,
+        31.899999976158142,
+        30.300000071525574,
+        31.799999952316284,
+        32.60000002384186,
+        31.600000023841858,
+        37.09999990463257,
+        41.300000071525574,
+        31.199999928474426,
+        30.90000009536743,
+        31.399999976158142,
+        30.399999976158142,
+        32,
+        38.299999952316284,
+        41.60000002384186,
+        31.700000047683716,
+        38.299999952316284,
+        41.60000002384186,
+        30,
+        31.299999952316284,
+        32.300000071525574,
+        30.5,
+        29.799999952316284,
+        30.899999976158142,
+        37.40000009536743,
+        38.299999952316284,
+        34,
+        26,
+        40.299999952316284,
+        43.300000071525574,
+        30.299999952316284,
+        37.800000071525574,
+        42.799999952316284,
+        30.799999952316284,
+        30.100000023841858,
+        33.5,
+        29.700000047683716,
+        29.699999928474426,
+        31.40000009536743,
+        31.09999990463257,
+        29.700000047683716
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 26,
+        "p50": 31.400000035762787,
+        "p95": 41.60000002384186,
+        "max": 43.300000071525574
+      }
+    },
+    {
+      "round": 5,
+      "intervalsMs": [
+        29.700000047683716,
+        31.100000023841858,
+        31.199999928474426,
+        31.899999976158142,
+        38.700000047683716,
+        42.5,
+        30.200000047683716,
+        29.09999990463257,
+        38.10000002384186,
+        41.89999997615814,
+        27.90000009536743,
+        29.699999928474426,
+        40.5,
+        40.200000047683716,
+        29.299999952316284,
+        32,
+        31.399999976158142,
+        29.700000047683716,
+        29.5,
+        32.39999997615814,
+        37,
+        28.200000047683716,
+        31.799999952316284,
+        38.5,
+        40.5,
+        29.899999976158142,
+        31.300000071525574,
+        26.899999976158142,
+        33,
+        36.39999997615814,
+        24.5,
+        40.10000002384186,
+        42,
+        30.299999952316284,
+        30.200000047683716,
+        36.299999952316284,
+        28,
+        30.700000047683716,
+        30.5,
+        30.399999976158142,
+        31.300000071525574,
+        37,
+        41.799999952316284,
+        29.799999952316284,
+        31.90000009536743,
+        31.199999928474426
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 24.5,
+        "p50": 31.300000071525574,
+        "p95": 41.89999997615814,
+        "max": 42.5
+      }
+    },
+    {
+      "round": 6,
+      "intervalsMs": [
+        28.199999928474426,
+        30.800000071525574,
+        37.799999952316284,
+        42.39999997615814,
+        27.200000047683716,
+        31,
+        38,
+        42,
+        32.199999928474426,
+        37.60000002384186,
+        41.10000002384186,
+        31.299999952316284,
+        31,
+        31,
+        30.300000071525574,
+        31.799999952316284,
+        29.600000023841858,
+        36.700000047683716,
+        27.799999952316284,
+        29.5,
+        31.100000023841858,
+        36.89999997615814,
+        41.700000047683716,
+        29.899999976158142,
+        31,
+        33,
+        30.100000023841858,
+        31,
+        27.59999990463257,
+        35.800000071525574,
+        26.399999976158142,
+        42.60000002384186,
+        39.199999928474426,
+        28.800000071525574,
+        31.5,
+        37.60000002384186,
+        41.699999928474426,
+        31.399999976158142,
+        37.40000009536743,
+        41.09999990463257,
+        30.800000071525574,
+        30.799999952316284,
+        31.800000071525574,
+        31.699999928474426,
+        31.700000047683716,
+        38
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 26.399999976158142,
+        "p50": 31.599999964237213,
+        "p95": 42,
+        "max": 42.60000002384186
+      }
+    },
+    {
+      "round": 7,
+      "intervalsMs": [
+        30.699999928474426,
+        31,
+        30.5,
+        31.800000071525574,
+        32.39999997615814,
+        29.799999952316284,
+        32,
+        29.300000071525574,
+        38.699999928474426,
+        40.90000009536743,
+        30.699999928474426,
+        31,
+        31.100000023841858,
+        30.899999976158142,
+        30.700000047683716,
+        31.299999952316284,
+        30.399999976158142,
+        30.5,
+        38.300000071525574,
+        42.299999952316284,
+        29.5,
+        31.399999976158142,
+        32.200000047683716,
+        30.5,
+        32.299999952316284,
+        29.300000071525574,
+        31.5,
+        26.899999976158142,
+        35.89999997615814,
+        26,
+        37.200000047683716,
+        24.600000023841858,
+        42.09999990463257,
+        41.800000071525574,
+        29.5,
+        32.60000002384186,
+        29.5,
+        30.59999990463257,
+        31.5,
+        30.200000047683716,
+        38.200000047683716,
+        41.09999990463257,
+        30.90000009536743,
+        30.59999990463257,
+        31.600000023841858,
+        29.300000071525574
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 24.600000023841858,
+        "p50": 31,
+        "p95": 41.800000071525574,
+        "max": 42.299999952316284
+      }
+    },
+    {
+      "round": 8,
+      "intervalsMs": [
+        29.600000023841858,
+        32.199999928474426,
+        29.100000023841858,
+        37.200000047683716,
+        41.299999952316284,
+        30.200000047683716,
+        31.199999928474426,
+        31,
+        30.5,
+        32,
+        31.300000071525574,
+        30.600000023841858,
+        30.799999952316284,
+        37.5,
+        42.10000002384186,
+        30.899999976158142,
+        31.299999952316284,
+        33.200000047683716,
+        33,
+        37.39999997615814,
+        41.800000071525574,
+        29.699999928474426,
+        31.300000071525574,
+        30.799999952316284,
+        31.299999952316284,
+        36.60000002384186,
+        28.700000047683716,
+        29.699999928474426,
+        29.700000047683716,
+        36.799999952316284,
+        37.60000002384186,
+        34.60000002384186,
+        26.600000023841858,
+        35.89999997615814,
+        30.799999952316284,
+        31.5,
+        31.100000023841858,
+        31.300000071525574,
+        31.59999990463257,
+        30.600000023841858,
+        30.399999976158142,
+        37.200000047683716,
+        41.200000047683716,
+        30.199999928474426,
+        33.200000047683716,
+        29.799999952316284
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 26.600000023841858,
+        "p50": 31.30000001192093,
+        "p95": 41.299999952316284,
+        "max": 42.10000002384186
+      }
+    },
+    {
+      "round": 9,
+      "intervalsMs": [
+        30,
+        30.600000023841858,
+        37.299999952316284,
+        27.100000023841858,
+        33,
+        36.799999952316284,
+        41.5,
+        29.800000071525574,
+        31.399999976158142,
+        30.299999952316284,
+        31.5,
+        37,
+        42,
+        30.200000047683716,
+        33.799999952316284,
+        30.100000023841858,
+        30.5,
+        31.299999952316284,
+        28.800000071525574,
+        31.5,
+        29.899999976158142,
+        38.5,
+        41.200000047683716,
+        29.399999976158142,
+        29.799999952316284,
+        38.10000002384186,
+        42.299999952316284,
+        29.600000023841858,
+        27.700000047683716,
+        35.39999997615814,
+        34.299999952316284,
+        24.5,
+        42,
+        42.10000002384186,
+        30.200000047683716,
+        31.100000023841858,
+        31.09999990463257,
+        29.700000047683716,
+        37.5,
+        41.299999952316284,
+        31.200000047683716,
+        32.299999952316284,
+        29.5,
+        31,
+        30.90000009536743,
+        39.5
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 24.5,
+        "p50": 31.25,
+        "p95": 42,
+        "max": 42.299999952316284
+      }
+    },
+    {
+      "round": 10,
+      "intervalsMs": [
+        31.5,
+        31.700000047683716,
+        31.59999990463257,
+        30.700000047683716,
+        31.5,
+        30.600000023841858,
+        30.5,
+        36.39999997615814,
+        28.5,
+        29.200000047683716,
+        31.299999952316284,
+        30.100000023841858,
+        30.799999952316284,
+        30.100000023841858,
+        30.5,
+        31.600000023841858,
+        31.799999952316284,
+        31.800000071525574,
+        30.59999990463257,
+        29.800000071525574,
+        36.799999952316284,
+        41.89999997615814,
+        32.60000002384186,
+        36.39999997615814,
+        41.5,
+        30.600000023841858,
+        30.800000071525574,
+        31.899999976158142,
+        32.10000002384186,
+        25.699999928474426,
+        32.89999997615814,
+        34.5,
+        26.90000009536743,
+        35.5,
+        31,
+        29.899999976158142,
+        31.600000023841858,
+        36.59999990463257,
+        41.60000002384186,
+        30.5,
+        30.200000047683716,
+        38.799999952316284,
+        40.39999997615814,
+        30.600000023841858,
+        30.600000023841858,
+        30
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 25.699999928474426,
+        "p50": 31.399999976158142,
+        "p95": 41.5,
+        "max": 41.89999997615814
+      }
+    },
+    {
+      "round": 11,
+      "intervalsMs": [
+        29.300000071525574,
+        31.5,
+        31.5,
+        30.09999990463257,
+        31.800000071525574,
+        37.5,
+        42.10000002384186,
+        31.699999928474426,
+        37.60000002384186,
+        40.89999997615814,
+        29.700000047683716,
+        32.39999997615814,
+        32.60000002384186,
+        30.299999952316284,
+        31.399999976158142,
+        29.600000023841858,
+        36.800000071525574,
+        41.199999928474426,
+        31.399999976158142,
+        38.700000047683716,
+        42,
+        29,
+        31.700000047683716,
+        30.399999976158142,
+        29.899999976158142,
+        37.60000002384186,
+        42.60000002384186,
+        31.59999990463257,
+        37.300000071525574,
+        42,
+        26,
+        31,
+        39.5,
+        49.5,
+        41.89999997615814,
+        28.299999952316284,
+        30.700000047683716,
+        37.700000047683716,
+        42,
+        30,
+        39.39999997615814,
+        41.299999952316284,
+        29.100000023841858,
+        29.700000047683716,
+        37.89999997615814,
+        41.699999928474426
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 26,
+        "p50": 32.10000002384186,
+        "p95": 42.10000002384186,
+        "max": 49.5
+      }
+    },
+    {
+      "round": 12,
+      "intervalsMs": [
+        30.299999952316284,
+        31.200000047683716,
+        31.399999976158142,
+        30.299999952316284,
+        36.700000047683716,
+        42.299999952316284,
+        31.800000071525574,
+        30.5,
+        30.899999976158142,
+        30.200000047683716,
+        31.09999990463257,
+        30.90000009536743,
+        30.199999928474426,
+        31.800000071525574,
+        37.09999990463257,
+        41.60000002384186,
+        29.899999976158142,
+        32,
+        30.200000047683716,
+        30.5,
+        37.299999952316284,
+        42,
+        30.5,
+        39.200000047683716,
+        40.89999997615814,
+        30.200000047683716,
+        30.299999952316284,
+        36.5,
+        39.89999997615814,
+        32.90000009536743,
+        34.59999990463257,
+        30.800000071525574,
+        31.199999928474426,
+        30.600000023841858,
+        31.300000071525574,
+        30.59999990463257,
+        36.5,
+        41.800000071525574,
+        29.899999976158142,
+        30.200000047683716,
+        37.09999990463257,
+        42,
+        28.300000071525574,
+        30.299999952316284,
+        38.200000047683716,
+        42.5
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 28.300000071525574,
+        "p50": 31.250000059604645,
+        "p95": 42,
+        "max": 42.5
+      }
+    },
+    {
+      "round": 13,
+      "intervalsMs": [
+        29.799999952316284,
+        38.299999952316284,
+        41.40000009536743,
+        30.59999990463257,
+        30.5,
+        31.90000009536743,
+        30,
+        31.5,
+        31.799999952316284,
+        29.899999976158142,
+        30.600000023841858,
+        38,
+        41.5,
+        29.899999976158142,
+        30.300000071525574,
+        37,
+        27.799999952316284,
+        30.799999952316284,
+        38.90000009536743,
+        41.299999952316284,
+        28.200000047683716,
+        30.799999952316284,
+        31.299999952316284,
+        31.40000009536743,
+        38.39999997615814,
+        41.299999952316284,
+        30.600000023841858,
+        31.700000047683716,
+        31.299999952316284,
+        34.200000047683716,
+        24.399999976158142,
+        30.5,
+        35.199999928474426,
+        39.60000002384186,
+        41,
+        29.600000023841858,
+        33.200000047683716,
+        30.399999976158142,
+        30.799999952316284,
+        32.10000002384186,
+        31.5,
+        29.899999976158142,
+        30.800000071525574,
+        31.399999976158142,
+        30.299999952316284,
+        37
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 24.399999976158142,
+        "p50": 31.349999964237213,
+        "p95": 41.299999952316284,
+        "max": 41.5
+      }
+    },
+    {
+      "round": 14,
+      "intervalsMs": [
+        37.39999997615814,
+        41.39999997615814,
+        30.100000023841858,
+        31,
+        31.200000047683716,
+        32.299999952316284,
+        32.299999952316284,
+        38.800000071525574,
+        40.89999997615814,
+        28.200000047683716,
+        31.799999952316284,
+        36.700000047683716,
+        42.09999990463257,
+        30,
+        31.100000023841858,
+        33.300000071525574,
+        29.399999976158142,
+        30.899999976158142,
+        33.39999997615814,
+        30.100000023841858,
+        31.399999976158142,
+        31.600000023841858,
+        30.299999952316284,
+        30.100000023841858,
+        32.89999997615814,
+        31.40000009536743,
+        31.299999952316284,
+        31.700000047683716,
+        26.699999928474426,
+        34.89999997615814,
+        35,
+        23.600000023841858,
+        44.39999997615814,
+        40.300000071525574,
+        28.600000023841858,
+        30.899999976158142,
+        38.10000002384186,
+        41.699999928474426,
+        30,
+        38.300000071525574,
+        41.799999952316284,
+        30.299999952316284,
+        34.800000071525574,
+        27.5,
+        30.699999928474426,
+        36.40000009536743
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 23.600000023841858,
+        "p50": 31.650000035762787,
+        "p95": 41.799999952316284,
+        "max": 44.39999997615814
+      }
+    },
+    {
+      "round": 15,
+      "intervalsMs": [
+        30.700000047683716,
+        32.39999997615814,
+        38.39999997615814,
+        41.200000047683716,
+        30.199999928474426,
+        31.600000023841858,
+        30.600000023841858,
+        29.600000023841858,
+        37.89999997615814,
+        41.799999952316284,
+        29.399999976158142,
+        29.90000009536743,
+        37.39999997615814,
+        41.699999928474426,
+        30.300000071525574,
+        30.799999952316284,
+        32.10000002384186,
+        30.100000023841858,
+        36.39999997615814,
+        28,
+        29.700000047683716,
+        31.5,
+        33,
+        30.899999976158142,
+        30.399999976158142,
+        32.10000002384186,
+        29.799999952316284,
+        31,
+        30.200000047683716,
+        27.299999952316284,
+        38,
+        23.300000071525574,
+        31,
+        39.09999990463257,
+        27.800000071525574,
+        30.199999928474426,
+        31.100000023841858,
+        32.700000047683716,
+        30.899999976158142,
+        31.600000023841858,
+        37.699999928474426,
+        41.5,
+        31.600000023841858,
+        31.700000047683716,
+        30.899999976158142,
+        29.5
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 23.300000071525574,
+        "p50": 31,
+        "p95": 41.5,
+        "max": 41.799999952316284
+      }
+    },
+    {
+      "round": 16,
+      "intervalsMs": [
+        31.199999928474426,
+        31.300000071525574,
+        31.699999928474426,
+        29.5,
+        38,
+        42.89999997615814,
+        27.5,
+        30.700000047683716,
+        36.700000047683716,
+        41.59999990463257,
+        30.40000009536743,
+        30.799999952316284,
+        31.700000047683716,
+        31.5,
+        31.199999928474426,
+        39.60000002384186,
+        41.5,
+        29.100000023841858,
+        30.799999952316284,
+        36.800000071525574,
+        42.5,
+        29.5,
+        30.399999976158142,
+        31.199999928474426,
+        29.40000009536743,
+        38.799999952316284,
+        41.299999952316284,
+        30.100000023841858,
+        31.399999976158142,
+        27,
+        31.5,
+        36.800000071525574,
+        39.39999997615814,
+        40.5,
+        30.5,
+        28.600000023841858,
+        37.60000002384186,
+        41.199999928474426,
+        31.700000047683716,
+        29.799999952316284,
+        30.399999976158142,
+        34.60000002384186,
+        29.5,
+        33,
+        30.300000071525574,
+        30.5
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 27,
+        "p50": 31.350000023841858,
+        "p95": 41.59999990463257,
+        "max": 42.89999997615814
+      }
+    },
+    {
+      "round": 17,
+      "intervalsMs": [
+        30.700000047683716,
+        36.699999928474426,
+        42,
+        29.90000009536743,
+        29.399999976158142,
+        37.799999952316284,
+        41.800000071525574,
+        30.699999928474426,
+        30.300000071525574,
+        30.299999952316284,
+        32.39999997615814,
+        32.200000047683716,
+        30.5,
+        30.899999976158142,
+        30.5,
+        37.200000047683716,
+        41.799999952316284,
+        29.600000023841858,
+        31.199999928474426,
+        32.60000002384186,
+        38.10000002384186,
+        42,
+        29.299999952316284,
+        30.40000009536743,
+        37.799999952316284,
+        41,
+        30.399999976158142,
+        31.300000071525574,
+        30.399999976158142,
+        31.600000023841858,
+        27.799999952316284,
+        31.899999976158142,
+        34.60000002384186,
+        26.600000023841858,
+        39.89999997615814,
+        27.700000047683716,
+        27.899999976158142,
+        33.39999997615814,
+        31.200000047683716,
+        31.399999976158142,
+        31.199999928474426,
+        39.5,
+        41.5,
+        31,
+        29.200000047683716,
+        37.10000002384186
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 26.600000023841858,
+        "p50": 31.250000059604645,
+        "p95": 41.800000071525574,
+        "max": 42
+      }
+    },
+    {
+      "round": 18,
+      "intervalsMs": [
+        37.90000009536743,
+        40.699999928474426,
+        31.300000071525574,
+        29.09999990463257,
+        36.700000047683716,
+        41.89999997615814,
+        29.800000071525574,
+        30.09999990463257,
+        38.300000071525574,
+        40.699999928474426,
+        31.40000009536743,
+        30.799999952316284,
+        31.399999976158142,
+        39.89999997615814,
+        40.60000002384186,
+        29.600000023841858,
+        29.899999976158142,
+        37.60000002384186,
+        42.60000002384186,
+        30.100000023841858,
+        30.59999990463257,
+        30.300000071525574,
+        31.600000023841858,
+        31.199999928474426,
+        31,
+        34.10000002384186,
+        44.10000002384186,
+        28,
+        31,
+        26.799999952316284,
+        34.89999997615814,
+        27.40000009536743,
+        41.09999990463257,
+        41.200000047683716,
+        31,
+        36.60000002384186,
+        41.60000002384186,
+        30.199999928474426,
+        31.300000071525574,
+        31.09999990463257,
+        30.40000009536743,
+        37,
+        41.59999990463257,
+        30.300000071525574,
+        30.899999976158142,
+        31.399999976158142
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 26.799999952316284,
+        "p50": 31.350000023841858,
+        "p95": 41.89999997615814,
+        "max": 44.10000002384186
+      }
+    },
+    {
+      "round": 19,
+      "intervalsMs": [
+        29.40000009536743,
+        31.899999976158142,
+        31.5,
+        30.399999976158142,
+        30.5,
+        31,
+        31,
+        32.799999952316284,
+        30.800000071525574,
+        30.299999952316284,
+        31.800000071525574,
+        31.199999928474426,
+        30.5,
+        31.600000023841858,
+        30.5,
+        30.899999976158142,
+        37.300000071525574,
+        41.59999990463257,
+        27.700000047683716,
+        33.39999997615814,
+        31.399999976158142,
+        39.300000071525574,
+        41.89999997615814,
+        29.299999952316284,
+        30.600000023841858,
+        37.300000071525574,
+        41.799999952316284,
+        29.200000047683716,
+        30.59999990463257,
+        37.5,
+        37.700000047683716,
+        34.10000002384186,
+        34.799999952316284,
+        24.5,
+        42.5,
+        41.300000071525574,
+        30.299999952316284,
+        31.600000023841858,
+        32.39999997615814,
+        29.700000047683716,
+        31.59999990463257,
+        30.800000071525574,
+        30.899999976158142,
+        32.200000047683716,
+        32.39999997615814,
+        37.89999997615814
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 24.5,
+        "p50": 31.549999952316284,
+        "p95": 41.799999952316284,
+        "max": 42.5
+      }
+    },
+    {
+      "round": 20,
+      "intervalsMs": [
+        30.40000009536743,
+        32.5,
+        30.199999928474426,
+        30.700000047683716,
+        36.5,
+        41.799999952316284,
+        31,
+        30.800000071525574,
+        31.799999952316284,
+        32.39999997615814,
+        27.899999976158142,
+        31.600000023841858,
+        36.89999997615814,
+        41.60000002384186,
+        30.899999976158142,
+        30.300000071525574,
+        32.199999928474426,
+        31.700000047683716,
+        31.399999976158142,
+        37.89999997615814,
+        42.200000047683716,
+        29.200000047683716,
+        32.199999928474426,
+        31.100000023841858,
+        32.89999997615814,
+        29.600000023841858,
+        31.600000023841858,
+        31.799999952316284,
+        38.60000002384186,
+        37,
+        34.89999997615814,
+        24.600000023841858,
+        42.299999952316284,
+        41.800000071525574,
+        29.600000023841858,
+        30.59999990463257,
+        30,
+        32.300000071525574,
+        31.399999976158142,
+        30.5,
+        38.200000047683716,
+        41.89999997615814,
+        31.100000023841858,
+        29.59999990463257,
+        30.600000023841858,
+        32.300000071525574
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 24.600000023841858,
+        "p50": 31.650000035762787,
+        "p95": 41.89999997615814,
+        "max": 42.299999952316284
+      }
+    },
+    {
+      "round": 21,
+      "intervalsMs": [
+        30.300000071525574,
+        31,
+        30.299999952316284,
+        32,
+        29,
+        34.700000047683716,
+        30.899999976158142,
+        30.699999928474426,
+        31.300000071525574,
+        30.199999928474426,
+        31.300000071525574,
+        29.199999928474426,
+        39.90000009536743,
+        41.09999990463257,
+        28.100000023841858,
+        31.5,
+        36.800000071525574,
+        41.799999952316284,
+        31.100000023841858,
+        38,
+        42,
+        30.199999928474426,
+        31.300000071525574,
+        29.899999976158142,
+        31.100000023841858,
+        37.299999952316284,
+        41.60000002384186,
+        30.200000047683716,
+        30.5,
+        31.09999990463257,
+        27.5,
+        36,
+        23.600000023841858,
+        32.300000071525574,
+        38.799999952316284,
+        41.5,
+        31,
+        30.700000047683716,
+        31.899999976158142,
+        30.699999928474426,
+        31.100000023841858,
+        30.300000071525574,
+        32.59999990463257,
+        30.300000071525574,
+        33,
+        38.199999928474426
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 23.600000023841858,
+        "p50": 31.100000023841858,
+        "p95": 41.60000002384186,
+        "max": 42
+      }
+    },
+    {
+      "round": 22,
+      "intervalsMs": [
+        28.200000047683716,
+        40.199999928474426,
+        43.200000047683716,
+        29.299999952316284,
+        36.90000009536743,
+        42.299999952316284,
+        30.200000047683716,
+        30.59999990463257,
+        32.5,
+        39,
+        42.800000071525574,
+        41.299999952316284,
+        31,
+        31,
+        30.399999976158142,
+        37.700000047683716,
+        41.60000002384186,
+        31.5,
+        29,
+        36.5,
+        41.60000002384186,
+        30.299999952316284,
+        30,
+        37.299999952316284,
+        41.90000009536743,
+        30,
+        31.699999928474426,
+        31.300000071525574,
+        31.399999976158142,
+        27.299999952316284,
+        31.399999976158142,
+        34.90000009536743,
+        39.799999952316284,
+        40.39999997615814,
+        31.200000047683716,
+        28.600000023841858,
+        37.09999990463257,
+        41.5,
+        31.600000023841858,
+        39,
+        41,
+        28.800000071525574,
+        30.59999990463257,
+        37.5,
+        41.5,
+        28.5
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 27.299999952316284,
+        "p50": 32.09999996423721,
+        "p95": 42.299999952316284,
+        "max": 43.200000047683716
+      }
+    },
+    {
+      "round": 23,
+      "intervalsMs": [
+        30.600000023841858,
+        37.59999990463257,
+        42.700000047683716,
+        30.899999976158142,
+        38,
+        41.60000002384186,
+        27.600000023841858,
+        30.899999976158142,
+        38.60000002384186,
+        42.699999928474426,
+        28.90000009536743,
+        31.899999976158142,
+        30.5,
+        30.699999928474426,
+        30.90000009536743,
+        30.5,
+        37.09999990463257,
+        41.40000009536743,
+        30.199999928474426,
+        39.39999997615814,
+        42.60000002384186,
+        29.399999976158142,
+        30.200000047683716,
+        37,
+        41.5,
+        30.299999952316284,
+        29.90000009536743,
+        36.89999997615814,
+        41.60000002384186,
+        24,
+        35.09999990463257,
+        26.200000047683716,
+        40.5,
+        41.299999952316284,
+        30.100000023841858,
+        31.700000047683716,
+        30.399999976158142,
+        32.200000047683716,
+        31,
+        30.899999976158142,
+        31,
+        31.5,
+        31.899999976158142,
+        40,
+        42.10000002384186,
+        29.299999952316284
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 24,
+        "p50": 31.600000023841858,
+        "p95": 42.60000002384186,
+        "max": 42.700000047683716
+      }
+    },
+    {
+      "round": 24,
+      "intervalsMs": [
+        30.5,
+        38.300000071525574,
+        41.39999997615814,
+        27.700000047683716,
+        31.299999952316284,
+        30.299999952316284,
+        31.300000071525574,
+        31.299999952316284,
+        31.800000071525574,
+        31.09999990463257,
+        30.600000023841858,
+        32,
+        30.399999976158142,
+        29.90000009536743,
+        37.39999997615814,
+        41.699999928474426,
+        32.200000047683716,
+        36.89999997615814,
+        41.800000071525574,
+        30.899999976158142,
+        38.299999952316284,
+        41.800000071525574,
+        28.399999976158142,
+        32.60000002384186,
+        31,
+        30.09999990463257,
+        29.90000009536743,
+        31.09999990463257,
+        35.200000047683716,
+        23.700000047683716,
+        38.59999990463257,
+        23.700000047683716,
+        43.200000047683716,
+        43.5,
+        41,
+        32.5,
+        30.699999928474426,
+        30.600000023841858,
+        37.299999952316284,
+        41,
+        29.5,
+        31,
+        36.5,
+        41.700000047683716,
+        30.600000023841858,
+        31.399999976158142
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 23.700000047683716,
+        "p50": 31.350000023841858,
+        "p95": 41.800000071525574,
+        "max": 43.5
+      }
+    },
+    {
+      "round": 25,
+      "intervalsMs": [
+        31.699999928474426,
+        31,
+        30.600000023841858,
+        31.299999952316284,
+        30.600000023841858,
+        37,
+        41.89999997615814,
+        28.5,
+        31.5,
+        37.10000002384186,
+        41.5,
+        29,
+        30,
+        39.800000071525574,
+        40.59999990463257,
+        28.90000009536743,
+        31,
+        38.299999952316284,
+        41,
+        29.600000023841858,
+        30.799999952316284,
+        32.5,
+        29.899999976158142,
+        30.5,
+        32,
+        31.700000047683716,
+        30.100000023841858,
+        36.699999928474426,
+        38.10000002384186,
+        34.700000047683716,
+        27.299999952316284,
+        39.10000002384186,
+        28.399999976158142,
+        30.399999976158142,
+        38.40000009536743,
+        41.5,
+        29.299999952316284,
+        30.899999976158142,
+        36.89999997615814,
+        27.90000009536743,
+        29.09999990463257,
+        31.40000009536743,
+        36.39999997615814,
+        42.60000002384186,
+        31,
+        38
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 27.299999952316284,
+        "p50": 31.450000047683716,
+        "p95": 41.5,
+        "max": 42.60000002384186
+      }
+    },
+    {
+      "round": 26,
+      "intervalsMs": [
+        44.39999997615814,
+        30.5,
+        30,
+        30.5,
+        32.10000002384186,
+        30.5,
+        31.399999976158142,
+        31.100000023841858,
+        30,
+        31.600000023841858,
+        30.899999976158142,
+        31.100000023841858,
+        30.600000023841858,
+        36.799999952316284,
+        41.60000002384186,
+        31,
+        32,
+        29.5,
+        30.899999976158142,
+        36.39999997615814,
+        42,
+        31.399999976158142,
+        38.40000009536743,
+        42,
+        29.399999976158142,
+        31.600000023841858,
+        31.799999952316284,
+        38.89999997615814,
+        37.700000047683716,
+        34,
+        27.100000023841858,
+        39.59999990463257,
+        27.700000047683716,
+        29.299999952316284,
+        30.90000009536743,
+        36.699999928474426,
+        27.899999976158142,
+        30.40000009536743,
+        31.199999928474426,
+        31.100000023841858,
+        30.299999952316284,
+        36.90000009536743,
+        42.39999997615814,
+        31.899999976158142,
+        36.5,
+        44.39999997615814
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 27.100000023841858,
+        "p50": 31.399999976158142,
+        "p95": 42.39999997615814,
+        "max": 44.39999997615814
+      }
+    },
+    {
+      "round": 27,
+      "intervalsMs": [
+        31.199999928474426,
+        31.40000009536743,
+        31.399999976158142,
+        32.199999928474426,
+        37.60000002384186,
+        41.700000047683716,
+        30.699999928474426,
+        30.90000009536743,
+        31.199999928474426,
+        30.100000023841858,
+        36.700000047683716,
+        41.799999952316284,
+        30.200000047683716,
+        32.5,
+        31.799999952316284,
+        37.5,
+        41.700000047683716,
+        30.899999976158142,
+        38.39999997615814,
+        41.5,
+        29.600000023841858,
+        31.699999928474426,
+        31.100000023841858,
+        34.89999997615814,
+        29.40000009536743,
+        38.5,
+        41.59999990463257,
+        30.5,
+        31.700000047683716,
+        34.700000047683716,
+        39.5,
+        33.09999990463257,
+        38.700000047683716,
+        41.799999952316284,
+        30.200000047683716,
+        31.100000023841858,
+        31.100000023841858,
+        31.09999990463257,
+        32.200000047683716,
+        38.299999952316284,
+        42.10000002384186,
+        29.800000071525574,
+        39.89999997615814,
+        41.699999928474426,
+        28,
+        31.800000071525574
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 28,
+        "p50": 32,
+        "p95": 41.799999952316284,
+        "max": 42.10000002384186
+      }
+    },
+    {
+      "round": 28,
+      "intervalsMs": [
+        30.100000023841858,
+        30.5,
+        30.5,
+        31.699999928474426,
+        30.700000047683716,
+        31,
+        36.89999997615814,
+        42.300000071525574,
+        31.09999990463257,
+        37.700000047683716,
+        27.5,
+        29.5,
+        31,
+        37,
+        41.60000002384186,
+        31.600000023841858,
+        30,
+        32.299999952316284,
+        31.399999976158142,
+        30.300000071525574,
+        31.899999976158142,
+        30.899999976158142,
+        30.299999952316284,
+        31.600000023841858,
+        32.39999997615814,
+        30.5,
+        31.100000023841858,
+        31.800000071525574,
+        29.699999928474426,
+        26.600000023841858,
+        33.799999952316284,
+        34.700000047683716,
+        24.399999976158142,
+        30.300000071525574,
+        40.89999997615814,
+        40.699999928474426,
+        31.5,
+        29.800000071525574,
+        31,
+        30.699999928474426,
+        31.200000047683716,
+        30.600000023841858,
+        36.799999952316284,
+        42.39999997615814,
+        30.5,
+        38.5
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 24.399999976158142,
+        "p50": 31.099999964237213,
+        "p95": 41.60000002384186,
+        "max": 42.39999997615814
+      }
+    },
+    {
+      "round": 29,
+      "intervalsMs": [
+        29.700000047683716,
+        32.299999952316284,
+        30.700000047683716,
+        32.299999952316284,
+        29.90000009536743,
+        39.799999952316284,
+        40.799999952316284,
+        28.800000071525574,
+        30.199999928474426,
+        37.90000009536743,
+        41.299999952316284,
+        29.799999952316284,
+        31.40000009536743,
+        30.899999976158142,
+        31.100000023841858,
+        37.09999990463257,
+        41.300000071525574,
+        30.799999952316284,
+        30.200000047683716,
+        30.799999952316284,
+        32.200000047683716,
+        30.899999976158142,
+        40,
+        41.299999952316284,
+        29.200000047683716,
+        32.39999997615814,
+        31.300000071525574,
+        30.5,
+        26.09999990463257,
+        33.90000009536743,
+        36.5,
+        42.699999928474426,
+        30.600000023841858,
+        32.5,
+        30.299999952316284,
+        30.200000047683716,
+        37.299999952316284,
+        41.5,
+        31,
+        31.300000071525574,
+        31.600000023841858,
+        38.299999952316284,
+        41.39999997615814,
+        29.700000047683716,
+        30,
+        38.299999952316284
+      ],
+      "complete": true,
+      "statistics": {
+        "n": 46,
+        "min": 26.09999990463257,
+        "p50": 31.350000083446503,
+        "p95": 41.39999997615814,
+        "max": 42.699999928474426
+      }
+    }
+  ],
+  "errors": [],
+  "complete": true,
+  "mutedAudioOutput": true,
+  "method": "Real input event to matching main-frame submission, observed GPU fence completion and following RAF. Drag intervals are actual main-frame submissions, not GPU execution time. No first-audible-sample claim; no P8 full-lifecycle certification."
+}

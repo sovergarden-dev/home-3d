@@ -1,0 +1,319 @@
+{
+  "syntheticOnly": true,
+  "evidence": "K1 pin add/delete latency, full matrix, real GPU",
+  "label": "H_MET_REAL_GPU",
+  "labelScope": "This machine only: NVIDIA GeForce GTX 1660 Ti, Chrome 156.0.8078.47 headed, DPR 1, Windows 10.0.26200. Not comparable with the Intel UHD / Chrome 152 run in ../../handoff-2026-10-30 (4e5136f, active-300 only, 103.20/101.00 ms NOT_MET) or with CI runners.",
+  "sources": {
+    "before": "de7173261a8a3928685555252c2b479f76a713fe",
+    "after": "fba1e09f8093ea77fa79355f9a5098926fdc1b3e",
+    "harness": "fba1e09f8093ea77fa79355f9a5098926fdc1b3e"
+  },
+  "scriptSha256": "e925947cdfc246ee598186ca03e076acdf8742c89ffe81a63f7286aadb450f99",
+  "environment": {
+    "platform": "WINDOWS_LOCAL",
+    "os": "Windows 10.0.26200 (operator record; the harness does not capture it)",
+    "rendererClass": "REAL_GPU",
+    "headed": true,
+    "channel": "chrome",
+    "browserVersion": "156.0.8078.47",
+    "driverVersion": "32.0.16.1074",
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "vendor": "Google Inc. (NVIDIA)",
+    "dprRequest": "1",
+    "dpr": 1
+  },
+  "conditions": {
+    "active-300": {
+      "population": 299,
+      "width": 1440,
+      "height": 900,
+      "life": true,
+      "viewports": ["1440x900"],
+      "files": {
+        "before": 6,
+        "after": 6
+      }
+    },
+    "active-empty": {
+      "population": 0,
+      "width": 1440,
+      "height": 900,
+      "life": true,
+      "viewports": ["1440x900"],
+      "files": {
+        "before": 6,
+        "after": 6
+      }
+    },
+    "smaller-300": {
+      "population": 299,
+      "width": 960,
+      "height": 600,
+      "life": true,
+      "viewports": ["960x600"],
+      "files": {
+        "before": 6,
+        "after": 6
+      }
+    },
+    "static-300": {
+      "population": 299,
+      "width": 1440,
+      "height": 900,
+      "life": false,
+      "viewports": ["1440x900"],
+      "files": {
+        "before": 6,
+        "after": 6
+      }
+    }
+  },
+  "notRemeasured": "a4f0121 and later heads were not re-measured for K1. After fba1e09 the runtime diff only gives the splash progress bar a progressbar role, a translated name (vi/en) and a rounded value; the splash is unmounted while K1 measures.",
+  "files": [
+    {
+      "file": "active-300-0-after.json",
+      "bytes": 13572,
+      "sha256": "7fb577a01bd1771e4d28ecd2dfd84db8f1553812ec239aaa0cd460f8a7a76a4d"
+    },
+    {
+      "file": "active-300-0-before.json",
+      "bytes": 13330,
+      "sha256": "b3e444b010a9eab2d754dd9b992c5bb4bd255309439908b9df344ca08376bc40"
+    },
+    {
+      "file": "active-300-1-after.json",
+      "bytes": 13580,
+      "sha256": "810a646a785341538ca73472d1bbd2de83ac4bd6de96f1692853d47986763e3e"
+    },
+    {
+      "file": "active-300-1-before.json",
+      "bytes": 13441,
+      "sha256": "5eec67a698cca0270a29a4f5dde27380f2543781a312512476535477c71440fe"
+    },
+    {
+      "file": "active-300-2-after.json",
+      "bytes": 13782,
+      "sha256": "7b0f3524053c945e4937b6838755759ae754c0dfcf1879f79cfb5077965ba065"
+    },
+    {
+      "file": "active-300-2-before.json",
+      "bytes": 13540,
+      "sha256": "40120079f5bdfee24e4a3098223383d9c36a6bd943a1a664a099182b79cab243"
+    },
+    {
+      "file": "active-300-3-after.json",
+      "bytes": 13641,
+      "sha256": "bd94809794808ffd4a8597477a83e78a090cc889b66ba04620cb37e0d7553c6f"
+    },
+    {
+      "file": "active-300-3-before.json",
+      "bytes": 13526,
+      "sha256": "b26612e45984bb7c54deda6a68c62e0e533c5d1237f5cef02205495cf02245cc"
+    },
+    {
+      "file": "active-300-4-after.json",
+      "bytes": 13743,
+      "sha256": "d91c683bfe6289815d4b406025e010d0be858b828c95c1970ff5a910fb190ef1"
+    },
+    {
+      "file": "active-300-4-before.json",
+      "bytes": 13557,
+      "sha256": "610a419d09375fa3e58e8543321e792d54d7d7e2b734fdc05bf110d335ebbb46"
+    },
+    {
+      "file": "active-300-5-after.json",
+      "bytes": 13653,
+      "sha256": "51a0186c02c9119f725659bfa87cab2d4c5043bb4750b2979633110bc4265f31"
+    },
+    {
+      "file": "active-300-5-before.json",
+      "bytes": 13438,
+      "sha256": "a633a7d850371c2222a7a7ea43c8f1e71b812b019afc5ebbcb3e6a52c904833e"
+    },
+    {
+      "file": "active-empty-0-after.json",
+      "bytes": 13643,
+      "sha256": "9fb68697674cfb94fa5acb581ed75604021039eefcc74ea336d1902e4e29eb05"
+    },
+    {
+      "file": "active-empty-0-before.json",
+      "bytes": 13514,
+      "sha256": "cc747dbbadbf9a3a73eaef63ed2b56bd292e667d1266daa2b69dc74f6d571f68"
+    },
+    {
+      "file": "active-empty-1-after.json",
+      "bytes": 13537,
+      "sha256": "5c97854216158c669a72c03c8bc5cc22a4a58064b0c2c3188d2baf117cf35adb"
+    },
+    {
+      "file": "active-empty-1-before.json",
+      "bytes": 13381,
+      "sha256": "cda6e2d00921e2066d57306f7d015b4063b10ce71bbce4cda58a505329980f68"
+    },
+    {
+      "file": "active-empty-2-after.json",
+      "bytes": 13541,
+      "sha256": "ca53f9e47edf25b0eb5e3d3073c469fcc1ca36094620d72762cf11f873ae063e"
+    },
+    {
+      "file": "active-empty-2-before.json",
+      "bytes": 13399,
+      "sha256": "f0fadf49ae0c48ef4afb9e451c0294b3789ac0b807261da9984bdcd6833a29b3"
+    },
+    {
+      "file": "active-empty-3-after.json",
+      "bytes": 13511,
+      "sha256": "a2ad113443f0b40e242ac2357b10e31857ae01a10814c0b6e1c6dc5afa905535"
+    },
+    {
+      "file": "active-empty-3-before.json",
+      "bytes": 13499,
+      "sha256": "3553a962bdf74d52469979e60af87a483972e38f7d0a8425788a743e64c86797"
+    },
+    {
+      "file": "active-empty-4-after.json",
+      "bytes": 13515,
+      "sha256": "8b7ed77fa17193b634459109c28c8d5977f9ed143d6ad89dc0384beebf7c0d06"
+    },
+    {
+      "file": "active-empty-4-before.json",
+      "bytes": 13429,
+      "sha256": "d8bad067a893f266168ca69bcbf8ecbd4d79d1a99720641e482402f1c5b03ae1"
+    },
+    {
+      "file": "active-empty-5-after.json",
+      "bytes": 13581,
+      "sha256": "2e090844ba8f614d5693ec0864f92348a427328a82031a6755f2ad83ca398d8d"
+    },
+    {
+      "file": "active-empty-5-before.json",
+      "bytes": 13428,
+      "sha256": "43cc251b5a3bad7f0550764de749addd86158fd8e080cdf4b659c56c5362cdd0"
+    },
+    {
+      "file": "smaller-300-0-after.json",
+      "bytes": 13618,
+      "sha256": "ec125490d6152428ce66f89392d8a00e57dbedcda31a952165a25a8395ee0d3c"
+    },
+    {
+      "file": "smaller-300-0-before.json",
+      "bytes": 13372,
+      "sha256": "fc917dc4f38fe3737e79ab00ae64aa30dfdc0557db54574c36af28fcd3d9a783"
+    },
+    {
+      "file": "smaller-300-1-after.json",
+      "bytes": 13726,
+      "sha256": "e36be76b7fb5e896bf59a71a57573a528de2ba58a6998e687c8785b47093c9a0"
+    },
+    {
+      "file": "smaller-300-1-before.json",
+      "bytes": 13528,
+      "sha256": "ff9d838c4bae8b41dc389019663a4bb022ee329abe6b02eff483f2517cd012c9"
+    },
+    {
+      "file": "smaller-300-2-after.json",
+      "bytes": 13616,
+      "sha256": "de3d7f4540ffa71c359b2f7fe7c52af60738f740bfc58c8a1f2be78b930c6ebe"
+    },
+    {
+      "file": "smaller-300-2-before.json",
+      "bytes": 13506,
+      "sha256": "4d4448256748ae0ed72c31558405b4ed641a039480ccdeb2ffc95909bd82f638"
+    },
+    {
+      "file": "smaller-300-3-after.json",
+      "bytes": 13549,
+      "sha256": "c17cda3e50bb4c14290d77051e8b9fccc2a92f23aeb5a9db614fc340d7d660f9"
+    },
+    {
+      "file": "smaller-300-3-before.json",
+      "bytes": 13327,
+      "sha256": "fb4cd92e8fb5c70a974308d1d891e7b1ce23f78583be6ca67450a282c1cb7b71"
+    },
+    {
+      "file": "smaller-300-4-after.json",
+      "bytes": 13641,
+      "sha256": "d7f2c3e3f9168d972ccca350631e52cd3ee0370d691f2294cca34690f9485acd"
+    },
+    {
+      "file": "smaller-300-4-before.json",
+      "bytes": 13456,
+      "sha256": "66051a26d098e628e6b18d4295f16c013c32f1972663ea4776577d36c7aa3550"
+    },
+    {
+      "file": "smaller-300-5-after.json",
+      "bytes": 13660,
+      "sha256": "4bead964ec19b728e460d2213f72731edcbc4a20a7fa9459030e7e4c9094f0eb"
+    },
+    {
+      "file": "smaller-300-5-before.json",
+      "bytes": 13630,
+      "sha256": "3176ebd457172afcc2c7ddc197eddc0a41f364cd0955d97a401d96e6905fbfee"
+    },
+    {
+      "file": "static-300-0-after.json",
+      "bytes": 13651,
+      "sha256": "cf5d4f2ac324b85ed24e8a46ca3236c273f36339c0ba58b5c75a6cb7e478ac1f"
+    },
+    {
+      "file": "static-300-0-before.json",
+      "bytes": 13268,
+      "sha256": "ee0708cc2688cfb6f3cc7582f2975ce9f1e196d195856202e4004cabfdef2a92"
+    },
+    {
+      "file": "static-300-1-after.json",
+      "bytes": 13687,
+      "sha256": "c32a94a9801e3cca694b2d345c2e5e1dc360d6379a09d4090c89fb9408653e3f"
+    },
+    {
+      "file": "static-300-1-before.json",
+      "bytes": 13461,
+      "sha256": "99b4f4f8d896e4b433ac1ccdde15b535fccf459e220320f75669270821e3dacb"
+    },
+    {
+      "file": "static-300-2-after.json",
+      "bytes": 13650,
+      "sha256": "ec39053336a655a8af1616b37b1b1972e057cbc5f186af21bcea37a1046e4863"
+    },
+    {
+      "file": "static-300-2-before.json",
+      "bytes": 13365,
+      "sha256": "937028cd1b8873fdcbda7d223fda7ccd3597ed4a9c3fc91f15d41201209c82b1"
+    },
+    {
+      "file": "static-300-3-after.json",
+      "bytes": 13737,
+      "sha256": "be1336baaa4a4bbaaa66b5b663a7f28ed1ef40e1d36a2fc60790bfb125e10291"
+    },
+    {
+      "file": "static-300-3-before.json",
+      "bytes": 13292,
+      "sha256": "d780dff745f03a201af43ed4e88f99f79228538e068b93e6a4446fb21404052d"
+    },
+    {
+      "file": "static-300-4-after.json",
+      "bytes": 13340,
+      "sha256": "50e0c0eca45f4b3838c731638ec19764c90fdcac01b4e26277e51fec61872450"
+    },
+    {
+      "file": "static-300-4-before.json",
+      "bytes": 13285,
+      "sha256": "528d57be023b054cfc15b4b610effc35daefd20b3216f11a342d50f75cfc34b1"
+    },
+    {
+      "file": "static-300-5-after.json",
+      "bytes": 13777,
+      "sha256": "a0454084dafecc9cacc5ab1d25805251ad113b56b90800f155c063c5277d0dfb"
+    },
+    {
+      "file": "static-300-5-before.json",
+      "bytes": 13445,
+      "sha256": "8becf1180abc34e1f87dfb82772e80883e6cb7526bddee9269c6be7b6d24b822"
+    },
+    {
+      "file": "summary.json",
+      "bytes": 5632,
+      "sha256": "c28e573aa127ded21f76288e733bce239e0c27f084c452258fd739305cc3b4d0"
+    }
+  ]
+}
