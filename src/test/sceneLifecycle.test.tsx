@@ -128,6 +128,38 @@ describe("scene DOM lifecycle", () => {
     expect(retry.disabled).toBe(false);
     mounted.unmount();
   });
+  it("covers recovered and retried startups with the splash until they are interactive", async () => {
+    const outlastSplashExit = () =>
+      act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 300));
+      });
+    runtime.ready = new Promise(() => {});
+    const mounted = render(
+      <>
+        <Splash />
+        <SceneViewport />
+      </>,
+    );
+    await waitFor(() => expect(runtime.created).toBe(1));
+    act(() => runtime.losses[0]!());
+    await waitFor(() => expect(runtime.created).toBe(2));
+    await outlastSplashExit();
+    expect(useAppStore.getState().sceneStatus).toBe("loading");
+    expect(screen.getByRole("progressbar")).toBeTruthy();
+    act(() => runtime.losses[1]!());
+    await waitFor(() => expect(screen.queryByRole("progressbar")).toBeNull());
+    let release = () => {};
+    runtime.ready = new Promise((resolve) => (release = () => resolve("interactive")));
+    fireEvent.click(screen.getByRole("button", { name: "Thử lại 3D" }));
+    await waitFor(() => expect(runtime.created).toBe(3));
+    await outlastSplashExit();
+    expect(useAppStore.getState().sceneStatus).toBe("loading");
+    expect(screen.getByRole("progressbar")).toBeTruthy();
+    await act(async () => release());
+    expect(useAppStore.getState().sceneStatus).toBe("ready");
+    await waitFor(() => expect(screen.queryByRole("progressbar")).toBeNull());
+    mounted.unmount();
+  });
   it("falls back and disposes the scene when its first frame fails", async () => {
     const failedFrame = Promise.reject(new Error("first frame failed"));
     // The viewport attaches its handler after the dynamic import; avoid an early unhandled rejection.

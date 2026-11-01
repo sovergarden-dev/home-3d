@@ -7,6 +7,9 @@ export function Splash() {
   const t = useT();
   const progress = useAppStore((s) => s.loadingProgress);
   const [gone, setGone] = useState(false);
+  // A recovered or retried startup reports progress below 1 again: cover the UI until it is
+  // interactive, as on first load. Adjusting state while rendering avoids a frame without it.
+  if (gone && progress < 1) setGone(false);
   useEffect(() => {
     if (progress < 1) return;
     const id = window.setTimeout(() => setGone(true), 250);
