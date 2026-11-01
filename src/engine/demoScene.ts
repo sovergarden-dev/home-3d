@@ -49,10 +49,22 @@ import {
 import { poseToOrbit } from "./view/memoryOrbit";
 import { buildMemoryHash, parseMemoryHash } from "@/memories/deepLink";
 import { bindPostcardCapture } from "@/memories/postcard";
+import { runStartupSequence, type StartupOutcome } from "./startupSequence";
+
+const STARTUP_PROGRAM_POLL_MS = 10;
+const STARTUP_PROGRAM_TIMEOUT_MS = 10_000;
 
 export interface SceneRuntime {
   setLabel: (label: string) => void;
   dispose: () => void;
+  /**
+   * Settles "interactive" once input may start: the first frame was drawn (or skipped while
+   * the page is hidden or the host has no size; the next visibility change or resize draws
+   * it) and every weather/festival variant was compiled. Each wait for shader programs is
+   * capped by STARTUP_PROGRAM_TIMEOUT_MS. Settles "stopped" when the scene is disposed or its
+   * context is lost, which onContextLost reports. Rejects when a startup step throws.
+   */
+  ready: Promise<StartupOutcome>;
 }
 
 function worldCentre(world: WorldData) {
@@ -231,6 +243,8 @@ export function createDemoScene(
   const planPointerStarts = new Map<number, THREE.Vector2>();
   let lastPinchDistance: number | null = null;
   let disposed = false;
+  // Nothing draws before the startup sequence's first frame; see runStartupSequence().
+  let firstFrameReady = false;
   let animationFrame = 0;
   let lastFrame = 0;
   let renderRevision = 0;
@@ -811,7 +825,8 @@ export function createDemoScene(
   }
 
   function render(activeAnimation = false) {
-    if (disposed || document.hidden || !host.clientWidth || !host.clientHeight) return;
+    if (disposed || !firstFrameReady || document.hidden || !host.clientWidth || !host.clientHeight)
+      return;
     const pinMode = useAppStore.getState().viewMode;
     memoryPins.group.visible =
       worldRenderable() && (pinMode === "diorama" || pinMode === "topdown");
@@ -900,6 +915,7 @@ export function createDemoScene(
   function scheduleFrame() {
     if (
       disposed ||
+      !firstFrameReady ||
       document.hidden ||
       (motion.matches && !lifeActive() && !memoryTour && !memoryFlight && !memoryPinsDirty) ||
       animationFrame !== 0
@@ -1294,6 +1310,7 @@ export function createDemoScene(
   }
 
   bindPostcardCapture(async (width, height) => {
+    if (!firstFrameReady) throw new Error("CAPTURE_UNAVAILABLE");
     if (width * height > renderer.capabilities.maxTextureSize ** 2)
       throw new Error("POSTCARD_TOO_LARGE");
     // Scene targets are linear/HDR in Three r180. Merely setting outputColorSpace
@@ -1502,8 +1519,8 @@ export function createDemoScene(
       );
       controls.enabled = false;
       marker.style.visibility = "hidden";
-      renderer.clear();
-      renderer.render(scene, activeCamera);
+      // render() clears to the empty private-error frame, but not before startup's first frame.
+      render();
       host.dataset["worldMode"] = snapshot.mode;
       host.dataset["activeWorlds"] = "0";
       useAppStore.getState().setPlanMeasurement(null);
@@ -1513,6 +1530,8 @@ export function createDemoScene(
     applyEnvironment();
     updateLayerVisibility();
     // Rebuilt bundles own new label/material program maps, not the disposed demo's cache.
+    // A world swap stays one synchronous warm-up so input never meets an uncompiled variant;
+    // during startup render() below does not draw before the first frame.
     atmosphere.warm(renderer, activeCamera);
     render();
     if (atmosphere.rainVisible || lifeActive()) scheduleFrame();
@@ -1570,16 +1589,45 @@ export function createDemoScene(
         flyMemory(memory);
     }
   };
-  const initialLink = parseMemoryHash(window.location.hash);
   const onHashChange = () => applyLink(parseMemoryHash(window.location.hash));
-  window.addEventListener("hashchange", onHashChange);
   mountWorld();
   updateLayerVisibility();
   applyEnvironment();
   resize();
-  atmosphere.warm(renderer, activeCamera);
-  render();
-  applyLink(initialLink);
+  // Queue the visible state's programs; the startup sequence waits for them, then draws.
+  renderer.compile(scene, activeCamera);
+  const parallelCompile = renderer.extensions.has("KHR_parallel_shader_compile");
+  const startup = runStartupSequence(
+    {
+      // Without the extension a program reports ready at once and links on first use.
+      programsPending: () =>
+        parallelCompile &&
+        (renderer.info.programs ?? []).some(
+          (program) => !(program as unknown as { isReady: () => boolean }).isReady(),
+        ),
+      stopped: () => disposed || renderer.getContext().isContextLost(),
+      firstFrame: () => {
+        firstFrameReady = true;
+        render();
+        // Read the hash now: it may have changed while startup programs compiled.
+        window.addEventListener("hashchange", onHashChange);
+        applyLink(parseMemoryHash(window.location.hash));
+        if (atmosphere.rainVisible || lifeActive()) scheduleFrame();
+      },
+      warmVariant: (index) => {
+        const total = atmosphere.warm(renderer, activeCamera, { start: index, end: index + 1 });
+        host.dataset["startupVariants"] = `${Math.min(index + 1, total)}/${total}`;
+        return total;
+      },
+    },
+    {
+      pollMs: STARTUP_PROGRAM_POLL_MS,
+      timeoutMs: STARTUP_PROGRAM_TIMEOUT_MS,
+      now: () => performance.now(),
+      setTimer: (callback, ms) => window.setTimeout(callback, ms),
+      clearTimer: (id) => window.clearTimeout(id),
+    },
+  );
   bindRealStreetView(() => {
     if (disposed || !worldRenderable()) return null;
     const mode = useAppStore.getState().viewMode;
@@ -1599,16 +1647,16 @@ export function createDemoScene(
     };
   });
   bindCapture(() => {
-    if (!worldRenderable() || document.hidden) return null;
+    if (!firstFrameReady || !worldRenderable() || document.hidden) return null;
     const captureStartedAt = performance.now();
     render();
     const image = canvas.toDataURL("image/png");
     host.dataset["captureLatencyMs"] = String(performance.now() - captureStartedAt);
     return image;
   });
-  if (atmosphere.rainVisible || lifeActive()) scheduleFrame();
 
   return {
+    ready: startup.ready,
     setLabel(label) {
       canvas.setAttribute("aria-label", label);
     },
@@ -1618,6 +1666,7 @@ export function createDemoScene(
       bindCapture(null);
       bindRealStreetView(null);
       window.clearTimeout(interactionTimer);
+      startup.stop();
       cancelAnimationFrame(animationFrame);
       unsubscribeStore();
       unsubscribeMemorySession();
