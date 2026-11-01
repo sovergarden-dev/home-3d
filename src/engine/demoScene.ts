@@ -50,9 +50,14 @@ import { poseToOrbit } from "./view/memoryOrbit";
 import { buildMemoryHash, parseMemoryHash } from "@/memories/deepLink";
 import { bindPostcardCapture } from "@/memories/postcard";
 
+const STARTUP_PROGRAM_POLL_MS = 10;
+const STARTUP_PROGRAM_TIMEOUT_MS = 10_000;
+
 export interface SceneRuntime {
   setLabel: (label: string) => void;
   dispose: () => void;
+  /** Resolves after the first frame is drawn, or without drawing once disposed. */
+  ready: Promise<void>;
 }
 
 function worldCentre(world: WorldData) {
@@ -231,6 +236,9 @@ export function createDemoScene(
   const planPointerStarts = new Map<number, THREE.Vector2>();
   let lastPinchDistance: number | null = null;
   let disposed = false;
+  // Startup draws only after its shader programs are ready; see startupProgramsReady().
+  let firstFrameReady = false;
+  let atmosphereWarmTimer = 0;
   let animationFrame = 0;
   let lastFrame = 0;
   let renderRevision = 0;
@@ -811,7 +819,8 @@ export function createDemoScene(
   }
 
   function render(activeAnimation = false) {
-    if (disposed || document.hidden || !host.clientWidth || !host.clientHeight) return;
+    if (disposed || !firstFrameReady || document.hidden || !host.clientWidth || !host.clientHeight)
+      return;
     const pinMode = useAppStore.getState().viewMode;
     memoryPins.group.visible =
       worldRenderable() && (pinMode === "diorama" || pinMode === "topdown");
@@ -900,6 +909,7 @@ export function createDemoScene(
   function scheduleFrame() {
     if (
       disposed ||
+      !firstFrameReady ||
       document.hidden ||
       (motion.matches && !lifeActive() && !memoryTour && !memoryFlight && !memoryPinsDirty) ||
       animationFrame !== 0
@@ -1570,16 +1580,57 @@ export function createDemoScene(
         flyMemory(memory);
     }
   };
-  const initialLink = parseMemoryHash(window.location.hash);
   const onHashChange = () => applyLink(parseMemoryHash(window.location.hash));
-  window.addEventListener("hashchange", onHashChange);
+  // A cold shader link blocks the first draw for hundreds of milliseconds. Queue the
+  // programs for the visible state, poll their completion without blocking where the
+  // browser supports it, then draw. Other browsers keep the synchronous first draw.
+  function startupProgramsReady() {
+    renderer.compile(scene, activeCamera);
+    if (!renderer.extensions.has("KHR_parallel_shader_compile")) return Promise.resolve();
+    const gl = renderer.getContext();
+    const deadline = performance.now() + STARTUP_PROGRAM_TIMEOUT_MS;
+    return new Promise<void>((resolve) => {
+      const poll = () => {
+        let pending = false;
+        try {
+          pending =
+            !disposed &&
+            !gl.isContextLost() &&
+            performance.now() < deadline &&
+            (renderer.info.programs ?? []).some(
+              (program) => !(program as unknown as { isReady: () => boolean }).isReady(),
+            );
+        } catch {
+          // A failed status query must not keep the scene behind the loading screen.
+        }
+        if (pending) window.setTimeout(poll, STARTUP_PROGRAM_POLL_MS);
+        else resolve();
+      };
+      poll();
+    });
+  }
+  // Weather and festival variants are warmed one per task after the first frame.
+  function warmAtmosphereSlice(start: number) {
+    atmosphereWarmTimer = 0;
+    if (disposed || renderer.getContext().isContextLost()) return;
+    const total = atmosphere.warm(renderer, activeCamera, { start, end: start + 1 });
+    if (start + 1 < total)
+      atmosphereWarmTimer = window.setTimeout(() => warmAtmosphereSlice(start + 1), 0);
+  }
   mountWorld();
   updateLayerVisibility();
   applyEnvironment();
   resize();
-  atmosphere.warm(renderer, activeCamera);
-  render();
-  applyLink(initialLink);
+  const ready = startupProgramsReady().then(() => {
+    if (disposed) return;
+    firstFrameReady = true;
+    render();
+    // Read the hash now: it may have changed while startup programs compiled.
+    window.addEventListener("hashchange", onHashChange);
+    applyLink(parseMemoryHash(window.location.hash));
+    if (atmosphere.rainVisible || lifeActive()) scheduleFrame();
+    warmAtmosphereSlice(0);
+  });
   bindRealStreetView(() => {
     if (disposed || !worldRenderable()) return null;
     const mode = useAppStore.getState().viewMode;
@@ -1599,16 +1650,16 @@ export function createDemoScene(
     };
   });
   bindCapture(() => {
-    if (!worldRenderable() || document.hidden) return null;
+    if (!firstFrameReady || !worldRenderable() || document.hidden) return null;
     const captureStartedAt = performance.now();
     render();
     const image = canvas.toDataURL("image/png");
     host.dataset["captureLatencyMs"] = String(performance.now() - captureStartedAt);
     return image;
   });
-  if (atmosphere.rainVisible || lifeActive()) scheduleFrame();
 
   return {
+    ready,
     setLabel(label) {
       canvas.setAttribute("aria-label", label);
     },
@@ -1618,6 +1669,7 @@ export function createDemoScene(
       bindCapture(null);
       bindRealStreetView(null);
       window.clearTimeout(interactionTimer);
+      window.clearTimeout(atmosphereWarmTimer);
       cancelAnimationFrame(animationFrame);
       unsubscribeStore();
       unsubscribeMemorySession();

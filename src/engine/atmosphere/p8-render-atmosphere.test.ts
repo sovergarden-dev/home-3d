@@ -199,4 +199,58 @@ describe("P8 atmosphere rendering contract", () => {
     expect(wet).toEqual([true]);
     atmosphere.dispose();
   });
+
+  it("warms the same ordered variants in slices and restores render state after each slice", () => {
+    const record = (target: ReturnType<typeof layer>) => {
+      const states: string[] = [];
+      const renderer = {
+        compile: () => {
+          const group = target.atmosphere.group;
+          states.push(
+            [
+              group.getObjectByName("rain-particles")?.visible ?? false,
+              ["tet", "midautumn", "christmas", "reunification", "national"].find(
+                (name) => group.getObjectByName(`festival-decoration-${name}`)?.visible,
+              ) ?? "normal",
+              target.scene.fog ? "fog" : "clear",
+              group.getObjectByName("moon-phase-disc")?.visible ?? false,
+              group.getObjectByName("simulation-flood-water")?.visible ?? false,
+              target.sun.position.toArray().join(","),
+            ].join("|"),
+          );
+        },
+      } as unknown as THREE.WebGLRenderer;
+      return { states, renderer };
+    };
+    const full = layer();
+    full.atmosphere.update(state({ weather: "rain", festival: "tet" }), true);
+    const fullRun = record(full);
+    expect(full.atmosphere.warm(fullRun.renderer, new THREE.PerspectiveCamera())).toBe(18);
+
+    const sliced = layer();
+    sliced.atmosphere.update(state({ weather: "rain", festival: "tet" }), true);
+    const slicedRun = record(sliced);
+    const camera = new THREE.PerspectiveCamera();
+    const before = {
+      sky: sliced.sky.clone(),
+      sun: sliced.sun.position.clone(),
+      fog: sliced.scene.fog,
+      groupVisible: sliced.atmosphere.group.visible,
+    };
+    for (let start = 0; start < 18; start += 4) {
+      expect(sliced.atmosphere.warm(slicedRun.renderer, camera, { start, end: start + 4 })).toBe(
+        18,
+      );
+      expect(sliced.sky.equals(before.sky)).toBe(true);
+      expect(sliced.sun.position.equals(before.sun)).toBe(true);
+      expect(sliced.scene.fog).toBe(before.fog);
+      expect(sliced.atmosphere.group.visible).toBe(before.groupVisible);
+    }
+    expect(slicedRun.states).toHaveLength(18);
+    expect(slicedRun.states).toEqual(fullRun.states);
+    expect(sliced.atmosphere.warm(slicedRun.renderer, camera, { start: 18, end: 22 })).toBe(18);
+    expect(slicedRun.states).toHaveLength(18);
+    full.atmosphere.dispose();
+    sliced.atmosphere.dispose();
+  });
 });

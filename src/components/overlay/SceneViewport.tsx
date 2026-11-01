@@ -71,7 +71,7 @@ function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
         if (cancelled || !host.current || !marker.current) return;
         store.setLoadingProgress(0.55);
         try {
-          runtime.current = createDemoScene(host.current, marker.current, () => {
+          const created = createDemoScene(host.current, marker.current, () => {
             if (cancelled) return;
             runtime.current?.dispose();
             runtime.current = null;
@@ -85,15 +85,32 @@ function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
               }, 250);
             }
           });
+          runtime.current = created;
           setRecovering(false);
           setFailed(false);
-          useAppStore.setState({ sceneStatus: "ready" });
+          store.setLoadingProgress(0.85);
+          // Controls and the splash wait for the first drawn frame, not just construction.
+          created.ready.then(
+            () => {
+              if (cancelled || runtime.current !== created) return;
+              useAppStore.setState({ sceneStatus: "ready" });
+              store.setLoadingProgress(1);
+            },
+            () => {
+              if (cancelled || runtime.current !== created) return;
+              created.dispose();
+              runtime.current = null;
+              setFailed(true);
+              useAppStore.setState({ sceneStatus: "fallback" });
+              store.setLoadingProgress(1);
+            },
+          );
         } catch {
           setRecovering(false);
           setFailed(true);
           useAppStore.setState({ sceneStatus: "fallback" });
+          store.setLoadingProgress(1);
         }
-        store.setLoadingProgress(1);
       })
       .catch(() => {
         if (cancelled) return;
