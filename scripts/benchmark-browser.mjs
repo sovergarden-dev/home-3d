@@ -1,12 +1,8 @@
 import { chromium, firefox } from "@playwright/test";
 import { execFileSync } from "node:child_process";
+import { rendererDriver } from "./renderer-driver.mjs";
 
 const git = (...args) => execFileSync("git", args, { encoding: "utf8" }).trim();
-const vendorIds = [
-  [/nvidia|geforce/i, 0x10de],
-  [/intel/i, 0x8086],
-  [/amd|radeon/i, 0x1002],
-];
 
 /** The GPU devices and drivers Chromium itself reports; Firefox exposes no equivalent. */
 async function browserGpuDevices(browser, firefoxRun) {
@@ -20,22 +16,6 @@ async function browserGpuDevices(browser, firefoxRun) {
   } finally {
     await session.detach().catch(() => {});
   }
-}
-
-/** Picks the device behind the unmasked WebGL renderer, so a second GPU cannot lend its driver. */
-function rendererDriver(devices, renderer) {
-  const byId = devices.find(
-    (device) =>
-      device.deviceId > 0 &&
-      new RegExp(`0x0*${device.deviceId.toString(16)}\\b`, "i").test(renderer),
-  );
-  if (byId) return byId.driverVersion || null;
-  const vendor = vendorIds.find(([pattern]) => pattern.test(renderer))?.[1];
-  // Chromium can list one adapter twice; only a single distinct driver for the vendor is unambiguous.
-  const drivers = new Set(
-    devices.filter((device) => device.vendorId === vendor).map((device) => device.driverVersion),
-  );
-  return drivers.size === 1 ? [...drivers][0] || null : null;
 }
 
 /** Keeps the existing harnesses' measurements unchanged while identifying their renderer. */
@@ -104,12 +84,16 @@ export async function launchBenchmark(extraArgs = []) {
         const reported = devices ? rendererDriver(devices, gpu.renderer) : null;
         const operator = process.env.BENCH_GPU_DRIVER;
         const driver = !headed
-          ? { driverVersion: "SOFTWARE_OR_HEADLESS", driverSource: "NONE" }
+          ? { driverVersion: "SOFTWARE_OR_HEADLESS", driverSource: "NONE", driverMatch: "NONE" }
           : reported
-            ? { driverVersion: reported, driverSource: "BROWSER_SYSTEM_INFO" }
+            ? {
+                driverVersion: reported.version,
+                driverSource: "BROWSER_SYSTEM_INFO",
+                driverMatch: reported.match,
+              }
             : operator
-              ? { driverVersion: operator, driverSource: "OPERATOR_ENV" }
-              : { driverVersion: "NOT_VERIFIED", driverSource: "NONE" };
+              ? { driverVersion: operator, driverSource: "OPERATOR_ENV", driverMatch: "NONE" }
+              : { driverVersion: "NOT_VERIFIED", driverSource: "NONE", driverMatch: "NONE" };
         return {
           sourceSha,
           harnessSha,
