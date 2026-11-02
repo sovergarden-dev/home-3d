@@ -1,0 +1,128 @@
+{
+  "syntheticOnly": true,
+  "method": "Production build behind scripts/production-server.mjs, headed browser on the real GPU, 1280x720 DPR 1, service worker blocked, a new context per run after a same-origin document without scripts, no network or CPU throttling. Times are performance.now() in the page: firstFrame = data-memory-geometries first appears, allVariants = data-startup-variants first reads n/n, ready = data-scene-state first reads ready. Long tasks come from PerformanceObserver; longTasksAfterFirstFrame counts those starting at or after firstFrame. Median of all runs; no sample removed.",
+  "environment": {
+    "sourceSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+    "harnessSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+    "harnessTreeClean": true,
+    "platform": "WINDOWS_LOCAL",
+    "syntheticOnly": true,
+    "rendererClass": "REAL_GPU",
+    "headed": true,
+    "channel": "chrome",
+    "browserVersion": "156.0.8078.47",
+    "driverVersion": "32.0.16.1074",
+    "driverSource": "BROWSER_SYSTEM_INFO",
+    "dprRequest": "1",
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "vendor": "Google Inc. (NVIDIA)",
+    "dpr": 1,
+    "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+  },
+  "median": {
+    "fcp": 96,
+    "firstFrame": 420,
+    "allVariants": 545,
+    "ready": 558,
+    "firstFrameToReadyMs": 133
+  },
+  "rows": [
+    {
+      "run": 1,
+      "longTasks": [
+        [
+          241,
+          262
+        ]
+      ],
+      "firstFrame": 642,
+      "variants": "18/18",
+      "allVariants": 799,
+      "ready": 919,
+      "fcp": 344,
+      "parallelShaderCompile": true,
+      "firstFrameToReadyMs": 277,
+      "longTasksAfterFirstFrame": 0
+    },
+    {
+      "run": 2,
+      "longTasks": [
+        [
+          256,
+          92
+        ]
+      ],
+      "firstFrame": 420,
+      "variants": "18/18",
+      "allVariants": 547,
+      "ready": 560,
+      "fcp": 96,
+      "parallelShaderCompile": true,
+      "firstFrameToReadyMs": 140,
+      "longTasksAfterFirstFrame": 0
+    },
+    {
+      "run": 3,
+      "longTasks": [
+        [
+          235,
+          86
+        ]
+      ],
+      "firstFrame": 403,
+      "variants": "18/18",
+      "allVariants": 519,
+      "ready": 531,
+      "fcp": 96,
+      "parallelShaderCompile": true,
+      "firstFrameToReadyMs": 128,
+      "longTasksAfterFirstFrame": 0
+    },
+    {
+      "run": 4,
+      "longTasks": [
+        [
+          22,
+          55
+        ],
+        [
+          237,
+          85
+        ]
+      ],
+      "firstFrame": 425,
+      "variants": "18/18",
+      "allVariants": 545,
+      "ready": 558,
+      "fcp": 96,
+      "parallelShaderCompile": true,
+      "firstFrameToReadyMs": 133,
+      "longTasksAfterFirstFrame": 0
+    },
+    {
+      "run": 5,
+      "longTasks": [
+        [
+          22,
+          56
+        ],
+        [
+          240,
+          91
+        ]
+      ],
+      "firstFrame": 408,
+      "variants": "18/18",
+      "allVariants": 523,
+      "ready": 535,
+      "fcp": 96,
+      "parallelShaderCompile": true,
+      "firstFrameToReadyMs": 127,
+      "longTasksAfterFirstFrame": 0
+    }
+  ]
+}

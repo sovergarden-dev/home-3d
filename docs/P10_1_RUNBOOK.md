@@ -69,7 +69,7 @@ Chạy riêng từng benchmark, không đồng thời build/test nặng hoặc b
 $env:BENCH_GPU='real'
 $env:BENCH_BROWSER='chrome'
 $env:BENCH_DPR='1'
-$env:BENCH_GPU_DRIVER='<driver đã đọc từ máy>'
+# Driver lấy từ Chrome (SystemInfo); chỉ gán BENCH_GPU_DRIVER khi provenance ghi NOT_VERIFIED
 $env:K1_BEFORE_SHA='<full baseline SHA>'
 $env:K1_AFTER_SHA='<full candidate SHA>'
 node scripts/p10-1-latency.mjs test-results/k1
