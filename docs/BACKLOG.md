@@ -18,6 +18,7 @@ Cập nhật 01/11/2026: Notion AI tạm tiếp quản; từ 31/10 làm trên m�
 Việc mở (P3 từ review độc lập và giới hạn đo đã ghi; chưa sửa, không chặn). Node DOM tăng 1 sau mỗi lần SPA navigation trong soak và hai việc `build-pwa` đã sửa ở PR #14 ([DECISIONS](DECISIONS.md), mục sau review delta PR #13).
 
 - Splash chưa chặn bàn phím: splash không giữ focus và nút dock không bị disable lúc khởi động, nên Tab có thể tới dock và canvas phía sau (có từ lần tải đầu; chuột và chạm đã bị splash chặn). Viết e2e bàn phím trước khi sửa.
+- Context WebGL đã gỡ trên WebKit: CI `41347880882` báo quá nhiều context WebGL đang sống sau 16 lượt Giới thiệu ↔ Về phố (context cũ nhất đã mất từ trước nhưng chưa được GC; canvas đang chạy không bị ảnh hưởng). Chromium đã có e2e `navigation-retention` sau GC ép buộc; WebKit chưa kiểm vì Playwright không có API công khai để ép GC trên WebKit.
 - Provenance benchmark: ghi cờ cây mã sạch (`git status --porcelain`) cùng SHA harness; đọc version driver từ thông tin GPU của browser thay vì biến `BENCH_GPU_DRIVER` do người chạy gán.
 - Đo lại 4G warm với throttle cả target service worker hoặc proxy giới hạn băng thông; tìm công cụ đo bộ nhớ GPU trên Firefox thay counter WDDM bất thường.
 
