@@ -1,0 +1,103 @@
+{
+  "syntheticOnly": true,
+  "sourceSha": "07fc66e14f89461fb74e348db1371b0b047f4979",
+  "method": "Production build, gzip loopback server, headed Chrome with the real GPU, 1280x720 DPR 1, service worker blocked, new context per run after a same-origin warm-up document, no throttling. Times are performance.now() in the page: first frame = data-memory-geometries appears, allVariants = data-startup-variants n/n, ready = data-scene-state ready.",
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "parallelCompile": true
+  },
+  "median": {
+    "fcp": 96,
+    "firstFrame": 421,
+    "allVariants": 548,
+    "ready": 562,
+    "firstFrameToReadyMs": 141
+  },
+  "rows": [
+    {
+      "run": 1,
+      "longTasks": [
+        [
+          26,
+          56
+        ],
+        [
+          239,
+          439
+        ]
+      ],
+      "firstFrame": 835,
+      "firstVariant": 835,
+      "variants": "18/18",
+      "allVariants": 994,
+      "ready": 1115,
+      "fcp": 528,
+      "firstFrameToReadyMs": 280
+    },
+    {
+      "run": 2,
+      "longTasks": [
+        [
+          247,
+          88
+        ]
+      ],
+      "firstFrame": 406,
+      "firstVariant": 406,
+      "variants": "18/18",
+      "allVariants": 519,
+      "ready": 531,
+      "fcp": 140,
+      "firstFrameToReadyMs": 125
+    },
+    {
+      "run": 3,
+      "longTasks": [
+        [
+          244,
+          93
+        ]
+      ],
+      "firstFrame": 488,
+      "firstVariant": 488,
+      "variants": "18/18",
+      "allVariants": 619,
+      "ready": 632,
+      "fcp": 96,
+      "firstFrameToReadyMs": 144
+    },
+    {
+      "run": 4,
+      "longTasks": [
+        [
+          239,
+          88
+        ]
+      ],
+      "firstFrame": 394,
+      "firstVariant": 394,
+      "variants": "18/18",
+      "allVariants": 508,
+      "ready": 521,
+      "fcp": 96,
+      "firstFrameToReadyMs": 127
+    },
+    {
+      "run": 5,
+      "longTasks": [
+        [
+          241,
+          93
+        ]
+      ],
+      "firstFrame": 421,
+      "firstVariant": 421,
+      "variants": "18/18",
+      "allVariants": 548,
+      "ready": 562,
+      "fcp": 88,
+      "firstFrameToReadyMs": 141
+    }
+  ]
+}

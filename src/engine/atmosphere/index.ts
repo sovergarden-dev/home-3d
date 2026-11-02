@@ -395,8 +395,16 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
       rainMaterial.uniforms["time"]!.value += Math.max(0, Math.min(0.1, delta));
   };
   let warming = false;
-  /** Compile each selectable variant, without warming their cartesian product. */
-  const warm = (renderer: THREE.WebGLRenderer, camera: THREE.Camera) => {
+  /**
+   * Compile each selectable variant, without warming their cartesian product.
+   * `range` selects part of the fixed variant order so startup can spread the
+   * work over short tasks. Returns the total number of variants.
+   */
+  const warm = (
+    renderer: THREE.WebGLRenderer,
+    camera: THREE.Camera,
+    range: { start: number; end: number } = { start: 0, end: Number.POSITIVE_INFINITY },
+  ) => {
     const visibility = new Map<THREE.Object3D, boolean>();
     group.traverse((object) => visibility.set(object, object.visible));
     const previous = {
@@ -459,7 +467,10 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
         projectionMatrix: camera.projectionMatrix.clone(),
       },
     };
+    let variantCount = 0;
     const compile = (variant: AtmosphereState) => {
+      const index = variantCount++;
+      if (index < range.start || index >= range.end) return;
       update(variant, true);
       renderer.compile(scene, camera);
     };
@@ -577,6 +588,7 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
       camera.projectionMatrix.copy(previous.camera.projectionMatrix);
       warming = false;
     }
+    return variantCount;
   };
   const dispose = () => {
     if (disposed) return;
