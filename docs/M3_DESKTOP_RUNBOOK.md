@@ -1,6 +1,6 @@
 # M3 — Desktop, offline và khả năng tiếp cận
 
-`PARTIAL`: phần mềm đã vào main qua PR #11 (`beacd9b`, CI main 4/4). Trên máy NVIDIA: FPS Chrome/Edge MET, Firefox bộ nhớ GPU NOT_MET, soak 30 phút MET. Lighthouse trên máy NVIDIA: PR #13 head mã `07fc66e` desktop 97 MET, mobile 50 NOT_MET (`2c21b54`: 97/56), Accessibility 100 (main `5e6aec5`: desktop 79, mobile 44). Trên Intel UHD: Lighthouse `a948321` mobile 26/desktop 60 NOT_MET, soak Codex ở `4e5136f` đỉnh +22,16% NOT_MET. 4G warm MET khi throttle cả service worker (`252f5e7`), ObjectURL NOT_EXERCISED (chi tiết ở [AUDIT_PACKET.md](AUDIT_PACKET.md)). Chỉ fixture tổng hợp; không có nghiệm thu khu thật hay thiết bị di động.
+`PARTIAL`: phần mềm đã vào main qua PR #11 (`beacd9b`, CI main 4/4). Trên máy NVIDIA: FPS Chrome/Edge MET, Firefox bộ nhớ GPU NOT_MET, soak 30 phút MET. Lighthouse trên máy NVIDIA: PR #13 head mã `07fc66e` desktop 97 MET, mobile 50 NOT_MET (`2c21b54`: 97/56), Accessibility 100 (main `5e6aec5`: desktop 79, mobile 44). Trên Intel UHD: Lighthouse `a948321` mobile 26/desktop 60 NOT_MET, soak Codex ở `4e5136f` đỉnh +22,16% NOT_MET. 4G warm MET theo phương pháp local (CDP trên loopback, không phải mạng di động thật) khi throttle cả service worker (`252f5e7`), ObjectURL NOT_EXERCISED (chi tiết ở [AUDIT_PACKET.md](AUDIT_PACKET.md)). Chỉ fixture tổng hợp; không có nghiệm thu khu thật hay thiết bị di động.
 
 ## Đã kiểm
 
