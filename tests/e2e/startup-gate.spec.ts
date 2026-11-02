@@ -65,6 +65,32 @@ const pointerTargets = (page: Page) =>
     });
   });
 
+/** Whether a script can focus the dock's noon preset; inert content cannot take focus. */
+const noonTakesFocus = (page: Page) =>
+  page.evaluate(() => {
+    const noon = [...document.querySelectorAll("button")].find((button) =>
+      /12:00/.test(button.textContent ?? ""),
+    );
+    if (!noon) return "missing";
+    noon.focus();
+    const focused = document.activeElement === noon;
+    noon.blur();
+    return focused;
+  });
+
+/** Whether a few Tab presses from the top of the page land inside the app shell. */
+async function tabReachesShell(page: Page) {
+  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+  for (let press = 0; press < 4; press++) {
+    await page.keyboard.press("Tab");
+    const inShell = await page.evaluate(
+      () => document.querySelector("main")?.contains(document.activeElement) ?? false,
+    );
+    if (inShell) return true;
+  }
+  return false;
+}
+
 test("startup keeps input closed until every shader variant settles, across context loss and retry", async ({
   page,
 }) => {
@@ -168,6 +194,65 @@ test("startup keeps input closed until every shader variant settles, across cont
   await expect(scene).toHaveAttribute("data-time-minutes", "1234");
   await expect(splash).toHaveCount(0);
   expect(await pointerTargets(page)).toEqual(["itself", "itself"]);
+});
+
+test("an interactive scene that loses its context is covered again until recovery settles", async ({
+  page,
+}) => {
+  await page.addInitScript(holdShaderPrograms);
+  await page.goto("/");
+  const root = page.locator("#scene-root");
+  const canvas = root.locator("canvas");
+  const splash = page.getByRole("progressbar", { name: "Đang tải phố 3D", exact: true });
+  await expect
+    .poll(
+      async () =>
+        (await canvas.count()) > 0 || (await root.getAttribute("data-scene-state")) === "fallback",
+      { timeout: 60000 },
+    )
+    .toBe(true);
+  const webgl = (await canvas.count()) > 0;
+  if (process.env["REQUIRE_WEBGL2"] === "1") expect(webgl).toBe(true);
+  test.skip(!webgl, "This browser has no WebGL2; there is no shader startup to hold.");
+  const canLose = await canvas.evaluate((element: HTMLCanvasElement) =>
+    Boolean(element.getContext("webgl2")?.getExtension("WEBGL_lose_context")),
+  );
+  test.skip(!canLose, "Native context-loss extension unavailable");
+
+  // The held first startup is closed to the keyboard as well as the pointer.
+  await expect(root).toHaveAttribute("data-scene-state", "loading");
+  await expect(splash).toBeVisible();
+  expect(await pointerTargets(page)).toEqual(["splash", "splash"]);
+  expect(await tabReachesShell(page)).toBe(false);
+  expect(await noonTakesFocus(page)).toBe(false);
+
+  await setHold(page, "none");
+  await expect(root).toHaveAttribute("data-scene-state", "ready", { timeout: 60000 });
+  await expect(splash).toHaveCount(0);
+  expect(await pointerTargets(page)).toEqual(["itself", "itself"]);
+  expect(await noonTakesFocus(page)).toBe(true);
+
+  // Lose the interactive scene's context and hold the programs of its automatic recovery.
+  await setHold(page, "existing");
+  await canvas.evaluate((element: HTMLCanvasElement) => {
+    element.dataset["lostCanvas"] = "after-ready";
+    element.getContext("webgl2")!.getExtension("WEBGL_lose_context")!.loseContext();
+  });
+  await expect(root).toHaveAttribute("data-recovery-attempts", "1");
+  await expect(root.locator("canvas:not([data-lost-canvas])")).toHaveCount(1);
+  await expect(root).toHaveAttribute("data-scene-state", "loading");
+  // Well past the splash's own 250 ms exit, it covers the recovered startup again.
+  await page.waitForTimeout(400);
+  await expect(root).toHaveAttribute("data-scene-state", "loading");
+  await expect(splash).toBeVisible();
+  expect(await pointerTargets(page)).toEqual(["splash", "splash"]);
+  expect(await noonTakesFocus(page)).toBe(false);
+
+  await setHold(page, "none");
+  await expect(root).toHaveAttribute("data-scene-state", "ready", { timeout: 60000 });
+  await expect(splash).toHaveCount(0);
+  expect(await pointerTargets(page)).toEqual(["itself", "itself"]);
+  expect(await noonTakesFocus(page)).toBe(true);
 });
 
 type StartupState = { state: string | null; variants: string | null; splash: boolean };
