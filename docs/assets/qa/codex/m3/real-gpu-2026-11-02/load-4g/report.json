@@ -1,0 +1,2066 @@
+{
+  "syntheticOnly": true,
+  "transport": "gzip",
+  "network": {
+    "offline": false,
+    "latency": 150,
+    "downloadThroughput": 200000,
+    "uploadThroughput": 93750,
+    "connectionType": "cellular4g"
+  },
+  "serviceWorkerThrottle": {
+    "attached": 6,
+    "throttled": 6,
+    "failures": []
+  },
+  "status": {
+    "coldShell": "MET",
+    "coldWorld": "MET",
+    "warmShell": "MET",
+    "warmWorld": "MET"
+  },
+  "method": "Production root with public fictional world. Three isolated contexts per viewport for cold HTTP/SW caches, followed by same-context reload after verified Service Worker control. CDP emulates 150ms latency and 1.6Mbps down/0.75Mbps up on the page and, through a second CDP client that auto-attaches before each service worker runs, on every service worker; no CPU throttling. A sample counts only if its navigation took at least the emulated latency from fetchStart to responseEnd, and warm samples also need every context's service worker throttled. No Playwright routing (which would disable HTTP cache). FCP is browser Paint Timing; world ready is observed from the actual scene state. No slow samples removed.",
+  "rows": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "run": 0,
+      "cache": "cold",
+      "environment": {
+        "sourceSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessTreeClean": true,
+        "platform": "WINDOWS_LOCAL",
+        "syntheticOnly": true,
+        "rendererClass": "REAL_GPU",
+        "headed": true,
+        "channel": "chrome",
+        "browserVersion": "156.0.8078.47",
+        "driverVersion": "32.0.16.1074",
+        "driverSource": "BROWSER_SYSTEM_INFO",
+        "dprRequest": "1",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "dpr": 1,
+        "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+      },
+      "metrics": {
+        "navigation": {
+          "fetchStart": 0.5,
+          "requestStart": 1.4000000953674316,
+          "responseStart": 111.30000007152557,
+          "responseEnd": 192.40000009536743,
+          "workerStart": 0,
+          "transferBytes": 6713,
+          "encodedBytes": 6413
+        },
+        "firstContentfulPaintMs": 916,
+        "worldReadyMs": 4492.700000047684,
+        "serviceWorkerControlled": false,
+        "resources": [
+          {
+            "type": "link",
+            "transferBytes": 15703,
+            "encodedBytes": 15403,
+            "durationMs": 480.7999999523163,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 163749,
+            "encodedBytes": 163449,
+            "durationMs": 2134.4000000953674,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 36411,
+            "encodedBytes": 36111,
+            "durationMs": 856.2000000476837,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 986,
+            "encodedBytes": 686,
+            "durationMs": 183.89999997615814,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 26295,
+            "encodedBytes": 25995,
+            "durationMs": 649.8999999761581,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 21468,
+            "encodedBytes": 21168,
+            "durationMs": 804.6000000238419,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 22208,
+            "encodedBytes": 21908,
+            "durationMs": 799.8999999761581,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 22192,
+            "encodedBytes": 21892,
+            "durationMs": 799.7999999523163,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 41072,
+            "encodedBytes": 40772,
+            "durationMs": 1200.2000000476837,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 12472,
+            "encodedBytes": 12172,
+            "durationMs": 870.5,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 11832,
+            "encodedBytes": 11532,
+            "durationMs": 1158.3000000715256,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 9644,
+            "encodedBytes": 9344,
+            "durationMs": 1115.5,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 20673,
+            "encodedBytes": 20373,
+            "durationMs": 450.5,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "fetch",
+            "transferBytes": 315,
+            "encodedBytes": 15,
+            "durationMs": 172.20000004768372,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "script",
+            "transferBytes": 180120,
+            "encodedBytes": 179820,
+            "durationMs": 1345.3999999761581,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 22332,
+            "encodedBytes": 22032,
+            "durationMs": 523,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 12476,
+            "encodedBytes": 12176,
+            "durationMs": 440.89999997615814,
+            "fromServiceWorker": false
+          }
+        ]
+      },
+      "navigationViaServiceWorker": false,
+      "navigationFetchMs": 191.90000009536743,
+      "navigationThrottleObserved": true,
+      "shellBudget": true,
+      "worldBudget": true
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "run": 0,
+      "cache": "warm",
+      "environment": {
+        "sourceSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessTreeClean": true,
+        "platform": "WINDOWS_LOCAL",
+        "syntheticOnly": true,
+        "rendererClass": "REAL_GPU",
+        "headed": true,
+        "channel": "chrome",
+        "browserVersion": "156.0.8078.47",
+        "driverVersion": "32.0.16.1074",
+        "driverSource": "BROWSER_SYSTEM_INFO",
+        "dprRequest": "1",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "dpr": 1,
+        "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+      },
+      "metrics": {
+        "navigation": {
+          "fetchStart": 1.899999976158142,
+          "requestStart": 1.899999976158142,
+          "responseStart": 183.5,
+          "responseEnd": 205.79999995231628,
+          "workerStart": 1.7999999523162842,
+          "transferBytes": 24958,
+          "encodedBytes": 24658
+        },
+        "firstContentfulPaintMs": 240,
+        "worldReadyMs": 642.2999999523163,
+        "serviceWorkerControlled": true,
+        "resources": [
+          {
+            "type": "link",
+            "transferBytes": 0,
+            "encodedBytes": 87420,
+            "durationMs": 1.5,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 125310,
+            "durationMs": 1.9000000953674316,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 510979,
+            "durationMs": 1.8000000715255737,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 91868,
+            "durationMs": 1.899999976158142,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 1189,
+            "durationMs": 1.7999999523162842,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 21168,
+            "durationMs": 1,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 21908,
+            "durationMs": 0.8999999761581421,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 21892,
+            "durationMs": 1,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 12172,
+            "durationMs": 1.100000023841858,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 11532,
+            "durationMs": 1,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 40772,
+            "durationMs": 1.100000023841858,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 9344,
+            "durationMs": 0.9000000953674316,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 20673,
+            "encodedBytes": 20373,
+            "durationMs": 270.5,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "fetch",
+            "transferBytes": 315,
+            "encodedBytes": 15,
+            "durationMs": 169.10000002384186,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "script",
+            "transferBytes": 0,
+            "encodedBytes": 667872,
+            "durationMs": 1.2000000476837158,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 22032,
+            "durationMs": 0.8999999761581421,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 12176,
+            "durationMs": 1.0999999046325684,
+            "fromServiceWorker": true
+          }
+        ]
+      },
+      "navigationViaServiceWorker": true,
+      "navigationFetchMs": 203.89999997615814,
+      "navigationThrottleObserved": true,
+      "shellBudget": true,
+      "worldBudget": true
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "run": 1,
+      "cache": "cold",
+      "environment": {
+        "sourceSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessTreeClean": true,
+        "platform": "WINDOWS_LOCAL",
+        "syntheticOnly": true,
+        "rendererClass": "REAL_GPU",
+        "headed": true,
+        "channel": "chrome",
+        "browserVersion": "156.0.8078.47",
+        "driverVersion": "32.0.16.1074",
+        "driverSource": "BROWSER_SYSTEM_INFO",
+        "dprRequest": "1",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "dpr": 1,
+        "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+      },
+      "metrics": {
+        "navigation": {
+          "fetchStart": 0.40000009536743164,
+          "requestStart": 1.100000023841858,
+          "responseStart": 14.200000047683716,
+          "responseEnd": 199.90000009536743,
+          "workerStart": 0,
+          "transferBytes": 6713,
+          "encodedBytes": 6413
+        },
+        "firstContentfulPaintMs": 700,
+        "worldReadyMs": 4060.3000000715256,
+        "serviceWorkerControlled": true,
+        "resources": [
+          {
+            "type": "link",
+            "transferBytes": 15703,
+            "encodedBytes": 15403,
+            "durationMs": 450.7000000476837,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 26295,
+            "encodedBytes": 25995,
+            "durationMs": 653.3999999761581,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 36411,
+            "encodedBytes": 36111,
+            "durationMs": 875.1999999284744,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 163749,
+            "encodedBytes": 163449,
+            "durationMs": 2135,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 986,
+            "encodedBytes": 686,
+            "durationMs": 201.5,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 21468,
+            "encodedBytes": 21168,
+            "durationMs": 804,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 22208,
+            "encodedBytes": 21908,
+            "durationMs": 799,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 22192,
+            "encodedBytes": 21892,
+            "durationMs": 814.6000000238419,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 41072,
+            "encodedBytes": 40772,
+            "durationMs": 1216.7999999523163,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 12472,
+            "encodedBytes": 12172,
+            "durationMs": 886.1999999284744,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 11832,
+            "encodedBytes": 11532,
+            "durationMs": 1158.7000000476837,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 9644,
+            "encodedBytes": 9344,
+            "durationMs": 1103.7000000476837,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 20673,
+            "encodedBytes": 20373,
+            "durationMs": 484.2000000476837,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "fetch",
+            "transferBytes": 315,
+            "encodedBytes": 15,
+            "durationMs": 174.10000002384186,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "script",
+            "transferBytes": 180120,
+            "encodedBytes": 179820,
+            "durationMs": 1332.8000000715256,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 22332,
+            "encodedBytes": 22032,
+            "durationMs": 525.2000000476837,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 12476,
+            "encodedBytes": 12176,
+            "durationMs": 441.59999990463257,
+            "fromServiceWorker": false
+          }
+        ]
+      },
+      "navigationViaServiceWorker": false,
+      "navigationFetchMs": 199.5,
+      "navigationThrottleObserved": true,
+      "shellBudget": true,
+      "worldBudget": true
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "run": 1,
+      "cache": "warm",
+      "environment": {
+        "sourceSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessTreeClean": true,
+        "platform": "WINDOWS_LOCAL",
+        "syntheticOnly": true,
+        "rendererClass": "REAL_GPU",
+        "headed": true,
+        "channel": "chrome",
+        "browserVersion": "156.0.8078.47",
+        "driverVersion": "32.0.16.1074",
+        "driverSource": "BROWSER_SYSTEM_INFO",
+        "dprRequest": "1",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "dpr": 1,
+        "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+      },
+      "metrics": {
+        "navigation": {
+          "fetchStart": 1.899999976158142,
+          "requestStart": 1.899999976158142,
+          "responseStart": 175,
+          "responseEnd": 207,
+          "workerStart": 1.7000000476837158,
+          "transferBytes": 24958,
+          "encodedBytes": 24658
+        },
+        "firstContentfulPaintMs": 224,
+        "worldReadyMs": 613.6000000238419,
+        "serviceWorkerControlled": true,
+        "resources": [
+          {
+            "type": "link",
+            "transferBytes": 0,
+            "encodedBytes": 87420,
+            "durationMs": 1.4000000953674316,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 510979,
+            "durationMs": 1.899999976158142,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 125310,
+            "durationMs": 1.899999976158142,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 91868,
+            "durationMs": 2,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 1189,
+            "durationMs": 2,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 21168,
+            "durationMs": 1,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 21908,
+            "durationMs": 1,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 21892,
+            "durationMs": 1.399999976158142,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 40772,
+            "durationMs": 2,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 12172,
+            "durationMs": 1.899999976158142,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 11532,
+            "durationMs": 1.7000000476837158,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 9344,
+            "durationMs": 1.2000000476837158,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 20673,
+            "encodedBytes": 20373,
+            "durationMs": 275.5,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "fetch",
+            "transferBytes": 315,
+            "encodedBytes": 15,
+            "durationMs": 170.5,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "script",
+            "transferBytes": 0,
+            "encodedBytes": 667872,
+            "durationMs": 1.600000023841858,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 22032,
+            "durationMs": 1.100000023841858,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 12176,
+            "durationMs": 1.1999999284744263,
+            "fromServiceWorker": true
+          }
+        ]
+      },
+      "navigationViaServiceWorker": true,
+      "navigationFetchMs": 205.10000002384186,
+      "navigationThrottleObserved": true,
+      "shellBudget": true,
+      "worldBudget": true
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "run": 2,
+      "cache": "cold",
+      "environment": {
+        "sourceSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessTreeClean": true,
+        "platform": "WINDOWS_LOCAL",
+        "syntheticOnly": true,
+        "rendererClass": "REAL_GPU",
+        "headed": true,
+        "channel": "chrome",
+        "browserVersion": "156.0.8078.47",
+        "driverVersion": "32.0.16.1074",
+        "driverSource": "BROWSER_SYSTEM_INFO",
+        "dprRequest": "1",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "dpr": 1,
+        "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+      },
+      "metrics": {
+        "navigation": {
+          "fetchStart": 0.30000007152557373,
+          "requestStart": 1.2000000476837158,
+          "responseStart": 6.900000095367432,
+          "responseEnd": 203.80000007152557,
+          "workerStart": 0,
+          "transferBytes": 6713,
+          "encodedBytes": 6413
+        },
+        "firstContentfulPaintMs": 756,
+        "worldReadyMs": 4058,
+        "serviceWorkerControlled": true,
+        "resources": [
+          {
+            "type": "link",
+            "transferBytes": 15703,
+            "encodedBytes": 15403,
+            "durationMs": 496.5,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 163749,
+            "encodedBytes": 163449,
+            "durationMs": 2151.100000023842,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 36411,
+            "encodedBytes": 36111,
+            "durationMs": 840,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 986,
+            "encodedBytes": 686,
+            "durationMs": 215.20000004768372,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 26295,
+            "encodedBytes": 25995,
+            "durationMs": 668,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 21468,
+            "encodedBytes": 21168,
+            "durationMs": 785.8000000715256,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 22208,
+            "encodedBytes": 21908,
+            "durationMs": 796.6999999284744,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 22192,
+            "encodedBytes": 21892,
+            "durationMs": 827.1000000238419,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 41072,
+            "encodedBytes": 40772,
+            "durationMs": 1185.2999999523163,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 12472,
+            "encodedBytes": 12172,
+            "durationMs": 853.4000000953674,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 11832,
+            "encodedBytes": 11532,
+            "durationMs": 1142.8999999761581,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 9644,
+            "encodedBytes": 9344,
+            "durationMs": 1118.2000000476837,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 20673,
+            "encodedBytes": 20373,
+            "durationMs": 484.3000000715256,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "fetch",
+            "transferBytes": 315,
+            "encodedBytes": 15,
+            "durationMs": 170.60000002384186,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "script",
+            "transferBytes": 180120,
+            "encodedBytes": 179820,
+            "durationMs": 1332.2000000476837,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 22332,
+            "encodedBytes": 22032,
+            "durationMs": 526.3999999761581,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 12476,
+            "encodedBytes": 12176,
+            "durationMs": 427.10000002384186,
+            "fromServiceWorker": false
+          }
+        ]
+      },
+      "navigationViaServiceWorker": false,
+      "navigationFetchMs": 203.5,
+      "navigationThrottleObserved": true,
+      "shellBudget": true,
+      "worldBudget": true
+    },
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "run": 2,
+      "cache": "warm",
+      "environment": {
+        "sourceSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessTreeClean": true,
+        "platform": "WINDOWS_LOCAL",
+        "syntheticOnly": true,
+        "rendererClass": "REAL_GPU",
+        "headed": true,
+        "channel": "chrome",
+        "browserVersion": "156.0.8078.47",
+        "driverVersion": "32.0.16.1074",
+        "driverSource": "BROWSER_SYSTEM_INFO",
+        "dprRequest": "1",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "dpr": 1,
+        "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+      },
+      "metrics": {
+        "navigation": {
+          "fetchStart": 1.8000000715255737,
+          "requestStart": 1.8000000715255737,
+          "responseStart": 174.20000004768372,
+          "responseEnd": 195.60000002384186,
+          "workerStart": 1.600000023841858,
+          "transferBytes": 24958,
+          "encodedBytes": 24658
+        },
+        "firstContentfulPaintMs": 220,
+        "worldReadyMs": 614.7000000476837,
+        "serviceWorkerControlled": true,
+        "resources": [
+          {
+            "type": "link",
+            "transferBytes": 0,
+            "encodedBytes": 87420,
+            "durationMs": 1.399999976158142,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 510979,
+            "durationMs": 1.9000000953674316,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 125310,
+            "durationMs": 2,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 1189,
+            "durationMs": 2.200000047683716,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 91868,
+            "durationMs": 2.200000047683716,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 21168,
+            "durationMs": 0.8999999761581421,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 21908,
+            "durationMs": 1,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 21892,
+            "durationMs": 1.3000000715255737,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 12172,
+            "durationMs": 1.2999999523162842,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 11532,
+            "durationMs": 1.5,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 40772,
+            "durationMs": 1,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 9344,
+            "durationMs": 0.7999999523162842,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 20673,
+            "encodedBytes": 20373,
+            "durationMs": 282.60000002384186,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "fetch",
+            "transferBytes": 315,
+            "encodedBytes": 15,
+            "durationMs": 165.70000004768372,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "script",
+            "transferBytes": 0,
+            "encodedBytes": 667872,
+            "durationMs": 1.1999999284744263,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 22032,
+            "durationMs": 1,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 12176,
+            "durationMs": 0.8999999761581421,
+            "fromServiceWorker": true
+          }
+        ]
+      },
+      "navigationViaServiceWorker": true,
+      "navigationFetchMs": 193.79999995231628,
+      "navigationThrottleObserved": true,
+      "shellBudget": true,
+      "worldBudget": true
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "run": 0,
+      "cache": "cold",
+      "environment": {
+        "sourceSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessTreeClean": true,
+        "platform": "WINDOWS_LOCAL",
+        "syntheticOnly": true,
+        "rendererClass": "REAL_GPU",
+        "headed": true,
+        "channel": "chrome",
+        "browserVersion": "156.0.8078.47",
+        "driverVersion": "32.0.16.1074",
+        "driverSource": "BROWSER_SYSTEM_INFO",
+        "dprRequest": "1",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "dpr": 1,
+        "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+      },
+      "metrics": {
+        "navigation": {
+          "fetchStart": 0.5,
+          "requestStart": 1.2000000476837158,
+          "responseStart": 6.600000023841858,
+          "responseEnd": 196.20000004768372,
+          "workerStart": 0,
+          "transferBytes": 6713,
+          "encodedBytes": 6413
+        },
+        "firstContentfulPaintMs": 732,
+        "worldReadyMs": 3996.2000000476837,
+        "serviceWorkerControlled": true,
+        "resources": [
+          {
+            "type": "link",
+            "transferBytes": 15703,
+            "encodedBytes": 15403,
+            "durationMs": 476.7000000476837,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 26295,
+            "encodedBytes": 25995,
+            "durationMs": 647.3000000715256,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 36411,
+            "encodedBytes": 36111,
+            "durationMs": 895.6000000238419,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 163749,
+            "encodedBytes": 163449,
+            "durationMs": 2147.8000000715256,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 986,
+            "encodedBytes": 686,
+            "durationMs": 213.29999995231628,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 21468,
+            "encodedBytes": 21168,
+            "durationMs": 802.1000000238419,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 22208,
+            "encodedBytes": 21908,
+            "durationMs": 796.9000000953674,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 22192,
+            "encodedBytes": 21892,
+            "durationMs": 796.8999999761581,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 41072,
+            "encodedBytes": 40772,
+            "durationMs": 1189.8999999761581,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 11832,
+            "encodedBytes": 11532,
+            "durationMs": 871.2000000476837,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 12472,
+            "encodedBytes": 12172,
+            "durationMs": 1196.5999999046326,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 9644,
+            "encodedBytes": 9344,
+            "durationMs": 1121.3999999761581,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 20673,
+            "encodedBytes": 20373,
+            "durationMs": 487.7000000476837,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "fetch",
+            "transferBytes": 315,
+            "encodedBytes": 15,
+            "durationMs": 180,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "script",
+            "transferBytes": 180120,
+            "encodedBytes": 179820,
+            "durationMs": 1332.3999999761581,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 22332,
+            "encodedBytes": 22032,
+            "durationMs": 527.8000000715256,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 12476,
+            "encodedBytes": 12176,
+            "durationMs": 414.2999999523163,
+            "fromServiceWorker": false
+          }
+        ]
+      },
+      "navigationViaServiceWorker": false,
+      "navigationFetchMs": 195.70000004768372,
+      "navigationThrottleObserved": true,
+      "shellBudget": true,
+      "worldBudget": true
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "run": 0,
+      "cache": "warm",
+      "environment": {
+        "sourceSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessTreeClean": true,
+        "platform": "WINDOWS_LOCAL",
+        "syntheticOnly": true,
+        "rendererClass": "REAL_GPU",
+        "headed": true,
+        "channel": "chrome",
+        "browserVersion": "156.0.8078.47",
+        "driverVersion": "32.0.16.1074",
+        "driverSource": "BROWSER_SYSTEM_INFO",
+        "dprRequest": "1",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "dpr": 1,
+        "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+      },
+      "metrics": {
+        "navigation": {
+          "fetchStart": 2,
+          "requestStart": 2,
+          "responseStart": 177.89999997615814,
+          "responseEnd": 209,
+          "workerStart": 1.7999999523162842,
+          "transferBytes": 24958,
+          "encodedBytes": 24658
+        },
+        "firstContentfulPaintMs": 224,
+        "worldReadyMs": 595.2999999523163,
+        "serviceWorkerControlled": true,
+        "resources": [
+          {
+            "type": "link",
+            "transferBytes": 0,
+            "encodedBytes": 87420,
+            "durationMs": 1.5,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 510979,
+            "durationMs": 2,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 91868,
+            "durationMs": 2.4000000953674316,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 125310,
+            "durationMs": 2.4000000953674316,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 1189,
+            "durationMs": 2.399999976158142,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 21168,
+            "durationMs": 0.8999999761581421,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 21908,
+            "durationMs": 1.100000023841858,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 21892,
+            "durationMs": 1.3000000715255737,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 40772,
+            "durationMs": 1.2999999523162842,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 11532,
+            "durationMs": 1.0999999046325684,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 12172,
+            "durationMs": 1.2000000476837158,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 9344,
+            "durationMs": 0.7000000476837158,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 20673,
+            "encodedBytes": 20373,
+            "durationMs": 276.39999997615814,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "fetch",
+            "transferBytes": 315,
+            "encodedBytes": 15,
+            "durationMs": 172.89999997615814,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "script",
+            "transferBytes": 0,
+            "encodedBytes": 667872,
+            "durationMs": 1.5,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 22032,
+            "durationMs": 1,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 12176,
+            "durationMs": 0.8000000715255737,
+            "fromServiceWorker": true
+          }
+        ]
+      },
+      "navigationViaServiceWorker": true,
+      "navigationFetchMs": 207,
+      "navigationThrottleObserved": true,
+      "shellBudget": true,
+      "worldBudget": true
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "run": 1,
+      "cache": "cold",
+      "environment": {
+        "sourceSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessTreeClean": true,
+        "platform": "WINDOWS_LOCAL",
+        "syntheticOnly": true,
+        "rendererClass": "REAL_GPU",
+        "headed": true,
+        "channel": "chrome",
+        "browserVersion": "156.0.8078.47",
+        "driverVersion": "32.0.16.1074",
+        "driverSource": "BROWSER_SYSTEM_INFO",
+        "dprRequest": "1",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "dpr": 1,
+        "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+      },
+      "metrics": {
+        "navigation": {
+          "fetchStart": 0.5,
+          "requestStart": 1.2000000476837158,
+          "responseStart": 6.700000047683716,
+          "responseEnd": 193.90000009536743,
+          "workerStart": 0,
+          "transferBytes": 6713,
+          "encodedBytes": 6413
+        },
+        "firstContentfulPaintMs": 748,
+        "worldReadyMs": 4004.3000000715256,
+        "serviceWorkerControlled": true,
+        "resources": [
+          {
+            "type": "link",
+            "transferBytes": 15703,
+            "encodedBytes": 15403,
+            "durationMs": 486.39999997615814,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 163749,
+            "encodedBytes": 163449,
+            "durationMs": 2142.100000023842,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 36411,
+            "encodedBytes": 36111,
+            "durationMs": 859.8999999761581,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 986,
+            "encodedBytes": 686,
+            "durationMs": 218,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 26295,
+            "encodedBytes": 25995,
+            "durationMs": 658.1999999284744,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 21468,
+            "encodedBytes": 21168,
+            "durationMs": 805.5,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 22208,
+            "encodedBytes": 21908,
+            "durationMs": 799.6999999284744,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 22192,
+            "encodedBytes": 21892,
+            "durationMs": 830.8999999761581,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 41072,
+            "encodedBytes": 40772,
+            "durationMs": 1171.1000000238419,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 11832,
+            "encodedBytes": 11532,
+            "durationMs": 841,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 12472,
+            "encodedBytes": 12172,
+            "durationMs": 1191,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 9644,
+            "encodedBytes": 9344,
+            "durationMs": 1115.5,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 20673,
+            "encodedBytes": 20373,
+            "durationMs": 501.7999999523163,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "fetch",
+            "transferBytes": 315,
+            "encodedBytes": 15,
+            "durationMs": 168.09999990463257,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "script",
+            "transferBytes": 180120,
+            "encodedBytes": 179820,
+            "durationMs": 1335.8000000715256,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 22332,
+            "encodedBytes": 22032,
+            "durationMs": 528.7000000476837,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 12476,
+            "encodedBytes": 12176,
+            "durationMs": 428.7000000476837,
+            "fromServiceWorker": false
+          }
+        ]
+      },
+      "navigationViaServiceWorker": false,
+      "navigationFetchMs": 193.40000009536743,
+      "navigationThrottleObserved": true,
+      "shellBudget": true,
+      "worldBudget": true
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "run": 1,
+      "cache": "warm",
+      "environment": {
+        "sourceSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessTreeClean": true,
+        "platform": "WINDOWS_LOCAL",
+        "syntheticOnly": true,
+        "rendererClass": "REAL_GPU",
+        "headed": true,
+        "channel": "chrome",
+        "browserVersion": "156.0.8078.47",
+        "driverVersion": "32.0.16.1074",
+        "driverSource": "BROWSER_SYSTEM_INFO",
+        "dprRequest": "1",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "dpr": 1,
+        "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+      },
+      "metrics": {
+        "navigation": {
+          "fetchStart": 1.7999999523162842,
+          "requestStart": 1.7999999523162842,
+          "responseStart": 173.39999997615814,
+          "responseEnd": 204,
+          "workerStart": 1.5,
+          "transferBytes": 24958,
+          "encodedBytes": 24658
+        },
+        "firstContentfulPaintMs": 232,
+        "worldReadyMs": 602,
+        "serviceWorkerControlled": true,
+        "resources": [
+          {
+            "type": "link",
+            "transferBytes": 0,
+            "encodedBytes": 87420,
+            "durationMs": 1.7000000476837158,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 125310,
+            "durationMs": 3.200000047683716,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 510979,
+            "durationMs": 3,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 1189,
+            "durationMs": 3.200000047683716,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 91868,
+            "durationMs": 3.200000047683716,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 21168,
+            "durationMs": 1.1999999284744263,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 21908,
+            "durationMs": 1,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 21892,
+            "durationMs": 1.2000000476837158,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 11532,
+            "durationMs": 1.100000023841858,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 12172,
+            "durationMs": 1.2000000476837158,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 40772,
+            "durationMs": 1,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 9344,
+            "durationMs": 1,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 20673,
+            "encodedBytes": 20373,
+            "durationMs": 272.5,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "fetch",
+            "transferBytes": 315,
+            "encodedBytes": 15,
+            "durationMs": 170.20000004768372,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "script",
+            "transferBytes": 0,
+            "encodedBytes": 667872,
+            "durationMs": 1.399999976158142,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 22032,
+            "durationMs": 1.2999999523162842,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 12176,
+            "durationMs": 1.100000023841858,
+            "fromServiceWorker": true
+          }
+        ]
+      },
+      "navigationViaServiceWorker": true,
+      "navigationFetchMs": 202.20000004768372,
+      "navigationThrottleObserved": true,
+      "shellBudget": true,
+      "worldBudget": true
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "run": 2,
+      "cache": "cold",
+      "environment": {
+        "sourceSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessTreeClean": true,
+        "platform": "WINDOWS_LOCAL",
+        "syntheticOnly": true,
+        "rendererClass": "REAL_GPU",
+        "headed": true,
+        "channel": "chrome",
+        "browserVersion": "156.0.8078.47",
+        "driverVersion": "32.0.16.1074",
+        "driverSource": "BROWSER_SYSTEM_INFO",
+        "dprRequest": "1",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "dpr": 1,
+        "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+      },
+      "metrics": {
+        "navigation": {
+          "fetchStart": 0.2999999523162842,
+          "requestStart": 0.8999999761581421,
+          "responseStart": 6.799999952316284,
+          "responseEnd": 193.59999990463257,
+          "workerStart": 0,
+          "transferBytes": 6712,
+          "encodedBytes": 6412
+        },
+        "firstContentfulPaintMs": 752,
+        "worldReadyMs": 4046,
+        "serviceWorkerControlled": true,
+        "resources": [
+          {
+            "type": "link",
+            "transferBytes": 15703,
+            "encodedBytes": 15403,
+            "durationMs": 492.5,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 163749,
+            "encodedBytes": 163449,
+            "durationMs": 2149.1999999284744,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 26295,
+            "encodedBytes": 25995,
+            "durationMs": 649.1999999284744,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 36411,
+            "encodedBytes": 36111,
+            "durationMs": 836.5999999046326,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 986,
+            "encodedBytes": 686,
+            "durationMs": 212.5,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 21468,
+            "encodedBytes": 21168,
+            "durationMs": 802.3999999761581,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 22208,
+            "encodedBytes": 21908,
+            "durationMs": 812.0999999046326,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 22192,
+            "encodedBytes": 21892,
+            "durationMs": 826.9000000953674,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 41072,
+            "encodedBytes": 40772,
+            "durationMs": 1168.5999999046326,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 11832,
+            "encodedBytes": 11532,
+            "durationMs": 822,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 12472,
+            "encodedBytes": 12172,
+            "durationMs": 1174.2999999523163,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 9644,
+            "encodedBytes": 9344,
+            "durationMs": 1124.6000000238419,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "other",
+            "transferBytes": 20673,
+            "encodedBytes": 20373,
+            "durationMs": 485.89999997615814,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "fetch",
+            "transferBytes": 315,
+            "encodedBytes": 15,
+            "durationMs": 180.39999997615814,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "script",
+            "transferBytes": 180120,
+            "encodedBytes": 179820,
+            "durationMs": 1341.6000000238419,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 22332,
+            "encodedBytes": 22032,
+            "durationMs": 523.1999999284744,
+            "fromServiceWorker": false
+          },
+          {
+            "type": "css",
+            "transferBytes": 12476,
+            "encodedBytes": 12176,
+            "durationMs": 425.1999999284744,
+            "fromServiceWorker": false
+          }
+        ]
+      },
+      "navigationViaServiceWorker": false,
+      "navigationFetchMs": 193.29999995231628,
+      "navigationThrottleObserved": true,
+      "shellBudget": true,
+      "worldBudget": true
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "run": 2,
+      "cache": "warm",
+      "environment": {
+        "sourceSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessSha": "252f5e7b3f32d8e45749356da7587740008bde7a",
+        "harnessTreeClean": true,
+        "platform": "WINDOWS_LOCAL",
+        "syntheticOnly": true,
+        "rendererClass": "REAL_GPU",
+        "headed": true,
+        "channel": "chrome",
+        "browserVersion": "156.0.8078.47",
+        "driverVersion": "32.0.16.1074",
+        "driverSource": "BROWSER_SYSTEM_INFO",
+        "dprRequest": "1",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1660 Ti (0x00002182) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "vendor": "Google Inc. (NVIDIA)",
+        "dpr": 1,
+        "memoryMeaning": "Heap and renderer counters are not physical GPU memory measurements."
+      },
+      "metrics": {
+        "navigation": {
+          "fetchStart": 1.100000023841858,
+          "requestStart": 1.100000023841858,
+          "responseStart": 176.29999995231628,
+          "responseEnd": 198.60000002384186,
+          "workerStart": 0.7999999523162842,
+          "transferBytes": 24958,
+          "encodedBytes": 24658
+        },
+        "firstContentfulPaintMs": 236,
+        "worldReadyMs": 603.7999999523163,
+        "serviceWorkerControlled": true,
+        "resources": [
+          {
+            "type": "link",
+            "transferBytes": 0,
+            "encodedBytes": 87420,
+            "durationMs": 1.7999999523162842,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 510979,
+            "durationMs": 1.8000000715255737,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 91868,
+            "durationMs": 2,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 125310,
+            "durationMs": 1.8000000715255737,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 0,
+            "encodedBytes": 1189,
+            "durationMs": 1.899999976158142,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 21168,
+            "durationMs": 0.8999999761581421,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 21908,
+            "durationMs": 2.5,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 21892,
+            "durationMs": 2.700000047683716,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 11532,
+            "durationMs": 3.899999976158142,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 12172,
+            "durationMs": 3.799999952316284,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 40772,
+            "durationMs": 1,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 9344,
+            "durationMs": 0.8999999761581421,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "other",
+            "transferBytes": 20673,
+            "encodedBytes": 20373,
+            "durationMs": 273.7000000476837,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "fetch",
+            "transferBytes": 315,
+            "encodedBytes": 15,
+            "durationMs": 167.70000004768372,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "script",
+            "transferBytes": 0,
+            "encodedBytes": 667872,
+            "durationMs": 1.1999999284744263,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 22032,
+            "durationMs": 0.8999999761581421,
+            "fromServiceWorker": true
+          },
+          {
+            "type": "css",
+            "transferBytes": 0,
+            "encodedBytes": 12176,
+            "durationMs": 1.100000023841858,
+            "fromServiceWorker": true
+          }
+        ]
+      },
+      "navigationViaServiceWorker": true,
+      "navigationFetchMs": 197.5,
+      "navigationThrottleObserved": true,
+      "shellBudget": true,
+      "worldBudget": true
+    }
+  ],
+  "externalHosts": []
+}
