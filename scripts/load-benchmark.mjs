@@ -2,6 +2,7 @@ import { expect } from "@playwright/test";
 import { mkdir, writeFile } from "node:fs/promises";
 import { createServer } from "node:net";
 import { launchBenchmark } from "./benchmark-browser.mjs";
+import { loadVerdict } from "./load-verdict.mjs";
 
 if (process.env.BENCH_GPU !== "real") throw Error("REAL_GPU_REQUIRED");
 const output = process.argv[2] ?? "test-results/load-benchmark";
@@ -34,7 +35,9 @@ async function throttleServiceWorkers(port, conditions) {
   });
   let nextId = 0;
   const pending = new Map();
-  const state = { attached: 0, throttled: 0, failures: [] };
+  // Throttled workers are tracked per browser context, so a worker restarting in one context cannot
+  // stand in for a worker that another context never attached.
+  const state = { attached: 0, throttled: 0, throttledContexts: new Set(), failures: [] };
   const send = (method, params = {}, sessionId) =>
     new Promise((resolve, reject) => {
       const id = ++nextId;
@@ -49,6 +52,7 @@ async function throttleServiceWorkers(port, conditions) {
         await send("Network.enable", {}, sessionId);
         await send("Network.emulateNetworkConditions", conditions, sessionId);
         state.throttled++;
+        state.throttledContexts.add(targetInfo.browserContextId);
       }
     } catch (error) {
       state.failures.push(String(error.message));
@@ -131,6 +135,7 @@ try {
           });
         });
         const cdp = await context.newCDPSession(page);
+        const { targetInfo } = await cdp.send("Target.getTargetInfo");
         await cdp.send("Network.enable");
         await cdp.send("Network.emulateNetworkConditions", network);
         for (const cache of ["cold", "warm"]) {
@@ -182,6 +187,9 @@ try {
             navigationFetchMs,
             navigationThrottleObserved:
               navigationFetchMs !== null && navigationFetchMs >= network.latency,
+            serviceWorkerThrottled: workers.state.throttledContexts.has(
+              targetInfo.browserContextId,
+            ),
             shellBudget:
               metrics.firstContentfulPaintMs !== null && metrics.firstContentfulPaintMs < 2000,
             worldBudget:
@@ -218,14 +226,7 @@ try {
     }
   }
   const workerState = workers.state;
-  const contexts = new Set(rows.map((row) => `${row.viewport.width}/${row.run}`)).size;
-  const status = (cache, budget) => {
-    const selected = rows.filter((row) => row.cache === cache);
-    // A sample that did not pay the emulated network says nothing about the 4G budget.
-    if (selected.some((row) => !row.navigationThrottleObserved)) return "NOT_VERIFIED";
-    if (cache === "warm" && workerState.throttled < contexts) return "NOT_VERIFIED";
-    return selected.every((row) => row[budget]) ? "MET" : "NOT_MET";
-  };
+  const status = (cache, budget) => loadVerdict(rows, cache, budget, workerState.failures);
   await writeFile(
     `${output}/report.json`,
     JSON.stringify(
@@ -236,6 +237,8 @@ try {
         serviceWorkerThrottle: {
           attached: workerState.attached,
           throttled: workerState.throttled,
+          throttledContexts: workerState.throttledContexts.size,
+          contexts: new Set(rows.map((row) => `${row.viewport.width}/${row.run}`)).size,
           failures: workerState.failures,
         },
         status: {
@@ -245,7 +248,7 @@ try {
           warmWorld: status("warm", "worldBudget"),
         },
         method:
-          "Production root with public fictional world. Three isolated contexts per viewport for cold HTTP/SW caches, followed by same-context reload after verified Service Worker control. CDP emulates 150ms latency and 1.6Mbps down/0.75Mbps up on the page and, through a second CDP client that auto-attaches before each service worker runs, on every service worker; no CPU throttling. A sample counts only if its navigation took at least the emulated latency from fetchStart to responseEnd, and warm samples also need every context's service worker throttled. No Playwright routing (which would disable HTTP cache). FCP is browser Paint Timing; world ready is observed from the actual scene state. No slow samples removed.",
+          "Production root with public fictional world. Three isolated contexts per viewport for cold HTTP/SW caches, followed by same-context reload after verified Service Worker control. CDP emulates 150ms latency and 1.6Mbps down/0.75Mbps up on the page and, through a second CDP client that auto-attaches before each service worker runs, on every service worker; no CPU throttling. A sample counts only if its navigation took at least the emulated latency from fetchStart to responseEnd, and warm samples also need their own context's service worker throttled; any service worker attach or throttle failure makes every verdict NOT_VERIFIED. No Playwright routing (which would disable HTTP cache). FCP is browser Paint Timing; world ready is observed from the actual scene state. No slow samples removed.",
         rows,
         externalHosts: [...externalHosts],
       },

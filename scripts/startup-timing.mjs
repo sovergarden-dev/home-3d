@@ -3,7 +3,8 @@ import { launchBenchmark } from "./benchmark-browser.mjs";
 
 /**
  * Cold production loads on the real GPU: when the first frame appears, when every startup variant
- * is compiled and when the scene opens for input. Run against scripts/production-server.mjs.
+ * has been submitted for compilation and when the scene opens for input. Run against
+ * scripts/production-server.mjs.
  */
 if (process.env.BENCH_GPU !== "real") throw Error("REAL_GPU_REQUIRED");
 const output = process.argv[2] ?? "test-results/startup-timing";
@@ -12,8 +13,10 @@ if (!Number.isInteger(runs) || runs < 1) throw Error("INVALID_RUNS");
 const origin = `http://127.0.0.1:${Number(process.env.PRODUCTION_QA_PORT ?? 4193)}`;
 await mkdir(output, { recursive: true });
 const median = (values) => {
-  const sorted = values.filter((value) => typeof value === "number").sort((a, b) => a - b);
-  if (!sorted.length) return null;
+  // Every run carries every mark (checked per run), so nothing is dropped from the median.
+  if (!values.length || values.some((value) => typeof value !== "number"))
+    throw Error("STARTUP_MARKS_MISSING");
+  const sorted = [...values].sort((a, b) => a - b);
   const middle = Math.floor(sorted.length / 2);
   return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
 };
@@ -73,8 +76,8 @@ try {
           parallelShaderCompile: Boolean(probe?.getExtension("KHR_parallel_shader_compile")),
         };
       });
-      if (marks.firstFrame === undefined || marks.ready === undefined)
-        throw Error("STARTUP_MARKS_MISSING");
+      const required = [marks.fcp, marks.firstFrame, marks.allVariants, marks.ready];
+      if (required.some((mark) => typeof mark !== "number")) throw Error("STARTUP_MARKS_MISSING");
       const row = {
         run,
         ...marks,
