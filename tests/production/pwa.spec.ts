@@ -12,6 +12,9 @@ test("production registers only in the top-level page; offline cache contains ow
     .poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller)))
     .toBe(true);
   expect((await page.request.get("/.vite/manifest.json")).status()).toBe(404);
+  // Only the hashed shells that sw.js references are published.
+  for (const shell of ["/offline-home.html", "/offline-about.html"])
+    expect((await page.request.get(shell)).status()).toBe(404);
   const manifest = await (await page.request.get("/manifest.webmanifest")).json();
   expect(manifest.icons.map((icon: { sizes: string }) => icon.sizes)).toEqual([
     "192x192",

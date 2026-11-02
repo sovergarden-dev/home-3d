@@ -681,6 +681,11 @@ function createLabelSprite(text: string, position: Position2, disposables: Dispo
     disposables.push(material);
   }
   const sprite = new THREE.Sprite(material);
+  // three.js shares one geometry across every Sprite. Each renderer that draws it adds a
+  // "dispose" listener holding that renderer's WebGL context, so a torn-down scene stays
+  // reachable until the geometry is disposed. Disposing frees GPU buffers only; the next
+  // renderer uploads it again.
+  if (!disposables.includes(sprite.geometry)) disposables.push(sprite.geometry);
   sprite.position.set(position[0], 0.5, position[1]);
   sprite.scale.set(8, 1.5, 1);
   sprite.userData = { label: text };
