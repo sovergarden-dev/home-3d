@@ -52,4 +52,6 @@ test("illustrative details toggle without changing the synthetic world or leakin
     body: JSON.stringify({ syntheticOnly: true, baseline, geometryCounts: counts, cycles: 3 }),
   });
   expect(new Set(counts).size).toBe(1);
+  // Equal counts alone would also hold if the details never drew: they upload geometry of their own.
+  expect(counts[0]).toBeGreaterThan(baseline);
 });

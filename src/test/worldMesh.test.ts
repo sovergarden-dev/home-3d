@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import * as THREE from "three";
 import { buildWorldMeshes } from "@/engine/world/buildWorldMeshes";
 import { SYNTHETIC_NEIGHBORHOOD } from "@/world/fixtures/syntheticNeighborhood";
@@ -32,6 +32,26 @@ describe("world mesh lifecycle", () => {
     expect(bundle.layers.trees.visible).toBe(false);
 
     expect(() => bundle.dispose()).not.toThrow();
+  });
+
+  it("releases renderers from the geometry three.js shares across label sprites", () => {
+    const material = new THREE.MeshStandardMaterial();
+    const bundle = buildWorldMeshes(SYNTHETIC_NEIGHBORHOOD, () => material);
+    const sprites: THREE.Sprite[] = [];
+    bundle.group.traverse((object) => {
+      if (object instanceof THREE.Sprite) sprites.push(object);
+    });
+    expect(sprites.length).toBeGreaterThan(1);
+    const shared = sprites[0]!.geometry;
+    expect(sprites.every((sprite) => sprite.geometry === shared)).toBe(true);
+    // A renderer that drew a sprite keeps a listener like this, and with it its WebGL context,
+    // until the geometry is disposed.
+    const rendererCleanup = vi.fn(() => shared.removeEventListener("dispose", rendererCleanup));
+    shared.addEventListener("dispose", rendererCleanup);
+    bundle.dispose();
+    expect(rendererCleanup).toHaveBeenCalledTimes(1);
+    expect(shared.hasEventListener("dispose", rendererCleanup)).toBe(false);
+    material.dispose();
   });
 
   it("renders tunnels below surface by structural layer while preserving surveyed elevation", () => {

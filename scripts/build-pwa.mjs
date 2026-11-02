@@ -6,12 +6,33 @@ import { readBuildOutput } from "../build/output.mjs";
 
 const output = await readBuildOutput();
 const root = output.root;
+const exists = (file) =>
+  stat(file).then(
+    () => true,
+    () => false,
+  );
+// Vite's internal manifest may include absolute build paths; it is tooling input, not a public
+// asset. Settle it before writing anything, so a stop never leaves half-written PWA output.
+const viteDirectory = path.join(root, ".vite");
+const internalManifest = path.join(viteDirectory, "manifest.json");
+const privateManifest = path.join(path.dirname(output.serverEntry), "client-manifest.json");
+// Never publish other Vite internals; an unexpected file stops the build instead of shipping it.
+if (
+  (await exists(viteDirectory)) &&
+  (await readdir(viteDirectory)).some((file) => file !== "manifest.json")
+)
+  throw Error("UNEXPECTED_PUBLIC_VITE_FILES");
+if (await exists(internalManifest)) await rename(internalManifest, privateManifest);
+else if (!(await exists(privateManifest))) throw Error("VITE_CLIENT_MANIFEST_REQUIRED");
+if (await exists(viteDirectory)) await rmdir(viteDirectory);
 const { default: application } = await import(pathToFileURL(output.serverEntry).href);
 if (typeof application?.fetch !== "function") throw Error("BUILT_FETCH_APPLICATION_REQUIRED");
 // Render only the public initial shell from the same built app, without starting a server.
-for (const [route, file] of [
-  ["/", "offline-home.html"],
-  ["/gioi-thieu", "offline-about.html"],
+// Shells stay in memory: only the hashed copies that `sw.js` references are written.
+const rendered = [];
+for (const [route, name] of [
+  ["/", "offline-home"],
+  ["/gioi-thieu", "offline-about"],
 ]) {
   const request = new Request(`https://home3d-build.invalid${route}`);
   Object.defineProperty(request, "ip", { value: undefined, writable: true, configurable: true });
@@ -26,7 +47,14 @@ for (const [route, file] of [
   );
   if (response.status !== 200 || !response.headers.get("content-type")?.includes("text/html"))
     throw Error("PUBLIC_SHELL_RENDER_FAILED");
-  await writeFile(path.join(root, file), await response.text());
+  const html = await response.text();
+  if (
+    !html.includes("<html") ||
+    !html.includes("/assets/") ||
+    html.includes("SYNTHETIC_PRIVATE_SENTINEL")
+  )
+    throw Error("PUBLIC_PRERENDERED_SHELL_REQUIRED");
+  rendered.push({ route, name, bytes: Buffer.from(html, "utf8") });
 }
 const digest = (bytes) => createHash("sha256").update(bytes).digest("hex");
 const contentTypes = {
@@ -56,24 +84,15 @@ for (const file of await readdir(path.join(root, "assets"))) {
     throw Error("HASHED_PUBLIC_ASSET_REQUIRED");
   await add(`assets/${file}`);
 }
-// A rerun renders new shell bytes; drop hashed shells from earlier runs so only referenced ones ship.
+// A rerun renders new shell bytes; drop shells from earlier runs, including unhashed copies that
+// older builds wrote, so only the ones `sw.js` references ship.
 for (const file of await readdir(root)) {
-  if (/^offline-(?:home|about)-[a-f0-9]{16}\.html$/.test(file)) await rm(path.join(root, file));
+  if (/^offline-(?:home|about)(?:-[a-f0-9]{16})?\.html$/.test(file))
+    await rm(path.join(root, file));
 }
 const shells = {};
-for (const [route, source] of [
-  ["/", "offline-home.html"],
-  ["/gioi-thieu", "offline-about.html"],
-]) {
-  const bytes = await readFile(path.join(root, source));
-  const html = bytes.toString("utf8");
-  if (
-    !html.includes("<html") ||
-    !html.includes("/assets/") ||
-    html.includes("SYNTHETIC_PRIVATE_SENTINEL")
-  )
-    throw Error("PUBLIC_PRERENDERED_SHELL_REQUIRED");
-  const file = source.replace(".html", `-${digest(bytes).slice(0, 16)}.html`);
+for (const { route, name, bytes } of rendered) {
+  const file = `${name}-${digest(bytes).slice(0, 16)}.html`;
   await writeFile(path.join(root, file), bytes);
   await add(file);
   shells[route] = `/${file}`;
@@ -117,22 +136,6 @@ const pwaHeaders =
   "\n/sw.js\n  Cache-Control: no-cache\n  Service-Worker-Allowed: /\n/manifest.webmanifest\n  Cache-Control: no-cache\n";
 // Safe to rerun on the same output: the PWA header block is appended once.
 if (!existing.includes(pwaHeaders)) await writeFile(headers, existing + pwaHeaders);
-// Vite's internal manifest may include absolute build paths; it is tooling input, not a public asset.
-const exists = (file) =>
-  stat(file).then(
-    () => true,
-    () => false,
-  );
-const viteDirectory = path.join(root, ".vite");
-const internalManifest = path.join(viteDirectory, "manifest.json");
-const privateManifest = path.join(path.dirname(output.serverEntry), "client-manifest.json");
-if (await exists(internalManifest)) await rename(internalManifest, privateManifest);
-else if (!(await exists(privateManifest))) throw Error("VITE_CLIENT_MANIFEST_REQUIRED");
-if (await exists(viteDirectory)) {
-  // Never publish other Vite internals; an unexpected file stops the build instead of shipping it.
-  if ((await readdir(viteDirectory)).length) throw Error("UNEXPECTED_PUBLIC_VITE_FILES");
-  await rmdir(viteDirectory);
-}
 console.log(
   JSON.stringify({
     pwa: "generated",
