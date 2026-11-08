@@ -1,12 +1,93 @@
 import { expect } from "@playwright/test";
 import { mkdir, writeFile } from "node:fs/promises";
+import { createServer } from "node:net";
 import { launchBenchmark } from "./benchmark-browser.mjs";
+import { loadVerdict } from "./load-verdict.mjs";
 
 if (process.env.BENCH_GPU !== "real") throw Error("REAL_GPU_REQUIRED");
 const output = process.argv[2] ?? "test-results/load-benchmark";
 const origin = `http://127.0.0.1:${Number(process.env.PRODUCTION_QA_PORT ?? 4193)}`;
 await mkdir(output, { recursive: true });
-const { browser, environment } = await launchBenchmark(["--mute-audio"]);
+
+const freeLoopbackPort = () =>
+  new Promise((resolve, reject) => {
+    const server = createServer();
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", () => {
+      const { port } = server.address();
+      server.close(() => resolve(port));
+    });
+  });
+
+/**
+ * A page's CDP session does not throttle its service worker, and warm navigations go through the
+ * worker (network-first). This second CDP client attaches to every service worker before it runs
+ * and applies the same conditions, so warm loads pay the emulated network like cold ones.
+ */
+async function throttleServiceWorkers(port, conditions) {
+  const version = await (await fetch(`http://127.0.0.1:${port}/json/version`)).json();
+  const socket = new WebSocket(version.webSocketDebuggerUrl);
+  await new Promise((resolve, reject) => {
+    socket.addEventListener("open", resolve, { once: true });
+    socket.addEventListener("error", () => reject(Error("SERVICE_WORKER_CDP_UNAVAILABLE")), {
+      once: true,
+    });
+  });
+  let nextId = 0;
+  const pending = new Map();
+  // Throttled workers are tracked per browser context, so a worker restarting in one context cannot
+  // stand in for a worker that another context never attached.
+  const state = { attached: 0, throttled: 0, throttledContexts: new Set(), failures: [] };
+  const send = (method, params = {}, sessionId) =>
+    new Promise((resolve, reject) => {
+      const id = ++nextId;
+      pending.set(id, { resolve, reject });
+      socket.send(JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) }));
+    });
+  const attached = async ({ sessionId, targetInfo, waitingForDebugger }) => {
+    const worker = targetInfo.type === "service_worker";
+    if (worker) state.attached++;
+    try {
+      if (worker) {
+        await send("Network.enable", {}, sessionId);
+        await send("Network.emulateNetworkConditions", conditions, sessionId);
+        state.throttled++;
+        state.throttledContexts.add(targetInfo.browserContextId);
+      }
+    } catch (error) {
+      state.failures.push(String(error.message));
+    } finally {
+      // The target waits for this client too; release it after the conditions apply.
+      if (waitingForDebugger)
+        await send("Runtime.runIfWaitingForDebugger", {}, sessionId).catch((error) =>
+          state.failures.push(String(error.message)),
+        );
+      if (!worker) await send("Target.detachFromTarget", { sessionId }).catch(() => {});
+    }
+  };
+  socket.addEventListener("message", ({ data }) => {
+    const message = JSON.parse(String(data));
+    if (message.id !== undefined) {
+      const entry = pending.get(message.id);
+      pending.delete(message.id);
+      if (message.error) entry?.reject(Error(`CDP_ERROR ${message.error.message}`));
+      else entry?.resolve(message.result);
+    } else if (message.method === "Target.attachedToTarget") void attached(message.params);
+  });
+  await send("Target.setAutoAttach", {
+    autoAttach: true,
+    waitForDebuggerOnStart: true,
+    flatten: true,
+    filter: [{ type: "service_worker", exclude: false }, { exclude: true }],
+  });
+  return { state, close: () => socket.close() };
+}
+
+const debugPort = await freeLoopbackPort();
+const { browser, environment } = await launchBenchmark([
+  "--mute-audio",
+  `--remote-debugging-port=${debugPort}`,
+]);
 const rows = [],
   externalHosts = new Set();
 const network = {
@@ -16,7 +97,9 @@ const network = {
   uploadThroughput: 750000 / 8,
   connectionType: "cellular4g",
 };
+let workers;
 try {
+  workers = await throttleServiceWorkers(debugPort, network);
   for (const viewport of [
     { width: 1440, height: 900 },
     { width: 390, height: 844 },
@@ -52,6 +135,7 @@ try {
           });
         });
         const cdp = await context.newCDPSession(page);
+        const { targetInfo } = await cdp.send("Target.getTargetInfo");
         await cdp.send("Network.enable");
         await cdp.send("Network.emulateNetworkConditions", network);
         for (const cache of ["cold", "warm"]) {
@@ -88,12 +172,24 @@ try {
               fromServiceWorker: entry.workerStart > 0,
             })),
           }));
+          const navigation = metrics.navigation;
+          // A navigation answered over the emulated network cannot finish sooner than its latency.
+          const navigationFetchMs = navigation
+            ? navigation.responseEnd - navigation.fetchStart
+            : null;
           const row = {
             viewport,
             run,
             cache,
             environment: await environment(page),
             metrics,
+            navigationViaServiceWorker: Boolean(navigation && navigation.workerStart > 0),
+            navigationFetchMs,
+            navigationThrottleObserved:
+              navigationFetchMs !== null && navigationFetchMs >= network.latency,
+            serviceWorkerThrottled: workers.state.throttledContexts.has(
+              targetInfo.browserContextId,
+            ),
             shellBudget:
               metrics.firstContentfulPaintMs !== null && metrics.firstContentfulPaintMs < 2000,
             worldBudget:
@@ -109,6 +205,8 @@ try {
               shellMs: metrics.firstContentfulPaintMs,
               worldMs: metrics.worldReadyMs,
               controlled: metrics.serviceWorkerControlled,
+              viaServiceWorker: row.navigationViaServiceWorker,
+              navigationFetchMs,
             }),
           );
           if (cache === "cold") {
@@ -127,6 +225,8 @@ try {
       }
     }
   }
+  const workerState = workers.state;
+  const status = (cache, budget) => loadVerdict(rows, cache, budget, workerState.failures);
   await writeFile(
     `${output}/report.json`,
     JSON.stringify(
@@ -134,8 +234,21 @@ try {
         syntheticOnly: true,
         transport: process.env.PRODUCTION_QA_COMPRESSION ?? "identity",
         network,
+        serviceWorkerThrottle: {
+          attached: workerState.attached,
+          throttled: workerState.throttled,
+          throttledContexts: workerState.throttledContexts.size,
+          contexts: new Set(rows.map((row) => `${row.viewport.width}/${row.run}`)).size,
+          failures: workerState.failures,
+        },
+        status: {
+          coldShell: status("cold", "shellBudget"),
+          coldWorld: status("cold", "worldBudget"),
+          warmShell: status("warm", "shellBudget"),
+          warmWorld: status("warm", "worldBudget"),
+        },
         method:
-          "Production root with public fictional world. Three isolated contexts per viewport for cold HTTP/SW caches, followed by same-context reload after verified Service Worker control. CDP emulates 150ms latency and 1.6Mbps down/0.75Mbps up; no CPU throttling. No Playwright routing (which would disable HTTP cache). FCP is browser Paint Timing; world ready is observed from the actual scene state. No slow samples removed.",
+          "Production root with public fictional world. Three isolated contexts per viewport for cold HTTP/SW caches, followed by same-context reload after verified Service Worker control. CDP emulates 150ms latency and 1.6Mbps down/0.75Mbps up on the page and, through a second CDP client that auto-attaches before each service worker runs, on every service worker; no CPU throttling. A sample counts only if its navigation took at least the emulated latency from fetchStart to responseEnd, and warm samples also need their own context's service worker throttled; any service worker attach or throttle failure makes every verdict NOT_VERIFIED. No Playwright routing (which would disable HTTP cache). FCP is browser Paint Timing; world ready is observed from the actual scene state. No slow samples removed.",
         rows,
         externalHosts: [...externalHosts],
       },
@@ -143,6 +256,8 @@ try {
       2,
     ) + "\n",
   );
+  if (workerState.failures.length) throw Error("SERVICE_WORKER_THROTTLE_FAILED");
 } finally {
+  workers?.close();
   await browser.close();
 }

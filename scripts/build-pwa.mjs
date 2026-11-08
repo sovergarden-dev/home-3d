@@ -12,7 +12,8 @@ const exists = (file) =>
     () => false,
   );
 // Vite's internal manifest may include absolute build paths; it is tooling input, not a public
-// asset. Settle it before writing anything, so a stop never leaves half-written PWA output.
+// asset. Only check it here: it moves next to the server entry in the write phase below, so a
+// stop at any check leaves `.vite` as the build left it.
 const viteDirectory = path.join(root, ".vite");
 const internalManifest = path.join(viteDirectory, "manifest.json");
 const privateManifest = path.join(path.dirname(output.serverEntry), "client-manifest.json");
@@ -22,9 +23,9 @@ if (
   (await readdir(viteDirectory)).some((file) => file !== "manifest.json")
 )
   throw Error("UNEXPECTED_PUBLIC_VITE_FILES");
-if (await exists(internalManifest)) await rename(internalManifest, privateManifest);
-else if (!(await exists(privateManifest))) throw Error("VITE_CLIENT_MANIFEST_REQUIRED");
-if (await exists(viteDirectory)) await rmdir(viteDirectory);
+const moveInternalManifest = await exists(internalManifest);
+if (!moveInternalManifest && !(await exists(privateManifest)))
+  throw Error("VITE_CLIENT_MANIFEST_REQUIRED");
 const { default: application } = await import(pathToFileURL(output.serverEntry).href);
 if (typeof application?.fetch !== "function") throw Error("BUILT_FETCH_APPLICATION_REQUIRED");
 // Render only the public initial shell from the same built app, without starting a server.
@@ -68,8 +69,7 @@ const contentTypes = {
   ".html": "text/html; charset=utf-8",
 };
 const assets = [];
-async function add(file) {
-  const bytes = await readFile(path.join(root, file));
+function record(file, bytes) {
   const contentType = contentTypes[path.extname(file)];
   if (!contentType) throw Error("UNEXPECTED_OFFLINE_ASSET_TYPE");
   assets.push({
@@ -82,20 +82,7 @@ async function add(file) {
 for (const file of await readdir(path.join(root, "assets"))) {
   if (!/^[\w.-]+-[\w-]{8,}\.(?:js|css|woff2|png|svg|jpg|webp)$/.test(file))
     throw Error("HASHED_PUBLIC_ASSET_REQUIRED");
-  await add(`assets/${file}`);
-}
-// A rerun renders new shell bytes; drop shells from earlier runs, including unhashed copies that
-// older builds wrote, so only the ones `sw.js` references ship.
-for (const file of await readdir(root)) {
-  if (/^offline-(?:home|about)(?:-[a-f0-9]{16})?\.html$/.test(file))
-    await rm(path.join(root, file));
-}
-const shells = {};
-for (const { route, name, bytes } of rendered) {
-  const file = `${name}-${digest(bytes).slice(0, 16)}.html`;
-  await writeFile(path.join(root, file), bytes);
-  await add(file);
-  shells[route] = `/${file}`;
+  record(`assets/${file}`, await readFile(path.join(root, "assets", file)));
 }
 const icons = [192, 512].map((size) => {
   const matches = assets.filter((asset) =>
@@ -109,6 +96,14 @@ const icons = [192, 512].map((size) => {
     purpose: "any maskable",
   };
 });
+// Shell names come from their bytes, which can differ between runs; `sw.js` lists exactly these.
+const shells = {};
+const shellFiles = rendered.map(({ route, name, bytes }) => {
+  const file = `${name}-${digest(bytes).slice(0, 16)}.html`;
+  record(file, bytes);
+  shells[route] = `/${file}`;
+  return { file, bytes };
+});
 const manifest = {
   id: "/",
   name: "Phố Nhà Mình",
@@ -121,19 +116,28 @@ const manifest = {
   theme_color: "#F3F1EA",
   icons,
 };
-await writeFile(path.join(root, "manifest.webmanifest"), JSON.stringify(manifest, null, 2) + "\n");
 assets.sort((a, b) => a.path.localeCompare(b.path));
 const template = await readFile("src/pwa/service-worker.template.js", "utf8");
 const version = digest(JSON.stringify({ assets, shells, template })).slice(0, 20);
 const prefix = "home3d-public-static-v1-";
-await writeFile(
-  path.join(root, "sw.js"),
-  `const CACHE_PREFIX=${JSON.stringify(prefix)};\nconst CACHE_NAME=${JSON.stringify(prefix + version)};\nconst OWNED_ASSETS=${JSON.stringify(assets)};\nconst OFFLINE_SHELLS=${JSON.stringify(shells)};\n${template}`,
-);
+const serviceWorker = `const CACHE_PREFIX=${JSON.stringify(prefix)};\nconst CACHE_NAME=${JSON.stringify(prefix + version)};\nconst OWNED_ASSETS=${JSON.stringify(assets)};\nconst OFFLINE_SHELLS=${JSON.stringify(shells)};\n${template}`;
 const headers = path.join(root, "_headers");
 const existing = await readFile(headers, "utf8").catch(() => "");
 const pwaHeaders =
   "\n/sw.js\n  Cache-Control: no-cache\n  Service-Worker-Allowed: /\n/manifest.webmanifest\n  Cache-Control: no-cache\n";
+// Every check is above: a stop leaves the build output as it was, `.vite` included, and only an
+// I/O error can interrupt the writes below. The Vite manifest moves first, so a rerun after an
+// interrupted write finds it next to the server entry. Shells from earlier runs go next,
+// including unhashed copies that older builds wrote, so only the ones `sw.js` references ship.
+if (moveInternalManifest) await rename(internalManifest, privateManifest);
+if (await exists(viteDirectory)) await rmdir(viteDirectory);
+for (const file of await readdir(root)) {
+  if (/^offline-(?:home|about)(?:-[a-f0-9]{16})?\.html$/.test(file))
+    await rm(path.join(root, file));
+}
+for (const { file, bytes } of shellFiles) await writeFile(path.join(root, file), bytes);
+await writeFile(path.join(root, "manifest.webmanifest"), JSON.stringify(manifest, null, 2) + "\n");
+await writeFile(path.join(root, "sw.js"), serviceWorker);
 // Safe to rerun on the same output: the PWA header block is appended once.
 if (!existing.includes(pwaHeaders)) await writeFile(headers, existing + pwaHeaders);
 console.log(

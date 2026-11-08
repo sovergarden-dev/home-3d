@@ -55,7 +55,7 @@ Mọi lượt dưới 0,1. Không suy luận nguyên nhân của các giá trị
 
 ## Thời gian khởi động ở `07fc66e`
 
-Raw: `startup-timing-07fc66e.json`. Build production, server gzip loopback, Chrome headed trên GPU thật (`KHR_parallel_shader_compile` có), 1280×720 DPR 1, chặn service worker, không throttle, 5 lượt, mỗi lượt context mới. Mốc đo bằng `performance.now()` trong trang.
+Raw: `startup-timing-07fc66e.json`, do một script tạm chưa commit tạo (review delta PR #13 mục R-N5). Script đã commit thành `scripts/startup-timing.mjs` ở PR đo 02/11, cùng mốc và cách mở trang; số đo lại ở [real-gpu-2026-11-02](../real-gpu-2026-11-02/README.md). Build production, server gzip loopback, Chrome headed trên GPU thật (`KHR_parallel_shader_compile` có), 1280×720 DPR 1, chặn service worker, không throttle, 5 lượt, mỗi lượt context mới. Mốc đo bằng `performance.now()` trong trang.
 
 | Mốc                                            | Trung vị (ms) | Khoảng (ms) |
 | ---------------------------------------------- | ------------- | ----------- |

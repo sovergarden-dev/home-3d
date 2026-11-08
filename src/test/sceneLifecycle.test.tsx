@@ -160,6 +160,29 @@ describe("scene DOM lifecycle", () => {
     await waitFor(() => expect(screen.queryByRole("progressbar")).toBeNull());
     mounted.unmount();
   });
+  it("brings the splash back when an interactive scene loses its context", async () => {
+    const outlastSplashExit = () =>
+      act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 300));
+      });
+    const mounted = render(
+      <>
+        <Splash />
+        <SceneViewport />
+      </>,
+    );
+    await waitFor(() => expect(useAppStore.getState().sceneStatus).toBe("ready"));
+    await outlastSplashExit();
+    expect(screen.queryByRole("progressbar")).toBeNull();
+    // The automatic recovery never finishes: the splash covers it again, past its own exit.
+    runtime.ready = new Promise(() => {});
+    act(() => runtime.losses[0]!());
+    await waitFor(() => expect(runtime.created).toBe(2));
+    await outlastSplashExit();
+    expect(useAppStore.getState().sceneStatus).toBe("loading");
+    expect(screen.getByRole("progressbar")).toBeTruthy();
+    mounted.unmount();
+  });
   it("falls back and disposes the scene when its first frame fails", async () => {
     const failedFrame = Promise.reject(new Error("first frame failed"));
     // The viewport attaches its handler after the dynamic import; avoid an early unhandled rejection.
