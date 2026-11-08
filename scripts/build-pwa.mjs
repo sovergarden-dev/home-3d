@@ -12,7 +12,8 @@ const exists = (file) =>
     () => false,
   );
 // Vite's internal manifest may include absolute build paths; it is tooling input, not a public
-// asset. Move it first: the move is idempotent, so a rerun after any later stop finds it in place.
+// asset. Only check it here: it moves next to the server entry in the write phase below, so a
+// stop at any check leaves `.vite` as the build left it.
 const viteDirectory = path.join(root, ".vite");
 const internalManifest = path.join(viteDirectory, "manifest.json");
 const privateManifest = path.join(path.dirname(output.serverEntry), "client-manifest.json");
@@ -22,9 +23,9 @@ if (
   (await readdir(viteDirectory)).some((file) => file !== "manifest.json")
 )
   throw Error("UNEXPECTED_PUBLIC_VITE_FILES");
-if (await exists(internalManifest)) await rename(internalManifest, privateManifest);
-else if (!(await exists(privateManifest))) throw Error("VITE_CLIENT_MANIFEST_REQUIRED");
-if (await exists(viteDirectory)) await rmdir(viteDirectory);
+const moveInternalManifest = await exists(internalManifest);
+if (!moveInternalManifest && !(await exists(privateManifest)))
+  throw Error("VITE_CLIENT_MANIFEST_REQUIRED");
 const { default: application } = await import(pathToFileURL(output.serverEntry).href);
 if (typeof application?.fetch !== "function") throw Error("BUILT_FETCH_APPLICATION_REQUIRED");
 // Render only the public initial shell from the same built app, without starting a server.
@@ -124,9 +125,12 @@ const headers = path.join(root, "_headers");
 const existing = await readFile(headers, "utf8").catch(() => "");
 const pwaHeaders =
   "\n/sw.js\n  Cache-Control: no-cache\n  Service-Worker-Allowed: /\n/manifest.webmanifest\n  Cache-Control: no-cache\n";
-// Every check is above: a stop leaves the previous PWA output as it was, and only an I/O error can
-// interrupt the writes below. Shells from earlier runs go first, including unhashed copies that
-// older builds wrote, so only the ones `sw.js` references ship.
+// Every check is above: a stop leaves the build output as it was, `.vite` included, and only an
+// I/O error can interrupt the writes below. The Vite manifest moves first, so a rerun after an
+// interrupted write finds it next to the server entry. Shells from earlier runs go next,
+// including unhashed copies that older builds wrote, so only the ones `sw.js` references ship.
+if (moveInternalManifest) await rename(internalManifest, privateManifest);
+if (await exists(viteDirectory)) await rmdir(viteDirectory);
 for (const file of await readdir(root)) {
   if (/^offline-(?:home|about)(?:-[a-f0-9]{16})?\.html$/.test(file))
     await rm(path.join(root, file));
