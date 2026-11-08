@@ -230,6 +230,7 @@ test("an interactive scene that loses its context is covered again until recover
   await expect(root).toHaveAttribute("data-scene-state", "ready", { timeout: 60000 });
   await expect(splash).toHaveCount(0);
   expect(await pointerTargets(page)).toEqual(["itself", "itself"]);
+  expect(await tabReachesShell(page)).toBe(true);
   expect(await noonTakesFocus(page)).toBe(true);
 
   // Lose the interactive scene's context and hold the programs of its automatic recovery.
@@ -246,12 +247,14 @@ test("an interactive scene that loses its context is covered again until recover
   await expect(root).toHaveAttribute("data-scene-state", "loading");
   await expect(splash).toBeVisible();
   expect(await pointerTargets(page)).toEqual(["splash", "splash"]);
+  expect(await tabReachesShell(page)).toBe(false);
   expect(await noonTakesFocus(page)).toBe(false);
 
   await setHold(page, "none");
   await expect(root).toHaveAttribute("data-scene-state", "ready", { timeout: 60000 });
   await expect(splash).toHaveCount(0);
   expect(await pointerTargets(page)).toEqual(["itself", "itself"]);
+  expect(await tabReachesShell(page)).toBe(true);
   expect(await noonTakesFocus(page)).toBe(true);
 });
 
