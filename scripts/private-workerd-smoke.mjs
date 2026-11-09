@@ -12,6 +12,31 @@ const repo = process.argv[2],
   bundle = process.argv[3],
   output = process.argv[4];
 if (!repo || !bundle || !output) throw Error("EXPLICIT_QA_PATHS_REQUIRED");
+// Run the bundle with the private config's own compatibility settings, so this check covers them.
+let privateConfig;
+try {
+  privateConfig = JSON.parse(await readFile(path.join(repo, "wrangler.private.jsonc"), "utf8"));
+} catch {
+  throw Error("PRIVATE_CONFIG_MUST_STAY_PLAIN_JSON");
+}
+const { compatibility_date: compatibilityDate, compatibility_flags: compatibilityFlags } =
+  privateConfig;
+const calendarDate = (value) =>
+  typeof value === "string" &&
+  /^\d{4}-\d{2}-\d{2}$/.test(value) &&
+  Number.isFinite(Date.parse(`${value}T00:00:00Z`)) &&
+  new Date(`${value}T00:00:00Z`).toISOString().slice(0, 10) === value;
+if (!calendarDate(compatibilityDate)) throw Error("PRIVATE_CONFIG_COMPATIBILITY_DATE_INVALID");
+if (
+  !Array.isArray(compatibilityFlags) ||
+  !compatibilityFlags.every((flag) => typeof flag === "string" && /^[a-z0-9_]+$/.test(flag))
+)
+  throw Error("PRIVATE_CONFIG_COMPATIBILITY_FLAGS_INVALID");
+const { compatibilityDate: workerdSupportedCompatibilityDate } = qaRequire("workerd");
+if (!calendarDate(workerdSupportedCompatibilityDate))
+  throw Error("LOCAL_WORKERD_COMPATIBILITY_DATE_UNKNOWN");
+if (compatibilityDate > workerdSupportedCompatibilityDate)
+  throw Error("PRIVATE_CONFIG_COMPATIBILITY_DATE_NEWER_THAN_LOCAL_WORKERD");
 const source = await readFile(bundle, "utf8");
 assert(source.includes("HOME3D_PRIVATE_ENABLED"));
 const publicRoot = path.resolve(repo, ".output/public");
@@ -54,8 +79,8 @@ const options = convertV4MiniflareOptions({
   // QA bundles live outside the checkout; module names must not traverse above the Worker root.
   modulesRoot: path.dirname(path.resolve(bundle)),
   scriptPath: bundle,
-  compatibilityDate: "2026-06-01",
-  compatibilityFlags: ["nodejs_compat"],
+  compatibilityDate,
+  compatibilityFlags,
   bindings: env,
   serviceBindings: {
     ASSETS: async (request) => {
@@ -125,6 +150,9 @@ try {
         syntheticOnly: true,
         runtime: "workerd 1.20261019.1 via Miniflare5.20261019.1-beta",
         bundleSha256: createHash("sha256").update(source).digest("hex"),
+        compatibilityDate,
+        compatibilityFlags,
+        workerdSupportedCompatibilityDate,
         jwksRequestsInterceptedLocally: jwksRequests,
         unexpectedOutboundDenied: unexpectedOutbound,
         externalPlatformAccess: "NONE",
