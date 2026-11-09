@@ -19,10 +19,10 @@ Bằng chứng cho `patches/controls-attribution.patch` trên nhánh `codex/m2-c
 
 ## Kết quả
 
-| Họ | Vòng | Kết luận | Số liệu chính |
-| --- | --- | --- | --- |
-| p8 | 30 | `MET` | 420/420 thao tác < 100 ms (max 45,9 ms, p95 cao nhất 38 ms); 1.380/1.380 khoảng kéo ≤ 50 ms (p50 27,6 ms, p95 28,9 ms, max 42,1 ms); 0 khung dài, 0 `newProgramLinks`, 0 lỗi |
-| p9 | 30 | `MET` | 60/60 mẫu < 100 ms; `cold-sound-on` p50 51,7 ms, p95 72,3 ms, max 72,7 ms; `warm-sound-on` p50 34,05 ms, p95 46 ms, max 51 ms; 0 `newProgramLinks`, 0 lỗi; 2 `longFrames` ở cold chỉ là quy nguyên nhân |
+| Họ  | Vòng | Kết luận | Số liệu chính                                                                                                                                                                                           |
+| --- | ---- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| p8  | 30   | `MET`    | 420/420 thao tác < 100 ms (max 45,9 ms, p95 cao nhất 38 ms); 1.380/1.380 khoảng kéo ≤ 50 ms (p50 27,6 ms, p95 28,9 ms, max 42,1 ms); 0 khung dài, 0 `newProgramLinks`, 0 lỗi                            |
+| p9  | 30   | `MET`    | 60/60 mẫu < 100 ms; `cold-sound-on` p50 51,7 ms, p95 72,3 ms, max 72,7 ms; `warm-sound-on` p50 34,05 ms, p95 46 ms, max 51 ms; 0 `newProgramLinks`, 0 lỗi; 2 `longFrames` ở cold chỉ là quy nguyên nhân |
 
 So với bằng chứng cũ `a4f0121` (`docs/assets/qa/codex/m3/real-gpu-2026-10-31/`): P8 trước có 4/1.380 khoảng > 50 ms, P9 trước có 1/30 warm 107,5 ms. Số liệu mới nhất quán với chẩn đoán rằng nhịp timer của harness cũ là nguồn chính của các khoảng vượt ngưỡng (**suy luận**, không đo lại trên app, không sửa app).
 
