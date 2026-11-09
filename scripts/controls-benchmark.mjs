@@ -21,6 +21,7 @@ const rows = [];
 const frameRounds = [];
 const errors = [];
 let observed;
+let longFramesSupported = false;
 const stats = (values) => {
   if (!values.length) return null;
   const sorted = [...values].sort((a, b) => a - b),
@@ -32,6 +33,14 @@ const stats = (values) => {
     p95: sorted[Math.ceil(n * 0.95) - 1],
     max: sorted[n - 1],
   };
+};
+const gaps = (times) => times.slice(1).map((at, index) => at - times[index]);
+// page.waitForTimeout(16) is a Node timer. On the Windows benchmark machine a 16 ms Node timer
+// fired after about 31 ms (two 15.6 ms system ticks), which halved the drag input rate and put
+// timer jitter into the frame intervals. Spin on the monotonic clock instead.
+const pause = async (ms) => {
+  const until = performance.now() + ms;
+  while (performance.now() < until) await new Promise((resolve) => setImmediate(resolve));
 };
 async function open() {
   const page = await browser.newPage({
@@ -63,7 +72,50 @@ async function open() {
       fence = null,
       links = 0;
     let recordingFrames = false,
-      frameTimes = [];
+      frameTimes = [],
+      pointerTimes = [],
+      windowStart = 0;
+    // Attribution only: Chrome long animation frames (> 50 ms) with their scripts, and the
+    // pointermove timestamps, tell app work apart from gaps in the synthetic input.
+    const longFrames = [];
+    const longFrameObserver = PerformanceObserver.supportedEntryTypes?.includes(
+      "long-animation-frame",
+    )
+      ? new PerformanceObserver((list) => longFrames.push(...list.getEntries()))
+      : null;
+    longFrameObserver?.observe({ type: "long-animation-frame", buffered: true });
+    const pathOf = (url) => {
+      try {
+        return url ? new URL(url).pathname : "";
+      } catch {
+        return "";
+      }
+    };
+    const longFramesBetween = (from, to) => {
+      longFrames.push(...(longFrameObserver?.takeRecords() ?? []));
+      return longFrames
+        .filter((entry) => entry.startTime < to && entry.startTime + entry.duration > from)
+        .map((entry) => ({
+          startMs: entry.startTime - from,
+          durationMs: entry.duration,
+          blockingDurationMs: entry.blockingDuration,
+          renderStartMs: entry.renderStart ? entry.renderStart - from : null,
+          scripts: (entry.scripts ?? []).map((script) => ({
+            invokerType: script.invokerType,
+            invoker: String(script.invoker ?? "").replace(location.origin, ""),
+            source: pathOf(script.sourceURL),
+            functionName: script.sourceFunctionName,
+            durationMs: script.duration,
+          })),
+        }));
+    };
+    document.addEventListener(
+      "pointermove",
+      (event) => {
+        if (recordingFrames) pointerTimes.push(event.timeStamp);
+      },
+      { capture: true, passive: true },
+    );
     const clear = WebGL2RenderingContext.prototype.clear;
     WebGL2RenderingContext.prototype.clear = function (mask) {
       const main =
@@ -103,13 +155,25 @@ async function open() {
         true,
       );
     window.__controlProbe = {
+      longFramesSupported: Boolean(longFrameObserver),
+      longFramesBetween,
       beginFrames() {
         frameTimes = [];
+        pointerTimes = [];
+        windowStart = performance.now();
         recordingFrames = true;
       },
-      endFrames() {
+      async endFrames() {
         recordingFrames = false;
-        return frameTimes;
+        const windowEnd = performance.now();
+        // Let the last frame finish so its long-animation-frame entry is queued.
+        for (let i = 0; i < 2; i++) await new Promise((resolve) => requestAnimationFrame(resolve));
+        const at = (time) => time - windowStart;
+        return {
+          frameAtMs: frameTimes.map(at),
+          pointerAtMs: pointerTimes.map(at),
+          longFrames: longFramesBetween(windowStart, windowEnd),
+        };
       },
       arm(expected) {
         active = {
@@ -142,6 +206,7 @@ async function open() {
     timeout: 60000,
   });
   observed = await environment(page);
+  longFramesSupported = await page.evaluate(() => window.__controlProbe.longFramesSupported);
   if (family === "p8") {
     await page.getByLabel("Mở gói world").setInputFiles({
       name: "synthetic-p8-controls.json",
@@ -195,9 +260,18 @@ async function action(page, round, name, expected, perform) {
         break;
       }
     }
+    let longFrames = [];
+    if (observation?.start !== null && observation?.start !== undefined) {
+      const until = reflectedAt ?? performance.now();
+      // Attribution only, after the latency is fixed: let the last frame finish first.
+      await frame();
+      await frame();
+      longFrames = window.__controlProbe.longFramesBetween(observation.start, until);
+    }
     window.__controlProbe.end();
     return {
       status: reflectedAt !== null ? "REFLECTED" : (observation?.error ?? "TIMED_OUT"),
+      longFrames,
       latencyMs:
         reflectedAt === null || observation?.start === null
           ? null
@@ -258,16 +332,20 @@ try {
         await page.mouse.down();
         for (let step = 0; step < 48; step++) {
           await page.mouse.move(600 + step * 2, 360 + Math.sin(step / 8) * 18);
-          await page.waitForTimeout(16);
+          await pause(16);
         }
         await page.mouse.up();
-        const timestamps = await page.evaluate(() => window.__controlProbe.endFrames());
-        const intervalsMs = timestamps.slice(1).map((at, index) => at - timestamps[index]);
+        const drag = await page.evaluate(() => window.__controlProbe.endFrames());
+        const intervalsMs = gaps(drag.frameAtMs);
         frameRounds.push({
           round,
           intervalsMs,
           complete: intervalsMs.length >= 30,
           statistics: stats(intervalsMs),
+          pointerIntervals: stats(gaps(drag.pointerAtMs)),
+          frameAtMs: drag.frameAtMs,
+          pointerAtMs: drag.pointerAtMs,
+          longFrames: drag.longFrames,
         });
       } else {
         await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-audio-contexts", "0");
@@ -307,6 +385,8 @@ try {
               ? createHash("sha256").update(fixtureText).digest("hex")
               : "built-in-synthetic-demo",
           randomSeed: 81273,
+          dragPacing: "48 moves, 16 ms pause on the monotonic clock after each move",
+          longFramesSupported,
           clock: { date: "2026-06-21", startMinutes: 720, speed: 0 },
           rows,
           frameRounds,
@@ -314,7 +394,7 @@ try {
           complete: round + 1 === rounds,
           mutedAudioOutput: true,
           method:
-            "Real input event to matching main-frame submission, observed GPU fence completion and following RAF. Drag intervals are actual main-frame submissions, not GPU execution time. No first-audible-sample claim; no P8 full-lifecycle certification.",
+            "Real input event to matching main-frame submission, observed GPU fence completion and following RAF. Drag intervals are actual main-frame submissions, not GPU execution time. Long animation frames and pointermove timestamps are attribution only and do not change the status. No first-audible-sample claim; no P8 full-lifecycle certification.",
         },
         null,
         2,
@@ -331,6 +411,7 @@ try {
       complete: samples.length === rounds && samples.every((row) => row.status === "REFLECTED"),
       allUnder100Ms: samples.every((row) => row.latencyMs !== null && row.latencyMs < 100),
       newProgramLinks: samples.reduce((sum, row) => sum + (row.newProgramLinks ?? 0), 0),
+      longFrames: samples.reduce((sum, row) => sum + row.longFrames.length, 0),
     };
   }
   const frames = {
@@ -340,6 +421,8 @@ try {
       family !== "p8" ||
       (frameRounds.length === rounds && frameRounds.every((row) => row.complete)),
     allAtMost50Ms: frameRounds.every((row) => row.intervalsMs.every((value) => value <= 50)),
+    pointerIntervals: stats(frameRounds.flatMap((row) => gaps(row.pointerAtMs))),
+    longFrames: frameRounds.reduce((sum, row) => sum + row.longFrames.length, 0),
   };
   await writeFile(
     path.join(output, "summary.json"),
