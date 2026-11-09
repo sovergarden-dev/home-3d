@@ -1,0 +1,211 @@
+{
+  "syntheticOnly": true,
+  "family": "p8",
+  "targetMs": 100,
+  "rounds": 30,
+  "summary": {
+    "Nhiều mây": {
+      "statistics": {
+        "n": 30,
+        "min": 23.900000005960464,
+        "p50": 24.75000000745058,
+        "p95": 38,
+        "max": 45.20000000298023
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0,
+      "longFrames": 0
+    },
+    "Mưa": {
+      "statistics": {
+        "n": 30,
+        "min": 24,
+        "p50": 25,
+        "p95": 32.099999994039536,
+        "max": 45.900000005960464
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0,
+      "longFrames": 0
+    },
+    "Mưa to": {
+      "statistics": {
+        "n": 30,
+        "min": 22.900000005960464,
+        "p50": 25,
+        "p95": 31.900000005960464,
+        "max": 38.70000000298023
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0,
+      "longFrames": 0
+    },
+    "Nắng nhẹ": {
+      "statistics": {
+        "n": 30,
+        "min": 24.099999994039536,
+        "p50": 24.900000005960464,
+        "p95": 25.400000005960464,
+        "max": 31.799999997019768
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0,
+      "longFrames": 0
+    },
+    "Mùa mưa": {
+      "statistics": {
+        "n": 30,
+        "min": 18.100000008940697,
+        "p50": 25,
+        "p95": 26.19999998807907,
+        "max": 31.399999991059303
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0,
+      "longFrames": 0
+    },
+    "Mùa khô": {
+      "statistics": {
+        "n": 30,
+        "min": 18.200000002980232,
+        "p50": 24.950000002980232,
+        "p95": 25.799999997019768,
+        "max": 26.200000002980232
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0,
+      "longFrames": 0
+    },
+    "Tết": {
+      "statistics": {
+        "n": 30,
+        "min": 17.200000002980232,
+        "p50": 23.649999998509884,
+        "p95": 31.100000008940697,
+        "max": 37.599999994039536
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0,
+      "longFrames": 0
+    },
+    "Trung Thu": {
+      "statistics": {
+        "n": 30,
+        "min": 17.5,
+        "p50": 18.149999998509884,
+        "p95": 18.400000005960464,
+        "max": 24.700000002980232
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0,
+      "longFrames": 0
+    },
+    "Thường ngày": {
+      "statistics": {
+        "n": 30,
+        "min": 17.5,
+        "p50": 18.149999998509884,
+        "p95": 25.200000002980232,
+        "max": 25.299999997019768
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0,
+      "longFrames": 0
+    },
+    "Khuya": {
+      "statistics": {
+        "n": 30,
+        "min": 23.899999991059303,
+        "p50": 24.400000005960464,
+        "p95": 31.400000005960464,
+        "max": 31.5
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0,
+      "longFrames": 0
+    },
+    "Ngày đang xem": {
+      "statistics": {
+        "n": 30,
+        "min": 21.200000002980232,
+        "p50": 22.69999999552965,
+        "p95": 27.299999997019768,
+        "max": 30.100000008940697
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0,
+      "longFrames": 0
+    },
+    "Ngập mô phỏng": {
+      "statistics": {
+        "n": 30,
+        "min": 23,
+        "p50": 24.25,
+        "p95": 28.899999991059303,
+        "max": 30.799999997019768
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0,
+      "longFrames": 0
+    },
+    "Tắt lớp": {
+      "statistics": {
+        "n": 30,
+        "min": 22.100000008940697,
+        "p50": 24,
+        "p95": 24.5,
+        "max": 24.600000008940697
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0,
+      "longFrames": 0
+    },
+    "Bật lớp": {
+      "statistics": {
+        "n": 30,
+        "min": 23,
+        "p50": 24.899999998509884,
+        "p95": 26,
+        "max": 26.600000008940697
+      },
+      "complete": true,
+      "allUnder100Ms": true,
+      "newProgramLinks": 0,
+      "longFrames": 0
+    }
+  },
+  "frames": {
+    "targetMaxMs": 50,
+    "statistics": {
+      "n": 1380,
+      "min": 21,
+      "p50": 27.599999994039536,
+      "p95": 28.900000005960464,
+      "max": 42.1000000089407
+    },
+    "complete": true,
+    "allAtMost50Ms": true,
+    "pointerIntervals": {
+      "n": 1440,
+      "min": 6.899999991059303,
+      "p50": 27.400000005960464,
+      "p95": 29.30000001192093,
+      "max": 36.29999999701977
+    },
+    "longFrames": 0
+  },
+  "status": "MET"
+}
