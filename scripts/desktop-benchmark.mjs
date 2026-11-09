@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { mkdir, writeFile, readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { launchBenchmark } from "./benchmark-browser.mjs";
@@ -10,18 +10,51 @@ const output = process.argv[2] ?? "test-results/desktop-benchmark",
   port = Number(process.env.DESKTOP_BENCH_PORT ?? 4190);
 if (process.env.BENCH_GPU !== "real") throw Error("REAL_GPU_REQUIRED");
 await mkdir(output, { recursive: true });
-const { browser, dpr, environment } = await launchBenchmark(["--mute-audio"]);
 const memoryPath = path.resolve(output, "gpu-memory.json");
+const baselinePath = `${memoryPath}.baseline.json`;
+const gpuMemoryScript = fileURLToPath(new URL("./windows-gpu-memory.ps1", import.meta.url));
+// The adapter-level baseline must predate the measured browser tree, otherwise the
+// delta silently loses whatever the browser allocated while it was starting.
+const baselineRun =
+  process.platform === "win32"
+    ? spawnSync(
+        "powershell.exe",
+        [
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          gpuMemoryScript,
+          "-Mode",
+          "baseline",
+          "-OutputFile",
+          baselinePath,
+        ],
+        { windowsHide: true, encoding: "utf8", timeout: 30000 },
+      )
+    : null;
+const baselineStatus = !baselineRun
+  ? "UNSUPPORTED_PLATFORM"
+  : baselineRun.status === 0
+    ? "CAPTURED"
+    : "FAILED";
+const { browser, dpr, environment } = await launchBenchmark(["--mute-audio"]);
 const gpuSampler =
   process.platform === "win32"
     ? spawn(
         "powershell.exe",
         [
           "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
           "-File",
-          fileURLToPath(new URL("./windows-gpu-memory.ps1", import.meta.url)),
+          gpuMemoryScript,
+          "-Mode",
+          "sample",
           "-RootProcessId",
           String(process.pid),
+          "-BaselineFile",
+          baselinePath,
           "-OutputFile",
           memoryPath,
         ],
@@ -263,14 +296,24 @@ try {
   const gpuMemory = await readFile(memoryPath, "utf8")
     .then(JSON.parse)
     .catch(() => ({ status: "NOT_VERIFIED", samples: [] }));
-  if (gpuMemory.status === "MEASURED") {
-    gpuMemory.peakResidentAllocationBytes = Math.max(
-      ...gpuMemory.samples.map((r) => r.residentAllocationBytes),
-    );
-    gpuMemory.peakCommittedBytes = Math.max(...gpuMemory.samples.map((r) => r.committedBytes));
+  gpuMemory.baselineStatus = baselineStatus;
+  gpuMemory.budgetBytes = 350000000;
+  if (gpuMemory.status === "MEASURED" || gpuMemory.status === "PARTIAL") {
+    const upperBound = gpuMemory.adapterUpperBoundBytes;
+    gpuMemory.peakResidentAllocationBytes = gpuMemory.perProcessPeakBytes ?? null;
+    gpuMemory.peakCommittedBytes =
+      Math.max(...gpuMemory.samples.map((sample) => sample.perProcess?.committedBytes ?? 0)) ||
+      null;
+    gpuMemory.upperBoundSource =
+      "adapter-level dedicated usage delta, includes every process on the adapter";
     for (const row of rows) row.gpuMemoryStatus = "MEASURED_BATCH_UPPER_BOUND";
+    // Conservative by construction: the adapter delta covers processes that are not
+    // this app, so passing it is a pass and failing it is not attributable evidence.
     gpuMemory.midBudgetStatus =
-      gpuMemory.peakResidentAllocationBytes <= 350000000 ? "MET" : "NOT_MET";
+      typeof upperBound === "number" && upperBound <= 350000000 ? "MET" : "NOT_VERIFIED";
+  } else {
+    gpuMemory.upperBoundSource = null;
+    gpuMemory.midBudgetStatus = "NOT_VERIFIED";
   }
   await writeFile(
     `${output}/report.json`,
