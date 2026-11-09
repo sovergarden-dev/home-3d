@@ -10,11 +10,11 @@ Bằng chứng cho nhánh `codex/m2-gpu-adapter`. Chỉ đổi `scripts/windows-
 - `fixtureSha256`: `7fcab9356d7d6e9e6bf958a0519c0afb9848c0f607283a41aecd428f8a569511`. Chỉ fixture tổng hợp (`P8_PACKAGE_TEXT`), không có dữ liệu khu thật.
 - Tệp đã lưu (mọi tệp dưới 1 MB; không lưu ảnh chụp màn hình để tránh trùng với bộ 31/10):
   - `desktop-chrome/report.json`: 366.039 byte, SHA-256 `b5f399d64c308c492a7a410c2fb05c999a5c38881e5704c32f706d1318953f42`.
-  - `desktop-chrome/gpu-memory.json`: 101.311 byte, SHA-256 `c93628f93a9e1ecc7dbf673e19de75c53e4077aa7daf3e20ab479a268be1601b`.
-  - `desktop-chrome/gpu-memory.json.baseline.json`: 1.743 byte, SHA-256 `923f163d26565e7ffa5144c59b54793e7ab12bfc3407baa3837e178ddf54e812`.
+  - `desktop-chrome/gpu-memory.json`: 99.796 byte (LF trong Git), SHA-256 `70ca5ccf56400bda06cd5a6c18f67a3840c523135a112efd8d37843d6c968541`.
+  - `desktop-chrome/gpu-memory.json.baseline.json`: 1.710 byte (LF trong Git), SHA-256 `fce1aa11a6194d82ffa77af5a68cb2a712cd97c2d29677288f33f09423673371`.
   - `desktop-firefox/report.json`: 320.786 byte, SHA-256 `84b429581864686c6ef23c0d624214fd7356b3e1acd1b451b4de64551b5ac9db`.
-  - `desktop-firefox/gpu-memory.json`: 133.931 byte, SHA-256 `da821a96e04910e3990454ebaec3d9f247ce3b83ccb56942b64fea49d3390fb4`.
-  - `desktop-firefox/gpu-memory.json.baseline.json`: 1.743 byte, SHA-256 `8965a39b718a75c5ce15cb2cddf6628daafd0430181f968499b5033f8345e852`.
+  - `desktop-firefox/gpu-memory.json`: 131.932 byte (LF trong Git), SHA-256 `6bb2abf3d85ef3f22fd5e1f3b15dd2f866b01b5cb5f97705ce53939157fd3d45`.
+  - `desktop-firefox/gpu-memory.json.baseline.json`: 1.710 byte (LF trong Git), SHA-256 `7dd36a1cc16ef4e2d7d6d73d0d22579741dd5f9a6468c1e9061c56cd6ed3b875`.
 
 ## Phương pháp
 
