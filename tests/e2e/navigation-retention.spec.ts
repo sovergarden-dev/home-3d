@@ -37,7 +37,7 @@ test("SPA navigation releases every torn-down 3D scene", async ({ page, browserN
   for (let index = 0; index < navigations; index++) {
     await page.getByRole("link", { name: "Giới thiệu", exact: true }).click();
     await expect(page).toHaveURL(/\/gioi-thieu$/);
-    await expect(page.getByRole("heading")).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await page.getByTestId("about-back-home").click();
     await expect(page).toHaveURL(/\/$/);
     await settled();

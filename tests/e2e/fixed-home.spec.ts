@@ -69,11 +69,13 @@ test("time, weather, camera and language controls update the fixed-home view", a
 
   await page.getByRole("radio", { name: "en", exact: true }).click();
   await expect(page.locator(".h6-top-info").getByText("Our house", { exact: true })).toBeVisible();
+  await expect(page).toHaveTitle(/Our house/i);
   await expect(page.getByRole("radio", { name: "Evening", exact: true })).toBeVisible();
   await expect(page.getByRole("radio", { name: "Rain", exact: true })).toBeVisible();
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await page.getByRole("radio", { name: "vi", exact: true }).click();
   await expect(page.locator("html")).toHaveAttribute("lang", "vi");
+  await expect(page).toHaveTitle(/Nhà mình/i);
 });
 
 test("the legacy preview query cannot enable a package loader", async ({ page }) => {
@@ -97,27 +99,40 @@ test("WebGL fallback keeps the fixed controls reachable without claiming a rende
   await expect(page.getByLabel("Mở gói world")).toHaveCount(0);
 });
 
-test("portrait and short-landscape layouts keep top actions and dock in bounds", async ({
+test("portrait and short-landscape layouts keep all overlays in bounds and non-overlapping", async ({
   page,
 }) => {
+  const overlaps = (
+    a: { left: number; top: number; right: number; bottom: number },
+    b: { left: number; top: number; right: number; bottom: number },
+  ) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+
   for (const viewport of [
     { width: 390, height: 844 },
     { width: 740, height: 390 },
+    { width: 568, height: 320 },
   ]) {
     await page.setViewportSize(viewport);
     await openHome(page);
+    const state = await page.locator("#scene-root").getAttribute("data-scene-state");
+    if (state === "ready") {
+      await page.getByRole("radio", { name: "Mặt bằng", exact: true }).click();
+    }
     const result = await page.evaluate(() => {
       const rect = (selector: string) => {
         const node = document.querySelector<HTMLElement>(selector);
-        if (!node) throw new Error(`MISSING_LAYOUT_NODE:${selector}`);
+        if (!node) return null;
         const box = node.getBoundingClientRect();
         return { left: box.left, top: box.top, right: box.right, bottom: box.bottom };
       };
       return {
         viewport: { width: innerWidth, height: innerHeight },
-        info: rect(".h6-top-info"),
-        actions: rect(".h6-top-actions"),
-        dock: rect("[role='region']"),
+        info: rect(".h6-top-info")!,
+        actions: rect(".h6-top-actions")!,
+        mapControls: rect(".h6-map-controls")!,
+        viewActions: rect(".h6-view-actions")!,
+        dock: rect("[role='region']")!,
+        scaleBar: rect("[data-testid='plan-scale-bar']"),
         documentWidth: document.documentElement.scrollWidth,
       };
     });
@@ -128,6 +143,17 @@ test("portrait and short-landscape layouts keep top actions and dock in bounds",
     expect(result.dock.right).toBeLessThanOrEqual(result.viewport.width);
     expect(result.dock.bottom).toBeLessThanOrEqual(result.viewport.height);
     expect(result.documentWidth).toBe(result.viewport.width);
+    expect(overlaps(result.info, result.dock)).toBe(false);
+    expect(overlaps(result.mapControls, result.dock)).toBe(false);
+    expect(overlaps(result.mapControls, result.actions)).toBe(false);
+    if (viewport.height <= 480) {
+      expect(result.viewActions.right - result.viewActions.left).toBeLessThanOrEqual(112);
+    }
+    if (result.scaleBar) {
+      expect(overlaps(result.scaleBar, result.info)).toBe(false);
+      expect(overlaps(result.scaleBar, result.dock)).toBe(false);
+      expect(overlaps(result.scaleBar, result.mapControls)).toBe(false);
+    }
   }
 });
 
@@ -169,9 +195,19 @@ test("one fixed synthetic world renders and survives a route remount", async ({ 
 
   await page.getByRole("link", { name: "Giới thiệu", exact: true }).click();
   await expect(page).toHaveURL(/\/gioi-thieu$/);
-  await expect(page.getByRole("heading")).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.locator("main")).not.toContainText(/Trung Thu|xe ôm|tiếng rao/i);
   await page.getByRole("link", { name: "Về phố", exact: true }).click();
   await expect(page).toHaveURL(/\/$/);
   await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "ready");
   await expect(page.locator("#scene-root canvas")).toHaveCount(1);
+
+  await page.keyboard.press("2");
+  await expect(scene).toHaveAttribute("data-time-minutes", "930");
+  await page.keyboard.press("e");
+  await expect(scene).toHaveAttribute("data-weather", "storm");
+  await page.keyboard.press("m");
+  await expect(page.locator("main")).toHaveAttribute("data-view-mode", "topdown");
+  await page.keyboard.press("h");
+  await expect(page.locator("main")).toHaveAttribute("data-view-mode", "diorama");
 });

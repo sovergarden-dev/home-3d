@@ -21,7 +21,7 @@ export function Dock() {
     <div
       role="region"
       aria-label={t.dockLabel}
-      className="glass pointer-events-auto flex flex-col gap-2 rounded-2xl p-2.5 shadow-lg backdrop-blur-md"
+      className="h6-dock glass pointer-events-auto flex flex-col gap-2 rounded-2xl p-2.5 shadow-lg"
     >
       {/* Hàng 1: 3 mốc thời gian (Sáng | Chiều | Tối) */}
       <div role="radiogroup" aria-label={t.tabs.time} className="grid grid-cols-3 gap-1.5">

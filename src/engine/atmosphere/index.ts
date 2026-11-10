@@ -278,9 +278,76 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
   const fog = new THREE.FogExp2("#b9c7cd", 0.001);
   let disposed = false,
     activeRain = false,
-    lastWet: boolean | undefined;
+    lastWet: boolean | undefined,
+    hasAppliedInitial = false;
   let lastState: AtmosphereState | undefined;
-  const update = (state: AtmosphereState, renderable: boolean, anchor?: THREE.Vector3) => {
+  const TRANSITION_DURATION = 0.35;
+  let transitionElapsed = TRANSITION_DURATION;
+  const fromLighting = {
+    sky: new THREE.Color(),
+    hemiColor: new THREE.Color(),
+    hemiGround: new THREE.Color(),
+    hemiIntensity: 1,
+    sunPos: new THREE.Vector3(),
+    sunColor: new THREE.Color(),
+    sunIntensity: 1,
+    moonPos: new THREE.Vector3(),
+    moonIntensity: 0,
+    fogColor: new THREE.Color(),
+    fogDensity: 0.001,
+  };
+  const toLighting = {
+    sky: new THREE.Color(),
+    hemiColor: new THREE.Color(),
+    hemiGround: new THREE.Color(),
+    hemiIntensity: 1,
+    sunPos: new THREE.Vector3(),
+    sunColor: new THREE.Color(),
+    sunIntensity: 1,
+    moonPos: new THREE.Vector3(),
+    moonIntensity: 0,
+    fogColor: new THREE.Color(),
+    fogDensity: 0.001,
+    useFog: true,
+  };
+
+  function applyBlendedLighting(alpha: number) {
+    const t = alpha >= 1 ? 1 : 1 - Math.pow(1 - Math.max(0, alpha), 3);
+    sky.copy(fromLighting.sky).lerp(toLighting.sky, t);
+    hemisphere.color.copy(fromLighting.hemiColor).lerp(toLighting.hemiColor, t);
+    hemisphere.groundColor.copy(fromLighting.hemiGround).lerp(toLighting.hemiGround, t);
+    hemisphere.intensity = THREE.MathUtils.lerp(
+      fromLighting.hemiIntensity,
+      toLighting.hemiIntensity,
+      t,
+    );
+    sun.position.copy(fromLighting.sunPos).lerp(toLighting.sunPos, t);
+    sun.color.copy(fromLighting.sunColor).lerp(toLighting.sunColor, t);
+    sun.intensity = THREE.MathUtils.lerp(fromLighting.sunIntensity, toLighting.sunIntensity, t);
+    if (moon) {
+      moon.position.copy(fromLighting.moonPos).lerp(toLighting.moonPos, t);
+      moon.intensity = THREE.MathUtils.lerp(
+        fromLighting.moonIntensity,
+        toLighting.moonIntensity,
+        t,
+      );
+      moon.visible = moon.intensity > 0.001;
+    }
+    if (toLighting.useFog) {
+      fog.color.copy(fromLighting.fogColor).lerp(toLighting.fogColor, t);
+      fog.density = THREE.MathUtils.lerp(fromLighting.fogDensity, toLighting.fogDensity, t);
+      scene.fog = fog;
+    } else {
+      scene.fog = null;
+    }
+  }
+
+  const update = (
+    state: AtmosphereState,
+    renderable: boolean,
+    anchor?: THREE.Vector3,
+    transitionMs = 0,
+  ) => {
     if (disposed) return;
     if (!warming) {
       lastState = { ...state };
@@ -315,50 +382,74 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
           : state.weather === "rain"
             ? 0.65
             : 0.5;
+    const canSmooth =
+      hasAppliedInitial && !warming && transitionMs > 0 && visible && toLighting.useFog;
+    if (canSmooth) {
+      fromLighting.sky.copy(sky);
+      fromLighting.hemiColor.copy(hemisphere.color);
+      fromLighting.hemiGround.copy(hemisphere.groundColor);
+      fromLighting.hemiIntensity = hemisphere.intensity;
+      fromLighting.sunPos.copy(sun.position);
+      fromLighting.sunColor.copy(sun.color);
+      fromLighting.sunIntensity = sun.intensity;
+      if (moon) {
+        fromLighting.moonPos.copy(moon.position);
+        fromLighting.moonIntensity = moon.intensity;
+      }
+      fromLighting.fogColor.copy(fog.color);
+      fromLighting.fogDensity = fog.density;
+    }
+
     if (visible) {
-      sky.copy(nightSky).lerp(season === "wet" ? wetSky : drySky, daylight);
+      toLighting.sky.copy(nightSky).lerp(season === "wet" ? wetSky : drySky, daylight);
       if (solar.elevationDeg > -10 && solar.elevationDeg < 18)
-        sky.lerp(sunsetSky, clamp(1 - Math.abs(solar.elevationDeg) / 18) * 0.45);
-      sky.multiplyScalar(0.8 + 0.2 * cloud);
-      hemisphere.color.copy(sky);
-      hemisphere.groundColor.set("#626b68");
-      hemisphere.intensity = THREE.MathUtils.lerp(0.9, 0.55 + 1.3 * cloud, daylight);
+        toLighting.sky.lerp(sunsetSky, clamp(1 - Math.abs(solar.elevationDeg) / 18) * 0.45);
+      toLighting.sky.multiplyScalar(0.8 + 0.2 * cloud);
+      toLighting.hemiColor.copy(toLighting.sky);
+      toLighting.hemiGround.set("#626b68");
+      toLighting.hemiIntensity = THREE.MathUtils.lerp(0.9, 0.55 + 1.3 * cloud, daylight);
       enu(solar.azimuthDeg, solar.elevationDeg, 100, sunPosition);
-      sun.position.copy(sunPosition);
+      toLighting.sunPos.copy(sunPosition);
       if (anchor) {
-        sun.position.add(anchor);
+        toLighting.sunPos.add(anchor);
         sun.target.position.copy(anchor);
         sun.target.updateMatrixWorld();
       }
-      sun.intensity = Math.max(0, daylight * cloud * 3.4);
-      sun.color.set(solar.elevationDeg < 15 ? "#ffc194" : "#fff0cd");
+      toLighting.sunIntensity = Math.max(0, daylight * cloud * 3.4);
+      toLighting.sunColor.set(solar.elevationDeg < 15 ? "#ffc194" : "#fff0cd");
       if (moon) {
         enu(moonSolar.azimuthDeg, moonSolar.elevationDeg, 120, moonPosition);
-        moon.position.copy(moonPosition);
+        toLighting.moonPos.copy(moonPosition);
         if (anchor) {
-          moon.position.add(anchor);
+          toLighting.moonPos.add(anchor);
           moon.target.position.copy(anchor);
           moon.target.updateMatrixWorld();
         }
-        moon.intensity = moonSolar.elevationDeg > 0 ? (1 - daylight) * 0.25 : 0;
-        moon.visible = moon.intensity > 0;
+        toLighting.moonIntensity = moonSolar.elevationDeg > 0 ? (1 - daylight) * 0.25 : 0;
       }
-      fog.color.copy(sky);
-      fog.density = season === "wet" ? 0.0016 : 0.0007;
-      scene.fog = fog;
+      toLighting.fogColor.copy(toLighting.sky);
+      toLighting.fogDensity = season === "wet" ? 0.0016 : 0.0007;
+      toLighting.useFog = true;
     } else {
-      sky.set("#b8c2c8");
-      hemisphere.color.set("#b8c2c8");
-      hemisphere.groundColor.set("#8b9295");
-      hemisphere.intensity = 0.8;
-      sun.intensity = 1;
-      sun.color.set("#ffffff");
-      sun.position.set(0, 100, 0);
-      if (moon) {
-        moon.intensity = 0;
-        moon.visible = false;
-      }
-      scene.fog = null;
+      toLighting.sky.set("#b8c2c8");
+      toLighting.hemiColor.set("#b8c2c8");
+      toLighting.hemiGround.set("#8b9295");
+      toLighting.hemiIntensity = 0.8;
+      toLighting.sunIntensity = 1;
+      toLighting.sunColor.set("#ffffff");
+      toLighting.sunPos.set(0, 100, 0);
+      toLighting.moonPos.set(0, -100, 0);
+      toLighting.moonIntensity = 0;
+      toLighting.useFog = false;
+    }
+
+    if (!warming) hasAppliedInitial = true;
+    if (canSmooth) {
+      transitionElapsed = 0;
+      applyBlendedLighting(0);
+    } else {
+      transitionElapsed = TRANSITION_DURATION;
+      applyBlendedLighting(1);
     }
     if (anchor) group.position.copy(anchor);
     activeRain = wet;
@@ -391,8 +482,13 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
     }
   };
   const tick = (delta: number) => {
-    if (!disposed && activeRain)
-      rainMaterial.uniforms["time"]!.value += Math.max(0, Math.min(0.1, delta));
+    if (disposed) return;
+    const clamped = Math.max(0, Math.min(0.1, delta));
+    if (activeRain) rainMaterial.uniforms["time"]!.value += clamped;
+    if (transitionElapsed < TRANSITION_DURATION) {
+      transitionElapsed = Math.min(TRANSITION_DURATION, transitionElapsed + Math.max(0, delta));
+      applyBlendedLighting(transitionElapsed / TRANSITION_DURATION);
+    }
   };
   let warming = false;
   /**
@@ -615,6 +711,9 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
     dispose,
     get rainVisible() {
       return activeRain;
+    },
+    get transitionActive() {
+      return !disposed && transitionElapsed < TRANSITION_DURATION;
     },
   };
 }
