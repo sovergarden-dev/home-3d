@@ -24,7 +24,11 @@ function About() {
   return (
     <main className="min-h-dvh px-6 py-16" style={{ background: "var(--gradient-scene)" }}>
       <article className="glass mx-auto max-w-xl p-8">
-        <Link to="/" className="ctl -ml-2 px-2 text-sm text-primary hover:bg-secondary">
+        <Link
+          to="/"
+          data-testid="about-back-home"
+          className="ctl -ml-2 px-2 text-sm text-primary hover:bg-secondary"
+        >
           <ArrowLeft className="h-4 w-4" /> {t.backHome}
         </Link>
         <h1 className="mt-4 font-serif text-4xl italic text-primary">{t.aboutTitle}</h1>

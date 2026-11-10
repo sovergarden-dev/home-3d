@@ -283,7 +283,7 @@ describe("WeatherConnection", () => {
     });
     expect(adapter.getSnapshot().status).toBe("ready");
     expect(screen.getAllByText(/Current weather|Thời tiết hiện tại/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/Nắng nhẹ|Light sun/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Nắng|Sunny/i).length).toBeGreaterThan(0);
 
     await act(async () => {
       vi.advanceTimersByTime(15 * 60 * 1000 + 1);
@@ -465,7 +465,12 @@ describe("WeatherConnection", () => {
         }),
     );
     vi.stubGlobal("fetch", fetchImpl);
-    const view = render(<WeatherPanel />);
+    const view = render(
+      <>
+        <WeatherConnection selectedDate={TODAY} />
+        <WeatherPanel />
+      </>,
+    );
     const trigger = await screen.findByRole("button", { name: /thời tiết thật/i });
     act(() => fireEvent.click(trigger));
     const dialog = await screen.findByRole("dialog");

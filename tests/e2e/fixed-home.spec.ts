@@ -1,0 +1,177 @@
+import { expect, test, type Page } from "@playwright/test";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+
+async function openHome(page: Page, forceFallback = false) {
+  if (forceFallback) {
+    await page.addInitScript(() => {
+      const original = HTMLCanvasElement.prototype.getContext;
+      HTMLCanvasElement.prototype.getContext = function (type: string, ...args: unknown[]) {
+        if (type === "webgl2") return null;
+        return Reflect.apply(original, this, [type, ...args]);
+      } as typeof original;
+    });
+  }
+  await page.goto("/");
+  await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", /ready|fallback/, {
+    timeout: 60000,
+  });
+}
+
+test("fixed-home shell exposes only the supported controls and build identity", async ({
+  page,
+}) => {
+  const externalRequests: string[] = [];
+  page.on("request", (request) => {
+    if (!new URL(request.url()).hostname.match(/^(127\.0\.0\.1|localhost)$/))
+      externalRequests.push(request.url());
+  });
+  await openHome(page);
+
+  await expect(page.locator(".h6-top-info").getByText("Nhà mình", { exact: true })).toBeVisible();
+  await expect(page.getByRole("radiogroup", { name: "Thời gian" }).getByRole("radio")).toHaveCount(
+    3,
+  );
+  await expect(page.getByRole("radiogroup", { name: "Thời tiết" }).getByRole("radio")).toHaveCount(
+    3,
+  );
+  for (const label of ["Sáng", "Chiều", "Tối", "Nắng", "Mây", "Mưa"])
+    await expect(page.getByRole("radio", { name: label, exact: true })).toBeVisible();
+  await expect(page.getByRole("radio", { name: "Diorama", exact: true })).toBeVisible();
+  await expect(page.getByRole("radio", { name: "Mặt bằng", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Giới thiệu", exact: true })).toBeVisible();
+  await expect(page.getByLabel("Mở gói world")).toHaveCount(0);
+  await expect(page.getByRole("tab")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Thời tiết thật" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /kỷ niệm|capture|giữ khoảnh khắc/i })).toHaveCount(
+    0,
+  );
+  expect(externalRequests).toEqual([]);
+});
+
+test("time, weather, camera and language controls update the fixed-home view", async ({ page }) => {
+  await openHome(page);
+  await page.getByRole("radio", { name: "Tối", exact: true }).click();
+  await page.getByRole("radio", { name: "Mưa", exact: true }).click();
+  await expect(page.locator(".h6-top-info")).toContainText("Tối");
+  await expect(page.locator(".h6-top-info")).toContainText("Mưa");
+
+  const state = await page.locator("#scene-root").getAttribute("data-scene-state");
+  if (state === "ready") {
+    await page.getByRole("radio", { name: "Mặt bằng", exact: true }).click();
+    await expect(page.locator("main")).toHaveAttribute("data-view-mode", "topdown");
+    await page.getByRole("radio", { name: "Diorama", exact: true }).click();
+    await expect(page.locator("main")).toHaveAttribute("data-view-mode", "diorama");
+  } else {
+    await expect(page.getByRole("radio", { name: "Mặt bằng", exact: true })).toBeDisabled();
+  }
+
+  await page.getByRole("radio", { name: "en", exact: true }).click();
+  await expect(page.locator(".h6-top-info").getByText("Our house", { exact: true })).toBeVisible();
+  await expect(page.getByRole("radio", { name: "Evening", exact: true })).toBeVisible();
+  await expect(page.getByRole("radio", { name: "Rain", exact: true })).toBeVisible();
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  await page.getByRole("radio", { name: "vi", exact: true }).click();
+  await expect(page.locator("html")).toHaveAttribute("lang", "vi");
+});
+
+test("the legacy preview query cannot enable a package loader", async ({ page }) => {
+  await page.goto("/?local-preview=1");
+  await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", /ready|fallback/, {
+    timeout: 60000,
+  });
+  await expect(page.getByLabel("Mở gói world")).toHaveCount(0);
+  await expect(page.locator(".h6-top-info").getByText("Nhà mình", { exact: true })).toBeVisible();
+});
+
+test("WebGL fallback keeps the fixed controls reachable without claiming a rendered scene", async ({
+  page,
+}) => {
+  await openHome(page, true);
+  await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "fallback");
+  await expect(page.getByTestId("static-scene")).toBeVisible();
+  await expect(page.getByTestId("build-info")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Thử lại 3D", exact: true })).toBeVisible();
+  await expect(page.getByRole("radio", { name: "Mưa", exact: true })).toBeVisible();
+  await expect(page.getByLabel("Mở gói world")).toHaveCount(0);
+});
+
+test("portrait and short-landscape layouts keep top actions and dock in bounds", async ({
+  page,
+}) => {
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 740, height: 390 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await openHome(page);
+    const result = await page.evaluate(() => {
+      const rect = (selector: string) => {
+        const node = document.querySelector<HTMLElement>(selector);
+        if (!node) throw new Error(`MISSING_LAYOUT_NODE:${selector}`);
+        const box = node.getBoundingClientRect();
+        return { left: box.left, top: box.top, right: box.right, bottom: box.bottom };
+      };
+      return {
+        viewport: { width: innerWidth, height: innerHeight },
+        info: rect(".h6-top-info"),
+        actions: rect(".h6-top-actions"),
+        dock: rect("[role='region']"),
+        documentWidth: document.documentElement.scrollWidth,
+      };
+    });
+    expect(result.info.left).toBeGreaterThanOrEqual(0);
+    expect(result.actions.right).toBeLessThanOrEqual(result.viewport.width);
+    expect(result.info.right).toBeLessThanOrEqual(result.actions.left);
+    expect(result.dock.left).toBeGreaterThanOrEqual(0);
+    expect(result.dock.right).toBeLessThanOrEqual(result.viewport.width);
+    expect(result.dock.bottom).toBeLessThanOrEqual(result.viewport.height);
+    expect(result.documentWidth).toBe(result.viewport.width);
+  }
+});
+
+test("Plan can pan, then home reset returns to the home-centred Diorama", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openHome(page);
+  const state = await page.locator("#scene-root").getAttribute("data-scene-state");
+  if (process.env["REQUIRE_WEBGL2"] === "1") expect(state).toBe("ready");
+  test.skip(state !== "ready", "WebGL2 unavailable; camera reset rendering NOT_VERIFIED.");
+
+  const scene = page.getByTestId("demo-scene");
+  await page.getByRole("radio", { name: "Mặt bằng", exact: true }).click();
+  const canvas = page.locator("#scene-root canvas");
+  await canvas.focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(scene).toHaveAttribute("data-plan-pan-revision", /[1-9]/);
+  await page.getByRole("button", { name: "Về nhà mình", exact: true }).click();
+  await expect(page.locator("main")).toHaveAttribute("data-view-mode", "diorama");
+  await expect(scene).toHaveAttribute("data-camera-type", "PerspectiveCamera");
+});
+
+test("one fixed synthetic world renders and survives a route remount", async ({ page }) => {
+  await openHome(page);
+  const state = await page.locator("#scene-root").getAttribute("data-scene-state");
+  if (process.env["REQUIRE_WEBGL2"] === "1") expect(state).toBe("ready");
+  test.skip(state !== "ready", "WebGL2 unavailable; rendered-world lifecycle NOT_VERIFIED.");
+
+  const scene = page.getByTestId("demo-scene");
+  await expect(page.locator("#scene-root canvas")).toHaveCount(1);
+  await expect(scene).toHaveAttribute("data-world-mode", "fixture");
+  await expect(scene).toHaveAttribute("data-active-worlds", "1");
+  await expect(scene).toHaveAttribute("data-illustrative-details", "true");
+  await page.getByRole("radio", { name: "Mặt bằng", exact: true }).click();
+  await expect(scene).toHaveAttribute("data-camera-type", "OrthographicCamera");
+  await expect(scene).toHaveAttribute("data-illustrative-details", "false");
+  await page.getByRole("radio", { name: "Diorama", exact: true }).click();
+  await expect(scene).toHaveAttribute("data-camera-type", "PerspectiveCamera");
+  await expect(scene).toHaveAttribute("data-illustrative-details", "true");
+
+  await page.getByRole("link", { name: "Giới thiệu", exact: true }).click();
+  await expect(page).toHaveURL(/\/gioi-thieu$/);
+  await expect(page.getByRole("heading")).toBeVisible();
+  await page.getByRole("link", { name: "Về phố", exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "ready");
+  await expect(page.locator("#scene-root canvas")).toHaveCount(1);
+});

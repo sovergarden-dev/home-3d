@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { worldHomeCentre } from "@/engine/demoScene";
+import { worldCameraCentre, worldHomeCentre } from "@/engine/demoScene";
 import type { WorldData } from "@/world/schema";
 
 const worldWithoutLot: WorldData = {
@@ -33,6 +33,13 @@ const worldWithoutLot: WorldData = {
   buildings: [],
   lots: [],
 };
+
+describe("fixed home camera centre", () => {
+  it("keeps offset source geometry framed on the configured ENU origin", () => {
+    const centre = worldCameraCentre();
+    expect([centre.x, centre.z]).toEqual([0, 0]);
+  });
+});
 
 describe("private-world home centre", () => {
   it("uses the configured ENU origin when parcel geometry is not available", () => {

@@ -1,6 +1,7 @@
+import { create } from "zustand";
 import { parseIsoDate } from "@/atmosphere/calendar";
 import { vietnamDateTime } from "@/atmosphere/clock";
-import { create } from "zustand";
+import { SITE_CONFIG } from "@/config/site";
 import { keepMoment, releaseMoment, clearMomentBlobs } from "@/memories/moments";
 
 export type TimeSpeed = 0 | 1 | 4;
@@ -15,12 +16,6 @@ export interface PlanMeasurement {
   revision: number;
 }
 
-export type CameraFrame = "home" | "core" | "full";
-
-/**
- * Single source of truth shared by the UI overlay and the future 3D engine.
- * The map uses the supplied ENU origin; confirming a point does not confirm a surveyed parcel boundary.
- */
 export interface AppState {
   selectedDate: string;
   timeOfDayMinutes: number;
@@ -46,7 +41,6 @@ export interface AppState {
   loadingProgress: number;
   sceneStatus: "loading" | "ready" | "fallback";
   viewReset: number;
-  cameraFrame: { kind: CameraFrame; request: number };
   showTrees: boolean;
   showLabels: boolean;
   planMeasurement: PlanMeasurement | null;
@@ -72,7 +66,6 @@ export interface AppState {
   zoomOut: () => void;
   /** Restore the default camera state without changing the world origin. */
   resetView: () => void;
-  requestCameraFrame: (kind: CameraFrame) => void;
   toggleSound: () => void;
   setLifeEnabled: (enabled: boolean) => void;
   setIllustrativeDetails: (enabled: boolean) => void;
@@ -89,30 +82,29 @@ const wrapMinutes = (m: number) => ((Math.round(m) % 1440) + 1440) % 1440;
 
 export const useAppStore = create<AppState>((set) => ({
   selectedDate: vietnamDateTime().date,
-  timeOfDayMinutes: 7 * 60,
+  timeOfDayMinutes: SITE_CONFIG.defaultTime,
   season: "auto",
   festivalAuto: true,
   atmosphereEnabled: true,
   floodLevel: 0,
-  timeSpeed: 0,
+  timeSpeed: 1,
   realTimeEnabled: false,
-  weather: "sunny",
+  weather: SITE_CONFIG.defaultWeather,
   realWeatherEnabled: false,
   realWeatherKind: null,
   festival: "normal",
-  viewMode: "diorama",
+  viewMode: SITE_CONFIG.defaultViewMode,
   heading: 28,
   zoom: 1,
   soundOn: false,
   lifeEnabled: true,
-  illustrativeDetails: false,
-  lifeDensity: 0.65,
+  illustrativeDetails: true,
+  lifeDensity: 1,
   ridePaused: false,
   language: "vi",
   loadingProgress: 0,
   sceneStatus: "loading",
   viewReset: 0,
-  cameraFrame: { kind: "home", request: 0 },
   showTrees: true,
   showLabels: true,
   planMeasurement: null,
@@ -160,8 +152,6 @@ export const useAppStore = create<AppState>((set) => ({
   zoomOut: () => set((s) => ({ zoom: Math.max(0.25, +(s.zoom / 1.25).toFixed(3)) })),
   resetView: () =>
     set((s) => ({ zoom: 1, heading: 0, viewMode: "diorama", viewReset: s.viewReset + 1 })),
-  requestCameraFrame: (kind) =>
-    set((s) => ({ cameraFrame: { kind, request: s.cameraFrame.request + 1 } })),
   toggleSound: () => set((s) => ({ soundOn: !s.soundOn })),
   setLifeEnabled: (lifeEnabled) => set({ lifeEnabled }),
   setIllustrativeDetails: (illustrativeDetails) => set({ illustrativeDetails }),

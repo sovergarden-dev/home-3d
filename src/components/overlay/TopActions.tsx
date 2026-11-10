@@ -1,101 +1,38 @@
-import { sendLifeCommand } from "@/engine/life/session";
+import type { Language } from "@/state/appStore";
 import { Link } from "@tanstack/react-router";
-import { Camera, Info, Volume2, VolumeX, Users } from "lucide-react";
-import { toast } from "sonner";
-import { useAppStore, type Language } from "@/state/appStore";
+import { Info } from "lucide-react";
+import { useAppStore } from "@/state/appStore";
 import { useT } from "@/i18n";
-import { captureDemoFrame } from "@/engine/capture";
 
 export function TopActions() {
   const t = useT();
-  const ready = useAppStore((s) => s.sceneStatus === "ready");
-  function capture() {
-    const image = captureDemoFrame();
-    if (!image) {
-      toast(t.captureUnavailable);
-      return;
-    }
-    useAppStore.getState().addMoment(image);
-    toast(t.captured);
-  }
-  const lifeEnabled = useAppStore((s) => s.lifeEnabled);
-  const soundOn = useAppStore((s) => s.soundOn);
-  const toggleSound = useAppStore((s) => s.toggleSound);
   const lang = useAppStore((s) => s.language);
   const setLanguage = useAppStore((s) => s.setLanguage);
 
   return (
-    <div className="pointer-events-auto flex flex-wrap items-center justify-end gap-2">
-      <div className="glass flex items-center gap-1 p-1">
-        <button
-          type="button"
-          onClick={() => {
-            if (!soundOn) sendLifeCommand({ kind: "soundGesture" });
-            toggleSound();
-          }}
-          disabled={!ready}
-          title={t.soundDemo}
-          aria-describedby="sound-demo-description"
-          aria-pressed={soundOn}
-          aria-label={t.sound}
-          className="ctl px-3 text-foreground hover:bg-secondary"
-        >
-          {soundOn ? <Volume2 className="h-4 w-4 text-accent" /> : <VolumeX className="h-4 w-4" />}
-          <span className="hidden sm:inline">{t.sound}</span>
-        </button>
-        <span id="sound-demo-description" className="sr-only">
-          {t.soundDemo}
-        </span>
-        <div
-          role="radiogroup"
-          aria-label={t.language}
-          className="flex rounded-xl bg-secondary p-0.5"
-        >
-          {(["vi", "en"] as Language[]).map((l) => (
-            <button
-              key={l}
-              type="button"
-              role="radio"
-              aria-checked={lang === l}
-              onClick={() => setLanguage(l)}
-              className="ctl min-w-[40px] px-2 text-xs uppercase aria-checked:bg-primary aria-checked:text-primary-foreground"
-            >
-              {l}
-            </button>
-          ))}
-        </div>
-        <Link
-          to="/gioi-thieu"
-          aria-label={t.about}
-          className="ctl text-foreground hover:bg-secondary"
-        >
-          <Info className="h-4 w-4" />
-        </Link>
+    <div className="h6-top-actions pointer-events-auto flex items-center justify-end">
+      <div role="radiogroup" aria-label={t.language} className="glass flex rounded-xl p-1">
+        {(["vi", "en"] as Language[]).map((l) => (
+          <button
+            key={l}
+            type="button"
+            role="radio"
+            aria-checked={lang === l}
+            onClick={() => setLanguage(l)}
+            className="ctl min-w-[40px] px-2 text-xs uppercase aria-checked:bg-primary aria-checked:text-primary-foreground"
+          >
+            {l}
+          </button>
+        ))}
       </div>
-      <button
-        type="button"
-        disabled={!ready}
-        aria-pressed={lifeEnabled}
-        aria-label={t.life.quickToggle}
-        title={t.life.quickToggle}
-        className="ctl glass px-2"
-        onClick={() => {
-          const state = useAppStore.getState();
-          state.setLifeEnabled(!state.lifeEnabled);
-        }}
+      <Link
+        to="/gioi-thieu"
+        aria-label={t.about}
+        title={t.about}
+        className="ctl glass ml-2 text-foreground hover:bg-secondary"
       >
-        <Users className="h-4 w-4" />
-      </button>
-      <button
-        type="button"
-        onClick={capture}
-        disabled={!ready}
-        aria-label={t.capture}
-        className="capture-action ctl bg-accent px-4 text-accent-foreground shadow-[var(--shadow-soft)] hover:brightness-105"
-      >
-        <Camera className="h-4 w-4" />
-        <span className="hidden sm:inline">{t.capture}</span>
-      </button>
+        <Info className="h-4 w-4" aria-hidden="true" />
+      </Link>
     </div>
   );
 }

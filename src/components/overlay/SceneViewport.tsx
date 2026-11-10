@@ -1,43 +1,15 @@
-import { ClientOnly, useBlocker } from "@tanstack/react-router";
-import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
-import { centerMarkerLabels } from "@/components/overlay/centerMarkerLabels";
-import { PrivateWorldPanel } from "@/components/overlay/PrivateWorldPanel";
+import { ClientOnly } from "@tanstack/react-router";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { SITE_CONFIG } from "@/config/site";
 import { useT } from "@/i18n";
-import { useAppStore } from "@/state/appStore";
-import { memorySession } from "@/memories/session";
-import { worldDataProvider } from "@/world/privateWorldSession";
-import { startMomentLifecycle } from "@/memories/moments";
-import { stopMemoryAudio } from "@/memories/audio";
+import { useAppStore, type Language } from "@/state/appStore";
 import { StaticScene } from "./StaticScene";
-const readGuestMode = () => memorySession.getSnapshot().guest;
-function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
+
+function ViewportInner() {
   const t = useT();
-  useBlocker({
-    enableBeforeUnload: false,
-    shouldBlockFn: ({ current, next }) => {
-      const snapshot = worldDataProvider.getSnapshot();
-      return (
-        current.pathname !== next.pathname &&
-        snapshot.mode === "private" &&
-        snapshot.dirty &&
-        !window.confirm(t.localPreview.confirmLeave)
-      );
-    },
-  });
-  const guest = useSyncExternalStore(memorySession.subscribe, readGuestMode, readGuestMode);
+  const lang = useAppStore((s) => s.language);
   const sceneStatus = useAppStore((s) => s.sceneStatus);
   const viewMode = useAppStore((s) => s.viewMode);
-  const worldSnapshot = useSyncExternalStore(
-    worldDataProvider.subscribe,
-    worldDataProvider.getSnapshot,
-    worldDataProvider.getSnapshot,
-  );
-  const markerLabels = centerMarkerLabels(
-    worldSnapshot.mode,
-    t,
-    worldSnapshot.centerConfirmation,
-    worldSnapshot.temporaryLotIllustrationSelected,
-  );
   const host = useRef<HTMLDivElement>(null);
   const marker = useRef<HTMLDivElement>(null);
   const runtime = useRef<ReturnType<typeof import("@/engine/demoScene").createDemoScene> | null>(
@@ -48,9 +20,7 @@ function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
   const [recovering, setRecovering] = useState(false);
   const recoveryAttempts = useRef(0);
   const [shortLandscape, setShortLandscape] = useState(false);
-  // Reuse the compact recovery card while the mobile sheet is open: a centered
-  // card would cover its tabs. Keep recovery above the sheet, not behind it.
-  const compactFallback = shortLandscape || dockExpanded;
+
   useEffect(() => {
     const query = window.matchMedia("(max-width: 767px) and (max-height: 480px)");
     const update = () => setShortLandscape(query.matches);
@@ -58,6 +28,7 @@ function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
     query.addEventListener("change", update);
     return () => query.removeEventListener("change", update);
   }, []);
+
   // OrbitControls disconnects from canvas.getRootNode(). Dispose before React
   // detaches the host, otherwise its document key listener retains the old scene.
   useLayoutEffect(() => {
@@ -129,18 +100,11 @@ function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
       runtime.current = null;
     };
   }, [attempt]);
-  useEffect(() => {
-    memorySession.start();
-    const stopMoments = startMomentLifecycle(() => useAppStore.getState().clearMoments());
-    return () => {
-      memorySession.stop();
-      stopMoments();
-      stopMemoryAudio();
-    };
-  }, []);
+
   useEffect(() => {
     runtime.current?.setLabel(t.sceneControls);
   }, [t.sceneControls, attempt, failed, sceneStatus]);
+
   return (
     <div
       id="scene-root"
@@ -155,43 +119,31 @@ function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
         ref={marker}
         data-testid="world-center-marker"
         className={`pointer-events-none absolute left-0 top-0 z-10 ${failed ? "hidden" : ""}`}
-        style={{ visibility: "hidden", display: guest ? "none" : undefined }}
+        style={{ visibility: "hidden" }}
       >
         <div className="rounded-xl border border-white/70 bg-primary px-3 py-2 text-center text-xs text-primary-foreground shadow-lg">
-          <span className="block font-medium">{markerLabels.title}</span>
-          {"illustration" in markerLabels ? (
-            <span
-              className="block opacity-90"
-              data-testid="temporary-lot-illustration"
-              data-illustrative-only="true"
-              data-boundary-geometry="none"
-            >
-              {markerLabels.illustration}
-            </span>
-          ) : (
-            <span className="block opacity-80">{markerLabels.description}</span>
-          )}
+          <span className="block font-medium">{SITE_CONFIG.homeLabel[lang]}</span>
+          <span className="block opacity-80">{t.emptyLot}</span>
         </div>
         <div className="mx-auto h-3 w-px bg-primary" />
       </div>
-      <PrivateWorldPanel enabled dockExpanded={dockExpanded} />
       {failed ? (
         <div
-          className={`pointer-events-none absolute inset-0 z-40 grid px-6 ${compactFallback ? "items-start justify-start" : "place-items-center"}`}
+          className={`pointer-events-none absolute inset-0 z-40 grid px-6 ${shortLandscape ? "items-start justify-start" : "place-items-center"}`}
         >
           <div
-            className={`pointer-events-auto glass max-w-sm p-6 text-center ${compactFallback ? "absolute right-4 top-20 w-[200px] max-w-[calc(100vw-3rem)] p-3 text-left" : ""}`}
+            className={`pointer-events-auto glass max-w-sm p-6 text-center ${shortLandscape ? "absolute right-4 top-20 w-[200px] max-w-[calc(100vw-3rem)] p-3 text-left" : ""}`}
             role="status"
           >
             <p className="font-serif text-xl italic text-primary">
               {recovering ? t.recoveringScene : t.fallbackTitle}
             </p>
-            <p className={`mt-3 text-sm text-muted-foreground ${compactFallback ? "hidden" : ""}`}>
+            <p className={`mt-3 text-sm text-muted-foreground ${shortLandscape ? "hidden" : ""}`}>
               {t.fallbackBody}
             </p>
             <button
               type="button"
-              className={`chip mt-4 ${compactFallback ? "mt-2" : ""}`}
+              className={`chip mt-4 ${shortLandscape ? "mt-2" : ""}`}
               onClick={() => {
                 recoveryAttempts.current = 0;
                 setRecovering(false);
@@ -205,21 +157,22 @@ function ViewportInner({ dockExpanded }: { dockExpanded: boolean }) {
           </div>
         </div>
       ) : viewMode !== "topdown" ? (
-        <p className="pointer-events-none absolute bottom-[112px] left-4 max-w-[200px] rounded-lg bg-background/80 px-3 py-2 text-xs text-foreground sm:bottom-5 sm:max-w-[230px]">
+        <p className="pointer-events-none absolute bottom-32 left-4 hidden max-w-[230px] rounded-lg bg-background/80 px-3 py-2 text-xs text-foreground sm:bottom-5 sm:block">
           {t.sceneHint}
         </p>
       ) : null}
     </div>
   );
 }
-export function SceneViewport({ dockExpanded = false }: { dockExpanded?: boolean }) {
+
+export function SceneViewport() {
   return (
     <ClientOnly
       fallback={
         <div className="absolute inset-0" style={{ background: "var(--gradient-scene)" }} />
       }
     >
-      <ViewportInner dockExpanded={dockExpanded} />
+      <ViewportInner />
     </ClientOnly>
   );
 }

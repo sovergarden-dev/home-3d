@@ -3,13 +3,12 @@ import { createLifeRuntime } from "./life/runtime";
 import { bindLifeCommands, resetLifeSession, updateLifeStatus } from "./life/session";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { bindCapture } from "./capture";
 import { bindRealStreetView } from "./view/externalMapView";
 import { createDemoAudio } from "./demoAudio";
 import { createAtmosphereLayer } from "./atmosphere";
 import { getAstronomy, phaseMoon } from "@/atmosphere/astronomy";
-import { getEffectiveFestival, getEffectiveSeason } from "@/atmosphere/calendar";
+import { getEffectiveSeason } from "@/atmosphere/calendar";
 import { buildWorldMeshes, type WorldMeshBundle } from "./world/buildWorldMeshes";
 import { createFrameMetrics } from "./quality/frameMetrics";
 import {
@@ -19,36 +18,16 @@ import {
   type PlanCameraConfig,
 } from "./view/planCamera";
 import {
-  PRIVATE_PLAN_CORE_SPAN_METRES,
   clampPrivatePlanCentre,
   derivePrivateWorldPlanFrame,
   type PrivateWorldPlanFrame,
 } from "./view/privateWorldPlanFrame";
-import { TEMPORARY_LOT_ILLUSTRATION_POSITION } from "./view/temporaryLotIllustration";
 import { projectMarkerAndCull } from "./view/cameraFrame";
 import { useAppStore } from "@/state/appStore";
+import { SITE_CONFIG } from "@/config/site";
 import { surfaceCentroid } from "@/world/geometry";
-import { worldDataProvider } from "@/world/privateWorldSession";
+import { homeWorldSession } from "@/world/homeWorldSession";
 import type { WorldData } from "@/world/schema";
-import { pickFeature, isTap } from "./interaction/featurePicking";
-import {
-  isConfidenceVisible,
-  getSelectedFeature,
-  selectFeature,
-  subscribeFeatureSelection,
-} from "@/world/featureSelection";
-import { memorySession } from "@/memories/session";
-import { bindMemoryCamera } from "@/memories/bridge";
-import { createMemoryPinLayer, type MemoryPin } from "@/memories/pins";
-import {
-  clampCameraPose,
-  DEFAULT_CAMERA_POSE,
-  catmullCameraPose,
-  type CameraPose,
-} from "@/memories/camera";
-import { poseToOrbit } from "./view/memoryOrbit";
-import { buildMemoryHash, parseMemoryHash } from "@/memories/deepLink";
-import { bindPostcardCapture } from "@/memories/postcard";
 import { runStartupSequence, type StartupOutcome } from "./startupSequence";
 
 const STARTUP_PROGRAM_POLL_MS = 10;
@@ -65,33 +44,6 @@ export interface SceneRuntime {
    * context is lost, which onContextLost reports. Rejects when a startup step throws.
    */
   ready: Promise<StartupOutcome>;
-}
-
-function worldCentre(world: WorldData) {
-  const positions = [
-    ...world.roads.flatMap((road) => road.polylineENU),
-    ...world.lots.flatMap((lot) =>
-      lot.geometry.type === "Polygon"
-        ? lot.geometry.coordinates.flat()
-        : lot.geometry.coordinates.flat(2),
-    ),
-    ...world.buildings.flatMap((building) =>
-      building.geometry.type === "Polygon"
-        ? building.geometry.coordinates.flat()
-        : building.geometry.coordinates.flat(2),
-    ),
-  ];
-  if (positions.length === 0) return new THREE.Vector3(0, 0, 0);
-  const bounds = positions.reduce(
-    (value, [x, z]) => ({
-      minX: Math.min(value.minX, x),
-      maxX: Math.max(value.maxX, x),
-      minZ: Math.min(value.minZ, z),
-      maxZ: Math.max(value.maxZ, z),
-    }),
-    { minX: Infinity, maxX: -Infinity, minZ: Infinity, maxZ: -Infinity },
-  );
-  return new THREE.Vector3((bounds.minX + bounds.maxX) / 2, 0, (bounds.minZ + bounds.maxZ) / 2);
 }
 
 function worldSpan(world: WorldData) {
@@ -121,12 +73,16 @@ function worldSpan(world: WorldData) {
   return Math.max(bounds.maxX - bounds.minX, bounds.maxZ - bounds.minZ, 50) * 1.25;
 }
 
-function perspectiveFrame(world: WorldData, isPrivateWorld: boolean) {
+function perspectiveFrame(world: WorldData) {
   return {
-    centre: isPrivateWorld ? new THREE.Vector3(0, 0, 0) : worldCentre(world),
-    // Keep the supplied origin in view; longer source roads remain available for panning.
-    span: isPrivateWorld ? PRIVATE_PLAN_CORE_SPAN_METRES : worldSpan(world),
+    centre: worldCameraCentre(),
+    span: worldSpan(world),
   };
+}
+
+export function worldCameraCentre() {
+  const [x, z] = SITE_CONFIG.heroCenter;
+  return new THREE.Vector3(x, 0, z);
 }
 
 export function worldHomeCentre(world: WorldData) {
@@ -216,27 +172,20 @@ export function createDemoScene(
   };
 
   let worldBundle: WorldMeshBundle | null = null;
-  let currentWorld = worldDataProvider.getSnapshot();
+  let currentWorld = homeWorldSession.getSnapshot();
   const fallbackWorld = "world" in currentWorld ? currentWorld.world : null;
-  const initialPerspectiveFrame = fallbackWorld
-    ? perspectiveFrame(fallbackWorld, currentWorld.mode === "private")
-    : null;
+  const initialPerspectiveFrame = fallbackWorld ? perspectiveFrame(fallbackWorld) : null;
   let centre = initialPerspectiveFrame?.centre ?? new THREE.Vector3();
   let homeCentre = fallbackWorld ? worldHomeCentre(fallbackWorld) : new THREE.Vector3();
-  const planCentre = homeCentre.clone();
+  const planCentre = worldCameraCentre();
   let span = initialPerspectiveFrame?.span ?? 100;
-  let fullPlanSpan: number | null = null;
-  let privatePlanFrame: PrivateWorldPlanFrame | null =
-    currentWorld.mode === "private" && fallbackWorld
-      ? derivePrivateWorldPlanFrame(fallbackWorld)
-      : null;
+  let privatePlanFrame: PrivateWorldPlanFrame | null = null;
   function resetPlanCentre() {
-    fullPlanSpan = null;
     if (privatePlanFrame) {
       planCentre.set(privatePlanFrame.centre.x, 0, privatePlanFrame.centre.z);
       return;
     }
-    planCentre.copy(homeCentre);
+    planCentre.copy(worldCameraCentre());
   }
   let planPanRevision = 0;
   const planPointers = new Map<number, THREE.Vector2>();
@@ -248,7 +197,6 @@ export function createDemoScene(
   let animationFrame = 0;
   let lastFrame = 0;
   let renderRevision = 0;
-  let lastWorldRevision = -1;
   const audio = createDemoAudio({
     onStateChange: () => {
       lastLifeMetricsAt = 0;
@@ -272,304 +220,14 @@ export function createDemoScene(
   let lastMetricsSnapshotAt = 0;
   let updatingControls = false;
   let syncingControlsState = false;
-  let syncingMemoryPose = false;
   let interactionActive = false;
   let interactionTimer = 0;
-  let pointerGestureWasMultiTouch = false;
-  let lastPackageEpoch = currentWorld.packageEpoch;
   const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const pinTier =
-    window.innerWidth < 768 || renderer.capabilities.maxTextureSize <= 4096
-      ? "low"
-      : window.innerWidth < 1100
-        ? "mid"
-        : "high";
-  const memoryPins = createMemoryPinLayer(pinTier);
-  scene.add(memoryPins.group);
-  const memoryPose = {
-    ...DEFAULT_CAMERA_POSE,
-    target: [...DEFAULT_CAMERA_POSE.target] as [number, number, number],
-  } as CameraPose;
-  let memorySessionSnapshot = memorySession.getSnapshot();
-  let memoryTour: {
-    memories: readonly MemoryPin[];
-    index: number;
-    from: CameraPose;
-    to: CameraPose;
-    started: number;
-    holdUntil: number;
-    paused: boolean;
-    saved: CameraPose;
-    savedMode: ReturnType<typeof useAppStore.getState>["viewMode"];
-    savedHeading: number;
-    savedZoom: number;
-    savedRaw: ReturnType<typeof saveMemoryCamera>;
-  } | null = null;
-  let memoryFlight: {
-    from: CameraPose;
-    to: CameraPose;
-    started: number;
-    duration: number;
-    onDone?: () => void;
-  } | null = null;
-  let memoryRenderTargets = 0;
-  let memoryLastPinSignature = "";
-  let memoryPinsDirty = false;
-  let memoryLinkError: string | undefined;
-  const memoryListeners = new Set<() => void>();
-  const notifyMemory = () => memoryListeners.forEach((listener) => listener());
-  const memorySnapshot = () => ({
-    ...(memoryLinkError ? { error: memoryLinkError } : {}),
-    active: Boolean(memoryTour || memoryFlight),
-    paused: Boolean(memoryTour?.paused),
-    index: memoryTour?.index ?? -1,
-    memoryId: memoryTour ? (memoryTour.memories[memoryTour.index]?.id ?? null) : null,
-  });
-  const currentMemoryPose = (): CameraPose => {
-    if (useAppStore.getState().viewMode === "topdown")
-      return clampCameraPose({
-        ...memoryPose,
-        mode: "topdown",
-        target: [planCentre.x, 0, planCentre.z],
-        zoom: useAppStore.getState().zoom,
-        distance: span,
-      });
-    const target = controls.target;
-    const distance = perspectiveCamera.position.distanceTo(target);
-    return clampCameraPose({
-      mode: "diorama",
-      target: [target.x, Math.max(0, target.y), target.z],
-      yaw: Math.atan2(
-        perspectiveCamera.position.x - target.x,
-        perspectiveCamera.position.z - target.z,
-      ),
-      pitch: Math.atan2(
-        perspectiveCamera.position.y - target.y,
-        Math.max(
-          0.001,
-          Math.hypot(
-            perspectiveCamera.position.x - target.x,
-            perspectiveCamera.position.z - target.z,
-          ),
-        ),
-      ),
-      distance,
-      zoom: (span * 1.15) / Math.max(distance, 1),
-    });
-  };
-  const saveMemoryCamera = () => ({
-    position: perspectiveCamera.position.clone(),
-    quaternion: perspectiveCamera.quaternion.clone(),
-    planCentre: planCentre.clone(),
-    planPosition: planCamera.position.clone(),
-    planQuaternion: planCamera.quaternion.clone(),
-    planProjection: planCamera.projectionMatrix.clone(),
-    target: controls.target.clone(),
-    aspect: perspectiveCamera.aspect,
-    projection: perspectiveCamera.projectionMatrix.elements.slice(),
-  });
-  const applyMemoryPose = (pose: CameraPose) => {
-    const next = clampCameraPose(pose);
-    Object.assign(memoryPose, next);
-    syncingMemoryPose = true;
-    try {
-      if (next.mode === "topdown") {
-        useAppStore.setState({ viewMode: "topdown", zoom: next.zoom });
-        planCentre.set(next.target[0], 0, next.target[2]);
-        applyPlan();
-      } else {
-        useAppStore.setState({
-          viewMode: "diorama",
-          heading: savedHeadingSafe(next.yaw),
-          zoom: next.zoom,
-        });
-        controls.target.set(next.target[0], next.target[1], next.target[2]);
-        poseToOrbit(next, perspectiveCamera.position);
-        perspectiveCamera.lookAt(controls.target);
-        activeCamera = perspectiveCamera;
-        controls.update();
-      }
-    } finally {
-      syncingMemoryPose = false;
-    }
-    render(true);
-  };
-  const beginMemoryFlight = (to: CameraPose, onDone?: () => void) => {
-    const from = currentMemoryPose();
-    const target = clampCameraPose(to);
-    if (motion.matches) {
-      applyMemoryPose(target);
-      onDone?.();
-      if (memoryTour) scheduleFrame();
-      return;
-    }
-    memoryFlight = {
-      from,
-      to: target,
-      started: performance.now(),
-      duration: 1200,
-      ...(onDone ? { onDone } : {}),
-    };
-    controls.enabled = false;
-    scheduleFrame();
-  };
-  const restoreMemoryCamera = () => {
-    if (!memoryTour) return;
-    const tour = memoryTour;
-    memoryTour = null;
-    memoryFlight = null;
-    syncingMemoryPose = true;
-    perspectiveCamera.position.copy(tour.savedRaw.position);
-    perspectiveCamera.quaternion.copy(tour.savedRaw.quaternion);
-    planCentre.copy(tour.savedRaw.planCentre);
-    planCamera.position.copy(tour.savedRaw.planPosition);
-    planCamera.quaternion.copy(tour.savedRaw.planQuaternion);
-    planCamera.projectionMatrix.copy(tour.savedRaw.planProjection);
-    planCamera.projectionMatrixInverse.copy(planCamera.projectionMatrix).invert();
-    controls.target.copy(tour.savedRaw.target);
-    perspectiveCamera.aspect = tour.savedRaw.aspect;
-    perspectiveCamera.updateProjectionMatrix();
-    perspectiveCamera.projectionMatrix.fromArray(tour.savedRaw.projection);
-    activeCamera = tour.savedMode === "topdown" ? planCamera : perspectiveCamera;
-    useAppStore.setState({
-      viewMode: tour.savedMode,
-      heading: tour.savedHeading,
-      zoom: tour.savedZoom,
-    });
-    syncingMemoryPose = false;
-    controls.enabled = tour.savedMode === "diorama";
-    render(true);
-    notifyMemory();
-  };
-  const savedHeadingSafe = (yaw: number) => ((yaw * 180) / Math.PI + 360) % 360;
-  const makeMemoryTour = (memories: readonly MemoryPin[], saved: CameraPose) => ({
-    memories,
-    index: 0,
-    from: saved,
-    to: clampCameraPose(memories[0]!.camera),
-    started: performance.now(),
-    holdUntil: 0,
-    paused: false,
-    saved,
-    savedMode: useAppStore.getState().viewMode,
-    savedHeading: useAppStore.getState().heading,
-    savedZoom: useAppStore.getState().zoom,
-    savedRaw: saveMemoryCamera(),
-  });
-  const startMemoryTour = (memories: readonly MemoryPin[]) => {
-    const visible = memories.filter(
-      (m) => !memorySessionSnapshot.guest || m.visibility !== "private",
-    );
-    const mode = useAppStore.getState().viewMode;
-    if (!visible.length || (mode !== "diorama" && mode !== "topdown")) return;
-    const saved = currentMemoryPose();
-    memoryTour = makeMemoryTour(visible, saved);
-    controls.enabled = false;
-    notifyMemory();
-    beginMemoryFlight(memoryTour.to, () => {
-      if (memoryTour) {
-        memoryTour.holdUntil = performance.now() + 5000;
-        notifyMemory();
-      }
-    });
-  };
-  const flyMemory = (memory: MemoryPin) => {
-    if (memorySessionSnapshot.guest && memory.visibility === "private") return;
-    if (!memoryTour && !memoryFlight) {
-      const mode = useAppStore.getState().viewMode;
-      if (mode !== "diorama" && mode !== "topdown") return;
-      memoryTour = makeMemoryTour([memory], currentMemoryPose());
-      controls.enabled = false;
-      notifyMemory();
-    } else if (memoryTour) {
-      memoryTour.memories = [memory];
-      memoryTour.index = 0;
-      memoryTour.to = clampCameraPose(memory.camera);
-      memoryTour.holdUntil = 0;
-      memoryTour.paused = false;
-      notifyMemory();
-    }
-    beginMemoryFlight(memory.camera);
-  };
-  const unsubscribeMemoryBinding = bindMemoryCamera({
-    getPose: currentMemoryPose,
-    flyTo: flyMemory,
-    startTour: startMemoryTour,
-    previous: () => {
-      if (memoryTour) {
-        memoryTour.index = Math.max(0, memoryTour.index - 1);
-        memoryTour.to = clampCameraPose(memoryTour.memories[memoryTour.index]!.camera);
-        notifyMemory();
-        memoryTour.holdUntil = 0;
-        beginMemoryFlight(memoryTour.to, () => {
-          if (memoryTour && memoryTour.memories.length > 1)
-            memoryTour.holdUntil = performance.now() + 5000;
-        });
-      }
-    },
-    next: () => {
-      if (memoryTour) {
-        if (memoryTour.index + 1 < memoryTour.memories.length) {
-          memoryTour.index += 1;
-          memoryTour.to = clampCameraPose(memoryTour.memories[memoryTour.index]!.camera);
-          notifyMemory();
-          memoryTour.holdUntil = 0;
-          beginMemoryFlight(memoryTour.to, () => {
-            if (memoryTour) memoryTour.holdUntil = performance.now() + 5000;
-          });
-        } else restoreMemoryCamera();
-      }
-    },
-    pause: () => {
-      if (memoryTour) {
-        memoryTour.paused = !memoryTour.paused;
-        notifyMemory();
-      }
-    },
-    exit: restoreMemoryCamera,
-    getSnapshot: memorySnapshot,
-    subscribe: (listener) => {
-      memoryListeners.add(listener);
-      return () => memoryListeners.delete(listener);
-    },
-  });
-  const unsubscribeMemorySession = memorySession.subscribe(() => {
-    const wasGuest = memorySessionSnapshot.guest;
-    memorySessionSnapshot = memorySession.getSnapshot();
-    if (
-      !memorySessionSnapshot.ready ||
-      wasGuest !== memorySessionSnapshot.guest ||
-      (memoryTour &&
-        memoryTour.memories.some(
-          (m) => !memorySessionSnapshot.memories.some((current) => current.id === m.id),
-        ))
-    )
-      restoreMemoryCamera();
-    const sig =
-      memorySessionSnapshot.memories
-        .map((m) => `${m.id}:${m.position.join(",")}:${m.visibility}`)
-        .join("|") + `:${memorySessionSnapshot.guest}`;
-    if (sig !== memoryLastPinSignature) {
-      memoryLastPinSignature = sig;
-      memoryPins.update(memorySessionSnapshot.memories, memorySessionSnapshot.guest);
-      host.dataset["memoryPins"] = String(memoryPins.mesh.count);
-      memoryPinsDirty = true;
-      scheduleFrame();
-      if (!memoryTour && !memoryFlight) {
-        const link = parseMemoryHash(window.location.hash);
-        if (link.state?.id) applyLink(link);
-      }
-    }
-  });
-  memorySessionSnapshot = memorySession.getSnapshot();
-  memoryPins.update(memorySessionSnapshot.memories, memorySessionSnapshot.guest);
-  host.dataset["memoryPinMeshes"] = "1";
-  host.dataset["memoryPins"] = String(memoryPins.mesh.count);
 
   let illustrativeDetails: ReturnType<typeof createIllustrativeDetails> | null = null;
 
   function mountWorld() {
-    const snapshot = worldDataProvider.getSnapshot();
+    const snapshot = homeWorldSession.getSnapshot();
     currentWorld = snapshot;
     if (!("world" in snapshot)) return;
     life?.dispose();
@@ -583,14 +241,14 @@ export function createDemoScene(
     worldBundle = buildWorldMeshes(snapshot.world, materialFactory);
     atmosphere.invalidateWorld();
     host.dataset["meshBuildLatencyMs"] = String(performance.now() - meshBuildStartedAt);
-    worldBundle.setConfidenceVisible(isConfidenceVisible());
-    worldBundle.setSelectedFeature(getSelectedFeature()?.featureId ?? null);
     scene.add(worldBundle.group);
-    const frame = perspectiveFrame(snapshot.world, snapshot.mode === "private");
+    const frame = perspectiveFrame(snapshot.world);
     centre = frame.centre;
     homeCentre = worldHomeCentre(snapshot.world);
-    privatePlanFrame =
-      snapshot.mode === "private" ? derivePrivateWorldPlanFrame(snapshot.world) : null;
+    privatePlanFrame = derivePrivateWorldPlanFrame(snapshot.world, {
+      x: SITE_CONFIG.heroCenter[0],
+      z: SITE_CONFIG.heroCenter[1],
+    });
     resetPlanCentre();
     span = frame.span;
     life = createLifeRuntime({
@@ -603,9 +261,6 @@ export function createDemoScene(
     });
     scene.add(life.group);
     planPanRevision = 0;
-    lastWorldRevision = snapshot.revision;
-    if (snapshot.packageEpoch !== lastPackageEpoch) selectFeature(null);
-    lastPackageEpoch = snapshot.packageEpoch;
     // Effects anchor to the mounted world frame instead of a fixed origin.
     atmosphere.group.position.set(homeCentre.x, 0, homeCentre.z);
     applyView(true);
@@ -627,7 +282,7 @@ export function createDemoScene(
   }
 
   function planConfig(state = useAppStore.getState()): PlanCameraConfig {
-    const verticalSpanMetres = fullPlanSpan ?? privatePlanFrame?.verticalSpanMetres ?? span;
+    const verticalSpanMetres = privatePlanFrame?.verticalSpanMetres ?? span;
     host.dataset["planCoreVerticalSpanMetres"] = String(verticalSpanMetres);
     host.dataset["planCameraZoom"] = String(state.zoom);
     host.dataset["planVisibleVerticalSpanMetres"] = String(verticalSpanMetres / state.zoom);
@@ -736,16 +391,10 @@ export function createDemoScene(
 
   function applyEnvironment() {
     const state = useAppStore.getState();
-    const effectiveWeather =
-      state.realWeatherEnabled && state.realWeatherKind ? state.realWeatherKind : state.weather;
+    const effectiveWeather = state.weather;
     const selectedDate = state.selectedDate;
-    const reference =
-      currentWorld.mode === "private" ? worldDataProvider.getGeoreference()?.origin : null;
-    const astronomy =
-      reference || currentWorld.mode !== "private"
-        ? getAstronomy(selectedDate, state.timeOfDayMinutes, reference ?? null)
-        : null;
-    const effectiveFestival = getEffectiveFestival(state);
+    const astronomy = getAstronomy(selectedDate, state.timeOfDayMinutes, null);
+    const effectiveFestival = "normal" as const;
     const effectiveSeason = getEffectiveSeason(state);
     const presentationVisible =
       state.atmosphereEnabled && worldRenderable() && state.viewMode !== "topdown";
@@ -763,7 +412,7 @@ export function createDemoScene(
         selectedDate,
         season: effectiveSeason,
         atmosphereEnabled: state.atmosphereEnabled,
-        floodLevel: state.floodLevel,
+        floodLevel: 0,
         moonPhase: phaseMoon(selectedDate, state.timeOfDayMinutes) ?? 0.5,
         astronomy:
           astronomy?.sun && astronomy.moon
@@ -784,9 +433,7 @@ export function createDemoScene(
       {
         minutes: state.timeOfDayMinutes,
         weather: effectiveWeather,
-        fixture:
-          currentWorld.mode === "fixture" ||
-          ("world" in currentWorld && currentWorld.world.manifest.isSynthetic),
+        fixture: true,
       },
     );
     life?.configure();
@@ -827,28 +474,18 @@ export function createDemoScene(
   function render(activeAnimation = false) {
     if (disposed || !firstFrameReady || document.hidden || !host.clientWidth || !host.clientHeight)
       return;
-    const pinMode = useAppStore.getState().viewMode;
-    memoryPins.group.visible =
-      worldRenderable() && (pinMode === "diorama" || pinMode === "topdown");
-    memoryPins.setSelected(memoryTour?.memories[memoryTour.index]?.id ?? null);
     if (currentWorld.mode === "private-error" || !worldBundle) {
       marker.style.visibility = "hidden";
       useAppStore.getState().setPlanMeasurement(null);
       renderer.clear();
       renderer.render(scene, activeCamera);
-      memoryPinsDirty = false;
       host.dataset["activeWorlds"] = "0";
       host.dataset["worldMode"] = currentWorld.mode;
       return;
     }
     renderer.render(scene, activeCamera);
-    // A pin update is a one-shot invalidation; do not let reduced-motion RAF spin.
-    memoryPinsDirty = false;
-    host.dataset["memoryRenderTargets"] = String(memoryRenderTargets);
     host.dataset["memoryTextures"] = String(renderer.info.memory.textures);
     host.dataset["memoryGeometries"] = String(renderer.info.memory.geometries);
-    host.dataset["memoryTourActive"] = String(Boolean(memoryTour));
-    host.dataset["memoryPins"] = String(memoryPins.mesh.count);
     const renderedAt = performance.now();
     frameMetrics.record(
       renderedAt,
@@ -858,22 +495,10 @@ export function createDemoScene(
       frameSnapshot = frameMetrics.snapshot();
       lastMetricsSnapshotAt = renderedAt;
     }
-    if (currentWorld.mode === "private" && currentWorld.temporaryLotIllustrationSelected) {
-      markerPosition.set(
-        TEMPORARY_LOT_ILLUSTRATION_POSITION.x,
-        TEMPORARY_LOT_ILLUSTRATION_POSITION.y,
-        TEMPORARY_LOT_ILLUSTRATION_POSITION.z,
-      );
-    } else {
-      markerPosition.set(homeCentre.x, 0.35, homeCentre.z);
-    }
+    markerPosition.set(homeCentre.x, 0.35, homeCentre.z);
     const projected = projectMarkerAndCull(activeCamera, markerPosition, -0.06);
     marker.style.transform = `translate(-50%, -100%) translate(${projected.x * host.clientWidth}px, ${projected.y * host.clientHeight - 10}px)`;
-    marker.style.visibility = memorySessionSnapshot.guest
-      ? "hidden"
-      : projected.visible
-        ? "visible"
-        : "hidden";
+    marker.style.visibility = projected.visible ? "visible" : "hidden";
     host.dataset["drawCalls"] = String(renderer.info.render.calls);
     host.dataset["triangles"] = String(renderer.info.render.triangles);
     host.dataset["renderedFrames"] = String(frameSnapshot.renderedFrames);
@@ -917,7 +542,7 @@ export function createDemoScene(
       disposed ||
       !firstFrameReady ||
       document.hidden ||
-      (motion.matches && !lifeActive() && !memoryTour && !memoryFlight && !memoryPinsDirty) ||
+      (motion.matches && !lifeActive()) ||
       animationFrame !== 0
     )
       return;
@@ -935,49 +560,9 @@ export function createDemoScene(
 
   function tick(now: number) {
     animationFrame = 0;
-    if (
-      disposed ||
-      document.hidden ||
-      (motion.matches && !lifeActive() && !memoryTour && !memoryFlight && !memoryPinsDirty)
-    )
-      return;
+    if (disposed || document.hidden || (motion.matches && !lifeActive())) return;
     const delta = lastFrame === 0 ? 0.016 : Math.min(0.1, (now - lastFrame) / 1000);
     lastFrame = now;
-    if (memoryFlight && !memoryTour?.paused) {
-      const t = Math.min(1, (now - memoryFlight.started) / memoryFlight.duration);
-      const prev =
-        memoryTour?.memories[Math.max(0, (memoryTour.index ?? 0) - 1)]?.camera ?? memoryFlight.from;
-      const next = memoryTour?.memories[(memoryTour.index ?? 0) + 1]?.camera ?? memoryFlight.to;
-      const eased = t * t * (3 - 2 * t);
-      applyMemoryPose(catmullCameraPose(prev, memoryFlight.from, memoryFlight.to, next, eased));
-      if (t >= 1) {
-        const done = memoryFlight.onDone;
-        memoryFlight = null;
-        notifyMemory();
-        done?.();
-      }
-    }
-    if (
-      memoryTour &&
-      !memoryTour.paused &&
-      !memoryFlight &&
-      memoryTour.holdUntil &&
-      now >= memoryTour.holdUntil
-    ) {
-      if (memoryTour.index + 1 < memoryTour.memories.length) {
-        memoryTour.index += 1;
-        memoryTour.to = clampCameraPose(memoryTour.memories[memoryTour.index]!.camera);
-        notifyMemory();
-        beginMemoryFlight(memoryTour.to, () => {
-          if (memoryTour) {
-            memoryTour.holdUntil = performance.now() + 5000;
-            notifyMemory();
-          }
-        });
-      } else restoreMemoryCamera();
-    }
-    host.dataset["memoryTourActive"] = String(Boolean(memoryTour));
-    host.dataset["memoryPins"] = String(memoryPins.mesh.count);
 
     atmosphere.tick(delta);
     // Input can dirty a stationary POV without requiring another moving frame.
@@ -996,15 +581,7 @@ export function createDemoScene(
     }
 
     const controlsChanged = controls.enabled ? updateControls() : false;
-    if (
-      controlsChanged ||
-      atmosphere.rainVisible ||
-      lifeFrameRequested ||
-      lifeActive() ||
-      memoryFlight ||
-      memoryPinsDirty ||
-      (memoryTour && !memoryTour.paused)
-    ) {
+    if (controlsChanged || atmosphere.rainVisible || lifeFrameRequested || lifeActive()) {
       render(true);
       scheduleFrame();
     }
@@ -1046,21 +623,12 @@ export function createDemoScene(
   }
 
   function onControlStart() {
-    if (memoryTour || memoryFlight) restoreMemoryCamera();
     interactionActive = true;
   }
   function onControlEnd() {
     interactionActive = false;
     frameMetrics.reset();
     window.clearTimeout(interactionTimer);
-    interactionTimer = window.setTimeout(() => {
-      if (!disposed)
-        window.history.replaceState(
-          null,
-          "",
-          `${window.location.pathname}${window.location.search}${buildMemoryHash({ pose: currentMemoryPose(), time: useAppStore.getState().timeOfDayMinutes })}`,
-        );
-    }, 120);
   }
 
   function transientInteraction() {
@@ -1074,15 +642,12 @@ export function createDemoScene(
 
   function onPlanPointerDown(event: PointerEvent) {
     if (!worldRenderable()) return;
-    if (memoryPins.setHovered(null)) render();
     const isPlan = useAppStore.getState().viewMode === "topdown";
     if (isPlan) canvas.setPointerCapture(event.pointerId);
-    if (planPointers.size === 0) pointerGestureWasMultiTouch = false;
     interactionActive = true;
     planPointers.set(event.pointerId, new THREE.Vector2(event.clientX, event.clientY));
     planPointerStarts.set(event.pointerId, new THREE.Vector2(event.clientX, event.clientY));
     if (planPointers.size === 2) {
-      pointerGestureWasMultiTouch = true;
       const [first, second] = [...planPointers.values()];
       lastPinchDistance = first && second ? first.distanceTo(second) : null;
     }
@@ -1113,17 +678,6 @@ export function createDemoScene(
 
   function onPlanPointerMove(event: PointerEvent) {
     if (!worldRenderable()) return;
-    if (planPointers.size === 0) {
-      const rect = canvas.getBoundingClientRect();
-      const hovered = memoryPins.pick(
-        event.clientX - rect.left,
-        event.clientY - rect.top,
-        activeCamera,
-        rect.width,
-        rect.height,
-      );
-      if (memoryPins.setHovered(hovered)) render();
-    }
     if (useAppStore.getState().viewMode !== "topdown") return;
     const previous = planPointers.get(event.pointerId);
     if (!previous) return;
@@ -1144,46 +698,6 @@ export function createDemoScene(
   }
 
   function onPlanPointerEnd(event: PointerEvent) {
-    const start = planPointerStarts.get(event.pointerId);
-    if (
-      start &&
-      planPointers.size === 1 &&
-      worldBundle &&
-      !["walk", "ride"].includes(useAppStore.getState().viewMode) &&
-      !pointerGestureWasMultiTouch &&
-      event.type !== "pointercancel" &&
-      isTap(start, new THREE.Vector2(event.clientX, event.clientY))
-    ) {
-      const rect = canvas.getBoundingClientRect();
-      const pointer = new THREE.Vector2(
-        ((event.clientX - rect.left) / rect.width) * 2 - 1,
-        -((event.clientY - rect.top) / rect.height) * 2 + 1,
-      );
-      const hiddenLayers = new Set<string>();
-      if (!worldBundle.layers.trees.visible) hiddenLayers.add("trees");
-      if (!worldBundle.layers.labels.visible) hiddenLayers.add("labels");
-      const pinId = memoryPins.pick(
-        event.clientX - rect.left,
-        event.clientY - rect.top,
-        activeCamera,
-        rect.width,
-        rect.height,
-      );
-      const memory = pinId
-        ? memorySessionSnapshot.memories.find((item) => item.id === pinId)
-        : null;
-      if (memory) flyMemory(memory);
-      else
-        selectFeature(
-          pickFeature(
-            new THREE.Raycaster(),
-            pointer,
-            activeCamera,
-            worldBundle.group,
-            hiddenLayers,
-          ),
-        );
-    }
     planPointers.delete(event.pointerId);
     planPointerStarts.delete(event.pointerId);
     interactionActive = planPointers.size > 0;
@@ -1201,35 +715,14 @@ export function createDemoScene(
     state.setZoom(state.zoom * (event.deltaY < 0 ? 1.12 : 0.89));
   }
 
-  function onPinPointerLeave() {
-    if (memoryPins.setHovered(null)) render();
-  }
-
-  let memoryPausedAt = 0;
-  let memoryVisibilityPaused = false;
   function onVisibility() {
-    if (document.hidden) memoryPausedAt = performance.now();
     cancelAnimationFrame(animationFrame);
     animationFrame = 0;
     lastFrame = 0;
     frameMetrics.reset();
-    if (document.hidden && memoryTour && !memoryTour.paused) {
-      memoryVisibilityPaused = true;
-      memoryTour.paused = true;
-      notifyMemory();
-    }
     applyEnvironment();
     if (document.hidden) audio.suspend();
     if (!document.hidden && !disposed) {
-      const resumedAt = performance.now();
-      const pausedFor = memoryPausedAt ? resumedAt - memoryPausedAt : 0;
-      if (memoryFlight) memoryFlight.started += pausedFor;
-      if (memoryTour?.holdUntil) memoryTour.holdUntil += pausedFor;
-      if (memoryTour && memoryVisibilityPaused) {
-        memoryTour.paused = false;
-        memoryVisibilityPaused = false;
-        notifyMemory();
-      }
       render();
       scheduleFrame();
     }
@@ -1269,7 +762,7 @@ export function createDemoScene(
       }
       if (key === "r") {
         event.preventDefault();
-        state.requestCameraFrame("core");
+        state.resetView();
       }
       if (key === "+" || key === "=") {
         event.preventDefault();
@@ -1309,80 +802,6 @@ export function createDemoScene(
     onContextLost();
   }
 
-  bindPostcardCapture(async (width, height) => {
-    if (!firstFrameReady) throw new Error("CAPTURE_UNAVAILABLE");
-    if (width * height > renderer.capabilities.maxTextureSize ** 2)
-      throw new Error("POSTCARD_TOO_LARGE");
-    // Scene targets are linear/HDR in Three r180. Merely setting outputColorSpace
-    // on the renderer does not apply screen tone mapping to an offscreen target.
-    const sceneTarget = new THREE.WebGLRenderTarget(width, height, {
-      depthBuffer: true,
-      type: THREE.HalfFloatType,
-    });
-    const target = new THREE.WebGLRenderTarget(width, height, { depthBuffer: false });
-    const output = new OutputPass();
-    memoryRenderTargets += 2;
-    const previous = renderer.getRenderTarget();
-    const oldViewport = renderer.getViewport(new THREE.Vector4());
-    const oldScissor = renderer.getScissor(new THREE.Vector4());
-    const oldScissorTest = renderer.getScissorTest();
-    const oldAutoClear = renderer.autoClear;
-    const oldCamera = activeCamera;
-    const oldPerspectiveAspect = perspectiveCamera.aspect;
-    const oldPerspectiveProjection = perspectiveCamera.projectionMatrix.elements.slice();
-    const oldPlanProjection = planCamera.projectionMatrix.elements.slice();
-    let canvas2d: HTMLCanvasElement | null = null;
-    try {
-      const camera = oldCamera;
-      if (camera instanceof THREE.PerspectiveCamera) {
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-      }
-      renderer.setRenderTarget(sceneTarget);
-      renderer.setViewport(0, 0, width, height);
-      renderer.setScissorTest(false);
-      renderer.render(scene, camera);
-      // OutputPass uses the renderer's ACES exposure and sRGB transfer exactly
-      // as the visible canvas does, then writes display bytes to the readback RT.
-      output.render(renderer, target, sceneTarget, 0, false);
-      const pixels = new Uint8Array(width * height * 4);
-      renderer.readRenderTargetPixels(target, 0, 0, width, height, pixels);
-      canvas2d = document.createElement("canvas");
-      canvas2d.width = width;
-      canvas2d.height = height;
-      const ctx = canvas2d.getContext("2d");
-      if (!ctx) throw new Error("CANVAS_UNAVAILABLE");
-      const image = ctx.createImageData(width, height);
-      for (let y = 0; y < height; y++)
-        image.data.set(
-          pixels.subarray(y * width * 4, (y + 1) * width * 4),
-          (height - y - 1) * width * 4,
-        );
-      ctx.putImageData(image, 0, 0);
-      return await new Promise<Blob>((resolve, reject) =>
-        canvas2d!.toBlob((b) => (b ? resolve(b) : reject(new Error("ENCODE_FAILED"))), "image/png"),
-      );
-    } finally {
-      perspectiveCamera.aspect = oldPerspectiveAspect;
-      perspectiveCamera.updateProjectionMatrix();
-      perspectiveCamera.projectionMatrix.fromArray(oldPerspectiveProjection);
-      planCamera.projectionMatrix.fromArray(oldPlanProjection);
-      renderer.autoClear = oldAutoClear;
-      renderer.setRenderTarget(previous);
-      renderer.setViewport(oldViewport);
-      renderer.setScissor(oldScissor);
-      renderer.setScissorTest(oldScissorTest);
-      output.dispose();
-      sceneTarget.dispose();
-      target.dispose();
-      memoryRenderTargets = 0;
-      host.dataset["memoryRenderTargets"] = "0";
-      if (canvas2d) {
-        canvas2d.width = 0;
-        canvas2d.height = 0;
-      }
-    }
-  });
   const resizeObserver = new ResizeObserver(resize);
   resizeObserver.observe(host);
   controls.addEventListener("change", onControlChange);
@@ -1393,7 +812,6 @@ export function createDemoScene(
   canvas.addEventListener("keydown", onKey);
   canvas.addEventListener("pointerdown", onPlanPointerDown);
   canvas.addEventListener("pointermove", onPlanPointerMove);
-  canvas.addEventListener("pointerleave", onPinPointerLeave);
   canvas.addEventListener("pointerup", onPlanPointerEnd);
   canvas.addEventListener("pointercancel", onPlanPointerEnd);
   canvas.addEventListener("wheel", onPlanWheel, { passive: false });
@@ -1403,15 +821,6 @@ export function createDemoScene(
 
   const unsubscribeStore = useAppStore.subscribe((state, previous) => {
     if (disposed) return;
-    if (syncingMemoryPose) return;
-    if ((memoryTour || memoryFlight) && state.viewMode !== previous.viewMode) {
-      const requestedMode = state.viewMode;
-      restoreMemoryCamera();
-      useAppStore.setState({ viewMode: requestedMode });
-      return;
-    }
-    if ((memoryTour || memoryFlight) && state.viewReset !== previous.viewReset)
-      restoreMemoryCamera();
     if (
       state.lifeEnabled !== previous.lifeEnabled ||
       state.lifeDensity !== previous.lifeDensity ||
@@ -1433,23 +842,6 @@ export function createDemoScene(
       planPanRevision += 1;
       host.dataset["planPanRevision"] = String(planPanRevision);
     }
-    if (state.cameraFrame.request !== previous.cameraFrame.request) {
-      resetPlanCentre();
-      if (state.cameraFrame.kind === "full") {
-        if ("world" in currentWorld) {
-          planCentre.copy(worldCentre(currentWorld.world));
-          fullPlanSpan =
-            worldSpan(currentWorld.world) *
-            Math.max(1, host.clientHeight / Math.max(host.clientWidth, 1));
-        }
-        useAppStore.setState({ viewMode: "topdown", zoom: 1 });
-      } else if (state.cameraFrame.kind === "core") {
-        useAppStore.setState({ viewMode: "topdown", zoom: 1 });
-      }
-      planPanRevision += 1;
-      applyView(true);
-      return;
-    }
     if (
       state.viewMode !== previous.viewMode ||
       state.heading !== previous.heading ||
@@ -1469,17 +861,12 @@ export function createDemoScene(
     }
     if (
       state.weather !== previous.weather ||
-      state.realWeatherKind !== previous.realWeatherKind ||
-      state.realWeatherEnabled !== previous.realWeatherEnabled ||
       state.viewMode !== previous.viewMode ||
       state.timeOfDayMinutes !== previous.timeOfDayMinutes ||
-      state.festival !== previous.festival ||
       state.soundOn !== previous.soundOn ||
       state.selectedDate !== previous.selectedDate ||
       state.season !== previous.season ||
-      state.festivalAuto !== previous.festivalAuto ||
-      state.atmosphereEnabled !== previous.atmosphereEnabled ||
-      state.floodLevel !== previous.floodLevel
+      state.atmosphereEnabled !== previous.atmosphereEnabled
     ) {
       applyEnvironment();
       render();
@@ -1487,51 +874,12 @@ export function createDemoScene(
     }
   });
 
-  const unsubscribeConfidence = subscribeFeatureSelection(() => {
-    worldBundle?.setConfidenceVisible(isConfidenceVisible());
-    worldBundle?.setSelectedFeature(getSelectedFeature()?.featureId ?? null);
-    render();
-  });
-
-  const unsubscribeWorld = worldDataProvider.subscribe((snapshot) => {
+  const unsubscribeWorld = homeWorldSession.subscribe((snapshot) => {
     if (disposed) return;
     currentWorld = snapshot;
-    if (memoryTour || memoryFlight) {
-      memoryTour = null;
-      memoryFlight = null;
-      controls.enabled = true;
-      notifyMemory();
-    }
-    if (snapshot.packageEpoch !== lastPackageEpoch) {
-      selectFeature(null);
-      lastPackageEpoch = snapshot.packageEpoch;
-    }
-    if (snapshot.revision === lastWorldRevision) {
-      applyEnvironment();
-      render();
-      return;
-    }
-    if (snapshot.mode === "private-error") {
-      disposeWorld();
-      atmosphere.update(
-        { timeOfDayMinutes: 720, weather: "sunny", festival: "normal", atmosphereEnabled: false },
-        false,
-      );
-      controls.enabled = false;
-      marker.style.visibility = "hidden";
-      // render() clears to the empty private-error frame, but not before startup's first frame.
-      render();
-      host.dataset["worldMode"] = snapshot.mode;
-      host.dataset["activeWorlds"] = "0";
-      useAppStore.getState().setPlanMeasurement(null);
-      return;
-    }
     mountWorld();
     applyEnvironment();
     updateLayerVisibility();
-    // Rebuilt bundles own new label/material program maps, not the disposed demo's cache.
-    // A world swap stays one synchronous warm-up so input never meets an uncompiled variant;
-    // during startup render() below does not draw before the first frame.
     atmosphere.warm(renderer, activeCamera);
     render();
     if (atmosphere.rainVisible || lifeActive()) scheduleFrame();
@@ -1545,7 +893,7 @@ export function createDemoScene(
       scheduleFrame();
     }
     if (command.kind === "pause")
-      useAppStore.getState().setRidePaused(!useAppStore.getState().ridePaused);
+      useAppStore.setState({ ridePaused: !useAppStore.getState().ridePaused });
     if (command.kind === "pointerLock") {
       try {
         const result = canvas.requestPointerLock?.();
@@ -1558,38 +906,7 @@ export function createDemoScene(
       void life.pov
         .requestOrientationPermission()
         .then((orientation) => updateLifeStatus({ orientation }));
-    if (command.kind === "audio") {
-      audio.gesture();
-      void (async () => {
-        try {
-          if (command.manifest.size > 4096) throw Error("MANIFEST_TOO_LARGE");
-          const manifest: unknown = JSON.parse(await command.manifest.text());
-          const result = await audio.importFile(command.file, manifest);
-          updateLifeStatus({ audio: result.ok ? "local" : "error" });
-        } catch {
-          updateLifeStatus({ audio: "error" });
-        }
-      })();
-    }
   });
-  const applyLink = (link: ReturnType<typeof parseMemoryHash>) => {
-    if (!link.valid) {
-      memoryLinkError = link.reason ?? "invalid";
-      notifyMemory();
-      return;
-    }
-    memoryLinkError = undefined;
-    if (link.state?.time !== undefined) useAppStore.getState().setTimeOfDayMinutes(link.state.time);
-    if (link.state?.pose) applyMemoryPose(link.state.pose);
-    if (link.state?.id) {
-      const memory = memorySessionSnapshot.memories.find(
-        (candidate) => candidate.id === link.state?.id,
-      );
-      if (memory && (!memorySessionSnapshot.guest || memory.visibility === "public"))
-        flyMemory(memory);
-    }
-  };
-  const onHashChange = () => applyLink(parseMemoryHash(window.location.hash));
   mountWorld();
   updateLayerVisibility();
   applyEnvironment();
@@ -1609,9 +926,6 @@ export function createDemoScene(
       firstFrame: () => {
         firstFrameReady = true;
         render();
-        // Read the hash now: it may have changed while startup programs compiled.
-        window.addEventListener("hashchange", onHashChange);
-        applyLink(parseMemoryHash(window.location.hash));
         if (atmosphere.rainVisible || lifeActive()) scheduleFrame();
       },
       warmVariant: (index) => {
@@ -1669,25 +983,18 @@ export function createDemoScene(
       startup.stop();
       cancelAnimationFrame(animationFrame);
       unsubscribeStore();
-      unsubscribeMemorySession();
-      unsubscribeMemoryBinding();
-      bindPostcardCapture(null);
-      memoryPins.dispose();
       unsubscribeWorld();
-      unsubscribeConfidence();
       resizeObserver.disconnect();
       controls.removeEventListener("start", onControlStart);
       controls.removeEventListener("end", onControlEnd);
       controls.dispose();
       audio.dispose();
       resetLifeSession();
-      window.removeEventListener("hashchange", onHashChange);
       document.removeEventListener("visibilitychange", onVisibility);
       motion.removeEventListener("change", onMotion);
       canvas.removeEventListener("keydown", onKey);
       canvas.removeEventListener("pointerdown", onPlanPointerDown);
       canvas.removeEventListener("pointermove", onPlanPointerMove);
-      canvas.removeEventListener("pointerleave", onPinPointerLeave);
       canvas.removeEventListener("pointerup", onPlanPointerEnd);
       canvas.removeEventListener("pointercancel", onPlanPointerEnd);
       canvas.removeEventListener("wheel", onPlanWheel);

@@ -1,6 +1,3 @@
-import { worldDataProvider } from "@/world/privateWorldSession";
-
-// Captures are tab-local Blobs, never contents of the shared/SSR UI store.
 const blobs = new Map<number, { blob: Blob; url: string | null }>();
 let sequence = 0;
 export function keepMoment(dataUrl: string): number | null {
@@ -31,26 +28,4 @@ export function clearMomentBlobs() {
 }
 export function momentDiagnostics() {
   return { blobs: blobs.size, objectUrls: [...blobs.values()].filter((entry) => entry.url).length };
-}
-let users = 0;
-let unsubscribe: (() => void) | null = null;
-export function startMomentLifecycle(onClear: () => void) {
-  if (++users === 1) {
-    let epoch = worldDataProvider.getPackageEpoch();
-    unsubscribe = worldDataProvider.subscribe((next) => {
-      if (next.loading || next.mode === "private-error" || next.packageEpoch !== epoch) {
-        epoch = next.packageEpoch;
-        clearMomentBlobs();
-        onClear();
-      }
-    });
-  }
-  return () => {
-    if (--users === 0) {
-      unsubscribe?.();
-      unsubscribe = null;
-      clearMomentBlobs();
-      onClear();
-    }
-  };
 }

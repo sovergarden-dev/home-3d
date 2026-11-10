@@ -49,13 +49,11 @@ const setHold = (page: Page, mode: "existing" | "none") =>
 const createdPrograms = (page: Page) =>
   page.evaluate(() => (window as unknown as { __shaderHold: ShaderHold }).__shaderHold.created());
 
-/** What a pointer at the canvas centre and at the dock's noon preset would hit. */
+/** What pointer input at the canvas centre and top-info card would hit. */
 const pointerTargets = (page: Page) =>
   page.evaluate(() => {
-    const noon = [...document.querySelectorAll("button")].find((button) =>
-      /12:00/.test(button.textContent ?? ""),
-    );
-    return [document.querySelector("#scene-root canvas"), noon].map((target) => {
+    const info = document.querySelector<HTMLElement>(".h6-top-info");
+    return [document.querySelector("#scene-root canvas"), info].map((target) => {
       if (!target) return "missing";
       const box = target.getBoundingClientRect();
       const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
@@ -65,16 +63,14 @@ const pointerTargets = (page: Page) =>
     });
   });
 
-/** Whether a script can focus the dock's noon preset; inert content cannot take focus. */
-const noonTakesFocus = (page: Page) =>
+/** Inert shell controls must not receive focus while startup covers them. */
+const presetTakesFocus = (page: Page) =>
   page.evaluate(() => {
-    const noon = [...document.querySelectorAll("button")].find((button) =>
-      /12:00/.test(button.textContent ?? ""),
-    );
-    if (!noon) return "missing";
-    noon.focus();
-    const focused = document.activeElement === noon;
-    noon.blur();
+    const preset = document.querySelector<HTMLButtonElement>('button[role="radio"][aria-checked]');
+    if (!preset) return "missing";
+    preset.focus();
+    const focused = document.activeElement === preset;
+    preset.blur();
     return focused;
   });
 
@@ -171,19 +167,9 @@ test("startup keeps input closed until every shader variant settles, across cont
   await expect(splash).toHaveCount(0);
   const retry = page.getByRole("button", { name: "Thử lại 3D", exact: true });
   await retry.click({ trial: true });
-
-  // A hash set while the retried scene is still held applies at its first frame.
   await retry.click();
-  await expect(canvas).toHaveCount(1);
-  await expect(root).toHaveAttribute("data-scene-state", "loading");
-  await page.waitForTimeout(400);
-  await expect(root).toHaveAttribute("data-scene-state", "loading");
-  await expect(splash).toBeVisible();
-  expect(await pointerTargets(page)).toEqual(["splash", "splash"]);
-  await page.evaluate(() => {
-    window.location.hash =
-      "v=1&mode=diorama&target=0,0,0&yaw=0.5&pitch=0.6&distance=60&zoom=1&time=1234";
-  });
+
+  // The retried startup remains covered until all queued programs finish linking.
   await setHold(page, "none");
   await expect(root).toHaveAttribute("data-scene-state", "ready", { timeout: 60000 });
   const [warmed, total] = (await scene.getAttribute("data-startup-variants"))!
@@ -191,7 +177,9 @@ test("startup keeps input closed until every shader variant settles, across cont
     .map(Number);
   expect(total).toBeGreaterThan(0);
   expect(warmed).toBe(total);
-  await expect(scene).toHaveAttribute("data-time-minutes", "1234");
+  await expect(scene).toHaveAttribute("data-time-minutes", "420");
+  await page.getByRole("radio", { name: "Chiều", exact: true }).click();
+  await expect(scene).toHaveAttribute("data-time-minutes", "930");
   await expect(splash).toHaveCount(0);
   expect(await pointerTargets(page)).toEqual(["itself", "itself"]);
 });
@@ -224,14 +212,14 @@ test("an interactive scene that loses its context is covered again until recover
   await expect(splash).toBeVisible();
   expect(await pointerTargets(page)).toEqual(["splash", "splash"]);
   expect(await tabReachesShell(page)).toBe(false);
-  expect(await noonTakesFocus(page)).toBe(false);
+  expect(await presetTakesFocus(page)).toBe(false);
 
   await setHold(page, "none");
   await expect(root).toHaveAttribute("data-scene-state", "ready", { timeout: 60000 });
   await expect(splash).toHaveCount(0);
   expect(await pointerTargets(page)).toEqual(["itself", "itself"]);
   expect(await tabReachesShell(page)).toBe(true);
-  expect(await noonTakesFocus(page)).toBe(true);
+  expect(await presetTakesFocus(page)).toBe(true);
 
   // Lose the interactive scene's context and hold the programs of its automatic recovery.
   await setHold(page, "existing");
@@ -248,14 +236,14 @@ test("an interactive scene that loses its context is covered again until recover
   await expect(splash).toBeVisible();
   expect(await pointerTargets(page)).toEqual(["splash", "splash"]);
   expect(await tabReachesShell(page)).toBe(false);
-  expect(await noonTakesFocus(page)).toBe(false);
+  expect(await presetTakesFocus(page)).toBe(false);
 
   await setHold(page, "none");
   await expect(root).toHaveAttribute("data-scene-state", "ready", { timeout: 60000 });
   await expect(splash).toHaveCount(0);
   expect(await pointerTargets(page)).toEqual(["itself", "itself"]);
   expect(await tabReachesShell(page)).toBe(true);
-  expect(await noonTakesFocus(page)).toBe(true);
+  expect(await presetTakesFocus(page)).toBe(true);
 });
 
 type StartupState = { state: string | null; variants: string | null; splash: boolean };

@@ -62,6 +62,16 @@ function ConnectedWeather({
   const label = (key: string, fallback: string) => copy?.[key] ?? fallback;
 
   useEffect(() => () => setRealWeatherEnabled(false), [adapter, setRealWeatherEnabled]);
+  useEffect(
+    () =>
+      useAppStore.subscribe((next, previous) => {
+        if (next.weather !== previous.weather) {
+          adapter.clear();
+          setRealWeatherEnabled(false);
+        }
+      }),
+    [adapter, setRealWeatherEnabled],
+  );
   useEffect(() => {
     if (!visible) {
       adapter.clear();

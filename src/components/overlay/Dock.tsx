@@ -1,181 +1,73 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
-import { Clock, CloudSun, Lamp, Heart } from "lucide-react";
+import { Cloud, CloudRain, Sun, Sunrise, Sunset } from "lucide-react";
+import { SITE_CONFIG } from "@/config/site";
 import { useT } from "@/i18n";
-import { FestivalPanel, MemoriesPanel, TimePanel, WeatherPanel } from "./DockPanels";
+import { useAppStore } from "@/state/appStore";
 
-const tabs = [
-  { id: "time", Icon: Clock, Panel: TimePanel },
-  { id: "weather", Icon: CloudSun, Panel: WeatherPanel },
-  { id: "festival", Icon: Lamp, Panel: FestivalPanel },
-  { id: "memories", Icon: Heart, Panel: MemoriesPanel },
-] as const;
-type TabId = (typeof tabs)[number]["id"];
+const timeIcons = { commute: Sunrise, noon: Sun, night: Sunset } as const;
+const weatherIcons = { sunny: Sun, cloudy: Cloud, rain: CloudRain } as const;
 
-type Snap = "peek" | "half" | "full";
-const snapHeights: Record<Snap, string> = { peek: "96px", half: "48dvh", full: "86dvh" };
-
-interface DockProps {
-  mobile: boolean;
-  /** Mobile only: true while the bottom sheet is above its peek height and would cover the map controls. */
-  onExpandedChange?: (expanded: boolean) => void;
-}
-
-export function Dock({ mobile, onExpandedChange }: DockProps) {
+export function Dock() {
   const t = useT();
-  const [active, setActive] = useState<TabId>("time");
-  const [snap, setSnap] = useState<Snap>("peek");
-  useEffect(() => {
-    onExpandedChange?.(mobile && snap !== "peek");
-  }, [mobile, snap, onExpandedChange]);
-  const drag = useRef<{ y: number; h: number } | null>(null);
-  const sheetRef = useRef<HTMLDivElement>(null);
-  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const lang = useAppStore((s) => s.language);
+  const minutes = useAppStore((s) => s.timeOfDayMinutes);
+  const setMinutes = useAppStore((s) => s.setTimeOfDayMinutes);
+  const weather = useAppStore((s) => s.weather);
+  const setWeather = useAppStore((s) => s.setWeather);
 
-  const onTabKey = (e: KeyboardEvent, i: number) => {
-    const d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
-    if (!d) return;
-    const n = (i + d + tabs.length) % tabs.length;
-    setActive(tabs[n]!.id);
-    tabRefs.current[n]?.focus();
-  };
-
-  const tabBar = (
-    <div
-      role="tablist"
-      aria-label={t.dockLabel}
-      className="no-scrollbar flex gap-1 overflow-x-auto"
-    >
-      {tabs.map(({ id, Icon }, i) => (
-        <button
-          key={id}
-          ref={(el) => {
-            tabRefs.current[i] = el;
-          }}
-          type="button"
-          role="tab"
-          id={`tab-${id}`}
-          aria-selected={active === id}
-          aria-controls={`panel-${id}`}
-          tabIndex={active === id ? 0 : -1}
-          onKeyDown={(e) => onTabKey(e, i)}
-          onClick={() => {
-            setActive(id);
-            if (mobile && snap === "peek") setSnap("half");
-          }}
-          className="ctl flex-1 flex-col gap-0.5 px-3 py-1 text-xs text-muted-foreground hover:text-foreground aria-selected:bg-secondary aria-selected:text-primary sm:flex-row sm:gap-2 sm:text-sm"
-        >
-          <Icon className="h-4 w-4 shrink-0" />
-          <span className="whitespace-nowrap">{t.tabs[id]}</span>
-        </button>
-      ))}
-    </div>
-  );
-
-  const panel = tabs.map(({ id, Panel }) => {
-    const visible = active === id && (!mobile || snap !== "peek");
-    return (
-      <div
-        key={id}
-        role="tabpanel"
-        id={`panel-${id}`}
-        aria-labelledby={`tab-${id}`}
-        hidden={!visible}
-        className="animate-in fade-in duration-200"
-      >
-        {visible && <Panel />}
-      </div>
-    );
-  });
-
-  if (!mobile) {
-    return (
-      <div className="pointer-events-auto glass w-full max-w-[680px] p-3">
-        <div
-          className={`mb-3 overflow-y-auto overscroll-contain ${
-            active === "memories" ? "max-h-[58dvh]" : "max-h-[min(30dvh,176px)]"
-          }`}
-        >
-          {panel}
-        </div>
-        {tabBar}
-      </div>
-    );
-  }
-
-  const order: Snap[] = ["peek", "half", "full"];
-  const onPointerDown = (e: React.PointerEvent) => {
-    e.preventDefault();
-    drag.current = { y: e.clientY, h: sheetRef.current!.getBoundingClientRect().height };
-    e.currentTarget.setPointerCapture(e.pointerId);
-    (e.currentTarget as HTMLButtonElement).focus({ preventScroll: true });
-    sheetRef.current!.style.transition = "none";
-  };
-  const onPointerMove = (e: React.PointerEvent) => {
-    if (!drag.current) return;
-    const height = Math.max(
-      80,
-      Math.min(window.innerHeight * 0.9, drag.current.h + drag.current.y - e.clientY),
-    );
-    sheetRef.current!.style.height = `${height}px`;
-    onExpandedChange?.(height > 100);
-  };
-  const finishDrag = (next: Snap) => {
-    drag.current = null;
-    const element = sheetRef.current!;
-    element.style.transition = "";
-    element.style.height = snapHeights[next];
-    setSnap(next);
-    onExpandedChange?.(next !== "peek");
-  };
-  const cancelDrag = () => {
-    if (drag.current) finishDrag(snap);
-  };
-  const onPointerUp = (e: React.PointerEvent) => {
-    if (!drag.current) return;
-    const dy = drag.current.y - e.clientY;
-    const height = drag.current.h + dy;
-    const next =
-      Math.abs(dy) < 6
-        ? order[(order.indexOf(snap) + 1) % 3]!
-        : height > window.innerHeight * 0.67
-          ? "full"
-          : height > window.innerHeight * 0.3
-            ? "half"
-            : "peek";
-    finishDrag(next);
-  };
+  const activeTimeKey = minutes < 720 ? "commute" : minutes < 1080 ? "noon" : "night";
+  const activeWeather = SITE_CONFIG.weatherDisplay[weather];
 
   return (
     <div
-      ref={sheetRef}
-      className={`pointer-events-auto glass fixed inset-x-0 bottom-0 ${snap === "full" ? "z-50" : "z-20"} flex flex-col !rounded-b-none transition-[height] duration-250 ease-[var(--ease)] motion-reduce:transition-none`}
-      style={{ height: snapHeights[snap], paddingBottom: "env(safe-area-inset-bottom)" }}
+      role="region"
+      aria-label={t.dockLabel}
+      className="glass pointer-events-auto flex flex-col gap-2 rounded-2xl p-2.5 shadow-lg backdrop-blur-md"
     >
-      <button
-        type="button"
-        aria-label={t.sheetHandle}
-        aria-expanded={snap !== "peek"}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={cancelDrag}
-        onLostPointerCapture={cancelDrag}
-        onKeyDown={(e) => {
-          if (["ArrowUp", "ArrowDown", "Enter", " "].includes(e.key)) e.preventDefault();
-          if (e.key === "Enter" || e.key === " ") setSnap(order[(order.indexOf(snap) + 1) % 3]!);
-          if (e.key === "ArrowUp") setSnap(order[Math.min(2, order.indexOf(snap) + 1)]!);
-          if (e.key === "ArrowDown") setSnap(order[Math.max(0, order.indexOf(snap) - 1)]!);
-        }}
-        className="flex h-6 w-full shrink-0 touch-none items-center justify-center"
-      >
-        <span className="h-1.5 w-10 rounded-full bg-border" />
-      </button>
-      <div className="px-3">{tabBar}</div>
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 pb-3 pt-3">
-        {panel}
+      {/* Hàng 1: 3 mốc thời gian (Sáng | Chiều | Tối) */}
+      <div role="radiogroup" aria-label={t.tabs.time} className="grid grid-cols-3 gap-1.5">
+        {SITE_CONFIG.timePresets.map(({ key, minutes: presetMinutes, labelVi, labelEn }) => {
+          const Icon = timeIcons[key];
+          const active = activeTimeKey === key;
+          return (
+            <button
+              key={key}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              onClick={() => setMinutes(presetMinutes)}
+              className={`chip min-h-10 justify-center gap-1.5 px-3 py-2 text-xs font-medium sm:text-sm ${
+                active ? "chip-active shadow-sm" : ""
+              }`}
+            >
+              <Icon className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+              <span>{lang === "vi" ? labelVi : labelEn}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Hàng 2: 3 trạng thái thời tiết (Nắng | Mây | Mưa) */}
+      <div role="radiogroup" aria-label={t.tabs.weather} className="grid grid-cols-3 gap-1.5">
+        {SITE_CONFIG.weatherPresets.map(({ key, weather: presetWeather, labelVi, labelEn }) => {
+          const Icon = weatherIcons[key];
+          const active = activeWeather === key;
+          return (
+            <button
+              key={key}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              onClick={() => setWeather(presetWeather)}
+              className={`chip min-h-10 justify-center gap-1.5 px-3 py-2 text-xs font-medium sm:text-sm ${
+                active ? "chip-active shadow-sm" : ""
+              }`}
+            >
+              <Icon className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+              <span>{lang === "vi" ? labelVi : labelEn}</span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
 }
-
-export const SHEET_PEEK = snapHeights.peek;

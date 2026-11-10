@@ -1,27 +1,26 @@
-import { PovControls } from "@/components/overlay/LifeControls";
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { SITE_CONFIG } from "@/config/site";
+import { useEffect } from "react";
 import { SceneViewport } from "@/components/overlay/SceneViewport";
 import { TopInfo } from "@/components/overlay/TopInfo";
 import { TopActions } from "@/components/overlay/TopActions";
 import { MapControls } from "@/components/overlay/MapControls";
 import { ScaleBar } from "@/components/overlay/ScaleBar";
-import { Dock, SHEET_PEEK } from "@/components/overlay/Dock";
+import { Dock } from "@/components/overlay/Dock";
 import { Splash } from "@/components/overlay/Splash";
 import { useClock } from "@/components/overlay/useClock";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { useAppStore } from "@/state/appStore";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Phố Nhà Mình — Bản đồ 3D khu phố" },
+      { title: `${SITE_CONFIG.name} — Bản đồ 3D khu phố` },
       {
         name: "description",
-        content: "Bản đồ 3D tương tác của khu phố quanh nhà: đổi giờ, thời tiết và ngày lễ.",
+        content: `${SITE_CONFIG.name}: sa bàn 3D khu phố quanh nhà, đổi buổi trong ngày và thời tiết.`,
       },
-      { property: "og:title", content: "Phố Nhà Mình — Bản đồ 3D khu phố" },
-      { property: "og:description", content: "Phố nhà mình, một chút thôi." },
+      { property: "og:title", content: `${SITE_CONFIG.name} — Bản đồ 3D khu phố` },
+      { property: "og:description", content: `${SITE_CONFIG.name}, một chút thôi.` },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -31,16 +30,15 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   useClock();
-  const mobile = useIsMobile();
-  // The expanded bottom sheet sits on top of the map controls, so hide them until it is back to peek.
-  const [sheetExpanded, setSheetExpanded] = useState(false);
   const lang = useAppStore((s) => s.language);
   const viewMode = useAppStore((s) => s.viewMode);
   // While the splash covers startup, keyboard focus must not reach the controls behind it either.
   const startingUp = useAppStore((s) => s.loadingProgress < 1);
+
   useEffect(() => {
     document.documentElement.lang = lang;
   }, [lang]);
+
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -56,7 +54,7 @@ function Home() {
         data-view-mode={viewMode}
         inert={startingUp}
       >
-        <SceneViewport dockExpanded={mobile && sheetExpanded} />
+        <SceneViewport />
         <div
           className="pointer-events-none absolute inset-0"
           style={{
@@ -65,35 +63,23 @@ function Home() {
             paddingRight: "max(1rem, env(safe-area-inset-right))",
           }}
         >
-          <div className="flex flex-col-reverse gap-2 sm:grid sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start sm:gap-3">
-            <div className="min-w-0 self-start sm:justify-self-start">
-              <TopInfo />
-            </div>
+          <div className="flex items-start justify-between gap-3">
+            <TopInfo />
             <TopActions />
           </div>
 
           <ScaleBar />
 
-          {mobile ? (
-            <div
-              className={`h6-map-controls-anchor absolute right-[max(1rem,env(safe-area-inset-right))] z-30 transition-[opacity,visibility] duration-200 motion-reduce:transition-none ${sheetExpanded ? "invisible opacity-0" : "visible opacity-100"}`}
-              style={{ bottom: `calc(${SHEET_PEEK} + env(safe-area-inset-bottom) + 0.75rem)` }}
-            >
-              <MapControls />
-            </div>
-          ) : (
-            <>
-              <div className="h6-map-controls-anchor absolute right-[max(1rem,env(safe-area-inset-right))] top-1/2 z-30 -translate-y-1/2">
-                <MapControls />
-              </div>
-              <div className="absolute left-4 right-[30rem] bottom-[max(1rem,env(safe-area-inset-bottom))] flex justify-center max-xl:right-24">
-                <Dock mobile={false} />
-              </div>
-            </>
-          )}
+          {/* Right vertical camera controls (Diorama, Mặt bằng, zoom, reset, compass) */}
+          <div className="h6-map-controls-anchor absolute right-[max(1rem,env(safe-area-inset-right))] top-1/2 z-30 -translate-y-1/2">
+            <MapControls />
+          </div>
+
+          {/* Centered floating dock at the bottom */}
+          <div className="pointer-events-none fixed inset-x-0 bottom-4 z-20 flex justify-center px-4">
+            <Dock />
+          </div>
         </div>
-        {mobile && <Dock mobile onExpandedChange={setSheetExpanded} />}
-        <PovControls />
       </main>
       {/* Outside the inert shell, so assistive technology still announces the progress. */}
       <Splash />

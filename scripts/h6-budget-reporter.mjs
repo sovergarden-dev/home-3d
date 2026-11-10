@@ -1,6 +1,8 @@
-const title = "20 mode/route/package/capture cycles keep one ready canvas and no page errors";
+import { readFileSync } from "node:fs";
+
 const isH6 = (test) =>
-  test.title === title && /(?:^|[\\/])h6-completion\.spec\.ts$/.test(test.location.file);
+  test.title === "20 view changes preserve one scene, then a route remount recovers cleanly" &&
+  /(?:^|[\\/])cycle-budget\.spec\.ts$/.test(test.location.file);
 
 export default class H6BudgetReporter {
   constructor() {
@@ -27,7 +29,7 @@ export default class H6BudgetReporter {
       try {
         const baseline = JSON.parse(readFileSync(".qa-ci/h6-baseline.json", "utf8"));
         const comparable =
-          baseline.sourceSha === "de7173261a8a3928685555252c2b479f76a713fe" &&
+          baseline.sourceSha === "ba0c67ab4c6bb1598ac978e2c09c5904f17d914e" &&
           baseline.status === "passed" &&
           Number.isFinite(baseline.durationMs) &&
           baseline.durationMs > 0;
@@ -57,4 +59,3 @@ export default class H6BudgetReporter {
     }
   }
 }
-import { readFileSync } from "node:fs";

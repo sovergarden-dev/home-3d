@@ -1,8 +1,19 @@
 # Backlog — Codex tiếp quản
 
-## Hiện hành từ 28/10/2026
+## Hiện hành từ 10/11/2026
 
-Nguồn phạm vi: [CODEX_HANDOFF.md](CODEX_HANDOFF.md); trạng thái có bằng chứng: [CODEX_LOG.md](CODEX_LOG.md). Trạng thái các milestone được chốt theo vạch đích §7 và quyết định T18 ở [DECISIONS.md](DECISIONS.md); mọi giới hạn mức hạng mục vẫn giữ nhãn trung thực (`NOT_MET`, `NOT_VERIFIED`, `BLOCKED`, `NOT_DONE`).
+### Post-audit fixed-home refactor — IN PROGRESS
+
+- Local branch `codex/post-audit-static-neighborhood`, base `ba0c67ab4c6bb1598ac978e2c09c5904f17d914e`; changes are uncommitted and not pushed. No deployment or Publish.
+- Acceptance E2E, final local run after independent-review fixes (`CI=1 REQUIRE_WEBGL2=1`): Chromium 19/19; Firefox 18 pass + 1 Chromium-CDP-only skip; WebKit 18 pass + 1 Chromium-CDP-only skip. Real UI link navigation to `/gioi-thieu` is restored in `TopActions`, and axe scans now cover Plan view plus selected Evening/Rain presets in VI/EN. Browser pixel evidence was nonblank in all three; these browser results do not certify a physical GPU.
+- Local quality: `bun run check` (428 unit, coverage ratchet, 50 pipeline, typecheck/lint/build/bundle) passed; bundle 159,986/250,000 gzip bytes. Production PWA 5/5, private Workerd 4 checks, Gitleaks 178 commits/no findings. These are local results, not CI for the uncommitted head.
+- WebKit's current cycle gate is 20 camera view changes plus one real link-driven About/home remount. Same-runner local baseline commit `ba0c67a`: 22,013 ms; current: 18,190 ms (−17.37%); within the existing 70s and +10% gates. The old package/capture H6 workload is retired and the two benchmarks are not directly comparable.
+- Real-GPU desktop benchmark (`T20`, commit `75235e0f11824c0260f4f792a76ead49fe173fb0`, `harnessTreeClean: true`, Chrome `157.0.8103.38` headed on `NVIDIA GeForce GTX 1660 Ti`, driver `32.0.16.1074`, `1440×900`, DPR 1): **4/4 scenarios `MET`** (`fps.p50 = 141.68–143.99`, `frameMs.max = 9.50–16.90 ms`, `drawCalls = 103–107`, `triangles = 7,300–16,264`, `adapterUpperBoundBytes = 177,893,376 B ≤ 350,000,000 B`, `midBudgetStatus: MET`). Evidence: [fixed-home-gpu-2026-11-10/README.md](assets/qa/codex/m4/fixed-home-gpu-2026-11-10/README.md).
+- Remaining before merge: final independent read-only review (`MERGE_OK`) and CI 4/4 on the exact PR head. No deployment or Publish.
+
+Nguồn phạm vi: [CODEX_HANDOFF.md](CODEX_HANDOFF.md); trạng thái có bằng chứng: [CODEX_LOG.md](CODEX_LOG.md). Trạng thái các milestone được chốt theo vạch đích §7 và quyết định T18 ở [DECISIONS.md](DECISIONS.md); mọi giới hạn mức hạng mục giữ nhãn trung thực (`NOT_MET`, `NOT_VERIFIED`, `BLOCKED`, `NOT_DONE`).
+
+## Lịch sử milestone trước refactor (28/10–09/11/2026)
 
 | Mốc | Phạm vi                                                            | Trạng thái                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | --- | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

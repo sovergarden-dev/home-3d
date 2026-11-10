@@ -6,7 +6,7 @@ import { useAppStore } from "@/state/appStore";
 const initial = useAppStore.getState();
 beforeEach(() => {
   vi.useFakeTimers({ toFake: ["Date", "setInterval", "clearInterval", "performance"] });
-  vi.setSystemTime(new Date("2026-12-31T16:59:59Z"));
+  vi.setSystemTime(new Date("2026-12-31T17:00:00.000Z"));
   useAppStore.setState(initial, true);
   Object.defineProperty(document, "hidden", { configurable: true, value: false });
 });
@@ -19,22 +19,23 @@ describe("P8 elapsed clock and lifecycle", () => {
     ["2028-02-28", "2028-02-29"],
     ["2028-02-29", "2028-03-01"],
     ["2026-12-31", "2027-01-01"],
-  ])("rolls %s to %s atomically", (date, next) => {
-    const result = advanceClock({ minutes: 1439.5, date, lastNow: 0 }, 1000, 1);
+  ])("rolls %s to %s atomically at wall-clock speed", (date, next) => {
+    const result = advanceClock({ minutes: 1439.99, date, lastNow: 0 }, 60000, 1);
     expect(result.date).toBe(next);
-    expect(result.minutes).toBeCloseTo(0.5);
+    expect(result.minutes).toBeCloseTo(0.99);
   });
-  it("does not discard visible elapsed time or drift with irregular ticks", () => {
-    const a = advanceClock({ minutes: 100, date: "2026-01-01", lastNow: 0 }, 500, 4);
-    const b = advanceClock(a, 22500, 4);
-    expect(b.minutes).toBe(190);
-    expect(advanceClock(b, 99999, 0).minutes).toBe(190);
+  it("applies speed as a multiplier to elapsed wall-clock time", () => {
+    const a = advanceClock({ minutes: 100, date: "2026-01-01", lastNow: 0 }, 30000, 1);
+    expect(a.minutes).toBeCloseTo(100.5);
+    const b = advanceClock(a, 60000, 4);
+    expect(b.minutes).toBeCloseTo(102.5);
+    expect(advanceClock(b, 99999, 0).minutes).toBeCloseTo(102.5);
     expect(advanceClock(b, Number.NaN, 4)).toBe(b);
   });
   it("pauses hidden duration and resumes without catch-up", () => {
     const paused = advanceClock({ minutes: 100, date: "2026-01-01", lastNow: 0 }, 60000, 4, false);
-    const resumed = advanceClock(paused, 61000, 4, true);
-    expect(resumed.minutes).toBe(104);
+    const resumed = advanceClock(paused, 75000, 4, true);
+    expect(resumed.minutes).toBeCloseTo(101);
   });
   it.each(["UTC", "America/Los_Angeles", "Asia/Tokyo"])(
     "keeps Vietnam civil date independent of %s machine TZ",
@@ -60,10 +61,10 @@ describe("P8 elapsed clock and lifecycle", () => {
     useAppStore.setState({ selectedDate: "2028-02-28", timeOfDayMinutes: 1439, timeSpeed: 1 });
     const h = renderHook(() => useClock());
     expect(vi.getTimerCount()).toBe(1);
-    act(() => vi.advanceTimersByTime(2000));
+    act(() => vi.advanceTimersByTime(61000));
     expect(useAppStore.getState()).toMatchObject({
       selectedDate: "2028-02-29",
-      timeOfDayMinutes: 1,
+      timeOfDayMinutes: 0,
     });
     act(() => {
       useAppStore.getState().setSelectedDate("2026-06-21");
@@ -71,7 +72,7 @@ describe("P8 elapsed clock and lifecycle", () => {
       useAppStore.getState().setTimeSpeed(4);
     });
     expect(vi.getTimerCount()).toBe(1);
-    act(() => vi.advanceTimersByTime(1000));
+    act(() => vi.advanceTimersByTime(61000));
     expect(useAppStore.getState()).toMatchObject({
       selectedDate: "2026-06-21",
       timeOfDayMinutes: 724,
@@ -87,21 +88,24 @@ describe("P8 elapsed clock and lifecycle", () => {
       document.dispatchEvent(new Event("visibilitychange"));
     });
     expect(vi.getTimerCount()).toBe(0);
-    act(() => vi.advanceTimersByTime(60000));
+    act(() => vi.advanceTimersByTime(61000));
     expect(useAppStore.getState().timeOfDayMinutes).toBe(100);
     act(() => {
       Object.defineProperty(document, "hidden", { configurable: true, value: false });
       document.dispatchEvent(new Event("visibilitychange"));
     });
     expect(vi.getTimerCount()).toBe(1);
-    act(() => vi.advanceTimersByTime(1000));
-    expect(useAppStore.getState().timeOfDayMinutes).toBe(104);
+    act(() => vi.advanceTimersByTime(61000));
+    expect(useAppStore.getState()).toMatchObject({
+      selectedDate: "2026-01-01",
+      timeOfDayMinutes: 104,
+    });
     act(() => useAppStore.getState().setTimeSpeed(0));
     expect(vi.getTimerCount()).toBe(0);
     act(() => useAppStore.getState().setRealTimeEnabled(true));
     expect(useAppStore.getState()).toMatchObject({
-      selectedDate: "2027-01-01",
-      timeOfDayMinutes: 1,
+      selectedDate: vietnamDateTime().date,
+      timeOfDayMinutes: vietnamDateTime().minutes,
     });
     expect(vi.getTimerCount()).toBe(1);
     h.unmount();

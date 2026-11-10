@@ -28,7 +28,7 @@ export const vi = {
   confirmedLocation: "Vị trí do Syringa xác nhận",
   provisionallyAcceptedCenter: "Tâm mới được chấp nhận tạm",
   weekdays: ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"],
-  weather: { sunny: "Nắng nhẹ", cloudy: "Nhiều mây", rain: "Mưa", storm: "Mưa to" },
+  weather: { sunny: "Nắng", cloudy: "Mây", rain: "Mưa", storm: "Giông" },
   festival: {
     normal: "Thường ngày",
     tet: "Tết",
@@ -262,11 +262,11 @@ export const vi = {
   tabs: { time: "Thời gian", weather: "Thời tiết", festival: "Lễ hội", memories: "Kỷ niệm" },
   presets: {
     dawn: "Sáng sớm",
-    commute: "Giờ đi làm",
-    noon: "Trưa",
+    commute: "Sáng",
+    noon: "Chiều",
     rainy: "Mưa chiều",
     sunset: "Hoàng hôn",
-    night: "Chợ đêm",
+    night: "Tối",
     late: "Khuya",
     asleep: "Phố ngủ",
   },
