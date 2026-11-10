@@ -1,0 +1,1428 @@
+{
+    "status":  "MEASURED",
+    "method":  "Per-process WDDM GPU counters summed only for browser descendants of the benchmark process, plus adapter-level DedicatedUsage (peak across adapter instances) and nvidia-smi memory.used. The adapter delta is an upper bound that includes every process on the adapter, not app-only texture bytes. Per-process sums are unreliable when they exceed the adapter total; that condition is reported as perProcessReliable: false.",
+    "baselineLoaded":  true,
+    "adapterBaselineBytes":  1920667648,
+    "adapterPeakBytes":  2723045376,
+    "adapterPeakDeltaBytes":  802377728,
+    "adapterUpperBoundBytes":  802377728,
+    "nvidiaSmiBaselineMiB":  1824,
+    "nvidiaSmiPeakMiB":  2588,
+    "nvidiaSmiPeakDeltaMiB":  764,
+    "adapterMatchesNvidia":  true,
+    "perProcessPeakBytes":  192569344,
+    "adapterTotalBytesSeen":  2723045376,
+    "perProcessReliable":  true,
+    "browserKind":  "chrome",
+    "samples":  [
+                    {
+                        "elapsedMs":  472,
+                        "perProcess":  {
+                                           "dedicatedBytes":  36446208,
+                                           "sharedBytes":  3850240,
+                                           "residentAllocationBytes":  40296448,
+                                           "committedBytes":  40964096,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2571739136,
+                                        "totalDedicatedBytes":  2571739136,
+                                        "committedBytes":  3248517120,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2571739136,
+                                                              "sharedBytes":  458117120,
+                                                              "committedBytes":  3248517120
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2444,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  1906,
+                        "perProcess":  {
+                                           "dedicatedBytes":  64811008,
+                                           "sharedBytes":  4579328,
+                                           "residentAllocationBytes":  69390336,
+                                           "committedBytes":  70123520,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2599542784,
+                                        "totalDedicatedBytes":  2599542784,
+                                        "committedBytes":  3275755520,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2599542784,
+                                                              "sharedBytes":  457781248,
+                                                              "committedBytes":  3275755520
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2471,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  3275,
+                        "perProcess":  {
+                                           "dedicatedBytes":  159850496,
+                                           "sharedBytes":  18296832,
+                                           "residentAllocationBytes":  178147328,
+                                           "committedBytes":  179097600,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2694586368,
+                                        "totalDedicatedBytes":  2694586368,
+                                        "committedBytes":  3384209408,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2694586368,
+                                                              "sharedBytes":  471121920,
+                                                              "committedBytes":  3384209408
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2551,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  4550,
+                        "perProcess":  {
+                                           "dedicatedBytes":  156815360,
+                                           "sharedBytes":  9187328,
+                                           "residentAllocationBytes":  166002688,
+                                           "committedBytes":  166952960,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2688962560,
+                                        "totalDedicatedBytes":  2688962560,
+                                        "committedBytes":  3368050688,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2688962560,
+                                                              "sharedBytes":  458375168,
+                                                              "committedBytes":  3368050688
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2559,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  5806,
+                        "perProcess":  {
+                                           "dedicatedBytes":  137957376,
+                                           "sharedBytes":  9187328,
+                                           "residentAllocationBytes":  147144704,
+                                           "committedBytes":  148094976,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2683088896,
+                                        "totalDedicatedBytes":  2683088896,
+                                        "committedBytes":  3361538048,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2683088896,
+                                                              "sharedBytes":  460013568,
+                                                              "committedBytes":  3361538048
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2548,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  7075,
+                        "perProcess":  {
+                                           "dedicatedBytes":  133361664,
+                                           "sharedBytes":  9187328,
+                                           "residentAllocationBytes":  142548992,
+                                           "committedBytes":  143499264,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2665480192,
+                                        "totalDedicatedBytes":  2665480192,
+                                        "committedBytes":  3343912960,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2665480192,
+                                                              "sharedBytes":  460079104,
+                                                              "committedBytes":  3343912960
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2534,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  8341,
+                        "perProcess":  {
+                                           "dedicatedBytes":  126869504,
+                                           "sharedBytes":  9187328,
+                                           "residentAllocationBytes":  136056832,
+                                           "committedBytes":  137007104,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2669293568,
+                                        "totalDedicatedBytes":  2669293568,
+                                        "committedBytes":  3348791296,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2669293568,
+                                                              "sharedBytes":  461221888,
+                                                              "committedBytes":  3348791296
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2537,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  9602,
+                        "perProcess":  {
+                                           "dedicatedBytes":  153305088,
+                                           "sharedBytes":  11087872,
+                                           "residentAllocationBytes":  164392960,
+                                           "committedBytes":  165343232,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2685747200,
+                                        "totalDedicatedBytes":  2685747200,
+                                        "committedBytes":  3366539264,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2685747200,
+                                                              "sharedBytes":  462598144,
+                                                              "committedBytes":  3366539264
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2554,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  10887,
+                        "perProcess":  {
+                                           "dedicatedBytes":  172167168,
+                                           "sharedBytes":  11448320,
+                                           "residentAllocationBytes":  183615488,
+                                           "committedBytes":  184565760,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2722025472,
+                                        "totalDedicatedBytes":  2722025472,
+                                        "committedBytes":  3407847424,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2722025472,
+                                                              "sharedBytes":  467562496,
+                                                              "committedBytes":  3407847424
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2583,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  12179,
+                        "perProcess":  {
+                                           "dedicatedBytes":  170725376,
+                                           "sharedBytes":  12365824,
+                                           "residentAllocationBytes":  183091200,
+                                           "committedBytes":  184041472,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2703077376,
+                                        "totalDedicatedBytes":  2703077376,
+                                        "committedBytes":  3386327040,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2703077376,
+                                                              "sharedBytes":  465154048,
+                                                              "committedBytes":  3386327040
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2569,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  13428,
+                        "perProcess":  {
+                                           "dedicatedBytes":  166715392,
+                                           "sharedBytes":  10989568,
+                                           "residentAllocationBytes":  177704960,
+                                           "committedBytes":  178655232,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2699067392,
+                                        "totalDedicatedBytes":  2699067392,
+                                        "committedBytes":  3381186560,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2699067392,
+                                                              "sharedBytes":  463859712,
+                                                              "committedBytes":  3381186560
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2566,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  14682,
+                        "perProcess":  {
+                                           "dedicatedBytes":  152821760,
+                                           "sharedBytes":  10694656,
+                                           "residentAllocationBytes":  163516416,
+                                           "committedBytes":  164466688,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2682109952,
+                                        "totalDedicatedBytes":  2682109952,
+                                        "committedBytes":  3360952320,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2682109952,
+                                                              "sharedBytes":  460058624,
+                                                              "committedBytes":  3360952320
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2549,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  15941,
+                        "perProcess":  {
+                                           "dedicatedBytes":  125124608,
+                                           "sharedBytes":  10563584,
+                                           "residentAllocationBytes":  135688192,
+                                           "committedBytes":  136638464,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2674393088,
+                                        "totalDedicatedBytes":  2674393088,
+                                        "committedBytes":  3357446144,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2674393088,
+                                                              "sharedBytes":  464601088,
+                                                              "committedBytes":  3357446144
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2538,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  17180,
+                        "perProcess":  {
+                                           "dedicatedBytes":  125124608,
+                                           "sharedBytes":  10563584,
+                                           "residentAllocationBytes":  135688192,
+                                           "committedBytes":  136638464,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2657161216,
+                                        "totalDedicatedBytes":  2657161216,
+                                        "committedBytes":  3335708672,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2657161216,
+                                                              "sharedBytes":  460013568,
+                                                              "committedBytes":  3335708672
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2526,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  18470,
+                        "perProcess":  {
+                                           "dedicatedBytes":  137842688,
+                                           "sharedBytes":  11579392,
+                                           "residentAllocationBytes":  149422080,
+                                           "committedBytes":  150372352,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2671714304,
+                                        "totalDedicatedBytes":  2671714304,
+                                        "committedBytes":  3352752128,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2671714304,
+                                                              "sharedBytes":  462454784,
+                                                              "committedBytes":  3352752128
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2541,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  19741,
+                        "perProcess":  {
+                                           "dedicatedBytes":  163508224,
+                                           "sharedBytes":  12627968,
+                                           "residentAllocationBytes":  176136192,
+                                           "committedBytes":  177086464,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2705711104,
+                                        "totalDedicatedBytes":  2705711104,
+                                        "committedBytes":  3387830272,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2705711104,
+                                                              "sharedBytes":  463503360,
+                                                              "committedBytes":  3387830272
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2573,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  21039,
+                        "perProcess":  {
+                                           "dedicatedBytes":  164950016,
+                                           "sharedBytes":  11284480,
+                                           "residentAllocationBytes":  176234496,
+                                           "committedBytes":  177184768,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2714279936,
+                                        "totalDedicatedBytes":  2714279936,
+                                        "committedBytes":  3399725056,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2714279936,
+                                                              "sharedBytes":  466911232,
+                                                              "committedBytes":  3399725056
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2576,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  22326,
+                        "perProcess":  {
+                                           "dedicatedBytes":  180535296,
+                                           "sharedBytes":  12034048,
+                                           "residentAllocationBytes":  192569344,
+                                           "committedBytes":  193302528,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2723045376,
+                                        "totalDedicatedBytes":  2723045376,
+                                        "committedBytes":  3405647872,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2723045376,
+                                                              "sharedBytes":  464367616,
+                                                              "committedBytes":  3405647872
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2588,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  23580,
+                        "perProcess":  {
+                                           "dedicatedBytes":  170045440,
+                                           "sharedBytes":  10035200,
+                                           "residentAllocationBytes":  180080640,
+                                           "committedBytes":  180813824,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2702151680,
+                                        "totalDedicatedBytes":  2702151680,
+                                        "committedBytes":  3382001664,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2702151680,
+                                                              "sharedBytes":  461631488,
+                                                              "committedBytes":  3382001664
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2569,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  24901,
+                        "perProcess":  {
+                                           "dedicatedBytes":  149639168,
+                                           "sharedBytes":  9379840,
+                                           "residentAllocationBytes":  159019008,
+                                           "committedBytes":  159711232,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2683633664,
+                                        "totalDedicatedBytes":  2683633664,
+                                        "committedBytes":  3360444416,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2683633664,
+                                                              "sharedBytes":  458391552,
+                                                              "committedBytes":  3360444416
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2549,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  26157,
+                        "perProcess":  {
+                                           "dedicatedBytes":  127438848,
+                                           "sharedBytes":  9379840,
+                                           "residentAllocationBytes":  136818688,
+                                           "committedBytes":  137510912,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2672615424,
+                                        "totalDedicatedBytes":  2672615424,
+                                        "committedBytes":  3350736896,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2672615424,
+                                                              "sharedBytes":  458489856,
+                                                              "committedBytes":  3350736896
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2540,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  27402,
+                        "perProcess":  {
+                                           "dedicatedBytes":  127438848,
+                                           "sharedBytes":  9379840,
+                                           "residentAllocationBytes":  136818688,
+                                           "committedBytes":  137510912,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2659467264,
+                                        "totalDedicatedBytes":  2659467264,
+                                        "committedBytes":  3337654272,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2659467264,
+                                                              "sharedBytes":  459603968,
+                                                              "committedBytes":  3337654272
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2534,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  28674,
+                        "perProcess":  {
+                                           "dedicatedBytes":  150347776,
+                                           "sharedBytes":  10297344,
+                                           "residentAllocationBytes":  160645120,
+                                           "committedBytes":  161402880,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2682908672,
+                                        "totalDedicatedBytes":  2682908672,
+                                        "committedBytes":  3362095104,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2682908672,
+                                                              "sharedBytes":  460685312,
+                                                              "committedBytes":  3362095104
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2551,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  29928,
+                        "perProcess":  {
+                                           "dedicatedBytes":  165060608,
+                                           "sharedBytes":  9773056,
+                                           "residentAllocationBytes":  174833664,
+                                           "committedBytes":  175525888,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2697093120,
+                                        "totalDedicatedBytes":  2697093120,
+                                        "committedBytes":  3377098752,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2697093120,
+                                                              "sharedBytes":  461422592,
+                                                              "committedBytes":  3377098752
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2564,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  31201,
+                        "perProcess":  {
+                                           "dedicatedBytes":  165052416,
+                                           "sharedBytes":  8986624,
+                                           "residentAllocationBytes":  174039040,
+                                           "committedBytes":  174731264,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2695639040,
+                                        "totalDedicatedBytes":  2695639040,
+                                        "committedBytes":  3373809664,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2695639040,
+                                                              "sharedBytes":  459587584,
+                                                              "committedBytes":  3373809664
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2580,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  32444,
+                        "perProcess":  {
+                                           "dedicatedBytes":  171544576,
+                                           "sharedBytes":  10149888,
+                                           "residentAllocationBytes":  181694464,
+                                           "committedBytes":  182386688,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2703527936,
+                                        "totalDedicatedBytes":  2703527936,
+                                        "committedBytes":  3384156160,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2703527936,
+                                                              "sharedBytes":  462209024,
+                                                              "committedBytes":  3384156160
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2570,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  33702,
+                        "perProcess":  {
+                                           "dedicatedBytes":  149848064,
+                                           "sharedBytes":  8183808,
+                                           "residentAllocationBytes":  158031872,
+                                           "committedBytes":  158724096,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2680700928,
+                                        "totalDedicatedBytes":  2680700928,
+                                        "committedBytes":  3355938816,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2680700928,
+                                                              "sharedBytes":  456835072,
+                                                              "committedBytes":  3355938816
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2547,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  34973,
+                        "perProcess":  {
+                                           "dedicatedBytes":  129892352,
+                                           "sharedBytes":  8183808,
+                                           "residentAllocationBytes":  138076160,
+                                           "committedBytes":  138768384,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2670845952,
+                                        "totalDedicatedBytes":  2670845952,
+                                        "committedBytes":  3347312640,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2670845952,
+                                                              "sharedBytes":  456835072,
+                                                              "committedBytes":  3347312640
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2539,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  36248,
+                        "perProcess":  {
+                                           "dedicatedBytes":  129892352,
+                                           "sharedBytes":  8183808,
+                                           "residentAllocationBytes":  138076160,
+                                           "committedBytes":  138768384,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2673868800,
+                                        "totalDedicatedBytes":  2673868800,
+                                        "committedBytes":  3349565440,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2673868800,
+                                                              "sharedBytes":  457293824,
+                                                              "committedBytes":  3349565440
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2542,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  37525,
+                        "perProcess":  {
+                                           "dedicatedBytes":  148840448,
+                                           "sharedBytes":  10346496,
+                                           "residentAllocationBytes":  159186944,
+                                           "committedBytes":  159879168,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2685837312,
+                                        "totalDedicatedBytes":  2685837312,
+                                        "committedBytes":  3363942400,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2685837312,
+                                                              "sharedBytes":  459620352,
+                                                              "committedBytes":  3363942400
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2550,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  38795,
+                        "perProcess":  {
+                                           "dedicatedBytes":  172335104,
+                                           "sharedBytes":  9887744,
+                                           "residentAllocationBytes":  182222848,
+                                           "committedBytes":  182915072,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2714746880,
+                                        "totalDedicatedBytes":  2714746880,
+                                        "committedBytes":  3393425408,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2714746880,
+                                                              "sharedBytes":  460275712,
+                                                              "committedBytes":  3393425408
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2581,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    },
+                    {
+                        "elapsedMs":  40067,
+                        "perProcess":  {
+                                           "dedicatedBytes":  170237952,
+                                           "sharedBytes":  10412032,
+                                           "residentAllocationBytes":  180649984,
+                                           "committedBytes":  181342208,
+                                           "browserProcesses":  8,
+                                           "matchedCounters":  1
+                                       },
+                        "adapter":  {
+                                        "available":  true,
+                                        "error":  null,
+                                        "dedicatedBytes":  2702479360,
+                                        "totalDedicatedBytes":  2702479360,
+                                        "committedBytes":  3381993472,
+                                        "instances":  [
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181FB_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  14254080,
+                                                              "committedBytes":  23379968
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x000181C3_phys_0",
+                                                              "dedicatedBytes":  0,
+                                                              "sharedBytes":  8192,
+                                                              "committedBytes":  5611520
+                                                          },
+                                                          {
+                                                              "name":  "luid_0x00000000_0x00016DC0_phys_0",
+                                                              "dedicatedBytes":  2702479360,
+                                                              "sharedBytes":  459980800,
+                                                              "committedBytes":  3381993472
+                                                          }
+                                                      ]
+                                    },
+                        "nvidia":  {
+                                       "supported":  true,
+                                       "usedMiB":  2569,
+                                       "totalMiB":  6144,
+                                       "error":  null
+                                   }
+                    }
+                ],
+    "completedAt":  "2026-11-10T20:27:31.8362213Z"
+}
