@@ -1,4 +1,4 @@
-# M5 T21: Fixed-Home Physical GPU Benchmark
+# M5 T21: Đo GPU vật lý sa bàn fixed-home
 
 - T21 đo sa bàn tổng hợp `HOME_NEIGHBORHOOD` sau khi giảm shader khởi động, gỡ phụ thuộc khỏi root shell và dọn E2E retired. Kết quả chỉ áp dụng trên máy Windows, Chrome/driver, DPR 1 đã nêu; không chứng nhận mobile, native Safari hay dữ liệu khu thật (`REAL_WORLD_NOT_VERIFIED`).
 
