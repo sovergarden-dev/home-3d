@@ -28,6 +28,8 @@ export interface AtmosphereLayerOptions {
   onRoadWet: (wet: boolean) => void;
   host?: HTMLElement;
   tier?: "low" | "mid" | "high";
+  festivalsEnabled?: boolean;
+  floodEnabled?: boolean;
 }
 const clamp = (n: number) => (Number.isFinite(n) ? Math.max(0, Math.min(1, n)) : 0);
 /** Explicit art-direction fallback, not georeferencing or a site observation. */
@@ -74,101 +76,105 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
     materials.add(m);
     return m;
   };
-  const red = material(
-    new THREE.MeshStandardMaterial({
-      color: "#bf2525",
-      emissive: "#ac1919",
-      emissiveIntensity: 0.3,
-      roughness: 0.7,
-      side: THREE.DoubleSide,
-    }),
-  );
-  const gold = material(
-    new THREE.MeshStandardMaterial({
-      color: "#ffce4f",
-      emissive: "#ffc23b",
-      emissiveIntensity: 0.4,
-      roughness: 0.65,
-      side: THREE.DoubleSide,
-    }),
-  );
-  const green = material(new THREE.MeshStandardMaterial({ color: "#2d7352", roughness: 0.85 }));
-  const lanternGeo = geometry(new THREE.SphereGeometry(0.6, 8, 6));
-  const flowerGeo = geometry(new THREE.CircleGeometry(0.2, 8));
-  const starGeo = geometry(starGeometry(0.8));
-  const flags = geometry(new THREE.PlaneGeometry(4, 2.5));
+  const festivalsEnabled = options.festivalsEnabled !== false;
+  const floodEnabled = options.floodEnabled !== false;
   const decorations = new Map<AtmosphereFestival, THREE.Group>();
-  const mesh = (
-    g: THREE.BufferGeometry,
-    m: THREE.Material,
-    parent: THREE.Group,
-    x: number,
-    y: number,
-    z = 0,
-  ) => {
-    const object = new THREE.Mesh(g, m);
-    object.position.set(x, y, z);
-    parent.add(object);
-    return object;
-  };
-  for (const festival of [
-    "normal",
-    "tet",
-    "midautumn",
-    "christmas",
-    "reunification",
-    "national",
-  ] as const) {
-    const decoration = new THREE.Group();
-    decoration.name = `festival-decoration-${festival}`;
-    // Suspended illustration to one side of the ENU home marker, never a building on its lot.
-    decoration.position.set(0, 0, -28);
-    decoration.userData["illustrationOnly"] = true;
-    decorations.set(festival, decoration);
-    group.add(decoration);
-    decoration.visible = false;
-    if (festival === "normal") continue;
-    if (festival === "tet" || festival === "midautumn") {
-      const line = new THREE.Line(
-        geometry(
-          new THREE.BufferGeometry().setFromPoints([
-            new THREE.Vector3(-18, 8, 0),
-            new THREE.Vector3(18, 8, 0),
-          ]),
-        ),
-        material(new THREE.LineBasicMaterial({ color: "#796046" })),
-      );
-      decoration.add(line);
-      for (let x = -16; x <= 16; x += 4) {
-        if (festival === "tet") {
-          mesh(lanternGeo, red, decoration, x, 7).scale.set(0.8, 1.2, 0.8);
-          for (let petal = 0; petal < 5; petal++)
-            mesh(
-              flowerGeo,
-              gold,
-              decoration,
-              x + Math.cos((petal * Math.PI * 2) / 5) * 0.35,
-              5.6 + Math.sin((petal * Math.PI * 2) / 5) * 0.35,
-              0.1,
-            );
-        } else {
-          mesh(starGeo, gold, decoration, x, 7);
-          mesh(lanternGeo, red, decoration, x, 5.8).scale.setScalar(0.45);
+  if (festivalsEnabled) {
+    const red = material(
+      new THREE.MeshStandardMaterial({
+        color: "#bf2525",
+        emissive: "#ac1919",
+        emissiveIntensity: 0.3,
+        roughness: 0.7,
+        side: THREE.DoubleSide,
+      }),
+    );
+    const gold = material(
+      new THREE.MeshStandardMaterial({
+        color: "#ffce4f",
+        emissive: "#ffc23b",
+        emissiveIntensity: 0.4,
+        roughness: 0.65,
+        side: THREE.DoubleSide,
+      }),
+    );
+    const green = material(new THREE.MeshStandardMaterial({ color: "#2d7352", roughness: 0.85 }));
+    const lanternGeo = geometry(new THREE.SphereGeometry(0.6, 8, 6));
+    const flowerGeo = geometry(new THREE.CircleGeometry(0.2, 8));
+    const starGeo = geometry(starGeometry(0.8));
+    const flags = geometry(new THREE.PlaneGeometry(4, 2.5));
+    const mesh = (
+      g: THREE.BufferGeometry,
+      m: THREE.Material,
+      parent: THREE.Group,
+      x: number,
+      y: number,
+      z = 0,
+    ) => {
+      const object = new THREE.Mesh(g, m);
+      object.position.set(x, y, z);
+      parent.add(object);
+      return object;
+    };
+    for (const festival of [
+      "normal",
+      "tet",
+      "midautumn",
+      "christmas",
+      "reunification",
+      "national",
+    ] as const) {
+      const decoration = new THREE.Group();
+      decoration.name = `festival-decoration-${festival}`;
+      // Suspended illustration to one side of the ENU home marker, never a building on its lot.
+      decoration.position.set(0, 0, -28);
+      decoration.userData["illustrationOnly"] = true;
+      decorations.set(festival, decoration);
+      group.add(decoration);
+      decoration.visible = false;
+      if (festival === "normal") continue;
+      if (festival === "tet" || festival === "midautumn") {
+        const line = new THREE.Line(
+          geometry(
+            new THREE.BufferGeometry().setFromPoints([
+              new THREE.Vector3(-18, 8, 0),
+              new THREE.Vector3(18, 8, 0),
+            ]),
+          ),
+          material(new THREE.LineBasicMaterial({ color: "#796046" })),
+        );
+        decoration.add(line);
+        for (let x = -16; x <= 16; x += 4) {
+          if (festival === "tet") {
+            mesh(lanternGeo, red, decoration, x, 7).scale.set(0.8, 1.2, 0.8);
+            for (let petal = 0; petal < 5; petal++)
+              mesh(
+                flowerGeo,
+                gold,
+                decoration,
+                x + Math.cos((petal * Math.PI * 2) / 5) * 0.35,
+                5.6 + Math.sin((petal * Math.PI * 2) / 5) * 0.35,
+                0.1,
+              );
+          } else {
+            mesh(starGeo, gold, decoration, x, 7);
+            mesh(lanternGeo, red, decoration, x, 5.8).scale.setScalar(0.45);
+          }
         }
+      } else if (festival === "christmas") {
+        const cone = geometry(new THREE.ConeGeometry(2, 4, 8));
+        // Small suspended festive silhouette, not a mapped tree or surveyed prop.
+        mesh(cone, green, decoration, -12, 6);
+        mesh(starGeo, gold, decoration, -12, 8.6).scale.setScalar(0.65);
+        for (let x = -5; x <= 14; x += 3)
+          mesh(lanternGeo, x % 2 === 0 ? red : gold, decoration, x, 7).scale.setScalar(0.45);
+      } else {
+        for (const x of [-12, 0, 12]) {
+          mesh(flags, red, decoration, x, 7);
+          mesh(starGeo, gold, decoration, x, 7, 0.025).scale.setScalar(0.8);
+        }
+        decoration.userData["occasion"] = festival;
       }
-    } else if (festival === "christmas") {
-      const cone = geometry(new THREE.ConeGeometry(2, 4, 8));
-      // Small suspended festive silhouette, not a mapped tree or surveyed prop.
-      mesh(cone, green, decoration, -12, 6);
-      mesh(starGeo, gold, decoration, -12, 8.6).scale.setScalar(0.65);
-      for (let x = -5; x <= 14; x += 3)
-        mesh(lanternGeo, x % 2 === 0 ? red : gold, decoration, x, 7).scale.setScalar(0.45);
-    } else {
-      for (const x of [-12, 0, 12]) {
-        mesh(flags, red, decoration, x, 7);
-        mesh(starGeo, gold, decoration, x, 7, 0.025).scale.setScalar(0.8);
-      }
-      decoration.userData["occasion"] = festival;
     }
   }
   const count = options.tier === "low" ? 180 : options.tier === "high" ? 900 : 480;
@@ -235,23 +241,29 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
     rings.setMatrixAt(i, dummy.matrix);
   }
   group.add(puddles, rings);
-  const floodMaterial = material(
-    new THREE.MeshStandardMaterial({
-      color: "#4f90a1",
-      transparent: true,
-      opacity: 0.16,
-      roughness: 0.2,
-      metalness: 0.05,
-      depthWrite: false,
-      side: THREE.DoubleSide,
-    }),
-  );
-  const flood = new THREE.Mesh(
-    geometry(new THREE.PlaneGeometry(64, 54).rotateX(-Math.PI / 2)),
-    floodMaterial,
-  );
-  flood.name = "simulation-flood-water";
-  group.add(flood);
+  const floodMaterial = floodEnabled
+    ? material(
+        new THREE.MeshStandardMaterial({
+          color: "#4f90a1",
+          transparent: true,
+          opacity: 0.16,
+          roughness: 0.2,
+          metalness: 0.05,
+          depthWrite: false,
+          side: THREE.DoubleSide,
+        }),
+      )
+    : null;
+  const flood = floodEnabled
+    ? new THREE.Mesh(
+        geometry(new THREE.PlaneGeometry(64, 54).rotateX(-Math.PI / 2)),
+        floodMaterial!,
+      )
+    : null;
+  if (flood) {
+    flood.name = "simulation-flood-water";
+    group.add(flood);
+  }
   const moonMaterial = material(
     new THREE.ShaderMaterial({
       transparent: true,
@@ -456,12 +468,14 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
     rain.visible = wet;
     rainGeometry.setDrawRange(0, state.weather === "storm" ? count : Math.floor(count * 0.55));
     rainMaterial.uniforms["opacity"]!.value = state.weather === "storm" ? 0.85 : 0.55;
-    puddles.visible = visible && (wet || level > 0);
+    puddles.visible = visible && (wet || (floodEnabled && level > 0));
     rings.visible = puddles.visible;
-    flood.visible = visible && level > 0;
-    flood.position.y = 0.06 + level * 1.3;
-    floodMaterial.opacity = 0.12 + level * 0.2;
-    const roadWet = visible && (wet || level > 0);
+    if (flood && floodMaterial) {
+      flood.visible = visible && level > 0;
+      flood.position.y = 0.06 + level * 1.3;
+      floodMaterial.opacity = 0.12 + level * 0.2;
+    }
+    const roadWet = visible && (wet || (floodEnabled && level > 0));
     if (!warming && roadWet !== lastWet) {
       onRoadWet(roadWet);
       lastWet = roadWet;
@@ -540,7 +554,10 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
       lastWet,
       rainRange: { start: rainGeometry.drawRange.start, count: rainGeometry.drawRange.count },
       rainOpacity: rainMaterial.uniforms["opacity"]!.value,
-      flood: { visible: flood.visible, y: flood.position.y, opacity: floodMaterial.opacity },
+      flood:
+        flood && floodMaterial
+          ? { visible: flood.visible, y: flood.position.y, opacity: floodMaterial.opacity }
+          : null,
       puddlesVisible: puddles.visible,
       ringsVisible: rings.visible,
       moonVisual: {
@@ -597,29 +614,33 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
       };
       for (const weather of ["sunny", "cloudy", "rain", "storm"] as const)
         compile({ ...base, weather, festival: "normal", atmosphereEnabled: true, floodLevel: 0 });
-      for (const festival of [
-        "normal",
-        "tet",
-        "midautumn",
-        "christmas",
-        "reunification",
-        "national",
-      ] as const)
-        compile({ ...base, weather: "sunny", festival, atmosphereEnabled: true, floodLevel: 0 });
+      if (festivalsEnabled) {
+        for (const festival of [
+          "normal",
+          "tet",
+          "midautumn",
+          "christmas",
+          "reunification",
+          "national",
+        ] as const)
+          compile({ ...base, weather: "sunny", festival, atmosphereEnabled: true, floodLevel: 0 });
+      }
       compile({
         ...night,
         weather: "rain",
         festival: "normal",
         atmosphereEnabled: true,
-        floodLevel: 1,
+        floodLevel: floodEnabled ? 1 : 0,
       });
-      compile({
-        ...base,
-        weather: "sunny",
-        festival: "normal",
-        atmosphereEnabled: true,
-        floodLevel: 1,
-      });
+      if (floodEnabled) {
+        compile({
+          ...base,
+          weather: "sunny",
+          festival: "normal",
+          atmosphereEnabled: true,
+          floodLevel: 1,
+        });
+      }
       compile({
         ...base,
         weather: "sunny",
@@ -628,14 +649,22 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
         floodLevel: 0,
       });
       // Only a second light topology is needed at night; reuse each real decorative material.
-      for (const festival of [
-        "tet",
-        "midautumn",
-        "christmas",
-        "reunification",
-        "national",
-      ] as const)
-        compile({ ...night, weather: "sunny", festival, atmosphereEnabled: true, floodLevel: 0 });
+      if (festivalsEnabled) {
+        for (const festival of [
+          "tet",
+          "midautumn",
+          "christmas",
+          "reunification",
+          "national",
+        ] as const)
+          compile({
+            ...night,
+            weather: "sunny",
+            festival,
+            atmosphereEnabled: true,
+            floodLevel: 0,
+          });
+      }
     } finally {
       scene.fog = previous.fog;
       fog.color.copy(previous.ownedFog.color);
@@ -663,9 +692,11 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
       lastWet = previous.lastWet;
       rainGeometry.setDrawRange(previous.rainRange.start, previous.rainRange.count);
       rainMaterial.uniforms["opacity"]!.value = previous.rainOpacity;
-      flood.visible = previous.flood.visible;
-      flood.position.y = previous.flood.y;
-      floodMaterial.opacity = previous.flood.opacity;
+      if (flood && floodMaterial && previous.flood) {
+        flood.visible = previous.flood.visible;
+        flood.position.y = previous.flood.y;
+        floodMaterial.opacity = previous.flood.opacity;
+      }
       puddles.visible = previous.puddlesVisible;
       rings.visible = previous.ringsVisible;
       moonVisual.position.copy(previous.moonVisual.position);

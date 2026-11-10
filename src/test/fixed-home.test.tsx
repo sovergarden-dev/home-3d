@@ -230,6 +230,32 @@ describe("fixed home experience", () => {
     expect(viDict.aboutShortcuts.length).toBeGreaterThanOrEqual(4);
     expect(enDict.aboutShortcuts.length).toBe(viDict.aboutShortcuts.length);
   });
+
+  it("warms only the compact fixed-home shader variants when configured without festivals or flood", () => {
+    const scene = new THREE.Scene();
+    const sky = new THREE.Color("#000000");
+    const hemisphere = new THREE.HemisphereLight("#ffffff", "#555555", 1);
+    const sun = new THREE.DirectionalLight("#ffffff", 1);
+    const moon = new THREE.DirectionalLight("#ffffff", 0);
+    const layer = createAtmosphereLayer({
+      scene,
+      sky,
+      hemisphere,
+      sun,
+      moon,
+      onRoadWet: () => {},
+      festivalsEnabled: false,
+      floodEnabled: false,
+    });
+    expect(layer.group.getObjectByName("festival-decoration-tet")).toBeUndefined();
+    expect(layer.group.getObjectByName("simulation-flood-water")).toBeUndefined();
+    let compiled = 0;
+    const renderer = { compile: () => (compiled += 1) } as unknown as THREE.WebGLRenderer;
+    const total = layer.warm(renderer, new THREE.PerspectiveCamera());
+    expect(total).toBe(6);
+    expect(compiled).toBe(6);
+    layer.dispose();
+  });
 });
 
 describe("private-world default and reset camera frame", () => {

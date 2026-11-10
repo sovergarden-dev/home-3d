@@ -1,20 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useLocation } from "@tanstack/react-router";
 import { useAppStore } from "@/state/appStore";
 import { useT } from "@/i18n";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 
 export function PwaUpdate() {
   const t = useT();
+  const titleId = useId();
+  const descId = useId();
   const location = useLocation();
   const sceneStatus = useAppStore((state) => state.sceneStatus);
   const ready = location.pathname !== "/" || sceneStatus === "ready" || sceneStatus === "fallback";
@@ -85,8 +77,20 @@ export function PwaUpdate() {
       clearTimeout(retryTimer.current);
     };
   }, [ready]);
+  useEffect(() => {
+    if (!confirm) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setConfirm(false);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [confirm]);
   if (!available || dismissed) return null;
   const apply = () => {
+    setConfirm(false);
     setFailed(false);
     setApplying(true);
     reloadRequested.current = true;
@@ -131,18 +135,43 @@ export function PwaUpdate() {
           </button>
         </div>
       </div>
-      <AlertDialog open={confirm} onOpenChange={setConfirm}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t.pwa.reloadTitle}</AlertDialogTitle>
-            <AlertDialogDescription>{t.pwa.saveBeforeReload}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t.pwa.later}</AlertDialogCancel>
-            <AlertDialogAction onClick={apply}>{t.pwa.reload}</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {confirm ? (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/75 p-4">
+          <div
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
+            aria-describedby={descId}
+            className="w-full max-w-lg rounded-lg border border-border bg-background p-6 shadow-lg"
+          >
+            <div className="flex flex-col space-y-2 text-center sm:text-left">
+              <h2 id={titleId} className="text-lg font-semibold text-foreground">
+                {t.pwa.reloadTitle}
+              </h2>
+              <p id={descId} className="text-sm text-muted-foreground">
+                {t.pwa.saveBeforeReload}
+              </p>
+            </div>
+            <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                autoFocus
+                onClick={() => setConfirm(false)}
+                className="ctl rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary"
+              >
+                {t.pwa.later}
+              </button>
+              <button
+                type="button"
+                onClick={apply}
+                className="ctl rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+              >
+                {t.pwa.reload}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }
