@@ -1,23 +1,17 @@
-import { expect, test, type Locator, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { createRequire } from "node:module";
+
 const require = createRequire(import.meta.url);
-async function verifyKeyboardFocus(page: Page, control: Locator) {
-  await control.focus();
-  await page.keyboard.press("Tab");
-  await page.keyboard.press("Shift+Tab");
-  await expect(control).toBeFocused();
-  expect(await page.locator(":focus").evaluate((node) => node.matches(":focus-visible"))).toBe(
-    true,
-  );
-}
 
 for (const viewport of [
   { width: 1440, height: 900 },
   { width: 390, height: 844 },
   { width: 740, height: 390 },
 ]) {
-  test(`public shell accessibility and keyboard at ${viewport.width}`, async ({ page }) => {
-    const external: string[] = [];
+  test(`fixed-home shell accessibility and keyboard focus at ${viewport.width}x${viewport.height}`, async ({
+    page,
+  }) => {
+    const externalRequests: string[] = [];
     await page.route("**/*", (route) => {
       const url = new URL(route.request().url());
       if (
@@ -25,7 +19,7 @@ for (const viewport of [
         ["blob:", "data:"].includes(url.protocol)
       )
         return route.continue();
-      external.push(url.hostname);
+      externalRequests.push(url.hostname);
       return route.abort();
     });
     await page.emulateMedia({ reducedMotion: "reduce" });
@@ -34,10 +28,12 @@ for (const viewport of [
     await expect(page.locator("#scene-root")).toHaveAttribute(
       "data-scene-state",
       /ready|fallback/,
-      { timeout: 60000 },
+      {
+        timeout: 60000,
+      },
     );
-    await page.getByRole("button", { name: "Thu gọn bảng riêng", exact: true }).click();
     await page.addScriptTag({ path: require.resolve("axe-core/axe.min.js") });
+
     const scans: { scenario: string; violations: unknown[] }[] = [];
     const scan = async (scenario: string) => {
       const violations = await page.evaluate(async () => {
@@ -49,10 +45,13 @@ for (const viewport of [
               values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"],
             },
           })
-        ).violations.map((v) => ({
-          id: v.id,
-          impact: v.impact,
-          nodes: v.nodes.map((n) => ({ target: n.target, summary: n.failureSummary })),
+        ).violations.map((violation) => ({
+          id: violation.id,
+          impact: violation.impact,
+          nodes: violation.nodes.map((node) => ({
+            target: node.target,
+            summary: node.failureSummary,
+          })),
         }));
       });
       scans.push({ scenario, violations });
@@ -66,39 +65,29 @@ for (const viewport of [
       await scan("VI Plan controls");
       await page.getByRole("radio", { name: "Diorama", exact: true }).click();
     }
-    for (const id of ["time", "weather", "festival", "memories"]) {
-      await page.locator(`#tab-${id}`).click();
-      await scan(`VI ${id} panel`);
-    }
+    await page.getByRole("radio", { name: "Tối", exact: true }).click();
+    await page.getByRole("radio", { name: "Mưa", exact: true }).click();
+    await scan("VI evening rain presets");
     await page.getByRole("radio", { name: "en", exact: true }).click();
-    await scan("EN memories panel");
-    await page.locator("#tab-time").click();
-    await scan("EN time panel");
-    await page.getByRole("radio", { name: "vi", exact: true }).click();
-    await test.info().attach("accessibility-scans", {
+    await scan("EN evening rain presets");
+    await test.info().attach("fixed-home-accessibility", {
       contentType: "application/json",
       body: JSON.stringify({ viewport, ready, scans }),
     });
     expect(scans.filter((scan) => scan.violations.length)).toEqual([]);
-    if (viewport.width < 768) {
-      await expect(page.getByTestId("private-world-panel")).toBeHidden();
-      await page
-        .getByRole("button", { name: "Kéo để mở rộng bảng điều khiển", exact: true })
-        .focus();
-      await page.keyboard.press("ArrowDown");
-      await expect(page.getByTestId("private-world-panel")).toBeVisible();
-    }
-    const sound = page.getByRole("button", { name: "Tiếng phố", exact: true });
-    if (ready) await verifyKeyboardFocus(page, sound);
-    else {
-      await expect(sound).toBeDisabled();
-      await sound.focus();
-      await expect(sound).not.toBeFocused();
-    }
-    await verifyKeyboardFocus(page, page.getByRole("radio", { name: "vi", exact: true }));
-    await expect(page.getByRole("button", { name: "Tiếng phố", exact: true })).toHaveAttribute(
-      "aria-describedby",
-      "sound-demo-description",
+    expect(externalRequests).toEqual([]);
+
+    const languageControl = page.getByRole("radio", { name: "en", exact: true });
+    await languageControl.focus();
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Shift+Tab");
+    await expect(languageControl).toBeFocused();
+    expect(await page.locator(":focus").evaluate((node) => node.matches(":focus-visible"))).toBe(
+      true,
+    );
+    await expect(page.getByRole("radiogroup", { name: "Time" }).getByRole("radio")).toHaveCount(3);
+    await expect(page.getByRole("radiogroup", { name: "Weather" }).getByRole("radio")).toHaveCount(
+      3,
     );
     expect(await page.evaluate(() => matchMedia("(prefers-reduced-motion: reduce)").matches)).toBe(
       true,
@@ -110,26 +99,25 @@ for (const viewport of [
           : 0,
       ),
     ).toBe(0);
-    expect(external).toEqual([]);
   });
 }
 
-test("keyboard remains available when 3D and sound are unavailable", async ({ page }) => {
-  await page.setViewportSize({ width: 740, height: 390 });
-  await page.emulateMedia({ reducedMotion: "reduce" });
+test("keyboard preset selection remains usable when WebGL2 is unavailable", async ({ page }) => {
   await page.addInitScript(() => {
     const original = HTMLCanvasElement.prototype.getContext;
     HTMLCanvasElement.prototype.getContext = function (type: string, ...args: unknown[]) {
       return type === "webgl2" ? null : Reflect.apply(original, this, [type, ...args]);
     };
   });
+  await page.setViewportSize({ width: 740, height: 390 });
   await page.goto("/");
   await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "fallback", {
     timeout: 60000,
   });
-  const sound = page.getByRole("button", { name: "Tiếng phố", exact: true });
-  await expect(sound).toBeDisabled();
-  await sound.focus();
-  await expect(sound).not.toBeFocused();
-  await verifyKeyboardFocus(page, page.getByRole("radio", { name: "vi", exact: true }));
+  const evening = page.getByRole("radio", { name: "Tối", exact: true });
+  await evening.focus();
+  await expect(evening).toBeFocused();
+  await page.keyboard.press("Space");
+  await expect(evening).toHaveAttribute("aria-checked", "true");
+  await expect(page.getByRole("button", { name: "Thử lại 3D", exact: true })).toBeVisible();
 });

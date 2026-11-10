@@ -5,7 +5,7 @@ import { spawn, spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { launchBenchmark } from "./benchmark-browser.mjs";
-import { P8_PACKAGE_TEXT } from "../tests/e2e/helpers/p8-fixture.ts";
+import { HOME_NEIGHBORHOOD } from "../src/world/homeNeighborhood.ts";
 const output = process.argv[2] ?? "test-results/desktop-benchmark",
   port = Number(process.env.DESKTOP_BENCH_PORT ?? 4190);
 if (process.env.BENCH_GPU !== "real") throw Error("REAL_GPU_REQUIRED");
@@ -98,18 +98,11 @@ try {
         callback(time);
       });
   });
-  await page.goto(`http://127.0.0.1:${port}/?local-preview=1`);
+  await page.goto(`http://127.0.0.1:${port}/`);
   await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "ready", {
     timeout: 60000,
   });
   const metadata = await environment(page);
-  await page.getByLabel("Mở gói world").setInputFiles({
-    name: "synthetic-desktop-benchmark.json",
-    mimeType: "application/json",
-    buffer: Buffer.from(P8_PACKAGE_TEXT),
-  });
-  await expect(page.getByText("Đã mở gói cục bộ", { exact: false })).toBeVisible();
-  await page.getByRole("button", { name: "Thu gọn bảng riêng", exact: true }).click();
   await page.evaluate(async () => {
     const imported = async (path) => {
       const resource = performance
@@ -121,7 +114,7 @@ try {
     window.__desktopFrames = (
       await imported("/src/engine/quality/frameMetrics.ts")
     ).observeRenderedFrames;
-    const provider = (await imported("/src/world/privateWorldSession.ts")).worldDataProvider;
+    const provider = (await imported("/src/world/homeWorldSession.ts")).homeWorldSession;
     if (!provider.getSnapshot().world?.manifest.isSynthetic)
       throw Error("SYNTHETIC_WORLD_REQUIRED");
   });
@@ -322,7 +315,7 @@ try {
         syntheticOnly: true,
         gpuMemory,
         environment: metadata,
-        fixtureSha256: createHash("sha256").update(P8_PACKAGE_TEXT).digest("hex"),
+        fixtureSha256: createHash("sha256").update(JSON.stringify(HOME_NEIGHBORHOOD)).digest("hex"),
         scriptSha256: createHash("sha256")
           .update(await readFile(new URL(import.meta.url)))
           .digest("hex"),

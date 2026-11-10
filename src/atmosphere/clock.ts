@@ -22,7 +22,7 @@ export function advanceClock(
     !parseIsoDate(state.date)
   )
     return { ...state, lastNow: now };
-  const total = state.minutes + ((now - state.lastNow) / 1000) * speed;
+  const total = state.minutes + ((now - state.lastNow) / 60000) * speed;
   const days = Math.floor(total / 1440);
   const date = new Date(Date.parse(`${state.date}T00:00:00Z`) + days * 86400000)
     .toISOString()

@@ -1,17 +1,38 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
+import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("@tanstack/react-router", () => ({
+  Link: ({
+    to,
+    children,
+    ...props
+  }: {
+    to: string;
+    children: ReactNode;
+    [key: string]: unknown;
+  }) => (
+    <a href={to} {...props}>
+      {children}
+    </a>
+  ),
+}));
 
 import { Dock } from "@/components/overlay/Dock";
 import { centerMarkerLabels } from "@/components/overlay/centerMarkerLabels";
+import { TopActions } from "@/components/overlay/TopActions";
 import { TopInfo } from "@/components/overlay/TopInfo";
 import { en as enDict } from "@/i18n/en";
 import { vi as viDict } from "@/i18n/vi";
 import { useAppStore } from "@/state/appStore";
+import { useClock } from "@/components/overlay/useClock";
 import {
   clampPrivatePlanCentre,
   derivePrivateWorldPlanFrame,
 } from "@/engine/view/privateWorldPlanFrame";
 import type { WorldData } from "@/world/schema";
+import { HOME_NEIGHBORHOOD } from "@/world/homeNeighborhood";
+import { homeWorldSession } from "@/world/homeWorldSession";
 
 const initialState = useAppStore.getState();
 
@@ -19,85 +40,88 @@ beforeEach(() => {
   useAppStore.setState(initialState, true);
 });
 
-// The preview keeps one centre, but a private world must not claim an unidentified lot.
-describe("map centre labels", () => {
-  it("dock has no place picker and opens on the time tab", () => {
-    render(<Dock mobile={false} />);
+function ClockHarness() {
+  useClock();
+  return null;
+}
 
-    const tabs = screen.getAllByRole("tab").map((tab) => tab.textContent);
-    expect(tabs).toEqual(["Thời gian", "Thời tiết", "Lễ hội", "Kỷ niệm"]);
-    expect(screen.getByRole("tab", { name: "Thời gian" })).toHaveAttribute("aria-selected", "true");
-    expect(screen.queryByText("Góc phố")).toBeNull();
+describe("fixed home experience", () => {
+  it("shows exactly six always-visible time and weather presets", () => {
+    render(<Dock />);
+    expect(
+      screen.getAllByRole("radiogroup").map((group) => group.getAttribute("aria-label")),
+    ).toEqual(["Thời gian", "Thời tiết"]);
+    expect(screen.getAllByRole("radio").map((radio) => radio.textContent?.trim())).toEqual([
+      "Sáng",
+      "Chiều",
+      "Tối",
+      "Nắng",
+      "Mây",
+      "Mưa",
+    ]);
+    expect(screen.queryByRole("tab")).not.toBeInTheDocument();
+    expect(screen.queryByText("Góc phố")).not.toBeInTheDocument();
   });
 
-  it("top info always names the house, in both languages", () => {
-    render(<TopInfo />);
-    expect(screen.getByText("Nhà mình")).toBeInTheDocument();
+  it("applies selected time and weather presets", () => {
+    render(<Dock />);
+    fireEvent.click(screen.getByRole("radio", { name: "Tối" }));
+    fireEvent.click(screen.getByRole("radio", { name: "Mưa" }));
+    expect(useAppStore.getState()).toMatchObject({ timeOfDayMinutes: 1170, weather: "storm" });
+  });
 
+  it("localizes the fixed home label and all six presets", () => {
+    render(
+      <>
+        <TopInfo />
+        <TopActions />
+        <Dock />
+      </>,
+    );
+    expect(screen.getByText("Nhà mình")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Giới thiệu" })).toHaveAttribute("href", "/gioi-thieu");
     act(() => useAppStore.getState().setLanguage("en"));
     expect(screen.getByText("Our house")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "About" })).toHaveAttribute("href", "/gioi-thieu");
+    for (const label of ["Morning", "Afternoon", "Evening", "Sunny", "Cloudy", "Rain"]) {
+      expect(screen.getByRole("radio", { name: label })).toBeInTheDocument();
+    }
   });
 
-  it("uses neutral labels for a private synthetic package without point confirmation", () => {
-    expect(centerMarkerLabels("private", viDict)).toEqual({
-      title: "Điểm tham chiếu",
-      description: "Ranh chưa đo",
+  it("automatically advances the simulation clock at one real minute per elapsed minute", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-11-10T00:00:00.000Z"));
+    const view = render(<ClockHarness />);
+    const initialMinutes = useAppStore.getState().timeOfDayMinutes;
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(61_000);
     });
-    expect(centerMarkerLabels("private", enDict)).toEqual({
-      title: "Reference point",
-      description: "Boundary not surveyed",
+    expect(useAppStore.getState().timeOfDayMinutes).toBe(initialMinutes + 1);
+    view.unmount();
+    vi.useRealTimers();
+  });
+
+  it("mounts a recursively immutable home dataset through a read-only session", () => {
+    expect(Object.isFrozen(HOME_NEIGHBORHOOD)).toBe(true);
+    expect(Object.isFrozen(HOME_NEIGHBORHOOD.manifest)).toBe(true);
+    expect(Object.isFrozen(HOME_NEIGHBORHOOD.roads)).toBe(true);
+    expect(Object.isFrozen(HOME_NEIGHBORHOOD.buildings)).toBe(true);
+    expect(Object.isFrozen(HOME_NEIGHBORHOOD.lots)).toBe(true);
+    expect(homeWorldSession.getSnapshot()).toMatchObject({
+      mode: "fixture",
+      world: HOME_NEIGHBORHOOD,
     });
+    expect(homeWorldSession).not.toHaveProperty("openFile");
+    expect(homeWorldSession).not.toHaveProperty("openText");
+    expect(homeWorldSession).not.toHaveProperty("exportWorkingPackage");
   });
 
-  it("requires explicit owner confirmation provenance before claiming the point is confirmed", () => {
-    const confirmed = {
-      status: "confirmed" as const,
-      provenance: { source: "owner" as const, method: "explicit-user-confirmation" as const },
-    };
-    expect(centerMarkerLabels("private", viDict, confirmed)).toEqual({
-      title: "Vị trí do Syringa xác nhận",
-      description: "Ranh chưa đo",
+  it("starts life and illustrative details at full density", () => {
+    expect(useAppStore.getState()).toMatchObject({
+      lifeEnabled: true,
+      lifeDensity: 1,
+      illustrativeDetails: true,
     });
-    expect(centerMarkerLabels("private", enDict, confirmed)).toEqual({
-      title: "Location confirmed by Syringa",
-      description: "Boundary not surveyed",
-    });
-    expect(
-      centerMarkerLabels("private", viDict, {
-        status: "confirmed",
-        provenance: { source: "synthetic", method: "explicit-user-confirmation" },
-      }),
-    ).toEqual({ title: "Điểm tham chiếu", description: "Ranh chưa đo" });
-  });
-
-  it("labels explicit provisional acceptance as provisional rather than final confirmation", () => {
-    expect(
-      centerMarkerLabels("private", viDict, {
-        status: "provisionally-accepted",
-        provenance: { source: "owner", method: "explicit-user-confirmation" },
-      }),
-    ).toEqual({ title: "Tâm mới được chấp nhận tạm", description: "Ranh chưa đo" });
-  });
-
-  it("store has no place selection and reset restores the default camera state", () => {
-    const state = useAppStore.getState();
-    expect(state).not.toHaveProperty("selectedPlaceId");
-    expect(state).not.toHaveProperty("selectPlace");
-
-    state.zoomIn();
-    state.setHeading(90);
-    useAppStore.getState().resetView();
-    expect(useAppStore.getState()).toMatchObject({ zoom: 1, heading: 0 });
-  });
-
-  it("enters Plan at 1× after a perspective fit without resetting an active Plan zoom", () => {
-    useAppStore.setState({ viewMode: "diorama", zoom: 4 });
-    useAppStore.getState().setViewMode("topdown");
-    expect(useAppStore.getState()).toMatchObject({ viewMode: "topdown", zoom: 1 });
-
-    useAppStore.getState().zoomIn();
-    useAppStore.getState().setViewMode("topdown");
-    expect(useAppStore.getState()).toMatchObject({ viewMode: "topdown", zoom: 1.25 });
   });
 });
 
@@ -156,17 +180,5 @@ describe("private-world default and reset camera frame", () => {
     });
     expect(frame.panBounds.minX).toBeLessThan(-620);
     expect(frame.panBounds.maxX).toBeGreaterThan(885);
-  });
-});
-
-describe("mobile bottom sheet", () => {
-  it("reports when it is expanded so the map controls can step aside", () => {
-    const onExpandedChange = vi.fn();
-    render(<Dock mobile onExpandedChange={onExpandedChange} />);
-    expect(onExpandedChange).toHaveBeenLastCalledWith(false);
-
-    fireEvent.click(screen.getByRole("tab", { name: "Thời tiết" }));
-    expect(onExpandedChange).toHaveBeenLastCalledWith(true);
-    expect(screen.getByRole("tabpanel")).toBeInTheDocument();
   });
 });

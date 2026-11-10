@@ -31,7 +31,7 @@ export const en: Dict = {
   confirmedLocation: "Location confirmed by Syringa",
   provisionallyAcceptedCenter: "Center provisionally accepted",
   weekdays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-  weather: { sunny: "Light sun", cloudy: "Cloudy", rain: "Rain", storm: "Heavy rain" },
+  weather: { sunny: "Sunny", cloudy: "Cloudy", rain: "Rain", storm: "Storm" },
   festival: {
     normal: "Everyday",
     tet: "Lunar New Year",
@@ -269,11 +269,11 @@ export const en: Dict = {
   tabs: { time: "Time", weather: "Weather", festival: "Festivals", memories: "Memories" },
   presets: {
     dawn: "Early morning",
-    commute: "Rush hour",
-    noon: "Noon",
+    commute: "Morning",
+    noon: "Afternoon",
     rainy: "Afternoon rain",
     sunset: "Sunset",
-    night: "Night market",
+    night: "Evening",
     late: "Late night",
     asleep: "Street asleep",
   },

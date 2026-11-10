@@ -59,7 +59,7 @@ export function createLifeRuntime(options: {
   });
   function configure() {
     const state = useAppStore.getState();
-    settings.speed = state.realTimeEnabled ? 1 : state.timeSpeed;
+    settings.speed = 1;
     settings.visible = state.lifeEnabled && state.viewMode !== "topdown" && !document.hidden;
     settings.tier = "mid";
     settings.hour = state.timeOfDayMinutes / 60;
@@ -132,9 +132,7 @@ export function createLifeRuntime(options: {
       const state = useAppStore.getState();
       return (
         !document.hidden &&
-        ((state.lifeEnabled &&
-          state.viewMode !== "topdown" &&
-          (state.realTimeEnabled || state.timeSpeed !== 0)) ||
+        ((state.lifeEnabled && state.viewMode !== "topdown") ||
           ((state.viewMode === "walk" || state.viewMode === "ride") && pov.active()))
       );
     },

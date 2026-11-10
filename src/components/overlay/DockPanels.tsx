@@ -1,287 +1,86 @@
-import { LifeControls } from "./LifeControls";
-import { createOpenMeteoWeatherAdapter } from "@/atmosphere/weatherOpenMeteo";
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
-import { sunEvents } from "@/atmosphere/astronomy";
-import { worldDataProvider } from "@/world/privateWorldSession";
-import { useAppStore, type Festival, type TimeSpeed, type Weather } from "@/state/appStore";
-import { getEffectiveFestival } from "@/atmosphere/calendar";
-import { WeatherConnection } from "./WeatherConnection";
-import { formatMinutes, useT } from "@/i18n";
-import { Cloud, CloudRain, CloudLightning, Sun } from "lucide-react";
-import { MemoriesPanel } from "./MemoriesPanel";
-export { MemoriesPanel };
-
-function Toggle({
-  label,
-  checked,
-  onChange,
-}: {
-  label: string;
-  checked: boolean;
-  onChange: (v: boolean) => void;
-}) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      onClick={() => onChange(!checked)}
-      className="ctl gap-2 px-2 text-sm text-foreground"
-    >
-      <span
-        className={`relative h-6 w-10 rounded-full transition-colors duration-200 ${checked ? "bg-primary" : "bg-border"}`}
-      >
-        <span
-          className={`absolute top-0.5 h-5 w-5 rounded-full bg-card shadow transition-transform duration-200 ${checked ? "translate-x-[18px]" : "translate-x-0.5"}`}
-        />
-      </span>
-      {label}
-    </button>
-  );
-}
-
-const presets = [
-  { m: 330, k: "dawn" },
-  { m: 420, k: "commute" },
-  { m: 720, k: "noon" },
-  { m: 930, k: "rainy" },
-  { m: 1080, k: "sunset" },
-  { m: 1170, k: "night" },
-  { m: 1380, k: "late" },
-  { m: 180, k: "asleep" },
-] as const;
+import { Cloud, CloudLightning, CloudRain, Sun, Sunrise, Sunset } from "lucide-react";
+import { useT } from "@/i18n";
+import { useAppStore, type Weather } from "@/state/appStore";
 
 export function TimePanel() {
   const t = useT();
-  const {
-    timeOfDayMinutes,
-    setTimeOfDayMinutes,
-    timeSpeed,
-    setTimeSpeed,
-    realTimeEnabled,
-    setRealTimeEnabled,
-    setWeather,
-    selectedDate,
-    setSelectedDate,
-  } = useAppStore();
-  const referenceSnapshot = useSyncExternalStore(
-    worldDataProvider.subscribe,
-    worldDataProvider.getSnapshot,
-    worldDataProvider.getSnapshot,
-  );
-  const sunset = useMemo(() => {
-    const reference = referenceSnapshot.georeferenceReady
-      ? worldDataProvider.getGeoreference()
-      : null;
-    return reference ? sunEvents(selectedDate, reference.origin)?.sunsetMinutes : undefined;
-  }, [selectedDate, referenceSnapshot]);
+  const minutes = useAppStore((s) => s.timeOfDayMinutes);
+  const setMinutes = useAppStore((s) => s.setTimeOfDayMinutes);
+
+  const presets: {
+    key: "commute" | "noon" | "night";
+    m: number;
+    icon: typeof Sun;
+  }[] = [
+    { key: "commute", m: 420, icon: Sunrise },
+    { key: "noon", m: 930, icon: Sun },
+    { key: "night", m: 1170, icon: Sunset },
+  ];
+
+  const activeKey = minutes < 720 ? "commute" : minutes < 1080 ? "noon" : "night";
 
   return (
-    <div className="space-y-3">
-      <label className="flex flex-wrap items-center justify-between gap-2 text-sm">
-        {t.atmosphere.date}
-        <input
-          type="date"
-          min="1900-01-01"
-          max="2100-12-31"
-          value={selectedDate}
-          disabled={realTimeEnabled}
-          onChange={(e) => setSelectedDate(e.target.value)}
-          className="h-11 rounded-lg border border-border bg-secondary px-3 disabled:opacity-50"
-        />
-      </label>
-      <div className="flex items-center gap-3">
-        <span className="w-14 text-lg font-medium tabular-nums text-primary">
-          {formatMinutes(timeOfDayMinutes)}
-        </span>
-        <input
-          type="range"
-          min={0}
-          max={1439}
-          step={1}
-          value={timeOfDayMinutes}
-          disabled={realTimeEnabled}
-          aria-label={t.timeSlider}
-          aria-valuetext={formatMinutes(timeOfDayMinutes)}
-          onChange={(e) => setTimeOfDayMinutes(+e.target.value)}
-          className="h-11 flex-1 accent-[var(--accent)] disabled:opacity-50"
-        />
-      </div>
-      <div className="no-scrollbar flex gap-2 overflow-x-auto">
-        {presets.map((p) => {
-          const minutes = p.k === "sunset" && sunset != null ? sunset : p.m;
+    <div className="space-y-2">
+      <div role="radiogroup" aria-label={t.tabs.time} className="grid grid-cols-3 gap-2">
+        {presets.map(({ key, m, icon: Icon }) => {
+          const active = activeKey === key;
           return (
             <button
-              key={p.k}
+              key={key}
               type="button"
-              disabled={realTimeEnabled || (p.k === "sunset" && sunset === null)}
-              aria-pressed={timeOfDayMinutes === minutes}
-              onClick={() => {
-                setTimeOfDayMinutes(minutes);
-                if (p.k === "rainy") setWeather("rain");
-              }}
-              className="chip flex-col !min-h-[52px] leading-tight disabled:opacity-50"
+              role="radio"
+              aria-checked={active}
+              onClick={() => setMinutes(m)}
+              className={`chip min-h-11 justify-center gap-2 py-2.5 text-sm font-medium ${active ? "chip-active" : ""}`}
             >
-              <span className="text-xs tabular-nums opacity-70">{formatMinutes(minutes)}</span>
-              <span>{t.presets[p.k]}</span>
+              <Icon className="h-4 w-4 shrink-0" />
+              <span>{t.presets[key]}</span>
             </button>
           );
         })}
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div role="radiogroup" aria-label={t.speed} className="flex gap-1">
-          {([0, 1, 4] as TimeSpeed[]).map((s) => (
-            <button
-              key={s}
-              type="button"
-              role="radio"
-              aria-checked={timeSpeed === s}
-              onClick={() => {
-                setRealTimeEnabled(false);
-                setTimeSpeed(s);
-              }}
-              className="chip"
-            >
-              {s === 0 ? t.pause : `${s}×`}
-            </button>
-          ))}
-        </div>
-        <Toggle label={t.realTime} checked={realTimeEnabled} onChange={setRealTimeEnabled} />
-      </div>
-      <p className="text-xs text-muted-foreground">{t.atmosphere.speedNote}</p>
-      <p className="text-xs text-muted-foreground">{t.atmosphere.timeNote}</p>
-      <LifeControls />
     </div>
   );
 }
 
-const weathers: { id: Weather; Icon: typeof Sun }[] = [
-  { id: "sunny", Icon: Sun },
-  { id: "cloudy", Icon: Cloud },
-  { id: "rain", Icon: CloudRain },
-  { id: "storm", Icon: CloudLightning },
-];
+const weatherIcons: Record<Weather, typeof Sun> = {
+  sunny: Sun,
+  cloudy: Cloud,
+  rain: CloudRain,
+  storm: CloudLightning,
+};
 
 export function WeatherPanel() {
   const t = useT();
-  const [adapter, setAdapter] = useState<ReturnType<typeof createOpenMeteoWeatherAdapter> | null>(
-    null,
-  );
-  useEffect(() => {
-    const next = createOpenMeteoWeatherAdapter({ provider: worldDataProvider });
-    setAdapter(next);
-    return () => next.dispose();
-  }, []);
-  const {
-    weather,
-    setWeather,
-    season,
-    setSeason,
-    floodLevel,
-    setFloodLevel,
-    atmosphereEnabled,
-    setAtmosphereEnabled,
-  } = useAppStore();
+  const weather = useAppStore((s) => s.weather);
+  const setWeather = useAppStore((s) => s.setWeather);
+  const modes: Weather[] = ["sunny", "cloudy", "rain", "storm"];
+
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <div
         role="radiogroup"
         aria-label={t.tabs.weather}
         className="grid grid-cols-2 gap-2 sm:grid-cols-4"
       >
-        {weathers.map(({ id, Icon }) => (
-          <button
-            key={id}
-            type="button"
-            role="radio"
-            aria-checked={weather === id}
-            onClick={() => {
-              adapter?.clear();
-              useAppStore.getState().setRealWeatherEnabled(false);
-              setWeather(id);
-            }}
-            className="chip gap-2 disabled:opacity-50"
-          >
-            <Icon className="h-4 w-4" />
-            {t.weather[id]}
-          </button>
-        ))}
+        {modes.map((w: Weather) => {
+          const Icon = weatherIcons[w];
+          const active = weather === w;
+          return (
+            <button
+              key={w}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              onClick={() => setWeather(w)}
+              className={`chip min-h-11 justify-center gap-2 py-2.5 text-sm font-medium ${active ? "chip-active" : ""}`}
+            >
+              <Icon className="h-4 w-4 shrink-0" />
+              <span>{t.weather[w]}</span>
+            </button>
+          );
+        })}
       </div>
-      <Toggle
-        label={t.atmosphere.layer}
-        checked={atmosphereEnabled}
-        onChange={setAtmosphereEnabled}
-      />
-      <div role="radiogroup" aria-label={t.atmosphere.season} className="flex flex-wrap gap-2">
-        {(["auto", "dry", "wet"] as const).map((id) => (
-          <button
-            key={id}
-            type="button"
-            role="radio"
-            aria-checked={season === id}
-            onClick={() => setSeason(id)}
-            className="chip"
-          >
-            {t.atmosphere.seasons[id]}
-          </button>
-        ))}
-      </div>
-      <p className="text-xs text-muted-foreground">{t.atmosphere.seasonNote}</p>
-      <label className="flex flex-wrap items-center gap-3 text-sm">
-        {t.atmosphere.flood} · {Math.round(floodLevel * 100)}%
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.1"
-          value={floodLevel}
-          aria-label={t.atmosphere.flood}
-          onChange={(e) => setFloodLevel(Number(e.target.value))}
-          className="h-11 min-w-32 flex-1 accent-[var(--accent)]"
-        />
-      </label>
-      <p className="text-xs text-muted-foreground">{t.atmosphere.floodNote}</p>
-      {adapter && <WeatherConnection adapter={adapter} />}
-    </div>
-  );
-}
-
-export function FestivalPanel() {
-  const t = useT();
-  const state = useAppStore();
-  const effective = getEffectiveFestival(state);
-  return (
-    <div className="space-y-3">
-      <Toggle
-        label={t.atmosphere.festivalAuto}
-        checked={state.festivalAuto}
-        onChange={state.setFestivalAuto}
-      />
-      <div
-        role="radiogroup"
-        aria-label={t.tabs.festival}
-        className="grid grid-cols-2 gap-2 sm:grid-cols-3"
-      >
-        {(
-          ["normal", "tet", "midautumn", "christmas", "reunification", "national"] as Festival[]
-        ).map((f) => (
-          <button
-            key={f}
-            type="button"
-            role="radio"
-            aria-checked={effective === f}
-            onClick={() => {
-              state.setFestivalAuto(false);
-              state.setFestival(f);
-            }}
-            className="chip"
-          >
-            {t.festival[f]}
-          </button>
-        ))}
-      </div>
-      <p className="text-xs text-muted-foreground">{t.atmosphere.festivalNote}</p>
-      <p className="text-xs text-muted-foreground">{t.atmosphere.illustrationNote}</p>
     </div>
   );
 }

@@ -153,9 +153,24 @@ export function planIllustrativeDetails(
       0.12,
       [0xb05537, 0x316e75, 0xb18a3e][random % 3]!,
     );
+    // Retractable striped storefront awning (mái hiên di động)
+    facade(
+      "storefront-awning",
+      0,
+      2.12,
+      0.52,
+      width * 0.92,
+      0.08,
+      0.85,
+      [0xc85a3b, 0x2e6f5e, 0x3b6790, 0xc79238][(random >>> 2) % 4]!,
+    );
     for (let floor = 1; floor <= Math.min(4, Math.floor((height - 1) / 3)); floor++) {
       const y = floor * 3;
       facade("balcony", 0, y, 0.45, width, 0.16, 0.9, 0xccbca0);
+      // Glazed balcony door & window frames on the upper facade wall
+      facade("window-frame", -width * 0.22, y + 1.15, 0.05, width * 0.28, 1.35, 0.08, 0x6f9ab0);
+      facade("window-frame", width * 0.22, y + 1.15, 0.05, width * 0.28, 1.35, 0.08, 0x6f9ab0);
+      facade("window-canopy", 0, y + 2.05, 0.28, width * 0.88, 0.07, 0.45, 0x7b4a3d);
       facade("iron-grille", 0, y + 0.9, 0.9, width, 0.08, 0.07, 0x465552);
       for (let bar = 0; bar < 5; bar++)
         facade("iron-grille", ((bar - 2) * width) / 5, y + 0.5, 0.9, 0.045, 0.9, 0.045, 0x465552);
@@ -196,18 +211,37 @@ export function planIllustrativeDetails(
         );
     }
     const [tx, tz] = surfaceCentroid(building.geometry);
-    if (polygonsOf(building.geometry).some((p) => pointInPolygon([tx, tz], p)))
-      put(
-        "water-tank",
-        "cylinder",
-        tx,
-        base + height + (building.roofHeight ?? 0) + 0.7,
-        tz,
-        1.1,
-        1.4,
-        1.1,
-        0xb3c0c0,
-      );
+    if (polygonsOf(building.geometry).some((p) => pointInPolygon([tx, tz], p))) {
+      const roofTop = base + height + (building.roofHeight ?? 0);
+      put("water-tank", "cylinder", tx, roofTop + 0.7, tz, 1.1, 1.4, 1.1, 0xb3c0c0);
+      // Solar water heater panel & rooftop pergola / tum shade for flat/terrace roofs
+      if (building.roofType === "flat" || building.roofType === "terrace_tum") {
+        put(
+          "solar-heater",
+          "box",
+          tx + ex * 0.9,
+          roofTop + 0.45,
+          tz + ez * 0.9,
+          1.15,
+          0.12,
+          0.85,
+          0x2d485c,
+          angle,
+        );
+        put(
+          "rooftop-trellis",
+          "box",
+          tx - ex * 0.85,
+          roofTop + 1.15,
+          tz - ez * 0.85,
+          1.4,
+          0.08,
+          1.2,
+          0x8c6d4e,
+          angle,
+        );
+      }
+    }
   }
   allocationLimit = limit.instances;
   let streetCount = 0;
@@ -284,14 +318,55 @@ export function planIllustrativeDetails(
           tilt,
         );
       }
-      const species = ["tamarind", "sao", "dau", "tropical-almond", "flamboyant"][random % 5]!;
+      const species = [
+        "tamarind",
+        "sao",
+        "dau",
+        "tropical-almond",
+        "flamboyant",
+        "lagerstroemia",
+        "golden-shower",
+      ][random % 7]!;
       const tx = x - dx * 3,
         tz = z - dz * 3,
         h = species === "sao" || species === "dau" ? 7 : 5;
       put(species, "cylinder", tx, base + h / 2, tz, 0.25, h, 0.25, 0x856b4c);
+      // Street sidewalk tree planter curb + parked scooter or bench along sidewalk
+      put("tree-planter", "cylinder", tx, base + 0.18, tz, 0.9, 0.36, 0.9, 0x9b8e7e);
+      if (random % 2 === 0) {
+        put(
+          "sidewalk-bench",
+          "box",
+          x + dx * 2.2,
+          base + 0.32,
+          z + dz * 2.2,
+          0.42,
+          0.45,
+          1.25,
+          0x8c5b3e,
+          Math.atan2(dx, dz),
+        );
+      } else {
+        put(
+          "parked-scooter",
+          "box",
+          x + dx * 2.0,
+          base + 0.38,
+          z + dz * 2.0,
+          0.35,
+          0.68,
+          1.05,
+          [0xc84b31, 0x2e6f95, 0x3b7a57][(random >>> 3) % 3]!,
+          Math.atan2(dx, dz) + 0.35,
+        );
+      }
       const layers = species === "tropical-almond" ? 3 : 2;
       for (let layer = 0; layer < layers; layer++) {
-        const broad = species === "tamarind" || species === "flamboyant";
+        const broad =
+          species === "tamarind" ||
+          species === "flamboyant" ||
+          species === "lagerstroemia" ||
+          species === "golden-shower";
         put(
           species,
           "sphere",
@@ -303,9 +378,13 @@ export function planIllustrativeDetails(
           broad ? 4.2 : 2.8,
           species === "flamboyant" && layer === 1
             ? 0xb96842
-            : species === "dau"
-              ? 0x416b43
-              : 0x5b824a,
+            : species === "lagerstroemia" && layer === 1
+              ? 0x9b5ea2
+              : species === "golden-shower" && layer === 1
+                ? 0xd9a738
+                : species === "dau"
+                  ? 0x416b43
+                  : 0x5b824a,
         );
       }
       streetCount++;

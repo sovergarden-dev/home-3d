@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createDemoLayout, daylightAt, overlapsHome, seededRandom } from "@/engine/demoLayout";
 import { DEMO_CONFIG } from "@/config/demo";
 import { vietnamTime } from "@/lib/vietnamTime";
@@ -8,6 +8,9 @@ const initialState = useAppStore.getState();
 beforeEach(() => {
   useAppStore.setState(initialState, true);
   bindCapture(null);
+});
+afterEach(() => {
+  vi.restoreAllMocks();
 });
 describe("fictional public demo", () => {
   it("has an empty origin plot and a bounded, deterministic invented layout", () => {
@@ -71,10 +74,13 @@ describe("demo captures and reset", () => {
     expect(JSON.stringify(useAppStore.getState().moments)).not.toContain("image-");
     useAppStore.getState().clearMoments();
     expect(useAppStore.getState().moments).toEqual([]);
-    vi.restoreAllMocks();
   });
-  it("returns to the home-centred diorama and starts with time paused", () => {
-    expect(useAppStore.getState().timeSpeed).toBe(0);
+
+  it("starts the simulation clock at normal speed", () => {
+    expect(useAppStore.getState().timeSpeed).toBe(1);
+  });
+
+  it("returns to the home-centred diorama at normal clock speed", () => {
     useAppStore.getState().setViewMode("walk");
     useAppStore.getState().setHeading(90);
     useAppStore.getState().zoomIn();

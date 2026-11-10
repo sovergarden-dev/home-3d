@@ -5,6 +5,16 @@ if (localURL && !["127.0.0.1", "localhost"].includes(new URL(localURL).hostname)
   throw Error("LOCAL_TEST_SERVER_REQUIRED");
 export default defineConfig({
   testDir: "./tests/e2e",
+  testMatch: [
+    "**/fixed-home.spec.ts",
+    "**/fixed-home-recovery.spec.ts",
+    "**/fixed-home-render.spec.ts",
+    "**/fixed-home-scene.spec.ts",
+    "**/startup-gate.spec.ts",
+    "**/navigation-retention.spec.ts",
+    "**/accessibility.spec.ts",
+    "**/cycle-budget.spec.ts",
+  ],
   timeout: 90000,
   fullyParallel: false,
   workers: 1,

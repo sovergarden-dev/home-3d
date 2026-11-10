@@ -11,7 +11,7 @@ export interface PlanPanBounds {
 }
 
 export interface PrivateWorldPlanFrame {
-  centre: { x: 0; z: 0 };
+  centre: { x: number; z: number };
   verticalSpanMetres: number;
   panBounds: PlanPanBounds;
 }
@@ -20,7 +20,10 @@ function geometryVertices(geometry: WorldData["buildings"][number]["geometry"]) 
   return geometry.type === "Polygon" ? geometry.coordinates.flat() : geometry.coordinates.flat(2);
 }
 
-export function derivePrivateWorldPlanFrame(world: WorldData): PrivateWorldPlanFrame {
+export function derivePrivateWorldPlanFrame(
+  world: WorldData,
+  centre: { x: number; z: number } = { x: 0, z: 0 },
+): PrivateWorldPlanFrame {
   const positions = [
     ...world.roads.flatMap((road) => road.polylineENU),
     ...world.lots.flatMap((lot) => geometryVertices(lot.geometry)),
@@ -36,15 +39,13 @@ export function derivePrivateWorldPlanFrame(world: WorldData): PrivateWorldPlanF
   const padding = PRIVATE_PLAN_CORE_RADIUS_METRES;
 
   return {
-    centre: { x: 0, z: 0 },
+    centre,
     verticalSpanMetres: PRIVATE_PLAN_CORE_SPAN_METRES,
-    // Keep the supplied origin as the default focus, but permit panning past every
-    // source vertex so a long way outside the initial core remains reachable.
     panBounds: {
-      minX: Math.min(-padding, minX - padding),
-      maxX: Math.max(padding, maxX + padding),
-      minZ: Math.min(-padding, minZ - padding),
-      maxZ: Math.max(padding, maxZ + padding),
+      minX: Math.min(centre.x - padding, minX - padding),
+      maxX: Math.max(centre.x + padding, maxX + padding),
+      minZ: Math.min(centre.z - padding, minZ - padding),
+      maxZ: Math.max(centre.z + padding, maxZ + padding),
     },
   };
 }

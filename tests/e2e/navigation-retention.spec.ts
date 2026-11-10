@@ -36,9 +36,10 @@ test("SPA navigation releases every torn-down 3D scene", async ({ page, browserN
   const navigations = 4;
   for (let index = 0; index < navigations; index++) {
     await page.getByRole("link", { name: "Giới thiệu", exact: true }).click();
-    await page.waitForURL(/gioi-thieu/);
-    await page.getByRole("link", { name: "Về phố", exact: true }).click();
-    await page.waitForURL((url) => url.pathname === "/");
+    await expect(page).toHaveURL(/\/gioi-thieu$/);
+    await expect(page.getByRole("heading")).toBeVisible();
+    await page.getByTestId("about-back-home").click();
+    await expect(page).toHaveURL(/\/$/);
     await settled();
   }
   // A scene that stays reachable keeps its canvas and WebGL context alive: one per navigation.

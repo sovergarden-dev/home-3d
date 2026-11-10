@@ -39,7 +39,18 @@ export type MaterialFactory = (
 ) => THREE.MeshStandardMaterial;
 
 function colorFor(localId: string) {
-  const palette = ["#d9c9b4", "#d4c4ad", "#c7d4c6", "#d8c1a8", "#c9d0d6", "#ded2bd"];
+  const palette = [
+    "#d9c9b4",
+    "#d4c4ad",
+    "#c7d4c6",
+    "#d8c1a8",
+    "#c9d0d6",
+    "#ded2bd",
+    "#e2c89c",
+    "#cfe0d8",
+    "#e0c3b6",
+    "#d7d4be",
+  ];
   let hash = 0;
   for (const character of localId) hash = (Math.imul(hash, 31) + character.charCodeAt(0)) | 0;
   return palette[Math.abs(hash) % palette.length]!;
@@ -700,24 +711,125 @@ function addTrees(
 ) {
   const trees = world.trees ?? [];
   if (trees.length === 0) return;
-  const trunk = new THREE.CylinderGeometry(0.16, 0.22, 2.5, 6);
-  const foliage = new THREE.DodecahedronGeometry(1.4);
-  const trunkMaterial = materialFactory("#614a37", 0.9, 0);
-  const foliageMaterial = materialFactory("#3e6e4d", 0.75, 0);
-  disposables.push(trunk, foliage);
-  trees.forEach((tree) => {
+  const trunk = new THREE.CylinderGeometry(0.14, 0.24, 2.5, 6);
+  const palmTrunk = new THREE.CylinderGeometry(0.11, 0.19, 3.0, 6);
+  const crownBroad = new THREE.DodecahedronGeometry(1.45, 0);
+  const crownRound = new THREE.IcosahedronGeometry(1.3, 0);
+  const crownCone = new THREE.ConeGeometry(1.35, 2.5, 7);
+  const crownFrond = new THREE.ConeGeometry(1.6, 0.85, 6);
+  const potGeo = new THREE.CylinderGeometry(0.45, 0.36, 0.42, 6);
+  const trunkMaterial = materialFactory("#5e4632", 0.9, 0);
+  const palmTrunkMaterial = materialFactory("#705941", 0.88, 0);
+  const potMaterial = materialFactory("#9a5b3e", 0.85, 0);
+  const foliageDark = materialFactory("#2f6341", 0.76, 0);
+  const foliageMid = materialFactory("#3e6e4d", 0.75, 0);
+  const foliageBright = materialFactory("#4e8249", 0.74, 0);
+  const blossomFlamboyant = materialFactory("#c85232", 0.7, 0);
+  const blossomLagerstroemia = materialFactory("#9b5ea2", 0.72, 0);
+  const blossomCassia = materialFactory("#d9a738", 0.72, 0);
+  disposables.push(trunk, palmTrunk, crownBroad, crownRound, crownCone, crownFrond, potGeo);
+  trees.forEach((tree, index) => {
     const root = new THREE.Group();
     root.name = `tree:${tree.localId}`;
     root.position.set(tree.position[0], 0, tree.position[1]);
-    const treeHeight = tree.height ?? 4;
-    const trunkMesh = new THREE.Mesh(trunk, trunkMaterial);
-    trunkMesh.scale.y = treeHeight / 4;
-    trunkMesh.position.y = treeHeight / 4;
-    const canopy = new THREE.Mesh(foliage, foliageMaterial);
-    canopy.userData["seasonalFoliage"] = true;
-    canopy.position.y = treeHeight * 0.72;
-    canopy.scale.setScalar(Math.max(0.75, treeHeight / 4));
-    root.add(trunkMesh, canopy);
+    const treeHeight = tree.height ?? 4.5;
+    let hash = index * 17;
+    for (const ch of tree.localId) hash = (Math.imul(hash, 31) + ch.charCodeAt(0)) | 0;
+    const archetype = Math.abs(hash) % 6;
+
+    // Concrete/terracotta street tree planter ring at the base
+    const planter = new THREE.Mesh(potGeo, potMaterial);
+    planter.position.y = 0.21;
+    root.add(planter);
+
+    if (archetype === 0) {
+      // Bàng (Tropical Almond) — tiered pagoda horizontal crowns
+      const trunkMesh = new THREE.Mesh(trunk, trunkMaterial);
+      trunkMesh.scale.y = treeHeight / 3.8;
+      trunkMesh.position.y = treeHeight * 0.32;
+      root.add(trunkMesh);
+      for (let tier = 0; tier < 3; tier++) {
+        const tierMesh = new THREE.Mesh(crownBroad, tier === 1 ? foliageBright : foliageMid);
+        tierMesh.userData["seasonalFoliage"] = true;
+        const s = (treeHeight / 4.2) * (1.15 - tier * 0.24);
+        tierMesh.scale.set(s * 1.35, s * 0.42, s * 1.35);
+        tierMesh.position.y = treeHeight * (0.52 + tier * 0.21);
+        root.add(tierMesh);
+      }
+    } else if (archetype === 1) {
+      // Phượng vĩ (Flamboyant) — wide umbrella canopy with red-orange blossom clusters
+      const trunkMesh = new THREE.Mesh(trunk, trunkMaterial);
+      trunkMesh.scale.y = treeHeight / 4;
+      trunkMesh.position.y = treeHeight * 0.28;
+      const mainCanopy = new THREE.Mesh(crownBroad, foliageMid);
+      mainCanopy.userData["seasonalFoliage"] = true;
+      const s = Math.max(0.85, treeHeight / 3.8);
+      mainCanopy.scale.set(s * 1.45, s * 0.55, s * 1.35);
+      mainCanopy.position.y = treeHeight * 0.72;
+      const topBlossom = new THREE.Mesh(crownRound, blossomFlamboyant);
+      topBlossom.scale.set(s * 1.15, s * 0.38, s * 1.1);
+      topBlossom.position.y = treeHeight * 0.9;
+      root.add(trunkMesh, mainCanopy, topBlossom);
+    } else if (archetype === 2) {
+      // Sao đen / Dầu rái — tall straight trunk with layered conical/domed dark green crown
+      const trunkMesh = new THREE.Mesh(trunk, trunkMaterial);
+      trunkMesh.scale.set(0.95, treeHeight / 3.2, 0.95);
+      trunkMesh.position.y = treeHeight * 0.38;
+      const lowerCrown = new THREE.Mesh(crownCone, foliageDark);
+      lowerCrown.userData["seasonalFoliage"] = true;
+      const s = Math.max(0.8, treeHeight / 4);
+      lowerCrown.scale.set(s * 1.05, s * 1.1, s * 1.05);
+      lowerCrown.position.y = treeHeight * 0.74;
+      const upperCrown = new THREE.Mesh(crownRound, foliageMid);
+      upperCrown.userData["seasonalFoliage"] = true;
+      upperCrown.scale.set(s * 0.75, s * 0.75, s * 0.75);
+      upperCrown.position.y = treeHeight * 0.98;
+      root.add(trunkMesh, lowerCrown, upperCrown);
+    } else if (archetype === 3) {
+      // Cau / Dừa cảnh (Areca Palm) — slender ringed trunk with radiating tropical frond crown
+      const trunkMesh = new THREE.Mesh(palmTrunk, palmTrunkMaterial);
+      trunkMesh.scale.y = treeHeight / 3.2;
+      trunkMesh.position.y = treeHeight * 0.42;
+      const frondLower = new THREE.Mesh(crownFrond, foliageBright);
+      frondLower.userData["seasonalFoliage"] = true;
+      const s = Math.max(0.8, treeHeight / 4);
+      frondLower.scale.set(s * 1.15, s * 0.65, s * 1.15);
+      frondLower.position.y = treeHeight * 0.84;
+      const frondUpper = new THREE.Mesh(crownFrond, foliageMid);
+      frondUpper.userData["seasonalFoliage"] = true;
+      frondUpper.scale.set(s * 0.85, s * 0.8, s * 0.85);
+      frondUpper.position.y = treeHeight * 0.96;
+      frondUpper.rotation.y = Math.PI / 6;
+      root.add(trunkMesh, frondLower, frondUpper);
+    } else if (archetype === 4) {
+      // Bằng lăng tím (Purple Crape Myrtle) — rounded multi-lobe crown with violet-purple blossoms
+      const trunkMesh = new THREE.Mesh(trunk, trunkMaterial);
+      trunkMesh.scale.y = treeHeight / 4;
+      trunkMesh.position.y = treeHeight * 0.28;
+      const baseCanopy = new THREE.Mesh(crownRound, foliageMid);
+      baseCanopy.userData["seasonalFoliage"] = true;
+      const s = Math.max(0.8, treeHeight / 4);
+      baseCanopy.scale.set(s * 1.15, s * 0.85, s * 1.15);
+      baseCanopy.position.y = treeHeight * 0.7;
+      const purpleCrown = new THREE.Mesh(crownBroad, blossomLagerstroemia);
+      purpleCrown.scale.set(s * 0.92, s * 0.55, s * 0.92);
+      purpleCrown.position.y = treeHeight * 0.9;
+      root.add(trunkMesh, baseCanopy, purpleCrown);
+    } else {
+      // Muồng hoàng yến / Me tây (Golden Shower / Tamarind) — multi-puff dome with golden accent
+      const trunkMesh = new THREE.Mesh(trunk, trunkMaterial);
+      trunkMesh.scale.y = treeHeight / 4;
+      trunkMesh.position.y = treeHeight * 0.28;
+      const s = Math.max(0.8, treeHeight / 4);
+      const mainCanopy = new THREE.Mesh(crownBroad, foliageBright);
+      mainCanopy.userData["seasonalFoliage"] = true;
+      mainCanopy.scale.set(s * 1.25, s * 0.75, s * 1.2);
+      mainCanopy.position.y = treeHeight * 0.72;
+      const goldenPuff = new THREE.Mesh(crownRound, blossomCassia);
+      goldenPuff.scale.set(s * 0.85, s * 0.45, s * 0.85);
+      goldenPuff.position.y = treeHeight * 0.88;
+      root.add(trunkMesh, mainCanopy, goldenPuff);
+    }
     group.add(root);
   });
 }
@@ -730,24 +842,65 @@ function addProps(
 ) {
   const props = world.props ?? [];
   if (props.length === 0) return;
-  const poleGeometry = new THREE.CylinderGeometry(0.08, 0.12, 6, 6);
-  const lampGeometry = new THREE.BoxGeometry(0.35, 0.15, 0.55);
+  const poleGeometry = new THREE.CylinderGeometry(0.08, 0.13, 6.2, 6);
+  const crossArmGeometry = new THREE.BoxGeometry(1.1, 0.09, 0.09);
+  const transformerGeometry = new THREE.CylinderGeometry(0.22, 0.22, 0.65, 8);
+  const lampArmGeometry = new THREE.BoxGeometry(0.1, 0.08, 1.1);
+  const lampGeometry = new THREE.BoxGeometry(0.38, 0.14, 0.58);
+  const benchSeatGeometry = new THREE.BoxGeometry(1.4, 0.08, 0.46);
+  const benchBackGeometry = new THREE.BoxGeometry(1.4, 0.36, 0.07);
+  const benchLegGeometry = new THREE.BoxGeometry(0.08, 0.42, 0.44);
   const material = materialFactory("#69747a", 0.45, 0.5);
-  disposables.push(poleGeometry, lampGeometry);
+  const darkMetal = materialFactory("#454d52", 0.5, 0.6);
+  const woodMaterial = materialFactory("#8c5e3c", 0.8, 0.05);
+  disposables.push(
+    poleGeometry,
+    crossArmGeometry,
+    transformerGeometry,
+    lampArmGeometry,
+    lampGeometry,
+    benchSeatGeometry,
+    benchBackGeometry,
+    benchLegGeometry,
+  );
   props.forEach((prop) => {
     const root = new THREE.Group();
     root.name = `prop:${prop.localId}`;
     root.position.set(prop.position[0], 0, prop.position[1]);
+    if (prop.kind === "bench") {
+      const seat = new THREE.Mesh(benchSeatGeometry, woodMaterial);
+      seat.position.y = 0.44;
+      const back = new THREE.Mesh(benchBackGeometry, woodMaterial);
+      back.position.set(0, 0.64, -0.2);
+      const legL = new THREE.Mesh(benchLegGeometry, darkMetal);
+      legL.position.set(-0.55, 0.21, 0);
+      const legR = new THREE.Mesh(benchLegGeometry, darkMetal);
+      legR.position.set(0.55, 0.21, 0);
+      root.add(seat, back, legL, legR);
+      group.add(root);
+      return;
+    }
     const pole = new THREE.Mesh(poleGeometry, material);
-    pole.position.y = 3;
+    pole.position.y = 3.1;
     root.add(pole);
+    if (prop.kind === "electric_pole") {
+      const arm1 = new THREE.Mesh(crossArmGeometry, darkMetal);
+      arm1.position.y = 5.6;
+      const arm2 = new THREE.Mesh(crossArmGeometry, darkMetal);
+      arm2.position.y = 5.1;
+      const transformer = new THREE.Mesh(transformerGeometry, darkMetal);
+      transformer.position.set(0.28, 4.3, 0);
+      root.add(arm1, arm2, transformer);
+    }
     if (prop.kind === "street_light") {
+      const arm = new THREE.Mesh(lampArmGeometry, darkMetal);
+      arm.position.set(0, 5.85, 0.35);
       const lampMaterial = material.clone();
       disposables.push(lampMaterial);
       const lamp = new THREE.Mesh(lampGeometry, lampMaterial);
       lamp.userData["existingStreetLight"] = true;
-      lamp.position.y = 5.9;
-      root.add(lamp);
+      lamp.position.set(0, 5.8, 0.72);
+      root.add(arm, lamp);
     }
     group.add(root);
   });
