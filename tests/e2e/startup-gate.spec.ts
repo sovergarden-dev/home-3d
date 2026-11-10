@@ -172,11 +172,9 @@ test("startup keeps input closed until every shader variant settles, across cont
   // The retried startup remains covered until all queued programs finish linking.
   await setHold(page, "none");
   await expect(root).toHaveAttribute("data-scene-state", "ready", { timeout: 60000 });
-  const [warmed, total] = (await scene.getAttribute("data-startup-variants"))!
-    .split("/")
-    .map(Number);
-  expect(total).toBeGreaterThan(0);
-  expect(warmed).toBe(total);
+  const [, total] = (await scene.getAttribute("data-startup-variants"))!.split("/").map(Number);
+  expect(total).toBe(6);
+  await expect(scene).toHaveAttribute("data-startup-variants", "6/6");
   await expect(scene).toHaveAttribute("data-time-minutes", "420");
   await page.getByRole("radio", { name: "Chiều", exact: true }).click();
   await expect(scene).toHaveAttribute("data-time-minutes", "930");

@@ -16,6 +16,9 @@ export function PwaUpdate() {
   const [applying, setApplying] = useState(false);
   const [failed, setFailed] = useState(false);
   const waiting = useRef<ServiceWorker | null>(null);
+  const dialog = useRef<HTMLDivElement>(null);
+  const cancelDialogButton = useRef<HTMLButtonElement>(null);
+  const returnFocusTo = useRef<HTMLElement | null>(null);
   const reloadRequested = useRef(false);
   const retryTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   useEffect(() => {
@@ -79,14 +82,34 @@ export function PwaUpdate() {
   }, [ready]);
   useEffect(() => {
     if (!confirm) return;
+    const modal = dialog.current;
+    const activeAtOpen =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    returnFocusTo.current = activeAtOpen;
+    cancelDialogButton.current?.focus();
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
         setConfirm(false);
+      } else if (event.key === "Tab" && modal) {
+        const focusable = modal.querySelectorAll<HTMLElement>("button:not([disabled])");
+        const first = focusable.item(0);
+        const last = focusable.item(focusable.length - 1);
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
       }
     };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    document.addEventListener("keydown", onKey, true);
+    return () => {
+      document.removeEventListener("keydown", onKey, true);
+      const returnTarget = returnFocusTo.current;
+      if (returnTarget?.isConnected) returnTarget.focus();
+    };
   }, [confirm]);
   if (!available || dismissed) return null;
   const apply = () => {
@@ -121,7 +144,10 @@ export function PwaUpdate() {
             type="button"
             className="ctl px-3"
             disabled={applying}
-            onClick={() => setConfirm(true)}
+            onClick={(event) => {
+              returnFocusTo.current = event.currentTarget;
+              setConfirm(true);
+            }}
           >
             {t.pwa.reload}
           </button>
@@ -138,6 +164,7 @@ export function PwaUpdate() {
       {confirm ? (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/75 p-4">
           <div
+            ref={dialog}
             role="alertdialog"
             aria-modal="true"
             aria-labelledby={titleId}
@@ -154,8 +181,8 @@ export function PwaUpdate() {
             </div>
             <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <button
+                ref={cancelDialogButton}
                 type="button"
-                autoFocus
                 onClick={() => setConfirm(false)}
                 className="ctl rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary"
               >

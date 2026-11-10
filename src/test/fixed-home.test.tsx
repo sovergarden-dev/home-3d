@@ -247,8 +247,14 @@ describe("fixed home experience", () => {
       festivalsEnabled: false,
       floodEnabled: false,
     });
-    expect(layer.group.getObjectByName("festival-decoration-tet")).toBeUndefined();
-    expect(layer.group.getObjectByName("simulation-flood-water")).toBeUndefined();
+    const festivalNames = layer.group.children
+      .map((child) => child.name)
+      .filter((name) => name.startsWith("festival-decoration-"));
+    expect(festivalNames).toEqual([]);
+    const floodNames = layer.group.children
+      .map((child) => child.name)
+      .filter((name) => name === "simulation-flood-water");
+    expect(floodNames).toEqual([]);
     let compiled = 0;
     const renderer = { compile: () => (compiled += 1) } as unknown as THREE.WebGLRenderer;
     const total = layer.warm(renderer, new THREE.PerspectiveCamera());
