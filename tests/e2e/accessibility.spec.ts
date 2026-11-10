@@ -70,6 +70,17 @@ for (const viewport of [
     await scan("VI evening rain presets");
     await page.getByRole("radio", { name: "en", exact: true }).click();
     await scan("EN evening rain presets");
+    await page.getByRole("link", { name: "About", exact: true }).click();
+    await expect(page).toHaveURL(/\/gioi-thieu$/);
+    await page.addScriptTag({ path: require.resolve("axe-core/axe.min.js") });
+    await scan("EN About route");
+    await page.getByRole("link", { name: "Back to the street", exact: true }).click();
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.locator("#scene-root")).toHaveAttribute(
+      "data-scene-state",
+      /ready|fallback/,
+      { timeout: 60000 },
+    );
     await test.info().attach("fixed-home-accessibility", {
       contentType: "application/json",
       body: JSON.stringify({ viewport, ready, scans }),

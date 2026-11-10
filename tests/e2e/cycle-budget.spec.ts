@@ -29,7 +29,7 @@ test("20 view changes preserve one scene, then a route remount recovers cleanly"
 
   await page.getByRole("link", { name: "Giới thiệu", exact: true }).click();
   await expect(page).toHaveURL(/\/gioi-thieu$/);
-  await expect(page.getByRole("heading")).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await page.getByRole("link", { name: "Về phố", exact: true }).click();
   await expect(root).toHaveAttribute("data-scene-state", "ready", { timeout: 60000 });
   await expect(root.locator("canvas")).toHaveCount(1);

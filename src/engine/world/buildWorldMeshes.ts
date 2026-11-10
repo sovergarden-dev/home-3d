@@ -25,6 +25,7 @@ export interface WorldMeshBundle {
   group: THREE.Group;
   layers: Record<LayerName, THREE.Group>;
   setLayerVisible: (layer: LayerName, visible: boolean) => void;
+  setLabelLanguage: (language: "vi" | "en") => void;
   setRoadWet: (wet: boolean) => void;
   setAtmospherePresentation: (season: "dry" | "wet" | null, night: boolean) => void;
   setConfidenceVisible: (visible: boolean) => void;
@@ -906,9 +907,127 @@ function addProps(
   });
 }
 
+const ROAD_DISPLAY_NAMES: Record<string, { vi: string; en: string }> = {
+  "road-main": { vi: "Đường chính", en: "Main Street" },
+  "road-back": { vi: "Đường sau", en: "Back Lane" },
+  "road-alley": { vi: "Hẻm bên", en: "Side Alley" },
+  "road-deadend": { vi: "Hẻm cụt", en: "Cul-de-sac" },
+};
+
+const BUILDING_DISPLAY_NAMES: Record<string, { vi: string; en: string }> = {
+  "building-neighbour-west": { vi: "Nhà ống 3 tầng", en: "3F Townhouse" },
+  "building-neighbour-east": { vi: "Nhà phố 4 tầng", en: "4F Townhouse" },
+  "building-corner-oblique": { vi: "Nhà góc mái ngói", en: "Corner Gabled House" },
+  "building-courtyard": { vi: "Khu nhà sân trong", en: "Courtyard Block" },
+  "building-multipolygon": { vi: "Cụm nhà xưởng nhỏ", en: "Workshop Cluster" },
+};
+
+function polylineMidpoint(points: Position2[]): Position2 {
+  if (points.length === 0) return [0, 0];
+  if (points.length === 1) return points[0]!;
+  let total = 0;
+  const lengths: number[] = [];
+  for (let i = 0; i < points.length - 1; i++) {
+    const seg = Math.hypot(points[i + 1]![0] - points[i]![0], points[i + 1]![1] - points[i]![1]);
+    lengths.push(seg);
+    total += seg;
+  }
+  const half = total / 2;
+  let acc = 0;
+  for (let i = 0; i < lengths.length; i++) {
+    const seg = lengths[i]!;
+    if (acc + seg >= half && seg > 0) {
+      const t = (half - acc) / seg;
+      return [
+        points[i]![0] + (points[i + 1]![0] - points[i]![0]) * t,
+        points[i]![1] + (points[i + 1]![1] - points[i]![1]) * t,
+      ];
+    }
+    acc += seg;
+  }
+  return points[Math.floor(points.length / 2)]!;
+}
+
+function addHomeLotTreatment(
+  world: WorldData,
+  group: THREE.Group,
+  materialFactory: MaterialFactory,
+  disposables: Disposable[],
+) {
+  const turfMaterial = materialFactory("#b8c29b", 0.94, 0);
+  const curbMaterial = materialFactory("#e7dfd0", 0.78, 0.02);
+  const postMaterial = materialFactory("#385d52", 0.65, 0.08);
+  const apronMaterial = materialFactory("#b9b1a1", 0.9, 0);
+  const postGeo = new THREE.CylinderGeometry(0.11, 0.13, 0.58, 6);
+  disposables.push(postGeo);
+
+  for (const lot of world.lots) {
+    if (!lot.confirmed || lot.status !== "empty") continue;
+    const lotGroup = new THREE.Group();
+    lotGroup.name = `lot:${lot.localId}`;
+    lotGroup.userData = {
+      localId: lot.localId,
+      featureId: lot.localId,
+      featureType: "lot",
+      confidence: lot.provenance.quality,
+    };
+
+    const turf = createSurfaceMeshes(lot.geometry, 0.06, 0.01, turfMaterial, disposables);
+    turf.name = `lot-surface:${lot.localId}`;
+    lotGroup.add(turf);
+
+    const outer = polygonsOf(lot.geometry)[0]?.coordinates[0];
+    const corners = outer ? ringWithoutClosure(outer) : [];
+    corners.forEach(([x, z], idx) => {
+      const post = new THREE.Mesh(postGeo, postMaterial);
+      post.position.set(x, 0.29, z);
+      post.castShadow = true;
+      lotGroup.add(post);
+
+      const next = corners[(idx + 1) % corners.length];
+      if (!next) return;
+      const dx = next[0] - x;
+      const dz = next[1] - z;
+      const length = Math.hypot(dx, dz);
+      if (length < 0.4) return;
+      const isFrontEdge = idx === 0;
+      if (isFrontEdge && length > 2.4) {
+        const sideSpan = (length - 2.2) / 2;
+        for (const sign of [-1, 1] as const) {
+          const offset = (length / 2 - sideSpan / 2) * sign;
+          const beamGeo = new THREE.BoxGeometry(sideSpan, 0.2, 0.16);
+          disposables.push(beamGeo);
+          const beam = new THREE.Mesh(beamGeo, curbMaterial);
+          const midX = (x + next[0]) / 2 + (dx / length) * offset;
+          const midZ = (z + next[1]) / 2 + (dz / length) * offset;
+          beam.position.set(midX, 0.12, midZ);
+          beam.rotation.y = -Math.atan2(dz, dx);
+          lotGroup.add(beam);
+        }
+        const apronGeo = new THREE.BoxGeometry(2.2, 0.05, 1.3);
+        disposables.push(apronGeo);
+        const apron = new THREE.Mesh(apronGeo, apronMaterial);
+        apron.position.set((x + next[0]) / 2, 0.04, (z + next[1]) / 2 - 0.6);
+        apron.rotation.y = -Math.atan2(dz, dx);
+        lotGroup.add(apron);
+      } else {
+        const beamGeo = new THREE.BoxGeometry(length, 0.2, 0.16);
+        disposables.push(beamGeo);
+        const beam = new THREE.Mesh(beamGeo, curbMaterial);
+        beam.position.set((x + next[0]) / 2, 0.12, (z + next[1]) / 2);
+        beam.rotation.y = -Math.atan2(dz, dx);
+        lotGroup.add(beam);
+      }
+    });
+
+    group.add(lotGroup);
+  }
+}
+
 export function buildWorldMeshes(
   world: WorldData,
   materialFactory: MaterialFactory,
+  labelLanguage?: "vi" | "en",
 ): WorldMeshBundle {
   const disposables: Disposable[] = [];
   const group = new THREE.Group();
@@ -945,7 +1064,92 @@ export function buildWorldMeshes(
   let disposed = false;
   let confidenceVisible = false;
   let selectedFeatureId: string | null = null;
-  const buildingLabels: Array<{ text: string; position: Position2 }> = [];
+  const labelDisposables: Disposable[] = [];
+  let currentLabelLanguage = labelLanguage;
+
+  function clearLabels() {
+    labelDisposables.forEach((d) => d.dispose());
+    labelDisposables.length = 0;
+    layers.labels.clear();
+  }
+
+  function rebuildLabels(lang: "vi" | "en" | undefined) {
+    clearLabels();
+    if (!lang) {
+      const buildingLabels: Array<{ text: string; position: Position2 }> = [];
+      world.buildings.forEach((building) => {
+        if (!building.hidden) {
+          buildingLabels.push({
+            text: building.localId,
+            position: surfaceCentroid(building.geometry),
+          });
+        }
+      });
+      const buildingLabelBatches = createBuildingLabelBatches(buildingLabels, labelDisposables);
+      if (buildingLabelBatches) {
+        layers.labels.add(buildingLabelBatches.group);
+      } else {
+        buildingLabels.forEach(({ text, position }) => {
+          layers.labels.add(createLabelSprite(text, position, labelDisposables));
+        });
+      }
+      world.lots.forEach((lot) => {
+        if (lot.status !== "empty") return;
+        const marker = createLabelSprite(
+          lot.localId,
+          surfaceCentroid(lot.geometry),
+          labelDisposables,
+        );
+        marker.name = `label:${lot.localId}`;
+        marker.userData["featureId"] = lot.localId;
+        marker.userData["featureType"] = "lot";
+        layers.labels.add(marker);
+      });
+      return;
+    }
+
+    const planLabels: Array<{ text: string; position: Position2 }> = [];
+    world.roads.forEach((road) => {
+      const mapped = ROAD_DISPLAY_NAMES[road.localId]?.[lang];
+      const fallback =
+        road.roadClass === "alley"
+          ? lang === "vi"
+            ? "Hẻm nội bộ"
+            : "Alley"
+          : lang === "vi"
+            ? "Đường khu phố"
+            : "Street";
+      planLabels.push({
+        text: mapped ?? fallback,
+        position: polylineMidpoint(road.polylineENU),
+      });
+    });
+    world.buildings.forEach((building) => {
+      if (building.hidden) return;
+      const mapped = BUILDING_DISPLAY_NAMES[building.localId]?.[lang];
+      if (!mapped) return;
+      planLabels.push({
+        text: mapped,
+        position: surfaceCentroid(building.geometry),
+      });
+    });
+
+    const batches = createBuildingLabelBatches(planLabels, labelDisposables);
+    if (batches) {
+      layers.labels.add(batches.group);
+    }
+    planLabels.forEach(({ text, position }) => {
+      if (!batches) {
+        layers.labels.add(createLabelSprite(text, position, labelDisposables));
+      } else {
+        const tag = new THREE.Object3D();
+        tag.position.set(position[0], 0.5, position[1]);
+        tag.userData = { label: text };
+        layers.labels.add(tag);
+      }
+    });
+  }
+
   world.roads.forEach((road) => {
     const mesh = addRoad(road, layers.roads, roadMaterialFactory, disposables);
     if (mesh) roadMeshes.set(road, mesh);
@@ -959,27 +1163,9 @@ export function buildWorldMeshes(
       disposables,
       world.manifest.isSynthetic,
     );
-    if (!building.hidden) {
-      const centroid = surfaceCentroid(building.geometry);
-      buildingLabels.push({ text: building.localId, position: centroid });
-    }
   });
-  const buildingLabelBatches = createBuildingLabelBatches(buildingLabels, disposables);
-  if (buildingLabelBatches) {
-    layers.labels.add(buildingLabelBatches.group);
-  } else {
-    buildingLabels.forEach(({ text, position }) => {
-      layers.labels.add(createLabelSprite(text, position, disposables));
-    });
-  }
-  world.lots.forEach((lot) => {
-    if (lot.status !== "empty") return;
-    const marker = createLabelSprite(lot.localId, surfaceCentroid(lot.geometry), disposables);
-    marker.name = `label:${lot.localId}`;
-    marker.userData["featureId"] = lot.localId;
-    marker.userData["featureType"] = "lot";
-    layers.labels.add(marker);
-  });
+  addHomeLotTreatment(world, layers.buildings, materialFactory, disposables);
+  rebuildLabels(currentLabelLanguage);
   addTrees(world, layers.trees, materialFactory, disposables);
   addProps(world, layers.props, materialFactory, disposables);
 
@@ -1036,6 +1222,11 @@ export function buildWorldMeshes(
     setLayerVisible(layer, visible) {
       layers[layer].visible = visible;
     },
+    setLabelLanguage(language) {
+      if (disposed || currentLabelLanguage === language) return;
+      currentLabelLanguage = language;
+      rebuildLabels(currentLabelLanguage);
+    },
     setRoadWet(wet) {
       const roughness = wet ? 0.32 : 0.92;
       roadMeshes.forEach((mesh) => {
@@ -1079,6 +1270,7 @@ export function buildWorldMeshes(
     dispose() {
       if (disposed) return;
       disposed = true;
+      clearLabels();
       confidenceVariants.forEach((material) => material.dispose());
       disposables.forEach((disposable) => disposable.dispose());
       group.removeFromParent();

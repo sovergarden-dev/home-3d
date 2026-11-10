@@ -20,6 +20,7 @@ test("fixed world stays immutable across views and illustration resources remain
   await expect(scene).toHaveAttribute("data-active-worlds", "1");
   await expect(scene).toHaveAttribute("data-illustrative-details", "true");
   await expect(scene).toHaveAttribute("data-illustrative-instances", /^[1-9]\d*$/);
+  await expect(scene).toHaveAttribute("data-labels-visible", "false");
   const revision = await scene.getAttribute("data-world-revision");
   const resourceCounts: string[] = [];
 
@@ -29,6 +30,7 @@ test("fixed world stays immutable across views and illustration resources remain
     await expect(scene).toHaveAttribute("data-camera-type", "OrthographicCamera");
     await expect(scene).toHaveAttribute("data-illustrative-details", "false");
     await expect(scene).toHaveAttribute("data-illustrative-instances", "0");
+    await expect(scene).toHaveAttribute("data-labels-visible", "true");
     await expect(scene).toHaveAttribute("data-world-revision", revision!);
     await expect(scene).toHaveAttribute("data-active-worlds", "1");
     await expect(canvas).toHaveCount(1);

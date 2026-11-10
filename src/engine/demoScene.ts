@@ -238,7 +238,11 @@ export function createDemoScene(
     illustrativeDetails = null;
     worldBundle?.dispose();
     const meshBuildStartedAt = performance.now();
-    worldBundle = buildWorldMeshes(snapshot.world, materialFactory);
+    worldBundle = buildWorldMeshes(
+      snapshot.world,
+      materialFactory,
+      useAppStore.getState().language,
+    );
     atmosphere.invalidateWorld();
     host.dataset["meshBuildLatencyMs"] = String(performance.now() - meshBuildStartedAt);
     scene.add(worldBundle.group);
@@ -389,7 +393,7 @@ export function createDemoScene(
     tier: renderer.capabilities.maxTextureSize <= 4096 ? "low" : "mid",
   });
 
-  function applyEnvironment() {
+  function applyEnvironment(immediate = false) {
     const state = useAppStore.getState();
     const effectiveWeather = state.weather;
     const selectedDate = state.selectedDate;
@@ -426,6 +430,7 @@ export function createDemoScene(
       },
       worldRenderable() && state.viewMode !== "topdown",
       homeCentre,
+      immediate || motion.matches ? 0 : 350,
     );
     audio.set(
       state.soundOn && !document.hidden && worldRenderable(),
@@ -465,10 +470,12 @@ export function createDemoScene(
 
     if (!worldBundle) return;
     const state = useAppStore.getState();
+    const planLabelsVisible = state.viewMode === "topdown" && state.showLabels;
+    worldBundle.setLabelLanguage(state.language);
     worldBundle.setLayerVisible("trees", state.showTrees);
-    worldBundle.setLayerVisible("labels", state.showLabels);
+    worldBundle.setLayerVisible("labels", planLabelsVisible);
     host.dataset["treesVisible"] = String(state.showTrees);
-    host.dataset["labelsVisible"] = String(state.showLabels);
+    host.dataset["labelsVisible"] = String(planLabelsVisible);
   }
 
   function render(activeAnimation = false) {
@@ -489,7 +496,9 @@ export function createDemoScene(
     const renderedAt = performance.now();
     frameMetrics.record(
       renderedAt,
-      interactionActive || activeAnimation || atmosphere.rainVisible ? "active" : "idle",
+      interactionActive || activeAnimation || atmosphere.rainVisible || atmosphere.transitionActive
+        ? "active"
+        : "idle",
     );
     if (lastMetricsSnapshotAt === 0 || renderedAt - lastMetricsSnapshotAt >= 250) {
       frameSnapshot = frameMetrics.snapshot();
@@ -581,7 +590,13 @@ export function createDemoScene(
     }
 
     const controlsChanged = controls.enabled ? updateControls() : false;
-    if (controlsChanged || atmosphere.rainVisible || lifeFrameRequested || lifeActive()) {
+    if (
+      controlsChanged ||
+      atmosphere.rainVisible ||
+      atmosphere.transitionActive ||
+      lifeFrameRequested ||
+      lifeActive()
+    ) {
       render(true);
       scheduleFrame();
     }
@@ -720,7 +735,7 @@ export function createDemoScene(
     animationFrame = 0;
     lastFrame = 0;
     frameMetrics.reset();
-    applyEnvironment();
+    applyEnvironment(true);
     if (document.hidden) audio.suspend();
     if (!document.hidden && !disposed) {
       render();
@@ -853,6 +868,7 @@ export function createDemoScene(
     if (
       state.showTrees !== previous.showTrees ||
       state.showLabels !== previous.showLabels ||
+      state.language !== previous.language ||
       state.illustrativeDetails !== previous.illustrativeDetails ||
       state.viewMode !== previous.viewMode
     ) {
@@ -868,9 +884,13 @@ export function createDemoScene(
       state.season !== previous.season ||
       state.atmosphereEnabled !== previous.atmosphereEnabled
     ) {
-      applyEnvironment();
+      const clockTickOnly =
+        state.weather === previous.weather &&
+        state.viewMode === previous.viewMode &&
+        Math.abs(state.timeOfDayMinutes - previous.timeOfDayMinutes) <= 2;
+      applyEnvironment(clockTickOnly || state.viewMode !== previous.viewMode);
       render();
-      if (atmosphere.rainVisible || lifeActive()) scheduleFrame();
+      if (atmosphere.rainVisible || atmosphere.transitionActive || lifeActive()) scheduleFrame();
     }
   });
 
@@ -878,11 +898,11 @@ export function createDemoScene(
     if (disposed) return;
     currentWorld = snapshot;
     mountWorld();
-    applyEnvironment();
+    applyEnvironment(true);
     updateLayerVisibility();
     atmosphere.warm(renderer, activeCamera);
     render();
-    if (atmosphere.rainVisible || lifeActive()) scheduleFrame();
+    if (atmosphere.rainVisible || atmosphere.transitionActive || lifeActive()) scheduleFrame();
   });
 
   bindLifeCommands((command) => {
@@ -909,7 +929,7 @@ export function createDemoScene(
   });
   mountWorld();
   updateLayerVisibility();
-  applyEnvironment();
+  applyEnvironment(true);
   resize();
   // Queue the visible state's programs; the startup sequence waits for them, then draws.
   renderer.compile(scene, activeCamera);

@@ -31,7 +31,42 @@ describe("world mesh lifecycle", () => {
     expect(bundle.layers.labels.visible).toBe(false);
     expect(bundle.layers.trees.visible).toBe(false);
 
-    expect(() => bundle.dispose()).not.toThrow();
+    expect(bundle.dispose()).toBeUndefined();
+  });
+
+  it("renders readable Vietnamese/English road labels, omits raw localIds when localized, and builds a home-lot boundary curb", () => {
+    const materials = new Map<string, THREE.MeshStandardMaterial>();
+    const factory = (color: string, roughness = 0.8, metalness = 0) => {
+      const key = `${color}:${roughness}:${metalness}`;
+      let mat = materials.get(key);
+      if (!mat) {
+        mat = new THREE.MeshStandardMaterial({ color, roughness, metalness });
+        materials.set(key, mat);
+      }
+      return mat;
+    };
+    const viBundle = buildWorldMeshes(SYNTHETIC_NEIGHBORHOOD, factory, "vi");
+    const viLabels: string[] = [];
+    viBundle.layers.labels.traverse((obj) => {
+      if (typeof obj.userData["label"] === "string") viLabels.push(obj.userData["label"]);
+    });
+    expect(viLabels).toContain("Đường chính");
+    expect(viLabels).toContain("Hẻm bên");
+    expect(viLabels).not.toContain("building-neighbour-west");
+    expect(viLabels).not.toContain("lot-home-empty");
+    expect(viBundle.group.getObjectByName("lot:lot-home-empty")).toBeTruthy();
+
+    viBundle.setLabelLanguage("en");
+    const enLabels: string[] = [];
+    viBundle.layers.labels.traverse((obj) => {
+      if (typeof obj.userData["label"] === "string") enLabels.push(obj.userData["label"]);
+    });
+    expect(enLabels).toContain("Main Street");
+    expect(enLabels).toContain("Side Alley");
+    expect(enLabels).not.toContain("lot-home-empty");
+
+    viBundle.dispose();
+    materials.forEach((m) => m.dispose());
   });
 
   it("releases renderers from the geometry three.js shares across label sprites", () => {

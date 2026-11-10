@@ -9,17 +9,18 @@ import { ScaleBar } from "@/components/overlay/ScaleBar";
 import { Dock } from "@/components/overlay/Dock";
 import { Splash } from "@/components/overlay/Splash";
 import { useClock } from "@/components/overlay/useClock";
+import { useSceneShortcuts } from "@/components/overlay/useSceneShortcuts";
 import { useAppStore } from "@/state/appStore";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: `${SITE_CONFIG.name} — Bản đồ 3D khu phố` },
+      { title: `${SITE_CONFIG.homeLabel.vi} — ${SITE_CONFIG.name}` },
       {
         name: "description",
         content: `${SITE_CONFIG.name}: sa bàn 3D khu phố quanh nhà, đổi buổi trong ngày và thời tiết.`,
       },
-      { property: "og:title", content: `${SITE_CONFIG.name} — Bản đồ 3D khu phố` },
+      { property: "og:title", content: `${SITE_CONFIG.homeLabel.vi} — ${SITE_CONFIG.name}` },
       { property: "og:description", content: `${SITE_CONFIG.name}, một chút thôi.` },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -30,6 +31,7 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   useClock();
+  useSceneShortcuts();
   const lang = useAppStore((s) => s.language);
   const viewMode = useAppStore((s) => s.viewMode);
   // While the splash covers startup, keyboard focus must not reach the controls behind it either.
@@ -37,6 +39,10 @@ function Home() {
 
   useEffect(() => {
     document.documentElement.lang = lang;
+    document.title =
+      lang === "vi"
+        ? `${SITE_CONFIG.homeLabel.vi} — ${SITE_CONFIG.name}`
+        : `${SITE_CONFIG.homeLabel.en} — ${SITE_CONFIG.name}`;
   }, [lang]);
 
   useEffect(() => {
@@ -76,7 +82,7 @@ function Home() {
           </div>
 
           {/* Centered floating dock at the bottom */}
-          <div className="pointer-events-none fixed inset-x-0 bottom-4 z-20 flex justify-center px-4">
+          <div className="h6-dock-anchor pointer-events-none fixed inset-x-0 bottom-4 z-20 flex justify-center px-4">
             <Dock />
           </div>
         </div>

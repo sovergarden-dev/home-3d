@@ -336,7 +336,15 @@ export const en: Dict = {
   sheetHandle: "Drag to expand the control panel",
   aboutTitle: "About Phố Nhà Mình",
   aboutBody: [
-    "A small map of the streets around home — watch the neighborhood wake at 5am, hear the noon street vendors, and see lanterns glow on Mid-Autumn night.",
-    "This is an invented street, not a reconstruction of a real neighborhood. The central lot is empty. Time, weather and festivals are simulated; audio is synthesized. Walk uses eye-level collision-aware simulation; passenger rides follow illustrative routes.",
+    "A quiet 3D neighborhood diorama around home — orbit across townhouses, street trees, and passing traffic while shifting the sky through Morning, Afternoon, and Evening across Sunny, Cloudy, and Rain presets.",
+    "The scene uses a sanitized synthetic neighborhood dataset rather than a cadastral survey or real coordinates; the central home lot remains empty as the reference anchor, and no location data leaves your browser.",
+  ],
+  aboutShortcutsTitle: "Keyboard shortcuts",
+  aboutShortcuts: [
+    { keys: "1 / 2 / 3", action: "Switch Morning · Afternoon · Evening" },
+    { keys: "Q / W / E", action: "Switch Sunny · Cloudy · Rain" },
+    { keys: "M", action: "Toggle Diorama ↔ Plan view" },
+    { keys: "H / R", action: "Reset camera to Our house" },
+    { keys: "+ / -", action: "Zoom in or out" },
   ],
 };

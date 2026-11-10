@@ -328,8 +328,16 @@ export const vi = {
   sheetHandle: "Kéo để mở rộng bảng điều khiển",
   aboutTitle: "Về Phố Nhà Mình",
   aboutBody: [
-    "Một tấm bản đồ nhỏ của khu phố quanh nhà — nơi bạn có thể xem phố thức dậy lúc 5 giờ sáng, nghe tiếng rao lúc trưa, và ngắm đèn lồng đêm Trung Thu.",
-    "Bản demo là phố hư cấu, không phải mô hình khu nhà thật; lô trung tâm để trống. Chọn giờ, thời tiết và lễ hội để xem phố thay đổi. Âm thanh là tổng hợp. Đi bộ dùng góc nhìn người và va chạm mô phỏng; xe ôm chạy tuyến minh họa.",
+    "Một sa bàn 3D tĩnh của khu phố quanh nhà — nơi bạn có thể xoay nhìn dãy nhà ống, tán cây ven đường, dòng xe qua lại và đổi sắc thái bầu trời qua ba buổi Sáng, Chiều, Tối cùng ba trạng thái Nắng, Mây, Mưa.",
+    "Dữ liệu đang dựng là khu phố tổng hợp minh họa, không phải bản khảo sát địa chính hay tọa độ nhà thật; lô đất trung tâm được giữ trống làm điểm neo và ứng dụng hoạt động độc lập, không gửi dữ liệu vị trí ra ngoài.",
+  ],
+  aboutShortcutsTitle: "Phím tắt nhanh",
+  aboutShortcuts: [
+    { keys: "1 / 2 / 3", action: "Đổi nhanh buổi Sáng · Chiều · Tối" },
+    { keys: "Q / W / E", action: "Đổi thời tiết Nắng · Mây · Mưa" },
+    { keys: "M", action: "Chuyển góc nhìn Diorama ↔ Mặt bằng" },
+    { keys: "H / R", action: "Đưa camera về lại tâm Nhà mình" },
+    { keys: "+ / -", action: "Phóng to hoặc thu nhỏ góc nhìn" },
   ],
 };
 export type Dict = typeof vi;
