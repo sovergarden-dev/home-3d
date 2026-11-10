@@ -391,6 +391,8 @@ export function createDemoScene(
     onRoadWet: (wet) => worldBundle?.setRoadWet(wet),
     host,
     tier: renderer.capabilities.maxTextureSize <= 4096 ? "low" : "mid",
+    festivalsEnabled: false,
+    floodEnabled: false,
   });
 
   function applyEnvironment(immediate = false) {

@@ -1,6 +1,6 @@
 # Phố Nhà Mình / Home 3D
 
-Ứng dụng khu phố 3D với một tâm cố định là nhà, điều khiển ngày/giờ/thời tiết, đời sống và âm thanh tổng hợp, kỷ niệm, tour và bưu thiếp. Bản công khai luôn là phố hư cấu. Gói khu thật chỉ được chủ sở hữu chọn từ file cục bộ; dữ liệu không gửi lên server hoặc SSR.
+Ứng dụng sa bàn 3D tĩnh của một khu phố hư cấu, tập trung vào một ngôi nhà. Có sáu preset thời điểm/thời tiết, hai chế độ xem và nhãn quy hoạch trong Mặt bằng. Không tải dữ liệu khu thật lên server; mọi benchmark và QA artifact trong repo chỉ dùng fixture tổng hợp.
 
 Stack: TanStack Start, React 19, Three.js trực tiếp, TypeScript và Bun 1.4.3. Giữ cấu hình `@lovable.dev/vite-tanstack-config` để tương thích [dự án Lovable](https://lovable.dev/projects/233f103b-6806-4738-9cc3-913722e17ad6). [Bản công khai](https://nhacvl.lovable.app/) chỉ thay đổi khi chủ sở hữu Publish.
 

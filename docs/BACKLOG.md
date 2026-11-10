@@ -1,17 +1,17 @@
 # Backlog — Codex tiếp quản
 
-## Hiện hành từ 10/11/2026
+## Hiện hành từ 11/11/2026
 
-### Post-audit fixed-home refactor — IN PROGRESS
+### Gói B — bundle, startup shaders và CI
 
-- Local branch `codex/post-audit-static-neighborhood`, base `ba0c67ab4c6bb1598ac978e2c09c5904f17d914e`; changes are uncommitted and not pushed. No deployment or Publish.
-- Acceptance E2E, final local run after independent-review fixes (`CI=1 REQUIRE_WEBGL2=1`): Chromium 19/19; Firefox 18 pass + 1 Chromium-CDP-only skip; WebKit 18 pass + 1 Chromium-CDP-only skip. Real UI link navigation to `/gioi-thieu` is restored in `TopActions`, and axe scans now cover Plan view plus selected Evening/Rain presets in VI/EN. Browser pixel evidence was nonblank in all three; these browser results do not certify a physical GPU.
-- Local quality: `bun run check` (428 unit, coverage ratchet, 50 pipeline, typecheck/lint/build/bundle) passed; bundle 159,986/250,000 gzip bytes. Production PWA 5/5, private Workerd 4 checks, Gitleaks 178 commits/no findings. These are local results, not CI for the uncommitted head.
-- WebKit's current cycle gate is 20 camera view changes plus one real link-driven About/home remount. Same-runner local baseline commit `ba0c67a`: 22,013 ms; current: 18,190 ms (−17.37%); within the existing 70s and +10% gates. The old package/capture H6 workload is retired and the two benchmarks are not directly comparable.
-- Real-GPU desktop benchmark (`T20`, commit `75235e0f11824c0260f4f792a76ead49fe173fb0`, `harnessTreeClean: true`, Chrome `157.0.8103.38` headed on `NVIDIA GeForce GTX 1660 Ti`, driver `32.0.16.1074`, `1440×900`, DPR 1): **4/4 scenarios `MET`** (`fps.p50 = 141.68–143.99`, `frameMs.max = 9.50–16.90 ms`, `drawCalls = 103–107`, `triangles = 7,300–16,264`, `adapterUpperBoundBytes = 177,893,376 B ≤ 350,000,000 B`, `midBudgetStatus: MET`). Evidence: [fixed-home-gpu-2026-11-10/README.md](assets/qa/codex/m4/fixed-home-gpu-2026-11-10/README.md).
-- Remaining before merge: final independent read-only review (`MERGE_OK`) and CI 4/4 on the exact PR head. No deployment or Publish.
+- Trạng thái hiện tại: PR #22 đã mở tại `https://github.com/sovergarden-dev/home-3d/pull/22`. Snapshot head `650151a885d83e5d4a86bfdab1e60a7489c1420a` đạt CI 4/4 ở run `42910488585`; review độc lập `MERGE_OK`. Audit-only docs commit cần push và chạy CI đúng head mới trước merge. PR #21 đã merge; code gates/T21 đạt.
+- Gói B: shader warmup còn 6 biến thể; bỏ QueryClient, Sonner, TooltipProvider và Radix AlertDialog khỏi root shell; PWA dùng accessible alertdialog tùy biến; xoá 13 E2E spec của luồng đã gỡ; Firefox CI có Mesa software WebGL2. Regression khóa `6/6` biến thể và kiểm Tab/Shift+Tab, Escape, trả focus.
+- Local `bun run check`: 433 unit trong coverage run, P9 CPU riêng 1/1, pipeline 50/50, typecheck/lint/build/bundle đạt; shell gzip `123.262 / 250.000 B`. Production PWA 5/5; Workerd 4/4 checks; Gitleaks lịch sử sau commit docs/evidence `b53101b` quét 184 commits (~14,84 MB), không phát hiện leak.
+- E2E local trên code head (`CI=1 REQUIRE_WEBGL2=1`): Chromium 19 pass, Firefox 18 pass + 1 skip chỉ cho Chromium-CDP, WebKit 18 pass + 1 skip chỉ cho Chromium-CDP; tổng 55 pass, 2 skip, 0 fail. WebKit H6 21.579 ms so với baseline cùng lượt 23.702 ms (−8,96%). Pixel render không trắng ở cả ba trình duyệt.
+- T21 [biên nhận](assets/qa/codex/m5/polished-home-gpu-2026-11-11/README.md): source/harness SHA sạch `cfbb1f4…`, Chrome 157.0.8103.50 headed / GTX 1660 Ti / driver 32.0.16.1074 / 1440×900 / DPR 1. Lượt cuối đạt 4/4 FPS/frame/hình học và cận trên adapter `172.969.984 B ≤ 350.000.000 B` (`nvidia-smi +171 MiB`, `MET`). Lượt đầu giữ `NOT_VERIFIED` vì adapter delta `802.377.728 B`; không quy cho app.
+- Còn lại trước khi merge: review độc lập `MERGE_OK`; sau cập nhật receipt, xác nhận CI đúng PR head 4/4; merge; CI push `main` 4/4; cập nhật Notion receipt và tạo tag cuối `audit/2026-11-11` trên đúng merge SHA. Không deploy/Publish.
 
-Nguồn phạm vi: [CODEX_HANDOFF.md](CODEX_HANDOFF.md); trạng thái có bằng chứng: [CODEX_LOG.md](CODEX_LOG.md). Trạng thái các milestone được chốt theo vạch đích §7 và quyết định T18 ở [DECISIONS.md](DECISIONS.md); mọi giới hạn mức hạng mục giữ nhãn trung thực (`NOT_MET`, `NOT_VERIFIED`, `BLOCKED`, `NOT_DONE`).
+Nguồn phạm vi: [CODEX_HANDOFF.md](CODEX_HANDOFF.md); lịch sử và trạng thái có bằng chứng: [CODEX_LOG.md](CODEX_LOG.md), [DECISIONS.md](DECISIONS.md), [AUDIT_PACKET.md](AUDIT_PACKET.md). `REAL_WORLD_NOT_VERIFIED` giữ nguyên.
 
 ## Lịch sử milestone trước refactor (28/10–09/11/2026)
 

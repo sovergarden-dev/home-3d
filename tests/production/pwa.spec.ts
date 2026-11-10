@@ -86,7 +86,24 @@ test("an update prompts, waits for explicit confirmation and leaves other tabs i
     .getByRole("button", { name: "Tải lại", exact: true })
     .click();
   await expect(page.getByRole("alertdialog")).toBeVisible();
-  await page.getByRole("alertdialog").getByRole("button", { name: "Để sau", exact: true }).click();
+  const dialog = page.getByRole("alertdialog");
+  const later = dialog.getByRole("button", { name: "Để sau", exact: true });
+  const confirmReload = dialog.getByRole("button", { name: "Tải lại", exact: true });
+  await expect(later).toBeFocused();
+  await page.keyboard.press("Shift+Tab");
+  await expect(confirmReload).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(later).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  const reopen = page
+    .getByTestId("pwa-update")
+    .getByRole("button", { name: "Tải lại", exact: true });
+  await expect(reopen).toBeFocused();
+  await reopen.click();
+  await expect(dialog).toBeVisible();
+  await later.click();
+  await expect(dialog).toHaveCount(0);
   expect(await other.locator("body").getAttribute("data-qa-session")).toBe("retained");
   await page
     .getByTestId("pwa-update")

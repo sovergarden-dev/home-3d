@@ -1,20 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useLocation } from "@tanstack/react-router";
 import { useAppStore } from "@/state/appStore";
 import { useT } from "@/i18n";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 
 export function PwaUpdate() {
   const t = useT();
+  const titleId = useId();
+  const descId = useId();
   const location = useLocation();
   const sceneStatus = useAppStore((state) => state.sceneStatus);
   const ready = location.pathname !== "/" || sceneStatus === "ready" || sceneStatus === "fallback";
@@ -24,6 +16,9 @@ export function PwaUpdate() {
   const [applying, setApplying] = useState(false);
   const [failed, setFailed] = useState(false);
   const waiting = useRef<ServiceWorker | null>(null);
+  const dialog = useRef<HTMLDivElement>(null);
+  const cancelDialogButton = useRef<HTMLButtonElement>(null);
+  const returnFocusTo = useRef<HTMLElement | null>(null);
   const reloadRequested = useRef(false);
   const retryTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   useEffect(() => {
@@ -85,8 +80,40 @@ export function PwaUpdate() {
       clearTimeout(retryTimer.current);
     };
   }, [ready]);
+  useEffect(() => {
+    if (!confirm) return;
+    const modal = dialog.current;
+    const activeAtOpen =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    returnFocusTo.current = activeAtOpen;
+    cancelDialogButton.current?.focus();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setConfirm(false);
+      } else if (event.key === "Tab" && modal) {
+        const focusable = modal.querySelectorAll<HTMLElement>("button:not([disabled])");
+        const first = focusable.item(0);
+        const last = focusable.item(focusable.length - 1);
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", onKey, true);
+    return () => {
+      document.removeEventListener("keydown", onKey, true);
+      const returnTarget = returnFocusTo.current;
+      if (returnTarget?.isConnected) returnTarget.focus();
+    };
+  }, [confirm]);
   if (!available || dismissed) return null;
   const apply = () => {
+    setConfirm(false);
     setFailed(false);
     setApplying(true);
     reloadRequested.current = true;
@@ -117,7 +144,10 @@ export function PwaUpdate() {
             type="button"
             className="ctl px-3"
             disabled={applying}
-            onClick={() => setConfirm(true)}
+            onClick={(event) => {
+              returnFocusTo.current = event.currentTarget;
+              setConfirm(true);
+            }}
           >
             {t.pwa.reload}
           </button>
@@ -131,18 +161,44 @@ export function PwaUpdate() {
           </button>
         </div>
       </div>
-      <AlertDialog open={confirm} onOpenChange={setConfirm}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t.pwa.reloadTitle}</AlertDialogTitle>
-            <AlertDialogDescription>{t.pwa.saveBeforeReload}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t.pwa.later}</AlertDialogCancel>
-            <AlertDialogAction onClick={apply}>{t.pwa.reload}</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {confirm ? (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/75 p-4">
+          <div
+            ref={dialog}
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
+            aria-describedby={descId}
+            className="w-full max-w-lg rounded-lg border border-border bg-background p-6 shadow-lg"
+          >
+            <div className="flex flex-col space-y-2 text-center sm:text-left">
+              <h2 id={titleId} className="text-lg font-semibold text-foreground">
+                {t.pwa.reloadTitle}
+              </h2>
+              <p id={descId} className="text-sm text-muted-foreground">
+                {t.pwa.saveBeforeReload}
+              </p>
+            </div>
+            <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <button
+                ref={cancelDialogButton}
+                type="button"
+                onClick={() => setConfirm(false)}
+                className="ctl rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary"
+              >
+                {t.pwa.later}
+              </button>
+              <button
+                type="button"
+                onClick={apply}
+                className="ctl rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+              >
+                {t.pwa.reload}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }
