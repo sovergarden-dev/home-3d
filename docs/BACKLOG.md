@@ -4,14 +4,12 @@
 
 ### Gói B — bundle, startup shaders và CI
 
-- Trạng thái hiện tại: PR #22 đã mở tại `https://github.com/sovergarden-dev/home-3d/pull/22`. Snapshot head `650151a885d83e5d4a86bfdab1e60a7489c1420a` đạt CI 4/4 ở run `42910488585`; review độc lập `MERGE_OK`. Audit-only docs commit cần push và chạy CI đúng head mới trước merge. PR #21 đã merge; code gates/T21 đạt.
-- Gói B: shader warmup còn 6 biến thể; bỏ QueryClient, Sonner, TooltipProvider và Radix AlertDialog khỏi root shell; PWA dùng accessible alertdialog tùy biến; xoá 13 E2E spec của luồng đã gỡ; Firefox CI có Mesa software WebGL2. Regression khóa `6/6` biến thể và kiểm Tab/Shift+Tab, Escape, trả focus.
-- Local `bun run check`: 433 unit trong coverage run, P9 CPU riêng 1/1, pipeline 50/50, typecheck/lint/build/bundle đạt; shell gzip `123.262 / 250.000 B`. Production PWA 5/5; Workerd 4/4 checks; Gitleaks lịch sử sau commit docs/evidence `b53101b` quét 184 commits (~14,84 MB), không phát hiện leak.
-- E2E local trên code head (`CI=1 REQUIRE_WEBGL2=1`): Chromium 19 pass, Firefox 18 pass + 1 skip chỉ cho Chromium-CDP, WebKit 18 pass + 1 skip chỉ cho Chromium-CDP; tổng 55 pass, 2 skip, 0 fail. WebKit H6 21.579 ms so với baseline cùng lượt 23.702 ms (−8,96%). Pixel render không trắng ở cả ba trình duyệt.
+- Application freeze: PR #22 merged at `e4a9b9b3b45680d56ba1415965ad85f3e9a0e1fa` from reviewed head `f617ec988cd7bc319784a9a5f1ac04f6460e370e`. Independent review `MERGE_OK`; exact-head PR CI `42919226343` passed 4/4 and main CI `42920498616` passed 4/4.
+- Immutable annotated application tag `audit/2026-11-11` (object `087884e14bd2364542aa785387ae3f7f8d9e0add`) points to the PR #22 merge SHA. Receipt-only corrections are tracked separately from the application freeze. Create `audit/2026-11-11-receipts` only after exact-head PR CI and post-merge main CI both pass; never move the application tag.
+- Gói B runtime: shader warmup còn 6 biến thể; bỏ QueryClient, Sonner, TooltipProvider và Radix AlertDialog khỏi root shell; PWA dùng accessible alertdialog tùy biến; xoá 13 E2E spec của luồng đã gỡ; Firefox CI có Mesa software WebGL2. Regression khóa `6/6` biến thể và kiểm Tab/Shift+Tab, Escape, trả focus.
 - T21 [biên nhận](assets/qa/codex/m5/polished-home-gpu-2026-11-11/README.md): source/harness SHA sạch `cfbb1f4…`, Chrome 157.0.8103.50 headed / GTX 1660 Ti / driver 32.0.16.1074 / 1440×900 / DPR 1. Lượt cuối đạt 4/4 FPS/frame/hình học và cận trên adapter `172.969.984 B ≤ 350.000.000 B` (`nvidia-smi +171 MiB`, `MET`). Lượt đầu giữ `NOT_VERIFIED` vì adapter delta `802.377.728 B`; không quy cho app.
-- Còn lại trước khi merge: review độc lập `MERGE_OK`; sau cập nhật receipt, xác nhận CI đúng PR head 4/4; merge; CI push `main` 4/4; cập nhật Notion receipt và tạo tag cuối `audit/2026-11-11` trên đúng merge SHA. Không deploy/Publish.
 
-Nguồn phạm vi: [CODEX_HANDOFF.md](CODEX_HANDOFF.md); lịch sử và trạng thái có bằng chứng: [CODEX_LOG.md](CODEX_LOG.md), [DECISIONS.md](DECISIONS.md), [AUDIT_PACKET.md](AUDIT_PACKET.md). `REAL_WORLD_NOT_VERIFIED` giữ nguyên.
+Nguồn phạm vi và các giới hạn còn lại: [CODEX_HANDOFF.md](CODEX_HANDOFF.md), lịch sử và quyết định đã ghi tại [CODEX_LOG.md](CODEX_LOG.md) và [DECISIONS.md](DECISIONS.md), cùng [AUDIT_PACKET.md](AUDIT_PACKET.md). `REAL_WORLD_NOT_VERIFIED` giữ nguyên.
 
 ## Lịch sử milestone trước refactor (28/10–09/11/2026)
 
