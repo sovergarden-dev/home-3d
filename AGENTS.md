@@ -38,7 +38,7 @@ Không Publish/sửa Lovable, đăng nhập/deploy Cloudflare hoặc Google, đ�
 - Bản đồ có đúng một tâm: nhà mình (gốc ENU). Không thêm bộ chọn địa điểm, danh sách hay thẻ "Góc phố", không đổi tâm. Kỷ niệm (P10) là ghim trên bản đồ: chạm vào thì camera bay tới, tâm vẫn là nhà.
 - Nhà tâm điểm đang xây để cho thuê; trong cảnh 3D lô nhà vẫn để trống. Không dựng lại nhà cũ (OSM, Overture, Open Buildings và ảnh Street View 06/2024 vẫn còn nhà cũ). Nhà mới chỉ thêm sau khi có model kiến trúc sư (P6) hoặc bản quét khi xây xong (P11); không bịa khối nhà hay ranh lô.
 - Khu nhà chưa có Google Photorealistic 3D. Phố mình (tự dựng từ dữ liệu mở và khảo sát) là lớp chính; Phố thật chỉ mở Google Maps qua đường link.
-- OSM ở khu này gần như không có số tầng. Trong snapshot hiện tại các footprints chỉ có chiều cao tường mặc định suy luận (`inferred`); Open Buildings chưa được trộn vào. Cao độ và số tầng khảo sát chỉ thêm khi chủ dự án cung cấp số đo và nghiệm thu.
+- OSM ở khu này gần như không có số tầng. Phần lớn footprints (315/317) dùng chiều cao tường mặc định; 2 footprints lấy số tầng từ OSM. Open Buildings chưa được trộn vào. Cao độ và số tầng khảo sát chỉ thêm khi chủ dự án cung cấp số đo và nghiệm thu.
 
 ## Vai trò
 
