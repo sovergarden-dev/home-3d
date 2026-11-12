@@ -10,7 +10,7 @@
 - **Mốc xuất phát:** `main` = `de7173261a8a3928685555252c2b479f76a713fe` (P10 đã merge và Publish ngày 24/10/2026). 0 PR mở, CI `main` 4/4 xanh, không có push mới từ 23/10.
 - **Việc:** M0 tiếp quản an toàn → M1 P10.1 (K1 độ trễ 300 ghim, K2 ghim đủ lớn, K3 chữ bưu thiếp; khép tiêu chí H bằng GPU thật) → M2 độ tin cậy và vệ sinh repo → M3 P12 (bench, PWA, a11y, Lighthouse, tự host font) → M4 bản riêng tư sẵn sàng deploy (không deploy) → M5 độ giống lõi. Chi tiết ở §4; được đổi thứ tự nếu có lý do.
 - **Nhà đang xây để cho thuê:** Chủ dự án cho phép dùng snapshot OSM (`138` đường, `317` footprints) + companion G1 trong bản build (bỏ qua rủi ro lộ vị trí); ranh lô, cao độ và hiện trạng giữ `REAL_WORLD_NOT_VERIFIED`, cấm geometry Google Maps/Street View.
-- **Quyền:** tự quyết, tự code, tự merge vào `main` khi đủ cổng §5. Không Publish Lovable, không deploy, không đổi visibility, không chi tiền, không tạo tài khoản hay token.
+- **Quyền:** tự quyết, tự code, tự merge vào `main` cục bộ/bản sao private khi đủ cổng §5. Push nhánh chứa dữ liệu thật lên remote public hoặc merge lên `main` của GitHub cần xác nhận riêng của chủ dự án (xem [GROK_HANDOFF.md](GROK_HANDOFF.md) §1). Không Publish Lovable, không deploy, không đổi visibility, không chi tiền, không tạo tài khoản hay token.
 - **Bàn giao đội Grok (11–12/11/2026):** xem tài liệu tiếp quản mới nhất tại [GROK_HANDOFF.md](GROK_HANDOFF.md) (thắng các mục lịch sử về phạm vi dữ liệu OSM/G1 và danh sách việc đang mở trên nhánh `codex/real-neighborhood-canonical`).
 
 - **Kết thúc:** đạt vạch đích §7 → đóng băng `main`, hoàn tất `docs/AUDIT_PACKET.md`, báo Syringa `READY_FOR_FINAL_AUDIT` kèm full SHA.
