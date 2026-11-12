@@ -9,3 +9,4 @@
 - [Roadmap lịch sử](PLAN.md): snapshot, không thay chỉ đạo bàn giao.
 
 - [P10.1 — ghim, độ trễ và bưu thiếp](P10_1_RUNBOOK.md)
+- [POV route golden (G1)](POV_ROUTE_GOLDEN.md): hash cố định của route POV và cách tạo lại.
