@@ -10,13 +10,16 @@ async function waitForRenderedHome(page: import("@playwright/test").Page) {
   return { root, scene: page.getByTestId("demo-scene") };
 }
 
-test("fixed world stays immutable across views and illustration resources remain stable", async ({
+test("owner-provided OSM neighborhood stays immutable across views and illustration resources remain stable", async ({
   page,
 }) => {
   const { root, scene } = await waitForRenderedHome(page);
   const canvas = root.locator("canvas");
   await expect(canvas).toHaveCount(1);
-  await expect(scene).toHaveAttribute("data-world-mode", "fixture");
+  await expect(scene).toHaveAttribute("data-world-mode", "home");
+  await expect(scene).toHaveAttribute("data-world-buildings", "317");
+  await expect(scene).toHaveAttribute("data-world-roads", "138");
+  await expect(scene).toHaveAttribute("data-verification-status", "REAL_WORLD_NOT_VERIFIED");
   await expect(scene).toHaveAttribute("data-active-worlds", "1");
   await expect(scene).toHaveAttribute("data-illustrative-details", "true");
   await expect(scene).toHaveAttribute("data-illustrative-instances", /^[1-9]\d*$/);
@@ -48,7 +51,12 @@ test("fixed world stays immutable across views and illustration resources remain
 
   await test.info().attach("fixed-home-resource-counts", {
     contentType: "application/json",
-    body: JSON.stringify({ syntheticOnly: true, worldRevision: revision, resourceCounts }),
+    body: JSON.stringify({
+      syntheticOnly: false,
+      source: "osm",
+      worldRevision: revision,
+      resourceCounts,
+    }),
   });
   expect(resourceCounts.every((count) => /^\d+$/.test(count))).toBe(true);
   expect(new Set(resourceCounts).size).toBe(1);

@@ -1,4 +1,5 @@
 import type { SurfaceGeometry, WorldData } from "@/world/schema";
+import { surfaceBounds } from "@/world/geometry";
 import { buildLifeGraph, type LifeEdge, type LifeGraph } from "./graph";
 export type LifeTier = "low" | "mid" | "high" | "ultra";
 export type LifeKind =
@@ -156,6 +157,20 @@ const pointOnEdge = (
   out.z = az + (bz - az) * t + Math.cos(angle) * offset;
   out.angle = direction < 0 ? angle + Math.PI : angle;
 };
+export function isBoxDisjoint(
+  bounds: { minX: number; maxX: number; minZ: number; maxZ: number } | null,
+  x: number,
+  z: number,
+  radius: number,
+): boolean {
+  if (!bounds) return false;
+  if (x + radius < bounds.minX) return true;
+  if (x - radius > bounds.maxX) return true;
+  if (z + radius < bounds.minZ) return true;
+  if (z - radius > bounds.maxZ) return true;
+  return false;
+}
+
 export function createLifeSimulation(world: WorldData, seed = 1): LifeSimulation {
   const graph = buildLifeGraph(world),
     agents: LifeAgent[] = [];
@@ -167,9 +182,17 @@ export function createLifeSimulation(world: WorldData, seed = 1): LifeSimulation
     }
   // Even an empty lot remains completely free of agents and simulated constructions.
   for (const lot of world.lots) solids.push(lot.geometry);
+  const solidBounds = solids.map((geometry) => {
+    const rings = geometry.type === "Polygon" ? geometry.coordinates : geometry.coordinates.flat();
+    return {
+      geometry,
+      bounds: rings.some((ring) => ring.length > 0) ? surfaceBounds(geometry) : null,
+    };
+  });
   const point = { x: 0, z: 0, angle: 0 };
   const safeAt = (x: number, z: number, radius: number) => {
-    for (const geometry of solids)
+    for (const { geometry, bounds } of solidBounds) {
+      if (isBoxDisjoint(bounds, x, z, radius)) continue;
       if (
         inGeometry(x, z, geometry) ||
         inGeometry(x + radius, z, geometry) ||
@@ -178,6 +201,7 @@ export function createLifeSimulation(world: WorldData, seed = 1): LifeSimulation
         inGeometry(x, z - radius, geometry)
       )
         return false;
+    }
     return true;
   };
   // Footprint checks and topology are prepared once, not reconstructed each frame.

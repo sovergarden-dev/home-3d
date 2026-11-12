@@ -29,7 +29,9 @@ test("fixed-home shell exposes only the supported controls and build identity", 
   });
   await openHome(page);
 
-  await expect(page.locator(".h6-top-info").getByText("Nhà mình", { exact: true })).toBeVisible();
+  await expect(
+    page.locator(".h6-top-info").getByText("Nhà của tôi · đang xây để cho thuê", { exact: true }),
+  ).toBeVisible();
   await expect(page.getByRole("radiogroup", { name: "Thời gian" }).getByRole("radio")).toHaveCount(
     3,
   );
@@ -68,14 +70,18 @@ test("time, weather, camera and language controls update the fixed-home view", a
   }
 
   await page.getByRole("radio", { name: "en", exact: true }).click();
-  await expect(page.locator(".h6-top-info").getByText("Our house", { exact: true })).toBeVisible();
-  await expect(page).toHaveTitle(/Our house/i);
+  await expect(
+    page
+      .locator(".h6-top-info")
+      .getByText("My house · under construction for rent", { exact: true }),
+  ).toBeVisible();
+  await expect(page).toHaveTitle(/My house · under construction for rent/i);
   await expect(page.getByRole("radio", { name: "Evening", exact: true })).toBeVisible();
   await expect(page.getByRole("radio", { name: "Rain", exact: true })).toBeVisible();
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await page.getByRole("radio", { name: "vi", exact: true }).click();
   await expect(page.locator("html")).toHaveAttribute("lang", "vi");
-  await expect(page).toHaveTitle(/Nhà mình/i);
+  await expect(page).toHaveTitle(/Nhà của tôi · đang xây để cho thuê/i);
 });
 
 test("the legacy preview query cannot enable a package loader", async ({ page }) => {
@@ -84,7 +90,9 @@ test("the legacy preview query cannot enable a package loader", async ({ page })
     timeout: 60000,
   });
   await expect(page.getByLabel("Mở gói world")).toHaveCount(0);
-  await expect(page.locator(".h6-top-info").getByText("Nhà mình", { exact: true })).toBeVisible();
+  await expect(
+    page.locator(".h6-top-info").getByText("Nhà của tôi · đang xây để cho thuê", { exact: true }),
+  ).toBeVisible();
 });
 
 test("WebGL fallback keeps the fixed controls reachable without claiming a rendered scene", async ({
@@ -175,7 +183,7 @@ test("Plan can pan, then home reset returns to the home-centred Diorama", async 
   await expect(scene).toHaveAttribute("data-camera-type", "PerspectiveCamera");
 });
 
-test("one fixed synthetic world renders and survives a route remount", async ({ page }) => {
+test("owner-provided OSM neighborhood renders and survives a route remount", async ({ page }) => {
   await openHome(page);
   const state = await page.locator("#scene-root").getAttribute("data-scene-state");
   if (process.env["REQUIRE_WEBGL2"] === "1") expect(state).toBe("ready");
@@ -183,7 +191,10 @@ test("one fixed synthetic world renders and survives a route remount", async ({ 
 
   const scene = page.getByTestId("demo-scene");
   await expect(page.locator("#scene-root canvas")).toHaveCount(1);
-  await expect(scene).toHaveAttribute("data-world-mode", "fixture");
+  await expect(scene).toHaveAttribute("data-world-mode", "home");
+  await expect(scene).toHaveAttribute("data-world-buildings", "317");
+  await expect(scene).toHaveAttribute("data-world-roads", "138");
+  await expect(scene).toHaveAttribute("data-verification-status", "REAL_WORLD_NOT_VERIFIED");
   await expect(scene).toHaveAttribute("data-active-worlds", "1");
   await expect(scene).toHaveAttribute("data-illustrative-details", "true");
   await page.getByRole("radio", { name: "Mặt bằng", exact: true }).click();

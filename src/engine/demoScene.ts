@@ -46,7 +46,7 @@ export interface SceneRuntime {
   ready: Promise<StartupOutcome>;
 }
 
-function worldSpan(world: WorldData) {
+export function worldCameraFrame(world: WorldData) {
   const positions = [
     ...world.roads.flatMap((road) => road.polylineENU),
     ...world.lots.flatMap((lot) =>
@@ -60,8 +60,17 @@ function worldSpan(world: WorldData) {
         : building.geometry.coordinates.flat(2),
     ),
   ];
-  if (positions.length === 0) return 100;
-  const bounds = positions.reduce(
+  if (positions.length === 0) {
+    return {
+      centre: worldCameraCentre(),
+      span: 100,
+      radius: 50,
+      groundSize: 800,
+      maxDistance: 380,
+      farPlane: 800,
+    };
+  }
+  const extent = positions.reduce(
     (value, [x, z]) => ({
       minX: Math.min(value.minX, x),
       maxX: Math.max(value.maxX, x),
@@ -70,14 +79,21 @@ function worldSpan(world: WorldData) {
     }),
     { minX: Infinity, maxX: -Infinity, minZ: Infinity, maxZ: -Infinity },
   );
-  return Math.max(bounds.maxX - bounds.minX, bounds.maxZ - bounds.minZ, 50) * 1.25;
+  const radius = positions.reduce((maximum, [x, z]) => Math.max(maximum, Math.hypot(x, z)), 0);
+  const span = Math.max(extent.maxX - extent.minX, extent.maxZ - extent.minZ, 50) * 1.25;
+  const maxDistance = Math.max(380, span * 2.3);
+  return {
+    centre: worldCameraCentre(),
+    span,
+    radius,
+    groundSize: Math.max(800, radius * 2.5),
+    maxDistance,
+    farPlane: Math.max(800, maxDistance + radius * 2 + 200),
+  };
 }
 
 function perspectiveFrame(world: WorldData) {
-  return {
-    centre: worldCameraCentre(),
-    span: worldSpan(world),
-  };
+  return worldCameraFrame(world);
 }
 
 export function worldCameraCentre() {
@@ -118,8 +134,17 @@ export function createDemoScene(
   const scene = new THREE.Scene();
   const sky = new THREE.Color("#ecdfca");
   scene.background = sky;
-  const perspectiveCamera = new THREE.PerspectiveCamera(42, 1, 0.1, 800);
-  const planCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 800);
+  let currentWorld = homeWorldSession.getSnapshot();
+  const fallbackWorld = "world" in currentWorld ? currentWorld.world : null;
+  const initialPerspectiveFrame = fallbackWorld ? perspectiveFrame(fallbackWorld) : null;
+  const perspectiveCamera = new THREE.PerspectiveCamera(
+    42,
+    1,
+    0.1,
+    initialPerspectiveFrame?.farPlane ?? 800,
+  );
+  const planCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 5000);
+  const planCentre = worldCameraCentre();
   let activeCamera: THREE.Camera = perspectiveCamera;
   const controls = new OrbitControls(perspectiveCamera, canvas);
   controls.enableDamping = true;
@@ -127,7 +152,7 @@ export function createDemoScene(
   controls.minPolarAngle = 0.3;
   controls.maxPolarAngle = Math.PI / 2 - 0.06;
   controls.minDistance = 16;
-  controls.maxDistance = 380;
+  controls.maxDistance = initialPerspectiveFrame?.maxDistance ?? 380;
   controls.rotateSpeed = 0.6;
   controls.zoomSpeed = 0.75;
   controls.screenSpacePanning = true;
@@ -151,7 +176,10 @@ export function createDemoScene(
   scene.add(hemisphere, sun, moon);
 
   const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(800, 800),
+    new THREE.PlaneGeometry(
+      initialPerspectiveFrame?.groundSize ?? 800,
+      initialPerspectiveFrame?.groundSize ?? 800,
+    ),
     new THREE.MeshStandardMaterial({ color: "#cfc5ad", roughness: 0.95 }),
   );
   ground.rotation.x = -Math.PI / 2;
@@ -172,12 +200,8 @@ export function createDemoScene(
   };
 
   let worldBundle: WorldMeshBundle | null = null;
-  let currentWorld = homeWorldSession.getSnapshot();
-  const fallbackWorld = "world" in currentWorld ? currentWorld.world : null;
-  const initialPerspectiveFrame = fallbackWorld ? perspectiveFrame(fallbackWorld) : null;
-  let centre = initialPerspectiveFrame?.centre ?? new THREE.Vector3();
   let homeCentre = fallbackWorld ? worldHomeCentre(fallbackWorld) : new THREE.Vector3();
-  const planCentre = worldCameraCentre();
+  let centre = initialPerspectiveFrame?.centre ?? new THREE.Vector3();
   let span = initialPerspectiveFrame?.span ?? 100;
   let privatePlanFrame: PrivateWorldPlanFrame | null = null;
   function resetPlanCentre() {
@@ -347,7 +371,7 @@ export function createDemoScene(
     controls.minPolarAngle = 0.3;
     controls.maxPolarAngle = Math.PI / 2 - 0.06;
     controls.minDistance = walk ? 4 : 16;
-    controls.maxDistance = walk ? 50 : 380;
+    controls.maxDistance = walk ? 50 : (initialPerspectiveFrame?.maxDistance ?? 380);
     controls.target.set(centre.x, targetY, centre.z);
     perspectiveCamera.position.set(
       centre.x + Math.sin(theta) * radius,
@@ -520,6 +544,11 @@ export function createDemoScene(
     host.dataset["idleRenderedFrames"] = String(frameMetrics.phaseSnapshot("idle").renderedFrames);
     host.dataset["worldMode"] = currentWorld.mode;
     host.dataset["worldRevision"] = String(currentWorld.revision);
+    host.dataset["worldBuildings"] = String(currentWorld.world.buildings.length);
+    host.dataset["worldRoads"] = String(currentWorld.world.roads.length);
+    host.dataset["verificationStatus"] =
+      currentWorld.world.manifest.verificationStatus ??
+      (currentWorld.world.manifest.isSynthetic ? "synthetic" : "REAL_WORLD_NOT_VERIFIED");
     host.dataset["activeWorlds"] = worldBundle ? "1" : "0";
     host.dataset["cameraType"] = activeCamera.type;
     if (life && (lastLifeMetricsAt === 0 || renderedAt - lastLifeMetricsAt >= 250)) {

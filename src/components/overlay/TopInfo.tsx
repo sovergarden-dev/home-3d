@@ -22,8 +22,16 @@ export function TopInfo() {
         <span className="truncate">{SITE_CONFIG.homeLabel[lang]}</span>
       </div>
       <div className="mt-1 text-xs font-medium text-muted-foreground">
-        {SITE_CONFIG.lotSubtitle[lang]} · {t.presets[periodKey]} · {t.weather[activeWeather]}
+        {SITE_CONFIG.description[lang]} · {t.presets[periodKey]} · {t.weather[activeWeather]}
       </div>
+      <a
+        className="mt-1 inline-block text-[10px] text-muted-foreground underline decoration-dotted underline-offset-2"
+        href="https://www.openstreetmap.org/copyright"
+        target="_blank"
+        rel="noreferrer"
+      >
+        {t.mapAttribution}
+      </a>
       <span className="mt-1 block text-[10px] text-muted-foreground" data-testid="build-info">
         {PUBLIC_BUILD_VERSION} · SHA {BUILD_SHA ?? t.localPreview.buildUnknown}
       </span>

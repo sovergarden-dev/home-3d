@@ -206,7 +206,19 @@ M4 trust boundary nhận binding thô và xác thực schema đúng một lần 
 
 Workerd1.20261019.1 từchối redirect:error ngaytrước fetch; unitNodekhôngpháthiệnkhácbiệtnày. Dùng redirect:manual, giữcheckresponse.okđểtừchối3xxkhôngđitheoLocation; unitthêmcase302. HelloWorkerdđạt; auth-onlyvàbundleđầyđủđangkiểm. ChưacoilàREADY_TO_DEPLOY_NOT_DEPLOYEDkhi fullnativeWorkerchưađạt.
 
-## M5 — Chiều cao từ raster cục bộ, không nhập footprint
+## Current product decision — use owner-authorized OSM snapshot
+
+The candidate product scene now mounts the supplied OSM snapshot, bound to its companion G1 by the exact package hash. Synthetic data remains for deterministic tests and the isolated editor provider. Do not mix in unlicensed or unverified external extracts. The project is a house under construction for rent, not the owner's current residence. Keep survey, height, parcel boundaries and condition as `REAL_WORLD_NOT_VERIFIED` until the owner supplies evidence and accepts verification.
+
+### Life simulation broadphase collision filtering (2026-11-11)
+
+When mounting the full OSM neighborhood (138 roads, 257 graph edges, 317 buildings), synchronous initialization in `createLifeSimulation` froze the browser main thread during startup (`suitable()` -> `safeAt()` evaluated ~425M point-in-polygon checks). We introduced AABB broadphase bounding box pre-filtering for all solids:
+
+- `surfaceBounds(geometry)` is cached per solid at simulation creation time.
+- `safeAt` tests the sample point's circle bounding box against each solid's AABB before delegating to `inGeometry()`.
+- Equivalence: 100% invariant preservation across concave/complex polygons with holes. Drops candidate polygon evaluation by >99%, dropping startup duration from ~8.4s blocking down to ~289ms on Bun JIT (<50ms per simulation frame) without changing collision behavior.
+
+## M5 — Height from local raster, no new footprints
 
 Chỉ đọc các GeoTIFF chủ dự án chỉ định trong config local; không tự tìm vùng, tải tile hoặc đăng nhập. Chọn năm lớn nhất trong danh sách đã cung cấp, không fallback năm cũ cho vùng thiếu mẫu. Mẫu hợp lệ nằm trong footprint hiện có và ngoài lỗ, có building_presence đạt ngưỡng explicit (không phải xác suất). Trung vị building_height là tổng chiều cao trên nền đất: trừ roofHeight đã biết, còn mái chưa biết giữ nguyên roofType và ghi inferred. Không gán giá trị 0/âm hoặc dữ liệu ngoài 0–100 m.
 

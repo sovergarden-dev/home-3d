@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -33,8 +34,14 @@ import {
   clampPrivatePlanCentre,
   derivePrivateWorldPlanFrame,
 } from "@/engine/view/privateWorldPlanFrame";
+import homeGeoreferenceDocument from "@/world/data/homeNeighborhood.georef.json";
+import homePackageDocument from "@/world/data/homeNeighborhood.json";
 import type { WorldData } from "@/world/schema";
-import { HOME_NEIGHBORHOOD } from "@/world/homeNeighborhood";
+import {
+  HOME_CENTER_CONFIRMATION,
+  HOME_GEOREFERENCE,
+  HOME_NEIGHBORHOOD,
+} from "@/world/homeNeighborhood";
 import { homeWorldSession } from "@/world/homeWorldSession";
 
 const initialState = useAppStore.getState();
@@ -87,10 +94,15 @@ describe("fixed home experience", () => {
         <Dock />
       </>,
     );
-    expect(screen.getByText("Nhà mình")).toBeInTheDocument();
+    expect(screen.getByText("Nhà của tôi · đang xây để cho thuê")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /OpenStreetMap contributors/ })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /OpenStreetMap contributors/ })).toHaveAttribute(
+      "href",
+      "https://www.openstreetmap.org/copyright",
+    );
     expect(screen.getByRole("link", { name: "Giới thiệu" })).toHaveAttribute("href", "/gioi-thieu");
     act(() => useAppStore.getState().setLanguage("en"));
-    expect(screen.getByText("Our house")).toBeInTheDocument();
+    expect(screen.getByText("My house · under construction for rent")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "About" })).toHaveAttribute("href", "/gioi-thieu");
     for (const label of ["Morning", "Afternoon", "Evening", "Sunny", "Cloudy", "Rain"]) {
       expect(screen.getByRole("radio", { name: label })).toBeInTheDocument();
@@ -110,16 +122,59 @@ describe("fixed home experience", () => {
     vi.useRealTimers();
   });
 
-  it("mounts a recursively immutable home dataset through a read-only session", () => {
+  it("mounts the owner-confirmed, source-backed real neighborhood through the immutable home session", () => {
+    expect(centerMarkerLabels("home", viDict, HOME_CENTER_CONFIRMATION)).toEqual({
+      title: "Tâm mới được chấp nhận tạm",
+      description: "Ranh chưa đo",
+    });
+    expect(centerMarkerLabels("home", enDict, HOME_CENTER_CONFIRMATION)).toEqual({
+      title: "Center provisionally accepted",
+      description: "Boundary not surveyed",
+    });
+    expect(centerMarkerLabels("fixture", viDict, undefined)).toEqual({
+      title: "Nhà mình",
+      description: "Lô trống · vị trí giả lập",
+    });
+
+    const packageText = JSON.stringify(homePackageDocument);
+    const packageSha256 = createHash("sha256").update(packageText).digest("hex");
+    expect(packageSha256).toBe(HOME_GEOREFERENCE.packageSha256);
+    expect(HOME_GEOREFERENCE.schemaVersion).toBe("1.0");
+    expect(HOME_GEOREFERENCE.origin).toEqual({ latitude: 10.752187, longitude: 106.659106 });
+
     expect(Object.isFrozen(HOME_NEIGHBORHOOD)).toBe(true);
     expect(Object.isFrozen(HOME_NEIGHBORHOOD.manifest)).toBe(true);
     expect(Object.isFrozen(HOME_NEIGHBORHOOD.roads)).toBe(true);
     expect(Object.isFrozen(HOME_NEIGHBORHOOD.buildings)).toBe(true);
     expect(Object.isFrozen(HOME_NEIGHBORHOOD.lots)).toBe(true);
+    expect(HOME_NEIGHBORHOOD.manifest.verificationStatus).toBe("REAL_WORLD_NOT_VERIFIED");
+    expect(HOME_NEIGHBORHOOD.manifest.isSynthetic).toBe(false);
+    expect(HOME_NEIGHBORHOOD.manifest.datasetRevision).toBe(
+      "h6-osm-center-confirmed-2026-10-16-r2",
+    );
+    expect(HOME_NEIGHBORHOOD.manifest.sources?.map((source) => source.namespace)).toEqual([
+      "osm-300m-primary",
+    ]);
+    expect(HOME_NEIGHBORHOOD.roads).toHaveLength(138);
+    expect(HOME_NEIGHBORHOOD.buildings).toHaveLength(317);
+    expect(HOME_NEIGHBORHOOD.lots).toHaveLength(0);
+    expect(
+      HOME_NEIGHBORHOOD.buildings.every(
+        (building) => building.provenance.quality === "source_only",
+      ),
+    ).toBe(true);
+    expect(
+      HOME_NEIGHBORHOOD.buildings.every(
+        (building) => building.attributes?.["wallHeight"]?.quality === "inferred",
+      ),
+    ).toBe(true);
+    expect(HOME_CENTER_CONFIRMATION.status).toBe("provisionally-accepted");
     expect(homeWorldSession.getSnapshot()).toMatchObject({
-      mode: "fixture",
+      mode: "home",
       world: HOME_NEIGHBORHOOD,
+      centerConfirmation: { status: "provisionally-accepted" },
     });
+    expect(homeWorldSession.getGeoreference()).toEqual({ origin: HOME_GEOREFERENCE.origin });
     expect(homeWorldSession).not.toHaveProperty("openFile");
     expect(homeWorldSession).not.toHaveProperty("openText");
     expect(homeWorldSession).not.toHaveProperty("exportWorkingPackage");

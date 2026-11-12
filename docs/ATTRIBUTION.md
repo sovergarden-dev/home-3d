@@ -1,10 +1,19 @@
-# Nguồn của Demo 1
+# Nguồn dữ liệu và giấy phép
 
-- Model, layout, đạo cụ, âm thanh tổng hợp: tạo bằng code cho bản demo, không lấy từ ảnh hoặc bản đồ địa điểm thật.
-- Không chứa Google Maps/Street View, dữ liệu OSM/Overture/Open Buildings hoặc ảnh người dùng. Credit các bộ dữ liệu sẽ được bổ sung khi thực sự sử dụng.
+- Đạo cụ và âm thanh tổng hợp vẫn do code tạo; hình học khu phố không lấy từ ảnh bản đồ.
+- Ứng dụng dùng OSM ODbL 1.0 cho đường và footprints trong khu phố. Credit hiển thị trong giao diện và được ghi dưới đây.
+- Không dùng Google Maps/Street View, Overture/Open Buildings hoặc ảnh người dùng trong snapshot hiện tại.
 - Three.js và OrbitControls: MIT, https://github.com/mrdoob/three.js.
 - React, Zustand, TanStack và các thư viện UI: theo giấy phép của từng dependency. Không thay đổi giấy phép nguồn.
 - Font UI của app Lovable vẫn là Be Vietnam Pro và Lora từ Google Fonts; bản HTML portable dùng font hệ thống khi không có sẵn. Google Fonts không phải Google Maps và không được dùng làm nguồn model.
+
+[© OpenStreetMap contributors](https://www.openstreetmap.org/copyright). Dữ liệu OpenStreetMap được cấp phép theo ODbL 1.0.
+
+## Khu nhà thật được chủ dự án cho phép
+
+`src/world/data/homeNeighborhood.json` là snapshot OSM do chủ dự án cung cấp. Gói gốc có SHA-256 `cd4f0146fd3399d0995111bd19a46751c86e0347a56d3e2a770a4832852a7ce3`, 138 đoạn đường và 317 footprints; không có lots, cây hoặc props. Các footprints chỉ có chiều cao tường mặc định suy luận; không có số tầng/cao độ khảo sát đáng tin. `src/world/data/homeNeighborhood.georef.json` giữ companion G1 khớp chính xác với byte gói nguồn. Tâm được chủ nhà chấp nhận tạm thời; ranh lô và hiện trạng vẫn `REAL_WORLD_NOT_VERIFIED`.
+
+Mọi đường và footprint của gói này thuộc OSM ODbL 1.0. Ghi công hiển thị trong app trỏ tới copyright của OpenStreetMap. Không dùng Google Maps hoặc Street View để trace, đo hay bổ sung hình học. Overture/Open Buildings chưa được trộn vào snapshot này.
 
 ## P9 — Tác nhân và âm thanh
 

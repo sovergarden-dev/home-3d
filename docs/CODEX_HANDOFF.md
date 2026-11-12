@@ -1,20 +1,24 @@
 # Home 3D — Bàn giao toàn bộ cho Codex
 
-> Notion AI lập ngày 28/10/2026 theo yêu cầu của Syringa (chủ dự án). Trạng thái: `HANDOFF_READY`. File an toàn cho repo public: không có tọa độ, địa chỉ, token, đường dẫn máy, IP hay dữ liệu khu thật. Khi cập nhật, giữ nguyên tính chất này.
+> Cập nhật 11/11/2026: chủ dự án cho phép dùng snapshot OSM và companion G1 đã xác minh hash trong repo/build. Đây là nhà đang xây để cho thuê, không phải nơi Syringa đang ở. Hiện trạng, chiều cao và ranh lô chưa khảo sát: `REAL_WORLD_NOT_VERIFIED`. Không dùng geometry Google Maps/Street View.
+
+> Notion AI lập ngày 28/10/2026 theo yêu cầu của Syringa (chủ dự án). Trạng thái: `HANDOFF_READY`. Tài liệu không chứa địa chỉ hoặc thông tin tài khoản cá nhân.
 
 ## 0. Tóm tắt một phút
 
 - **Vai trò:** Codex chạy trên mini PC Windows của Syringa, toàn quyền trên máy. Từ nay Codex là người phụ trách duy nhất của Home 3D (repo `sovergarden-dev/home-3d`, app "Phố Nhà Mình"). Cue (VPS) và Hermes dừng Home 3D. Notion AI không review từng PR nữa, chỉ **audit cuối** khi Syringa yêu cầu.
 - **Mốc xuất phát:** `main` = `de7173261a8a3928685555252c2b479f76a713fe` (P10 đã merge và Publish ngày 24/10/2026). 0 PR mở, CI `main` 4/4 xanh, không có push mới từ 23/10.
 - **Việc:** M0 tiếp quản an toàn → M1 P10.1 (K1 độ trễ 300 ghim, K2 ghim đủ lớn, K3 chữ bưu thiếp; khép tiêu chí H bằng GPU thật) → M2 độ tin cậy và vệ sinh repo → M3 P12 (bench, PWA, a11y, Lighthouse, tự host font) → M4 bản riêng tư sẵn sàng deploy (không deploy) → M5 độ giống lõi. Chi tiết ở §4; được đổi thứ tự nếu có lý do.
-- **Quyền:** tự quyết, tự code, tự merge vào `main` khi đủ cổng §5. Không Publish Lovable, không deploy, không đổi visibility, không chi tiền, không tạo tài khoản hay token. Dữ liệu khu thật không bao giờ vào repo, PR, CI hay log.
+- Nhà của tôi là công trình đang xây để cho thuê; không phải nơi Syringa đang ở. Snapshot OSM/G1 cho phép sử dụng trong bản build được ghi tại [ATTRIBUTION.md](ATTRIBUTION.md). OSM cung cấp đường và footprints, không chứng nhận hiện trạng, cao độ hay ranh lô; giữ `REAL_WORLD_NOT_VERIFIED`. Không lấy geometry từ Google Maps/Street View.
+
 - **Kết thúc:** đạt vạch đích §7 → đóng băng `main`, hoàn tất `docs/AUDIT_PACKET.md`, báo Syringa `READY_FOR_FINAL_AUDIT` kèm full SHA.
 
 ## 1. Dự án
 
 - Phố Nhà Mình: web app bản đồ 3D khu phố quanh nhà Syringa. Nhà là tâm cố định duy nhất (D10, không bộ chọn địa điểm). Lô nhà để trống vì nhà cũ đã phá để xây lại; không dựng lại nhà cũ (D11).
 - Hai lớp: **Phố mình** tự dựng từ dữ liệu mở (OSM, Overture, Google Open Buildings CC BY 4.0) và khảo sát của Syringa; **Phố thật** chỉ mở Google Maps qua link khi người dùng bấm.
-- Bản công khai https://nhacvl.lovable.app chỉ chạy demo phố hư cấu (fixture tổng hợp). Khu thật chỉ xem cục bộ bằng gói riêng (`?local-preview=1` rồi chọn file), không lên Lovable, repo hay CI. Bản riêng tư dự kiến chạy trên Cloudflare Workers + Access của Syringa (chưa làm, xem M4).
+- Bản đang đóng băng trên `main` vẫn là bản demo cũ. Nhánh ứng viên `codex/real-neighborhood-canonical` chuyển cảnh sản phẩm sang snapshot OSM và companion G1 được chủ dự án cho phép, còn fixture synthetic chỉ ở unit/E2E và editor. Chưa Publish/deploy; việc phát hành vẫn chờ chủ dự án cho phép riêng.
+
 - Stack: TanStack Start (SSR, build ra Cloudflare Worker) qua `@lovable.dev/vite-tanstack-config`; React 19; Three.js trực tiếp (three 0.180, WebGL2, không R3F); zustand; zod; Vitest 4; Playwright 1.58.2; Bun 1.4.3. `bunfig.toml` có guard `minimumReleaseAge` 24 giờ. Pipeline dữ liệu ở `pipeline/` (package riêng).
 - Đã xong: P1/P1.1 vỏ UI, Demo 1, H6 khu thật đúng mặt bằng (preview cục bộ), P7 Phố thật (link Google Maps), P8 không khí (giờ, thời tiết, mùa, lễ hội âm lịch), P9 sự sống, âm thanh tổng hợp, POV Đi bộ/xe ôm, P10 kỷ niệm, tour, nhật ký xây nhà, bưu thiếp, G1 georeference riêng.
 - Lovable sync nhánh `main` ("In sync"). Merge vào `main` làm Preview Lovable tự cập nhật (Preview cần đăng nhập); trang công khai chỉ đổi khi bấm Publish. Publish gần nhất 24/10/2026 09:46 (+07), bản P10.
@@ -31,27 +35,27 @@
 
 ## 3. Hiện trạng đã kiểm (28/10/2026)
 
-| Mục | Giá trị |
-| --- | --- |
-| `main` | `de7173261a8a3928685555252c2b479f76a713fe` — merge PR #7; cây mã bằng P10 reviewed head `a5d9011d404f531f2ebe28efb18d40f2ab0040b9` |
-| Nhánh remote | `main`; `feat/p10-memories` = `a5d9011…` (đã nằm trong `main`, chưa dọn) |
-| PR / issue / tag | 0 / 0 / chưa có tag |
-| CI mới nhất | push `main` run 39968559993: quality, e2e-full-chromium, e2e-full-firefox, e2e-full-webkit đều success |
-| Trang công khai | https://nhacvl.lovable.app trả 200, bản P10 |
-| Lovable | theo `main`; thẻ lịch sử có "Build unsuccessful / Preview is out of date" chưa rõ nguyên nhân (cần UI Lovable, để audit cuối) |
+| Mục              | Giá trị                                                                                                                            |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `main`           | `de7173261a8a3928685555252c2b479f76a713fe` — merge PR #7; cây mã bằng P10 reviewed head `a5d9011d404f531f2ebe28efb18d40f2ab0040b9` |
+| Nhánh remote     | `main`; `feat/p10-memories` = `a5d9011…` (đã nằm trong `main`, chưa dọn)                                                           |
+| PR / issue / tag | 0 / 0 / chưa có tag                                                                                                                |
+| CI mới nhất      | push `main` run 39968559993: quality, e2e-full-chromium, e2e-full-firefox, e2e-full-webkit đều success                             |
+| Trang công khai  | https://nhacvl.lovable.app trả 200, bản P10                                                                                        |
+| Lovable          | theo `main`; thẻ lịch sử có "Build unsuccessful / Preview is out of date" chưa rõ nguyên nhân (cần UI Lovable, để audit cuối)      |
 
 ### Mốc số đo (baseline)
 
-| Chỉ số | Mốc |
-| --- | --- |
-| Unit (Vitest) | 362 pass, 58 file |
-| Pipeline | 39 pass, 6 file |
-| E2E CI Chromium | 77 pass / 0 fail / 0 skip |
-| E2E CI Firefox | 48 / 0 / 29 skip (CI Firefox không có WebGL2) |
-| E2E CI WebKit | 77 / 0 / 0 |
-| Lint | 0 lỗi, 7 cảnh báo |
-| H6 20 vòng (dispatch 39941270224) | Chromium 39,8 s; WebKit 57,4 s (WebKit phải dưới 70 s; timeout 90 s giữ nguyên) |
-| Draw calls / tam giác | main 37 / 4556; 300 ghim 38 / 9356 |
+| Chỉ số                                                          | Mốc                                                                                                                                          |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Unit (Vitest)                                                   | 362 pass, 58 file                                                                                                                            |
+| Pipeline                                                        | 39 pass, 6 file                                                                                                                              |
+| E2E CI Chromium                                                 | 77 pass / 0 fail / 0 skip                                                                                                                    |
+| E2E CI Firefox                                                  | 48 / 0 / 29 skip (CI Firefox không có WebGL2)                                                                                                |
+| E2E CI WebKit                                                   | 77 / 0 / 0                                                                                                                                   |
+| Lint                                                            | 0 lỗi, 7 cảnh báo                                                                                                                            |
+| H6 20 vòng (dispatch 39941270224)                               | Chromium 39,8 s; WebKit 57,4 s (WebKit phải dưới 70 s; timeout 90 s giữ nguyên)                                                              |
+| Draw calls / tam giác                                           | main 37 / 4556; 300 ghim 38 / 9356                                                                                                           |
 | K1 trên SwiftShader (P10; 1440×900, DPR 1, 299↔300 thẻ, 30 mẫu) | RAF1 p50 114,05 ms; RAF2 p50 223,85 ms, p95 566,6 ms; DOM commit p50 104,05 ms; CPU mutation p50 1,85 ms; khung đứng yên p50 khoảng 116,6 ms |
 
 ### Lỗi và nợ đã biết
@@ -164,22 +168,22 @@ Từ `main` mới nhất, một PR hoặc ba PR nhỏ (K1, K2, K3). Đặc tả 
 
 ### Để sau — cần người, thiết bị hoặc quyết định (không chặn vạch đích)
 
-| Việc | Cần gì | Nhãn hiện tại |
-| --- | --- | --- |
-| Khảo sát thực địa (video, ảnh mặt tiền, số tầng, màu, mái, bảng hiệu) | Syringa đi chụp | NOT_DONE |
-| Thu âm phố bốn khung giờ | Syringa thu | khe nạp và fallback tổng hợp đã có |
-| 10–20 góc kỷ niệm | Syringa nhập trong app | — |
-| Ranh lô và số đo | bản vẽ hoặc khảo sát | tâm chấp nhận tạm, ranh chưa đo |
-| Nhà tương lai (P6), nhà thật (P11) | file kiến trúc sư; bản quét khi xây xong | NOT_STARTED |
-| Nghiệm thu thực địa | Syringa | REAL_WORLD_NOT_VERIFIED |
-| iPhone, native Safari, Android | thiết bị thật | NOT_VERIFIED |
-| Deploy bản riêng tư, domain | tài khoản Cloudflare của Syringa, sau audit | READY_TO_DEPLOY_NOT_DEPLOYED (sau M4) |
-| Publish Lovable | sau audit cuối | — |
-| Ẩn badge Lovable | tuỳ gói Lovable | — |
-| Nhúng Google 3D Tiles | chỉ khi Google phủ 3D khu nhà và đã đọc lại điều khoản | NOT_STARTED |
-| ML làm mờ mặt, biển số | quyết định riêng; hiện soát tay từng ảnh | NOT_DONE có chủ ý |
-| Ý tưởng backlog (Phố qua các năm, AR, in 3D, gia đình cùng thêm kỷ niệm) | quyết định sản phẩm | — |
-| Giấy phép mã nguồn (`LICENSE`) | Syringa chọn | chưa có |
+| Việc                                                                     | Cần gì                                                 | Nhãn hiện tại                         |
+| ------------------------------------------------------------------------ | ------------------------------------------------------ | ------------------------------------- |
+| Khảo sát thực địa (video, ảnh mặt tiền, số tầng, màu, mái, bảng hiệu)    | Syringa đi chụp                                        | NOT_DONE                              |
+| Thu âm phố bốn khung giờ                                                 | Syringa thu                                            | khe nạp và fallback tổng hợp đã có    |
+| 10–20 góc kỷ niệm                                                        | Syringa nhập trong app                                 | —                                     |
+| Ranh lô và số đo                                                         | bản vẽ hoặc khảo sát                                   | tâm chấp nhận tạm, ranh chưa đo       |
+| Nhà tương lai (P6), nhà thật (P11)                                       | file kiến trúc sư; bản quét khi xây xong               | NOT_STARTED                           |
+| Nghiệm thu thực địa                                                      | Syringa                                                | REAL_WORLD_NOT_VERIFIED               |
+| iPhone, native Safari, Android                                           | thiết bị thật                                          | NOT_VERIFIED                          |
+| Deploy bản riêng tư, domain                                              | tài khoản Cloudflare của Syringa, sau audit            | READY_TO_DEPLOY_NOT_DEPLOYED (sau M4) |
+| Publish Lovable                                                          | sau audit cuối                                         | —                                     |
+| Ẩn badge Lovable                                                         | tuỳ gói Lovable                                        | —                                     |
+| Nhúng Google 3D Tiles                                                    | chỉ khi Google phủ 3D khu nhà và đã đọc lại điều khoản | NOT_STARTED                           |
+| ML làm mờ mặt, biển số                                                   | quyết định riêng; hiện soát tay từng ảnh               | NOT_DONE có chủ ý                     |
+| Ý tưởng backlog (Phố qua các năm, AR, in 3D, gia đình cùng thêm kỷ niệm) | quyết định sản phẩm                                    | —                                     |
+| Giấy phép mã nguồn (`LICENSE`)                                           | Syringa chọn                                           | chưa có                               |
 
 ## 5. Quyền hạn và cổng
 
@@ -213,14 +217,14 @@ Ghi vào mục "Câu hỏi cho Syringa" trong `docs/AUDIT_PACKET.md` (chỉ nh�
 
 Câu hỏi đã biết trước, kèm mặc định khi Syringa chưa trả lời:
 
-| Câu hỏi | Mặc định |
-| --- | --- |
-| Dùng gói khu thật cục bộ cho smoke riêng tư và M5? | Không; chỉ fixture tổng hợp |
-| Cắm Android qua USB để kiểm? | Bỏ qua, ghi NOT_VERIFIED |
-| Thêm `LICENSE`? | Không thêm (giữ mọi quyền) |
-| Ruleset cho `main`? | Syringa tự bật hoặc bỏ qua; Codex không cần quyền admin |
-| Analytics không cookie cho bản riêng tư? | Tắt |
-| Defender exclusion cho thư mục repo? | Không |
+| Câu hỏi                                               | Mặc định                                                    |
+| ----------------------------------------------------- | ----------------------------------------------------------- |
+| Dùng snapshot OSM/G1 đã được phép cho scene sản phẩm? | Có; hiện trạng/ranh lô/cao độ giữ `REAL_WORLD_NOT_VERIFIED` | Tiếp tục theo lớp provenance |
+| Cắm Android qua USB để kiểm?                          | Bỏ qua, ghi NOT_VERIFIED                                    |
+| Thêm `LICENSE`?                                       | Không thêm (giữ mọi quyền)                                  |
+| Ruleset cho `main`?                                   | Syringa tự bật hoặc bỏ qua; Codex không cần quyền admin     |
+| Analytics không cookie cho bản riêng tư?              | Tắt                                                         |
+| Defender exclusion cho thư mục repo?                  | Không                                                       |
 
 ### 5.4 Không bao giờ
 
@@ -237,7 +241,8 @@ Mỗi mục tối đa ba vòng thử có đo đạc. Vẫn không đạt thì gh
 
 ## 6. Quy tắc cứng (tóm tắt; bản đầy đủ trong `AGENTS.md`)
 
-- **Riêng tư:** repo, PR, CI, log, artifact chỉ chứa fixture tổng hợp. Không tọa độ, địa chỉ, geometry, ENU, graph, source ID, override hay ảnh khu thật (xoá lat/lng chưa đủ). Dữ liệu riêng chỉ đọc cục bộ khi Syringa chỉ định đường dẫn và mục đích; đầu ra ở thư mục riêng ngoài repo và ngoài thư mục đồng bộ OneDrive; log chỉ ghi số tổng hợp đã khử nhận dạng.
+- **Riêng tư và phạm vi dữ liệu:** repo/build chứa duy nhất snapshot OSM/G1 được chủ dự án cho phép. Các file khác, ảnh, log, artifact và CI không được bổ sung tọa độ, địa chỉ hay ảnh riêng. Không dùng geometry Google Maps/Street View.
+
 - **Google:** chỉ để xem. Không trace, đo, vẽ lại hay dựng model từ Street View, ảnh vệ tinh, Google Earth, 3D Tiles; không nhúng; Phố thật chỉ mở link; không cache nội dung Google.
 - **Lovable:** giữ cấu trúc TanStack Start với `@lovable.dev/vite-tanstack-config`; chỉ dùng bun (`bun.lock`); engine chỉ chạy phía client; không thêm plugin trùng; không tạo `.hermes.md` hay `AGENTS.override.md`; `main` là nhánh sync.
 - **Asset:** file trên 1 MB không commit.

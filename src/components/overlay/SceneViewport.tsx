@@ -123,7 +123,7 @@ function ViewportInner() {
       >
         <div className="rounded-xl border border-white/70 bg-primary px-3 py-2 text-center text-xs text-primary-foreground shadow-lg">
           <span className="block font-medium">{SITE_CONFIG.homeLabel[lang]}</span>
-          <span className="block opacity-80">{t.emptyLot}</span>
+          <span className="block opacity-80">{t.unmeasuredBoundary}</span>
         </div>
         <div className="mx-auto h-3 w-px bg-primary" />
       </div>

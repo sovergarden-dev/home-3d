@@ -2,12 +2,16 @@
 
 ## Hiện trạng
 
+- Ngày 11/11/2026, chủ dự án cho phép dùng snapshot OSM cùng companion G1 đã hash-bind trong repo/build cho ngôi nhà đang xây để cho thuê, không phải nơi Syringa đang ở.
+- Snapshot có 138 đường, 317 footprints, không có lô; chiều cao suy luận. Ranh lô và hiện trạng thực địa chưa xác minh; `REAL_WORLD_NOT_VERIFIED` giữ nguyên.
+- Nhánh `codex/real-neighborhood-canonical`; không Publish/deploy. Fixture tổng hợp vẫn dành cho test/editor.
+
 `READY_FOR_FINAL_AUDIT` at the immutable application tag `audit/2026-11-11` (`e4a9b9b3b45680d56ba1415965ad85f3e9a0e1fa`). PR #22 reviewed head `f617ec988cd7bc319784a9a5f1ac04f6460e370e`; independent review `MERGE_OK`; PR CI `42919226343` and main CI `42920498616` passed 4/4. The tag is the frozen application snapshot. A separate docs-only receipt correction reconciles historical status entries without changing the application tag or runtime. Its final PR/head, exact-head CI, merge SHA and main CI belong in the separate receipt-tag annotation, created only after both CI gates pass. M0–M4 `DONE` (`M4: READY_TO_DEPLOY_NOT_DEPLOYED`); M5 `PARTIAL`; `REAL_WORLD_NOT_VERIFIED` remains. No deployment or Publish.
 
 - Main trước khi merge PR công cụ bộ nhớ GPU cấp adapter là `ee2322f4abbb1711c0c6a082ddced5a8001c8ab7` (merge PR #18 `codex/m2-controls-attribution`, 09/11/2026 02:47:55Z; CI push `42552896266` 4/4, WebKit H6 48.485 ms, baseline `de71732` cùng run 58.800 ms, −17,54 %). Trước đó: PR #17 `9f0639e` (CI push `42541032040` 4/4), PR #16 `dab9d3b` (CI push `42530523502` 4/4), PR #15 `53fa7e5` (CI push `41420119958` 4/4), PR #14 `69543c2`, PR #13 `a76daab`, PR #12 `5e6aec5` (biên nhận chỉ docs của PR #11), PR #11 `beacd9b48b429db0e22530777e7d335d74369c7d` (CI push `41263307199` 4/4), PR #8 `cf3cb26` (M0 DONE, CI push `40717187350` 4/4). CI push main `41383947465` ở `69543c2` trước đó 3/4: WebKit fail bài H6 20 vòng vì process mạng WebKit crash; lỗi có từ trước PR #14 và chưa sửa, main xanh không được coi là đã sửa. Sau khi merge PR `codex/m2-gpu-adapter` và CI push `main` đạt 4/4, `main` đóng băng và gắn tag `audit/2026-11-09` trên full SHA merge commit cuối để đạt vạch đích `READY_FOR_FINAL_AUDIT` (§7).
 - PR #8, #11–#18 đã merge; PR #9/#10 (draft) được GitHub tự đánh dấu MERGED lúc 01/11/2026 01:59:22Z vì head đã nằm trong `beacd9b`. PR cuối trước đóng băng: `codex/m2-gpu-adapter` (công cụ bộ nhớ GPU cấp adapter cho Firefox + chốt gói audit cuối §7–§8).
 - Trạng thái các milestone theo vạch đích §7 và quyết định T18 ở [DECISIONS.md](DECISIONS.md): **M0 `DONE`**, **M1 `DONE`**, **M2 `DONE`**, **M3 `DONE`**, **M4 `DONE` (`READY_TO_DEPLOY_NOT_DEPLOYED`)**, **M5 `PARTIAL` có lý do hợp lệ** (M5.1 và M5.2 xong phần mềm với 50 pipeline test; dữ liệu khu thật mặc định "Không", `REAL_WORLD_NOT_VERIFIED`). Mọi giới hạn mức hạng mục vẫn giữ nhãn trung thực: H6 WebKit CI `MET` ở mọi `main` nhưng độ ổn định mạng WebKit quản lý theo Q2 (bảng đếm dồn ở [BACKLOG.md](BACKLOG.md)); P8/P9 lần đo 1 `MET` trên GPU NVIDIA (chưa chứng nhận toàn vòng đời P8, không đo mẫu âm thanh vật lý đầu tiên); trên NVIDIA: FPS Chrome/Edge/Firefox `MET`, soak `+1,28 %` `MET` (Intel UHD `+22,16 %` `NOT_MET`), bộ nhớ GPU Chrome/Edge `MET` (cận trên adapter Chrome 157,52 MB), Firefox `NOT_VERIFIED` (cận trên adapter `361.734.144` B / `nvidia-smi` `+344` MiB, thay cho counter per-process hỏng 22,94–23,17 GB); Lighthouse Accessibility 100, Performance desktop NVIDIA 97 `MET`, mobile NVIDIA 50–56 `NOT_MET`, Intel UHD 26/60 `NOT_MET`; 4G cold/warm `MET` local (`252f5e7`); ObjectURL `NOT_EXERCISED`; Android/iPhone/Safari thật `NOT_VERIFIED`.
-- Không Publish/deploy, không đăng nhập cloud, không đọc dữ liệu khu thật. `REAL_WORLD_NOT_VERIFIED` giữ nguyên.
+- Không Publish/deploy, không đăng nhập cloud, không nạp height tile khu thật. `REAL_WORLD_NOT_VERIFIED` giữ nguyên cho hiện trạng/ranh lô/cao độ.
 
 ## 10/11/2026 — Phục hồi E2E theo hợp đồng fixed-home (T19)
 
@@ -419,10 +423,10 @@ Lượt đầu ở `a4f0121` dừng sau 6 warm-up và 27 vòng đo (1.570.495 ms
 
 - PR #21 merged at `8cff23444739135898d94f47b6408156321b08c2`; PR CI `42879983796` and main CI `42882952454` passed 4/4; independent review `MERGE_OK`.
 - PR #22 reviewed head `f617ec988cd7bc319784a9a5f1ac04f6460e370e`; independent review `MERGE_OK`. Exact-head PR CI `42919226343` passed 4/4. Merge commit `e4a9b9b3b45680d56ba1415965ad85f3e9a0e1fa`; post-merge main CI `42920498616` passed 4/4.
-- Immutable application tag `audit/2026-11-11` (annotated object `087884e14bd2364542aa785387ae3f7f8d9e0add`) points to the PR #22 merge SHA. No deployment or Publish; synthetic-only boundary `REAL_WORLD_NOT_VERIFIED` remains.
+- Immutable application tag `audit/2026-11-11` contains the synthetic-only application snapshot at the time it was frozen. No deployment or Publish; this separate OSM update is on its own branch.
 - Gói B tại clean code SHA `cfbb1f4b610b7a3a9ad4240ca0bc68c402f078d1`: shader startup `6/6`, PWA alertdialog keyboard regression, PWA production 5/5. Local quality: 433 unit plus CPU test 1/1, pipeline 50/50, typecheck/lint/build/bundle; shell gzip 123,262 B. E2E `CI=1 REQUIRE_WEBGL2=1`: 55 passed, 2 Chromium-CDP-only skips, 0 failed; nonblank pixel render verified on Chromium/Firefox/WebKit. Workerd 4/4 checks.
 - T21 run 2 is on the same clean code SHA `cfbb1f4`; Chrome 157.0.8103.50 headed / GTX 1660 Ti / driver 32.0.16.1074 / DPR 1. All four scenarios passed; adapter delta `172,969,984 B`, `nvidia-smi +171 MiB`, `MET`. Attempt 1 (`802,377,728 B`) remains `NOT_VERIFIED` due to other GPU processes sharing the adapter.
-- T21 artifact and hashes: [receipt](assets/qa/codex/m5/polished-home-gpu-2026-11-11/README.md). Public files contain only synthetic fixture data; `REAL_WORLD_NOT_VERIFIED` remains.
+- T21 artifact and hashes: [receipt](assets/qa/codex/m5/polished-home-gpu-2026-11-11/README.md). The receipt contains only the synthetic fixture and its benchmark evidence; it does not cover the OSM neighborhood. `REAL_WORLD_NOT_VERIFIED` remains.
 
 ## Receipt-only audit correction (11/11/2026)
 

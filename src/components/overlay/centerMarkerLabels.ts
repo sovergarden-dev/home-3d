@@ -33,19 +33,19 @@ export function centerMarkerLabels(
   centerConfirmation?: unknown,
   showTemporaryLotIllustration = false,
 ) {
-  const isPrivateWorld = mode === "private";
-  const pointStatus = isPrivateWorld ? ownerPointStatus(centerConfirmation) : undefined;
+  const isOwnerWorld = mode === "home" || mode === "private";
+  const pointStatus = isOwnerWorld ? ownerPointStatus(centerConfirmation) : undefined;
   const markerLabels = {
-    title: !isPrivateWorld
+    title: !isOwnerWorld
       ? labels.home
       : pointStatus === "confirmed"
         ? labels.confirmedLocation
         : pointStatus === "provisionally-accepted"
           ? labels.provisionallyAcceptedCenter
           : labels.referencePoint,
-    description: isPrivateWorld ? labels.unmeasuredBoundary : labels.emptyLot,
+    description: isOwnerWorld ? labels.unmeasuredBoundary : labels.emptyLot,
   };
-  if (isPrivateWorld && showTemporaryLotIllustration) {
+  if (mode === "private" && showTemporaryLotIllustration) {
     return { ...markerLabels, illustration: labels.temporaryLotIllustration };
   }
   return markerLabels;

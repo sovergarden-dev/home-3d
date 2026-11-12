@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from "react";
 import {
   worldDataProvider,
+  type PrivateWorldSessionSnapshot,
   type WorldDataProvider,
   type WorldSessionSnapshot,
 } from "@/world/privateWorldSession";
@@ -158,7 +159,7 @@ export function createMemorySession(
     error: string | null = null;
   let undo: { memory: Memory; at: number } | null = null;
   let observedEpoch = initial.packageEpoch;
-  let observedMode = initial.mode;
+  let observedMode: PrivateWorldSessionSnapshot["mode"] = initial.mode;
   let observedLoading = initial.loading;
   let observedError = initial.mode === "private-error";
   let photoProcessor = options.photoProcessor ?? processPhoto;
@@ -295,7 +296,7 @@ export function createMemorySession(
       }
     }
   };
-  const onWorld = (next: WorldSessionSnapshot) => {
+  const onWorld = (next: PrivateWorldSessionSnapshot) => {
     const identityChanged = next.packageEpoch !== observedEpoch || next.mode !== observedMode;
     const loadingTransition = observedLoading !== next.loading;
     const errorTransition = observedError !== (next.mode === "private-error");
