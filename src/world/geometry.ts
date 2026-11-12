@@ -1,6 +1,7 @@
 import type { LinearRing, PolygonGeometry, Position2, SurfaceGeometry } from "./schema";
 
-const EPSILON = 1e-9;
+// Shared tolerance for on-boundary tests; broadphase filters must pad by exactly this much.
+export const EPSILON = 1e-9;
 
 export function samePosition(a: Position2, b: Position2, tolerance = EPSILON) {
   return Math.abs(a[0] - b[0]) <= tolerance && Math.abs(a[1] - b[1]) <= tolerance;
