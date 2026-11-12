@@ -141,6 +141,13 @@ test("portrait and short-landscape layouts keep all overlays in bounds and non-o
         viewActions: rect(".h6-view-actions")!,
         dock: rect("[role='region']")!,
         scaleBar: rect("[data-testid='plan-scale-bar']"),
+        attribution: rect(".h6-top-info a[href='https://www.openstreetmap.org/copyright']")!,
+        attributionClipped: (() => {
+          const link = document.querySelector<HTMLElement>(
+            ".h6-top-info a[href='https://www.openstreetmap.org/copyright']",
+          )!;
+          return link.scrollWidth > link.clientWidth;
+        })(),
         documentWidth: document.documentElement.scrollWidth,
       };
     });
@@ -151,6 +158,16 @@ test("portrait and short-landscape layouts keep all overlays in bounds and non-o
     expect(result.dock.right).toBeLessThanOrEqual(result.viewport.width);
     expect(result.dock.bottom).toBeLessThanOrEqual(result.viewport.height);
     expect(result.documentWidth).toBe(result.viewport.width);
+    // The OSM attribution must stay fully visible: inside the viewport, inside its card and
+    // not clipped by its own box.
+    expect(result.attributionClipped).toBe(false);
+    expect(result.attribution.left).toBeGreaterThanOrEqual(0);
+    expect(result.attribution.top).toBeGreaterThanOrEqual(0);
+    expect(result.attribution.right).toBeLessThanOrEqual(result.viewport.width);
+    expect(result.attribution.bottom).toBeLessThanOrEqual(result.viewport.height);
+    expect(result.attribution.left).toBeGreaterThanOrEqual(result.info.left);
+    expect(result.attribution.right).toBeLessThanOrEqual(result.info.right);
+    expect(result.attribution.bottom).toBeLessThanOrEqual(result.info.bottom);
     expect(overlaps(result.info, result.dock)).toBe(false);
     expect(overlaps(result.mapControls, result.dock)).toBe(false);
     expect(overlaps(result.mapControls, result.actions)).toBe(false);
