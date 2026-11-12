@@ -19,7 +19,9 @@ export function TopInfo() {
     >
       <div className="flex items-center gap-2 text-lg font-semibold text-primary sm:text-xl">
         <MapPin className="h-4 w-4 shrink-0 text-accent" aria-hidden />
-        <span className="truncate">{SITE_CONFIG.homeLabel[lang]}</span>
+        <span className="truncate" title={SITE_CONFIG.homeLabel[lang]}>
+          {SITE_CONFIG.homeLabel[lang]}
+        </span>
       </div>
       <div className="mt-1 text-xs font-medium text-muted-foreground">
         {SITE_CONFIG.description[lang]} · {t.presets[periodKey]} · {t.weather[activeWeather]}
