@@ -197,6 +197,11 @@
       line-height: 1rem;
       margin-top: 2px;
     }
+    /* WebKit sizes the max-content column a few px narrower than the link's text and
+       wraps the attribution onto a second line; keep it on one and let the stamp shrink. */
+    .h6-top-info > a {
+      white-space: nowrap;
+    }
     .h6-top-info > p {
       line-height: 14px;
       margin-top: 2px;
@@ -221,11 +226,13 @@
       grid-template-columns: repeat(1, 44px);
     }
 
+    /* Flow directly under the top row instead of a fixed offset, so the bar follows the
+       info card's real height (it wraps differently per engine and label length). */
     .plan-scale-bar {
-      top: calc(max(1rem, env(safe-area-inset-top)) + 8.1rem);
-      bottom: auto;
-      left: max(1rem, env(safe-area-inset-left));
-      right: auto;
+      position: relative;
+      inset: auto;
+      width: max-content;
+      margin-top: 0.5rem;
       flex-direction: row;
       align-items: flex-start;
     }
