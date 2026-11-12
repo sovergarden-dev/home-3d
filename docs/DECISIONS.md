@@ -230,7 +230,7 @@ The merge makes the authorized OSM snapshot canonical on `main`: 138 roads, 317 
 
 ### Short-landscape overlay (2026-11-12)
 
-On short-landscape, keep the scale bar in document flow under the measured info card (`d505b47`). Do not absolutely position the scale bar, widen the card, or set a card `max-height` that could clip attribution. The OSM credit uses `nowrap`, is never ellipsized or clipped, and must remain fully inside the viewport (assertion added in `32dfdd1`). The home label is clamped to two lines with `title={label}` (`d756dac`). Pixel accepted this tradeoff: the current real label fits two lines, the full text stays in the DOM and on the map marker, and touch users still read it there. Aegis gave architecture and security GO on `32dfdd1`.
+On short-landscape, keep the scale bar in document flow under the measured info card (`d505b47`). Do not absolutely position the scale bar, widen the card, or set a card `max-height` that could clip attribution. In `4dc6852`, the narrow-landscape card is a wrapping flex row: the OSM attribution is `flex: none` and `nowrap`, never clipped, and only the build stamp shrinks or ellipsizes. That replaces a WebKit shortfall of about 5.5px caused by a stale max-content grid column measured before the web font loaded. Assertions in `32dfdd1` and `7856e83` keep the credit fully visible and clear of the stamp. The home label is clamped to two lines with `title={label}` (`d756dac`). Pixel accepted this tradeoff: the current real label fits two lines, the full text stays in the DOM and on the map marker, and touch users still read it there. Aegis gave architecture and security GO on `32dfdd1`.
 
 ### Owner-authorized OSM snapshot supersedes fictional-only rule (2026-11-12)
 
