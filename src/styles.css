@@ -166,8 +166,8 @@
        per line and pushed the card into the dock. The OSM attribution and build
        stamp share the last row so the card stays clear of the scale bar. */
     .h6-top-info {
-      display: grid;
-      grid-template-columns: max-content minmax(0, 1fr);
+      display: flex;
+      flex-wrap: wrap;
       column-gap: 0.5rem;
       align-items: baseline;
       width: 226px;
@@ -178,7 +178,11 @@
       z-index: 20;
     }
     .h6-top-info > :nth-child(-n + 2) {
-      grid-column: 1 / -1;
+      flex: 0 0 100%;
+    }
+    .h6-top-info > [data-testid="build-info"] {
+      flex: 1 1 0;
+      min-width: 0;
     }
     .h6-top-info > div:first-child {
       min-width: 0;
@@ -201,10 +205,14 @@
       line-height: 1rem;
       margin-top: 2px;
     }
-    /* WebKit sizes the max-content column a few px narrower than the link's text and
-       wraps the attribution onto a second line; keep it on one and let the stamp shrink. */
+    /* The attribution keeps its full one-line width; only the build stamp beside it
+       shrinks and ellipsizes. A flex row, not a max-content grid column: WebKit keeps the
+       grid column's intrinsic width from before the web font loads (146.3px vs 151.8px of
+       text), so the link overflowed until a forced relayout; min-width: max-content reads
+       the same stale value. */
     .h6-top-info > a {
       white-space: nowrap;
+      flex: none;
     }
     .h6-top-info > p {
       line-height: 14px;
