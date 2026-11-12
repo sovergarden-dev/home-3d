@@ -12,12 +12,12 @@
 ## Project rules
 
 - The shared zustand store `src/state/appStore.ts` contains safe UI controls only. Package world, overrides, selection and marker opt-in belong to the client session; never SSR-serialize private world into the shared store.
-- `SceneViewport` mounts one client-only Three.js world in `#scene-root`: fictional demo by default, or an explicitly opened local package. Private data stays in the tab and explicit local downloads only.
+- `SceneViewport` mounts one client-only Three.js world in `#scene-root`: the owner-authorized OSM home neighborhood by default, or an explicitly opened local package. Private survey data stays in the tab and explicit local downloads only. Synthetic fixtures remain for deterministic tests and the isolated editor provider.
 - UI strings come from `src/i18n/{vi,en}.ts` via `useT()`; never hardcode copy in components.
 
 # Phố Nhà Mình — hướng dẫn cho agent
 
-Web app bản đồ 3D khu phố quanh nhà Syringa, nhà làm tâm. Chỉ đạo hiện hành là `docs/CODEX_HANDOFF.md`; roadmap Notion và `docs/PLAN.md` giữ làm nguồn lịch sử, không ghi đè bàn giao. Xem `docs/DECISIONS.md` và `docs/BACKLOG.md`; không tự thêm dữ liệu thật.
+Web app bản đồ 3D khu phố quanh một ngôi nhà đang xây để cho thuê, nhà làm tâm. Snapshot OSM (138 đường, 317 footprints, ODbL 1.0, © OpenStreetMap contributors) là dữ liệu canonical. Chỉ đạo hiện hành là `docs/CODEX_HANDOFF.md`; roadmap Notion và `docs/PLAN.md` giữ làm nguồn lịch sử, không ghi đè bàn giao. Xem `docs/DECISIONS.md` và `docs/BACKLOG.md`; không tự bịa ranh lô hay cao độ, không thêm dữ liệu thật ngoài phạm vi chủ dự án đã cho phép.
 
 Khối LOVABLE ở đầu file do Lovable quản lý: giữ nguyên. Quy tắc state phía trên đã đồng bộ cho H6; không dùng mô tả Demo 1 lịch sử để đưa world riêng trở lại store SSR.
 
@@ -29,21 +29,21 @@ Codex thực hiện M0–M5, tự quyết và ghi lý do trong `docs/DECISIONS.m
 
 Dữ liệu world, georeference và nội dung kỷ niệm ở phiên client riêng, không SSR-serialize. Kỷ niệm mặc định RAM; IndexedDB chỉ sau opt-in. Giữ kiểm ảnh/metadata, review ảnh trước public, nhật ký private và một canvas/vòng RAF/AudioContext. Public/guest là preview hoặc xuất tệp, không phải đăng mạng. Các ràng buộc chi tiết đã triển khai nằm trong runbook H6/P7/P8/P9/P10.
 
-Chỉ dùng fixture tổng hợp khi chủ dự án chưa chỉ định đường dẫn và mục đích cho dữ liệu thật. G1 đã được chủ dự án báo `GEOREFERENCE_BOUND_PROVEN` cho cặp tệp riêng; Codex chưa đọc cặp tệp đó, và `REAL_WORLD_NOT_VERIFIED` giữ nguyên. Không dùng trạng thái này để bỏ guard package/consent.
+Snapshot OSM cùng companion G1 do chủ dự án cho phép là world canonical trong repo (`src/world/data/homeNeighborhood.json` và `homeNeighborhood.georef.json`). Fixture tổng hợp vẫn dùng cho unit test và editor. `verificationStatus` giữ `REAL_WORLD_NOT_VERIFIED` cho đến khi chủ dự án cung cấp số đo, khảo sát thực địa và nghiệm thu. Tâm `provisionally-accepted` không phải `confirmed`. Không dùng trạng thái này để bỏ guard package/consent, và không bịa ranh lô hay cao độ.
 
 Không Publish/sửa Lovable, đăng nhập/deploy Cloudflare hoặc Google, đổi visibility/cài đặt repo, chi tiền, tạo tài khoản/token, hay đụng dự án khác. Gom câu hỏi vào `docs/AUDIT_PACKET.md`; chỉ hỏi trong chat khi không còn việc độc lập làm được. Sau mỗi PR cập nhật log; mỗi milestone báo 3–5 dòng rồi tiếp tục.
 
 ## Sự thật cố định
 
 - Bản đồ có đúng một tâm: nhà mình (gốc ENU). Không thêm bộ chọn địa điểm, danh sách hay thẻ "Góc phố", không đổi tâm. Kỷ niệm (P10) là ghim trên bản đồ: chạm vào thì camera bay tới, tâm vẫn là nhà.
-- Nhà cũ đã phá để xây lại: lô nhà để trống. Không dựng lại nhà cũ (OSM, Overture, Open Buildings và ảnh Street View 06/2024 vẫn còn nhà cũ). Nhà mới thêm sau: model kiến trúc sư (P6), bản quét khi xây xong (P11).
+- Nhà tâm điểm đang xây để cho thuê; trong cảnh 3D lô nhà vẫn để trống. Không dựng lại nhà cũ (OSM, Overture, Open Buildings và ảnh Street View 06/2024 vẫn còn nhà cũ). Nhà mới chỉ thêm sau khi có model kiến trúc sư (P6) hoặc bản quét khi xây xong (P11); không bịa khối nhà hay ranh lô.
 - Khu nhà chưa có Google Photorealistic 3D. Phố mình (tự dựng từ dữ liệu mở và khảo sát) là lớp chính; Phố thật chỉ mở Google Maps qua đường link.
-- OSM ở khu này gần như không có số tầng: chiều cao lấy từ khảo sát, Open Buildings bù chỗ thiếu.
+- OSM ở khu này gần như không có số tầng. Phần lớn footprints (315/317) dùng chiều cao tường mặc định; 2 footprints lấy số tầng từ OSM. Open Buildings chưa được trộn vào. Cao độ và số tầng khảo sát chỉ thêm khi chủ dự án cung cấp số đo và nghiệm thu.
 
 ## Vai trò
 
 - **Codex:** triển khai, kiểm chứng, self-review trong phiên riêng, quét riêng tư, PR/CI/merge theo cổng bàn giao; ghi log và chuẩn bị audit cuối.
-- **Syringa:** quyết định dữ liệu thật, giấy phép, tài khoản, chi phí, Publish và deploy; nghiệm thu thực địa.
+- **Syringa:** quyết định dữ liệu thật bổ sung, giấy phép, tài khoản, chi phí, Publish và deploy; nghiệm thu thực địa. Snapshot OSM và companion G1 cho nhà đang xây để cho thuê đã được cho phép; ranh lô và cao độ vẫn chờ số đo và nghiệm thu của chủ dự án.
 - **Notion AI:** chỉ audit cuối khi Syringa yêu cầu.
 - **Cue và Hermes:** không còn thực hiện Home 3D.
 
@@ -59,12 +59,12 @@ Không Publish/sửa Lovable, đăng nhập/deploy Cloudflare hoặc Google, đ�
 ### 2. Bí mật và riêng tư
 
 - Dự án Lovable bắt buộc commit `.env`, nên `.env` chỉ chứa giá trị công khai, không nhạy cảm.
-- "Cấu hình riêng" (toạ độ gốc, polygon lô, URL riêng, key nếu có) chỉ có ở bản riêng tư: Worker secret trên Cloudflare của Syringa, sau Cloudflare Access. Khi dev: file local gitignored (ví dụ `.dev.vars` hoặc `*.local`) do Syringa điền. Không hard-code, không commit, không in ra log.
-- Bản Lovable (link công khai) luôn chạy chế độ demo: không cấu hình riêng, không dữ liệu thật, không ảnh riêng. Thiếu cấu hình riêng thì chạy demo (gốc giả, ẩn Phố thật), không crash.
-- Repo chỉ giữ toạ độ hư cấu/tổng hợp. ENU tương đối của khu thật cũng riêng tư, không đưa vào repo/build/CI. Gốc lat/lng chỉ đến từ cấu hình riêng.
+- Companion G1 đã được chủ dự án cho phép nằm trong repo (không xóa `origin` khỏi `homeNeighborhood.georef.json`). Cấu hình riêng khác (polygon lô, URL riêng, key nếu có) chỉ có ở bản riêng tư: Worker secret trên Cloudflare của Syringa, sau Cloudflare Access. Khi dev: file local gitignored (ví dụ `.dev.vars` hoặc `*.local`) do Syringa điền. Không hard-code thêm toạ độ, không in ra log.
+- Bản Lovable (link công khai) gắn snapshot OSM đã được chủ dự án cho phép (đường và footprints), không ảnh riêng và không ranh lô bịa. `verificationStatus` giữ `REAL_WORLD_NOT_VERIFIED`. Nút "Phố thật" chỉ mở Google Maps bằng liên kết ngoài. Thiếu cấu hình riêng khác thì không crash.
+- Repo chứa snapshot OSM canonical và companion G1 đã được chủ dự án cho phép (138 đường, 317 footprints, ODbL 1.0). Không chạy prettier hay formatter trên `src/world/data/*.json`. Không xóa `origin` khỏi `homeNeighborhood.georef.json`. Không thêm ranh lô, cao độ khảo sát, ảnh riêng hay dữ liệu thật khác khi chưa được chỉ định. ENU tương đối và số đo khảo sát mới vẫn riêng tư cho tới khi chủ dự án cung cấp và chấp nhận. Fixture tổng hợp vẫn dùng cho test.
 - Mọi ảnh đi qua pipeline phải xoá EXIF/GPS, có test.
 - Không đụng Google Cloud Console, Cloudflare, cài đặt Lovable, DNS, billing. Viết script hoặc hướng dẫn để Syringa tự chạy.
-- Không ghi secret, token, toạ độ, địa chỉ vào code, log, PR, issue, Notion.
+- Không ghi secret, token, toạ độ, địa chỉ vào code, log, PR, issue, Notion. Ngoại lệ hẹp: companion G1 đã được chủ dự án cho phép được giữ `origin` trong `src/world/data/homeNeighborhood.georef.json`; không lặp lại toạ độ ở chỗ khác và không xóa `origin` khỏi tệp đó.
 
 ### 3. Tương thích Lovable
 
@@ -114,7 +114,7 @@ Không Publish/sửa Lovable, đăng nhập/deploy Cloudflare hoặc Google, đ�
 ## Lệnh và quy trình
 
 - Bun 1.4.3 theo CI; cài bằng `bun install --frozen-lockfile`. Không đổi guard 24 giờ để cài cho được.
-- `bun run check`: typecheck, lint, unit, pipeline và build. `bun run test:e2e`: Chromium, Firefox, WebKit. Pipeline có package riêng; script chạy trên Windows và Linux.
+- `bun run check`: typecheck, lint, unit, pipeline và build. Unit/Vitest chạy trên Node, không dùng `bun --bun vitest` hay `bun test`; golden tuyến POV xem `docs/POV_ROUTE_GOLDEN.md`. `bun run test:e2e`: Chromium, Firefox, WebKit. Pipeline có package riêng; script chạy trên Windows và Linux.
 - Nhánh `codex/<milestone>-<scope>` từ main mới nhất; commit nhỏ Conventional Commits. Code, comment và commit bằng tiếng Anh; docs tiếng Việt; UI VI mặc định, có EN.
 - Trước merge: local gate đạt, CI bốn job success đúng full head SHA, nhánh không behind main, self-review ở phiên riêng, gitleaks và quét diff sạch. Chỉ merge commit; không auto-merge trước đủ cổng.
 - Sau merge: CI push main bốn job success; nếu đỏ, sửa hoặc revert bằng PR mới. Ghi PR/head/merge SHA/run ID/counts và giới hạn kiểm chứng vào `docs/CODEX_LOG.md`.

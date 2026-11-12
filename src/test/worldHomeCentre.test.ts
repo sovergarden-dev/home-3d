@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { worldCameraCentre, worldHomeCentre } from "@/engine/demoScene";
+import { worldCameraCentre, worldCameraFrame, worldHomeCentre } from "@/engine/demoScene";
+import { HOME_NEIGHBORHOOD } from "@/world/homeNeighborhood";
 import type { WorldData } from "@/world/schema";
 
 const worldWithoutLot: WorldData = {
@@ -33,6 +34,17 @@ const worldWithoutLot: WorldData = {
   buildings: [],
   lots: [],
 };
+
+describe("fixed home camera frame", () => {
+  it("fits the full OSM extent and preserves the home-origin marker at usable zoom", () => {
+    const frame = worldCameraFrame(HOME_NEIGHBORHOOD);
+    expect(frame.radius).toBeGreaterThan(800);
+    expect(frame.groundSize / 2).toBeGreaterThan(frame.radius);
+    expect(frame.maxDistance).toBeGreaterThan(380);
+    expect(frame.farPlane).toBeGreaterThan(frame.maxDistance + frame.radius);
+    expect(frame.span).toBeGreaterThan(1_000);
+  });
+});
 
 describe("fixed home camera centre", () => {
   it("keeps offset source geometry framed on the configured ENU origin", () => {

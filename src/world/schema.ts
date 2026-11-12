@@ -61,6 +61,8 @@ export interface WorldManifest {
   assetHashes: Record<string, string>;
   licences: string[];
   sources?: WorldSourceMetadata[];
+  /** Real-world classification is deliberately retained until the owner verifies the data. */
+  verificationStatus?: "REAL_WORLD_NOT_VERIFIED";
   coverage: {
     quality: QualityStatus;
     sourceCount: number;

@@ -1,8 +1,8 @@
 # Phố Nhà Mình / Home 3D
 
-Ứng dụng sa bàn 3D tĩnh của một khu phố hư cấu, tập trung vào một ngôi nhà. Có sáu preset thời điểm/thời tiết, hai chế độ xem và nhãn quy hoạch trong Mặt bằng. Không tải dữ liệu khu thật lên server; mọi benchmark và QA artifact trong repo chỉ dùng fixture tổng hợp.
+Ứng dụng sa bàn 3D tĩnh của khu phố quanh một ngôi nhà đang xây để cho thuê. Snapshot OSM canonical có 138 đường và 317 footprints, giấy phép ODbL 1.0, ghi công [© OpenStreetMap contributors](https://www.openstreetmap.org/copyright). Có sáu preset thời điểm/thời tiết, hai chế độ xem và nhãn quy hoạch trong Mặt bằng. `verificationStatus` giữ `REAL_WORLD_NOT_VERIFIED` cho đến khi chủ sở hữu cung cấp số đo và nghiệm thu thực địa; không bịa ranh lô hay cao độ. Fixture tổng hợp vẫn dùng cho unit test và editor.
 
-Stack: TanStack Start, React 19, Three.js trực tiếp, TypeScript và Bun 1.4.3. Giữ cấu hình `@lovable.dev/vite-tanstack-config` để tương thích [dự án Lovable](https://lovable.dev/projects/233f103b-6806-4738-9cc3-913722e17ad6). [Bản công khai](https://nhacvl.lovable.app/) chỉ thay đổi khi chủ sở hữu Publish.
+Stack: TanStack Start, React 19, Three.js trực tiếp, TypeScript và Bun 1.4.3. Giữ cấu hình `@lovable.dev/vite-tanstack-config` để tương thích [dự án Lovable](https://lovable.dev/projects/233f103b-6806-4738-9cc3-913722e17ad6). main là nhánh Lovable sync. [Bản công khai](https://nhacvl.lovable.app/) chỉ thay đổi khi chủ sở hữu Publish.
 
 ## Phát triển và kiểm chứng
 
@@ -16,7 +16,7 @@ bun x playwright install chromium firefox webkit
 bun run test:e2e
 ```
 
-`check` gồm typecheck, lint, unit/coverage, pipeline và production build/budget. Các kiểm tra GPU thật và soak chạy riêng theo runbook; CI hoặc Playwright WebKit không thay thế thiết bị thật. Không bỏ qua kết quả fail/skip. Guard tuổi dependency 24 giờ nằm trong `bunfig.toml`.
+`check` gồm typecheck, lint, unit/coverage, pipeline và production build/budget. Unit test Vitest chạy trên Node (`bun run test`, `bunx vitest run`, `bun run check`); không dùng `bun --bun vitest` hay `bun test`. Golden tuyến POV được mô tả trong [docs/POV_ROUTE_GOLDEN.md](docs/POV_ROUTE_GOLDEN.md). Các kiểm tra GPU thật và soak chạy riêng theo runbook; CI hoặc Playwright WebKit không thay thế thiết bị thật. Không bỏ qua kết quả fail/skip. Guard tuổi dependency 24 giờ nằm trong `bunfig.toml`.
 
 ## Cấu trúc
 
@@ -29,8 +29,8 @@ bun run test:e2e
 
 ## Giới hạn và quy trình
 
-Repo, PR, CI, log và artifact chỉ chứa fixture tổng hợp. Không commit dữ liệu, toạ độ, geometry, ảnh hay đường dẫn khu thật. Không suy dựng từ ảnh/Street View/Google 3D; Phố thật chỉ mở Google Maps khi người dùng chủ động xác nhận. Không có secret trong `.env` hoặc bundle client. Ảnh đi qua kiểm metadata và review riêng trước khi xuất public.
+Snapshot OSM đã được chủ dự án cho phép (`src/world/data/homeNeighborhood.json`, 138 đường và 317 footprints, ODbL 1.0) cùng companion G1 là dữ liệu khu phố canonical. Không chạy prettier hay formatter khác trên `src/world/data/*.json`. Không bịa ranh lô hay cao độ. Không suy dựng hình học từ ảnh, Street View, Google Earth hay 3D Tiles; nút Phố thật chỉ mở Google Maps bằng liên kết ngoài khi người dùng xác nhận. Giữ dòng ghi công © OpenStreetMap contributors luôn nhìn thấy, không cắt. Fixture tổng hợp vẫn dùng cho unit test và editor. Không có secret trong `.env` hoặc bundle client. Ảnh đi qua kiểm metadata và review riêng trước khi xuất public.
 
-Mọi thay đổi qua PR và merge commit sau các cổng trong [bàn giao](docs/CODEX_HANDOFF.md). Không push thẳng main hoặc viết lại lịch sử đã push. Codex không Publish, deploy, đổi cài đặt dịch vụ hoặc truy cập dữ liệu riêng khi chưa được chỉ định.
+main là nhánh Lovable sync. Mọi thay đổi qua PR và merge commit sau các cổng trong [bàn giao](docs/CODEX_HANDOFF.md). Không push thẳng main; không force-push, rebase, amend hay squash các commit đã đẩy lên main. Không sửa khối `LOVABLE:BEGIN` trong `AGENTS.md`. Codex không Publish, deploy, đổi cài đặt dịch vụ hoặc truy cập dữ liệu riêng khi chưa được chỉ định.
 
 Đọc [AGENTS.md](AGENTS.md), [nhật ký](docs/CODEX_LOG.md), [quyết định](docs/DECISIONS.md), [backlog](docs/BACKLOG.md), [gói audit](docs/AUDIT_PACKET.md), [attribution](docs/ATTRIBUTION.md) và [runbook H6](docs/H6_PRIVATE_WORLD_RUNBOOK.md). Chưa chọn giấy phép mã nguồn; không suy ra quyền sử dụng từ visibility public.

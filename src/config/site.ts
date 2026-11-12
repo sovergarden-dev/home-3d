@@ -2,8 +2,14 @@ import type { Position2 } from "@/world/schema";
 
 export const SITE_CONFIG = {
   name: "Phố Nhà Mình",
-  homeLabel: { vi: "Nhà mình", en: "Our house" },
-  lotSubtitle: { vi: "Khu phố quanh nhà", en: "Neighborhood block" },
+  homeLabel: {
+    vi: "Nhà của tôi · đang xây để cho thuê",
+    en: "My house · under construction for rent",
+  },
+  description: {
+    vi: "Đường và footprints OpenStreetMap · hiện trạng chưa khảo sát.",
+    en: "OpenStreetMap roads and footprints · site not surveyed.",
+  },
   defaultTime: 420,
   defaultWeather: "sunny" as const,
   defaultViewMode: "diorama" as const,

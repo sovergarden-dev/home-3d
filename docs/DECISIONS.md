@@ -206,7 +206,39 @@ M4 trust boundary nhận binding thô và xác thực schema đúng một lần 
 
 Workerd1.20261019.1 từchối redirect:error ngaytrước fetch; unitNodekhôngpháthiệnkhácbiệtnày. Dùng redirect:manual, giữcheckresponse.okđểtừchối3xxkhôngđitheoLocation; unitthêmcase302. HelloWorkerdđạt; auth-onlyvàbundleđầyđủđangkiểm. ChưacoilàREADY_TO_DEPLOY_NOT_DEPLOYEDkhi fullnativeWorkerchưađạt.
 
-## M5 — Chiều cao từ raster cục bộ, không nhập footprint
+## Current product decision — use owner-authorized OSM snapshot
+
+The candidate product scene now mounts the supplied OSM snapshot, bound to its companion G1 by the exact package hash. Synthetic data remains for deterministic tests and the isolated editor provider. Do not mix in unlicensed or unverified external extracts. The project is a house under construction for rent, not the owner's current residence. Keep survey, height, parcel boundaries and condition as `REAL_WORLD_NOT_VERIFIED` until the owner supplies evidence and accepts verification.
+
+### Life simulation broadphase collision filtering (2026-11-11)
+
+When mounting the full OSM neighborhood (138 roads, 257 graph edges, 317 buildings), synchronous initialization in `createLifeSimulation` froze the browser main thread during startup (`suitable()` -> `safeAt()` evaluated ~425M point-in-polygon checks). We introduced AABB broadphase bounding box pre-filtering for all solids:
+
+- `surfaceBounds(geometry)` is cached per solid at simulation creation time.
+- `safeAt` tests the sample point's circle bounding box against each solid's AABB before delegating to `inGeometry()`.
+- Equivalence: 100% invariant preservation across concave/complex polygons with holes. Drops candidate polygon evaluation by >99%, dropping startup duration from ~8.4s blocking down to ~289ms on Bun JIT (<50ms per simulation frame) without changing collision behavior.
+
+### Merge `codex/real-neighborhood-canonical` into main (2026-11-12)
+
+Merge the owner-authorized OSM canonical branch into `main` with a merge commit, not squash or rebase. `main` là nhánh Lovable sync: a merge commit keeps the existing audit and handoff history (`audit/*`, `handoff/*` tags stay untouched) and avoids rewriting commits already pushed, which would break Lovable history on the synced branch.
+
+The merge makes the authorized OSM snapshot canonical on `main`: 138 roads, 317 building footprints, ODbL 1.0, © OpenStreetMap contributors, plus the G1 companion. The focal house is under construction for rent. `verificationStatus` stays `REAL_WORLD_NOT_VERIFIED` until the owner supplies measurements and field acceptance; do not invent lot boundaries or elevations. `provisionally-accepted` is not `confirmed`. Google Maps, Street View, Earth and 3D Tiles geometry stay banned; Google Maps may only open as an external link from the "Phố thật" button.
+
+### AABB broadphase in `buildPovRoute` (2026-11-12)
+
+`buildPovRoute` used to run `pointInPolygon` against every solid for every probe. The exhaustive builder at `b6293467` takes about 40 s (see `docs/POV_ROUTE_GOLDEN.md`; commit `e433b9b` recorded about 39 s of main-thread CPU on G1 in Chromium). The AABB broadphase in `src/engine/life/pov.ts` pads each solid's bounds by `EPSILON` (inclusive) and cuts that to ~0.3 s on the same route (43 segments, byte-identical). Output is pinned by the G1 golden in `src/test/p9-pov-route-golden.test.ts` plus synthetic collision tests. Vitest must run under Node, not `bun --bun`. This is separate from the 2026-11-11 life-simulation broadphase in `createLifeSimulation`.
+
+### Short-landscape overlay (2026-11-12)
+
+On short-landscape, keep the scale bar in document flow under the measured info card (`d505b47`). Do not absolutely position the scale bar, widen the card, or set a card `max-height` that could clip attribution. In `4dc6852`, the narrow-landscape card is a wrapping flex row: the OSM attribution is `flex: none` and `nowrap`, never clipped, and only the build stamp shrinks or ellipsizes. That replaces a WebKit shortfall of about 5.5px caused by a stale max-content grid column measured before the web font loaded. Assertions in `32dfdd1` and `7856e83` keep the credit fully visible and clear of the stamp. The home label is clamped to two lines with `title={label}` (`d756dac`). Pixel accepted this tradeoff: the current real label fits two lines, the full text stays in the DOM and on the map marker, and touch users still read it there. Aegis gave architecture and security GO on `32dfdd1`.
+
+### Owner-authorized OSM snapshot supersedes fictional-only rule (2026-11-12)
+
+The earlier rule that the public app and repo may hold only fictional/synthetic neighborhood data is superseded for this product scene. It was recorded in the historical entries **Mã nguồn public, dữ liệu riêng không public** ("Bản Lovable và bản HTML xem thử chỉ dùng phố hư cấu"), **Model và engine demo** (layout "hoàn toàn hư cấu"), and **H6: world synthetic/public, package riêng/local** ("Runtime public dựng đúng một `WorldData` synthetic"; "Repo chỉ giữ schema, code, docs và fixture synthetic"). Those entries stay as history and are not deleted.
+
+On 2026-11-11 to 2026-11-12 the owner authorized the real OSM snapshot (138 roads, 317 footprints, ODbL 1.0, © OpenStreetMap contributors) plus the G1 companion as the canonical neighborhood in the repo and on `main` (see **Current product decision — use owner-authorized OSM snapshot** and **Merge `codex/real-neighborhood-canonical` into main (2026-11-12)**). The focal house is under construction for rent, not the owner's current residence. `verificationStatus` stays `REAL_WORLD_NOT_VERIFIED`; do not invent lot boundaries or elevations. Google Maps, Street View, Earth and 3D Tiles geometry remain banned; Google Maps may only open as an external link from the "Phố thật" button. Synthetic fixtures remain for deterministic tests and the isolated editor provider.
+
+## M5 — Height from local raster, no new footprints
 
 Chỉ đọc các GeoTIFF chủ dự án chỉ định trong config local; không tự tìm vùng, tải tile hoặc đăng nhập. Chọn năm lớn nhất trong danh sách đã cung cấp, không fallback năm cũ cho vùng thiếu mẫu. Mẫu hợp lệ nằm trong footprint hiện có và ngoài lỗ, có building_presence đạt ngưỡng explicit (không phải xác suất). Trung vị building_height là tổng chiều cao trên nền đất: trừ roofHeight đã biết, còn mái chưa biết giữ nguyên roofType và ghi inferred. Không gán giá trị 0/âm hoặc dữ liệu ngoài 0–100 m.
 

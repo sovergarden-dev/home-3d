@@ -29,7 +29,9 @@ test("fixed-home shell exposes only the supported controls and build identity", 
   });
   await openHome(page);
 
-  await expect(page.locator(".h6-top-info").getByText("Nhà mình", { exact: true })).toBeVisible();
+  await expect(
+    page.locator(".h6-top-info").getByText("Nhà của tôi · đang xây để cho thuê", { exact: true }),
+  ).toBeVisible();
   await expect(page.getByRole("radiogroup", { name: "Thời gian" }).getByRole("radio")).toHaveCount(
     3,
   );
@@ -68,14 +70,18 @@ test("time, weather, camera and language controls update the fixed-home view", a
   }
 
   await page.getByRole("radio", { name: "en", exact: true }).click();
-  await expect(page.locator(".h6-top-info").getByText("Our house", { exact: true })).toBeVisible();
-  await expect(page).toHaveTitle(/Our house/i);
+  await expect(
+    page
+      .locator(".h6-top-info")
+      .getByText("My house · under construction for rent", { exact: true }),
+  ).toBeVisible();
+  await expect(page).toHaveTitle(/My house · under construction for rent/i);
   await expect(page.getByRole("radio", { name: "Evening", exact: true })).toBeVisible();
   await expect(page.getByRole("radio", { name: "Rain", exact: true })).toBeVisible();
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await page.getByRole("radio", { name: "vi", exact: true }).click();
   await expect(page.locator("html")).toHaveAttribute("lang", "vi");
-  await expect(page).toHaveTitle(/Nhà mình/i);
+  await expect(page).toHaveTitle(/Nhà của tôi · đang xây để cho thuê/i);
 });
 
 test("the legacy preview query cannot enable a package loader", async ({ page }) => {
@@ -84,7 +90,9 @@ test("the legacy preview query cannot enable a package loader", async ({ page })
     timeout: 60000,
   });
   await expect(page.getByLabel("Mở gói world")).toHaveCount(0);
-  await expect(page.locator(".h6-top-info").getByText("Nhà mình", { exact: true })).toBeVisible();
+  await expect(
+    page.locator(".h6-top-info").getByText("Nhà của tôi · đang xây để cho thuê", { exact: true }),
+  ).toBeVisible();
 });
 
 test("WebGL fallback keeps the fixed controls reachable without claiming a rendered scene", async ({
@@ -133,6 +141,24 @@ test("portrait and short-landscape layouts keep all overlays in bounds and non-o
         viewActions: rect(".h6-view-actions")!,
         dock: rect("[role='region']")!,
         scaleBar: rect("[data-testid='plan-scale-bar']"),
+        attribution: rect(".h6-top-info a[href='https://www.openstreetmap.org/copyright']")!,
+        attributionClipped: (() => {
+          const link = document.querySelector<HTMLElement>(
+            ".h6-top-info a[href='https://www.openstreetmap.org/copyright']",
+          )!;
+          return link.scrollWidth > link.clientWidth;
+        })(),
+        attributionText: (() => {
+          const range = document.createRange();
+          range.selectNodeContents(
+            document.querySelector(
+              ".h6-top-info a[href='https://www.openstreetmap.org/copyright']",
+            )!,
+          );
+          const box = range.getBoundingClientRect();
+          return { left: box.left, top: box.top, right: box.right, bottom: box.bottom };
+        })(),
+        buildInfo: rect("[data-testid='build-info']")!,
         documentWidth: document.documentElement.scrollWidth,
       };
     });
@@ -143,6 +169,22 @@ test("portrait and short-landscape layouts keep all overlays in bounds and non-o
     expect(result.dock.right).toBeLessThanOrEqual(result.viewport.width);
     expect(result.dock.bottom).toBeLessThanOrEqual(result.viewport.height);
     expect(result.documentWidth).toBe(result.viewport.width);
+    // The OSM attribution must stay fully visible: inside the viewport, inside its card and
+    // not clipped by its own box.
+    expect(result.attributionClipped).toBe(false);
+    expect(result.attribution.left).toBeGreaterThanOrEqual(0);
+    expect(result.attribution.top).toBeGreaterThanOrEqual(0);
+    expect(result.attribution.right).toBeLessThanOrEqual(result.viewport.width);
+    expect(result.attribution.bottom).toBeLessThanOrEqual(result.viewport.height);
+    expect(result.attribution.left).toBeGreaterThanOrEqual(result.info.left);
+    expect(result.attribution.right).toBeLessThanOrEqual(result.info.right);
+    expect(result.attribution.bottom).toBeLessThanOrEqual(result.info.bottom);
+    // The rendered attribution text itself stays inside its link and card and never runs
+    // under the build stamp beside it.
+    expect(overlaps(result.attributionText, result.buildInfo)).toBe(false);
+    expect(result.attributionText.left).toBeGreaterThanOrEqual(result.attribution.left);
+    expect(result.attributionText.right).toBeLessThanOrEqual(result.attribution.right);
+    expect(result.attributionText.right).toBeLessThanOrEqual(result.info.right);
     expect(overlaps(result.info, result.dock)).toBe(false);
     expect(overlaps(result.mapControls, result.dock)).toBe(false);
     expect(overlaps(result.mapControls, result.actions)).toBe(false);
@@ -175,7 +217,7 @@ test("Plan can pan, then home reset returns to the home-centred Diorama", async 
   await expect(scene).toHaveAttribute("data-camera-type", "PerspectiveCamera");
 });
 
-test("one fixed synthetic world renders and survives a route remount", async ({ page }) => {
+test("owner-provided OSM neighborhood renders and survives a route remount", async ({ page }) => {
   await openHome(page);
   const state = await page.locator("#scene-root").getAttribute("data-scene-state");
   if (process.env["REQUIRE_WEBGL2"] === "1") expect(state).toBe("ready");
@@ -183,7 +225,10 @@ test("one fixed synthetic world renders and survives a route remount", async ({ 
 
   const scene = page.getByTestId("demo-scene");
   await expect(page.locator("#scene-root canvas")).toHaveCount(1);
-  await expect(scene).toHaveAttribute("data-world-mode", "fixture");
+  await expect(scene).toHaveAttribute("data-world-mode", "home");
+  await expect(scene).toHaveAttribute("data-world-buildings", "317");
+  await expect(scene).toHaveAttribute("data-world-roads", "138");
+  await expect(scene).toHaveAttribute("data-verification-status", "REAL_WORLD_NOT_VERIFIED");
   await expect(scene).toHaveAttribute("data-active-worlds", "1");
   await expect(scene).toHaveAttribute("data-illustrative-details", "true");
   await page.getByRole("radio", { name: "Mặt bằng", exact: true }).click();

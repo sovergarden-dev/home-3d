@@ -24,6 +24,19 @@ export type WorldSessionSnapshot =
       georeferenceReady?: boolean;
     }
   | {
+      mode: "home";
+      revision: number;
+      packageEpoch: number;
+      temporaryLotIllustrationSelected: false;
+      loading: false;
+      dirty: false;
+      world: WorldData;
+      centerConfirmation: CenterConfirmation;
+      overrides?: undefined;
+      lastError?: null;
+      georeferenceReady?: false;
+    }
+  | {
       mode: "private";
       revision: number;
       packageEpoch: number;
@@ -48,7 +61,8 @@ export type WorldSessionSnapshot =
       georeferenceReady?: boolean;
     };
 
-type SessionListener = (snapshot: WorldSessionSnapshot) => void;
+export type PrivateWorldSessionSnapshot = Exclude<WorldSessionSnapshot, { mode: "home" }>;
+type SessionListener = (snapshot: PrivateWorldSessionSnapshot) => void;
 
 async function readLocalFile(file: File) {
   if (typeof file.text === "function") return file.text();
@@ -61,7 +75,7 @@ async function readLocalFile(file: File) {
 }
 
 export interface WorldDataProvider {
-  getSnapshot: () => WorldSessionSnapshot;
+  getSnapshot: () => PrivateWorldSessionSnapshot;
   subscribe: (listener: SessionListener) => () => void;
   openText: (text: string) => void;
   openGeoreferenceText: (text: string) => Promise<boolean>;
@@ -85,7 +99,7 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
   let georeferenceRequestId = 0;
   let packageText: string | null = null;
   let georeference: PackageGeoreference | null = null;
-  let snapshot: WorldSessionSnapshot = {
+  let snapshot: PrivateWorldSessionSnapshot = {
     mode: "fixture",
     revision,
     packageEpoch,
@@ -101,7 +115,7 @@ export function createWorldDataProvider(fixture: WorldData): WorldDataProvider {
   let exportedDocumentSignature = documentSignature(undefined);
   const listeners = new Set<SessionListener>();
 
-  const publish = (next: WorldSessionSnapshot) => {
+  const publish = (next: PrivateWorldSessionSnapshot) => {
     snapshot = next;
     listeners.forEach((listener) => listener(snapshot));
   };

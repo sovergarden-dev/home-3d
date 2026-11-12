@@ -1,4 +1,4 @@
-import { pointInPolygon, polygonsOf } from "@/world/geometry";
+import { EPSILON, pointInPolygon, polygonsOf, surfaceBounds } from "@/world/geometry";
 import type { Position2 } from "@/world/schema";
 import * as THREE from "three";
 import type { WorldData } from "@/world/schema";
@@ -70,8 +70,14 @@ export function buildPovRoute(world: WorldData): RouteSegment[] {
     .filter((b) => !b.hidden)
     .flatMap((b) => [b.geometry, ...(b.parts ?? []).map((p) => p.geometry)])
     .concat(world.lots.map((l) => l.geometry))
-    .flatMap(polygonsOf);
+    .flatMap(polygonsOf)
+    // AABB broadphase: pointInPolygon only reports a hit inside the outer ring or within
+    // EPSILON of its edges, so a probe outside the bounds padded by EPSILON (inclusive)
+    // cannot hit and the exact test only runs for nearby solids.
+    .filter((polygon) => polygon.coordinates[0]?.length)
+    .map((polygon) => ({ polygon, bounds: surfaceBounds(polygon) }));
   const probe: Position2 = [0, 0];
+  const pad = EPSILON;
   const safe = new Uint8Array(graph.edges.length).fill(1);
   for (const edge of graph.edges) {
     for (let i = 2; i < edge.points.length && safe[edge.id]; i += 2) {
@@ -92,7 +98,16 @@ export function buildPovRoute(world: WorldData): RouteSegment[] {
         ]) {
           probe[0] = x + dx!;
           probe[1] = z + dz!;
-          if (solids.some((p) => pointInPolygon(probe, p))) {
+          if (
+            solids.some(
+              ({ polygon, bounds }) =>
+                probe[0] >= bounds.minX - pad &&
+                probe[0] <= bounds.maxX + pad &&
+                probe[1] >= bounds.minZ - pad &&
+                probe[1] <= bounds.maxZ + pad &&
+                pointInPolygon(probe, polygon),
+            )
+          ) {
             safe[edge.id] = 0;
             break;
           }

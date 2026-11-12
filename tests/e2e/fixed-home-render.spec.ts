@@ -28,7 +28,9 @@ async function renderedPixelEvidence(page: import("@playwright/test").Page, imag
   }, image.toString("base64"));
 }
 
-test("fixed synthetic neighborhood produces nonblank rendered scene pixels", async ({ page }) => {
+test("owner-provided OSM neighborhood produces nonblank rendered scene pixels", async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/");
   const root = page.locator("#scene-root");
@@ -37,7 +39,11 @@ test("fixed synthetic neighborhood produces nonblank rendered scene pixels", asy
   if (process.env["REQUIRE_WEBGL2"] === "1") expect(state).toBe("ready");
   test.skip(state !== "ready", "WebGL2 unavailable; rendered pixels NOT_VERIFIED.");
 
+  const scene = page.getByTestId("demo-scene");
   const canvas = root.locator("canvas");
+  await expect(scene).toHaveAttribute("data-world-mode", "home");
+  await expect(scene).toHaveAttribute("data-world-buildings", "317");
+  await expect(scene).toHaveAttribute("data-world-roads", "138");
   await expect(canvas).toHaveCount(1);
   const evidence = await renderedPixelEvidence(page, await canvas.screenshot());
   console.info("FIXED_HOME_PIXEL_EVIDENCE", JSON.stringify(evidence));
@@ -49,6 +55,5 @@ test("fixed synthetic neighborhood produces nonblank rendered scene pixels", asy
   expect(evidence.height).toBeGreaterThan(0);
   expect(evidence.colorBins).toBeGreaterThan(24);
   expect(evidence.nonBackground).toBeGreaterThan(100);
-  await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-world-mode", "fixture");
-  await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-active-worlds", "1");
+  await expect(scene).toHaveAttribute("data-verification-status", "REAL_WORLD_NOT_VERIFIED");
 });
