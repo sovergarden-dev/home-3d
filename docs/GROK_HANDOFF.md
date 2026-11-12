@@ -1,25 +1,31 @@
 # Home 3D ("Phố Nhà Mình") — Bàn giao tiếp quản cho đội ngũ Grok
 
-- **Mốc mã nguồn đã chạy cổng:** commit runtime `3ac12db4b7ce6d0d5eb9059661a7f4f4c6b6840a` trên nhánh `codex/real-neighborhood-canonical`; commit bàn giao tài liệu nằm ngay kế tiếp và được gắn tag `handoff/2026-11-11-grok` (`git rev-parse handoff/2026-11-11-grok^{commit}`).
+- **Mốc mã nguồn đã chạy cổng:** commit runtime `3ac12db4b7ce6d0d5eb9059661a7f4f4c6b6840a` trên nhánh `codex/real-neighborhood-canonical`; commit bàn giao tài liệu nằm trên đỉnh nhánh này và được gắn tag `handoff/2026-11-12-grok` (`git rev-parse "handoff/2026-11-12-grok^{commit}"`). Tag trước đó `handoff/2026-11-11-grok` (`fff419ef53c23e5eb9ce752f86790ff9e51d5b2c`) giữ nguyên làm mốc lịch sử.
 - **Thứ tự ưu tiên tài liệu:** Nếu có mâu thuẫn với `docs/CODEX_HANDOFF.md` hoặc `AGENTS.md` §2 về phạm vi dữ liệu thật, tài liệu này thắng cho phạm vi bàn giao ngày 11–12/11/2026.
 - **Nền gốc đóng băng trước đó:** `origin/main` = `6e6348694e2aa939eeb82b288662f4b0e6403510`, tag ứng dụng `audit/2026-11-11` (`087884e14bd2364542aa785387ae3f7f8d9e0add` -> `e4a9b9b3b45680d56ba1415965ad85f3e9a0e1fa`) và tag biên nhận `audit/2026-11-11-receipts` (`5ded3f26b88866ed1d4a48e7ae8c22fef260bd92` -> `6e6348694e2aa939eeb82b288662f4b0e6403510`). **Tuyệt đối không sửa hoặc di chuyển hai tag `audit/*` này.**
 
 ## 1. Quyền hạn và ranh giới cứng
 
-Chủ dự án (Syringa) cấp quyền cho đội ngũ Grok tiếp quản toàn bộ kỹ thuật: làm việc trên nhánh cục bộ/bundle, sửa code/test/docs, tạo PR nội bộ và đọc/cập nhật Notion của dự án `sovergarden-dev/home-3d`. Việc đẩy nhánh chứa dữ liệu thật lên remote public hoặc merge vào `main` trên GitHub cần một dòng xác nhận bằng văn bản riêng từ chủ dự án về việc chuyển repo sang private hoặc đồng ý công bố trên public GitHub.
+Chủ dự án (Syringa) cấp **TOÀN QUYỀN** cho đội ngũ Grok tiếp quản dự án `sovergarden-dev/home-3d` (app `nhacvl.lovable.app`), không cần hỏi lại từng bước:
+
+- **GitHub:** đọc/ghi repo, tạo nhánh, commit, push (kể cả push nhánh chứa dữ liệu OSM đã được phê duyệt), mở PR, merge vào `main`, tạo/xóa tag mới, quản lý branch protection, rulesets và đổi visibility repo nếu cần.
+- **Lovable:** Publish/deploy lên `nhacvl.lovable.app`, điều chỉnh cấu hình build/deploy và Lovable Cloud nếu dự án cần.
+- **Notion:** đọc và cập nhật các trang Notion của dự án (§6).
+- **Kỹ thuật:** cài/nâng cấp dependency, refactor, tối ưu bundle/hiệu năng, chỉnh sửa `AGENTS.md` §2 trong PR riêng cho khớp ủy quyền mới, miễn giữ xanh các cổng kiểm chứng trước khi merge `main`/publish.
 
 ### Quy tắc bắt buộc không được vi phạm
 
-1. **Không Publish / không deploy lên production (`nhacvl.lovable.app`):** Chủ dự án giữ quyền Publish/deploy; chỉ phát triển và kiểm thử ở nhánh/PR và môi trường local/CI cho đến khi chủ dự án cho phép phát hành riêng bằng văn bản. Không bật Lovable Cloud, không đổi cài đặt visibility/DNS/Cloudflare.
-2. **Không tự ý push/merge tọa độ lên GitHub public:** `sovergarden-dev/home-3d` hiện là repo public. Dù chủ dự án cho phép nhúng snapshot OSM + companion G1 vào app vì đây là nhà đang xây để cho thuê, việc đẩy lịch sử git lên remote public là không thể đảo ngược. Khi chưa có xác nhận rõ của chủ dự án (chuyển repo sang private hoặc đồng ý public), chỉ làm việc trên nhánh cục bộ từ `home-3d-handoff.bundle` và không push `codex/real-neighborhood-canonical` lên remote public hay merge vào `main`.
-3. **Phạm vi dữ liệu khu phố thật (cập nhật 11/11/2026):**
+1. **An toàn lịch sử Lovable:** Trước khi force-push hoặc rebase/amend/squash commit đã đẩy lên nhánh Lovable đang sync (`main`), dừng một nhịp và xác nhận hậu quả vì Lovable ghi đè lịch sử phía họ và không thể hoàn tác (khối `LOVABLE:BEGIN` ở đầu `AGENTS.md`).
+2. **Lưu ý repo public:** `sovergarden-dev/home-3d` hiện là repo public. Chủ dự án đã phê duyệt nhúng snapshot OSM + companion G1 vì căn nhà tâm điểm là **nhà đang xây để cho thuê** (không phải nơi ở hiện tại) và cấp quyền push/merge GitHub; tuy nhiên lịch sử push lên remote public là không thể đảo ngược — nếu muốn chuyển repo sang private, xử lý trước khi push.
+3. **Chuỗi tag audit lịch sử:** Tuyệt đối giữ nguyên `audit/2026-11-11`, `audit/2026-11-11-receipts`, `audit/2026-11-09`, `audit/2026-11-10` trừ khi chủ dự án yêu cầu rõ bằng văn bản. Khi Publish lên `nhacvl.lovable.app`, ghi lại SHA đã publish, thời gian và URL vào `docs/CODEX_LOG.md` và Notion.
+4. **Phạm vi dữ liệu khu phố thật (cập nhật 11–12/11/2026):**
    - Căn nhà tâm điểm là **nhà đang xây để cho thuê**, không phải nơi ở hiện tại của chủ dự án; chủ dự án đã cho phép dùng snapshot OSM + companion G1 thật trong repo/build.
-   - Dữ liệu hiện tại (`src/world/data/homeNeighborhood.json` và `.georef.json`): `138` đường, `317` building footprints (OSM ODbL 1.0), `0` lots/trees/props; chiều cao tường chỉ là `inferred`; tâm mới ở trạng thái `provisionally-accepted`.
+   - Dữ liệu hiện tại (`src/world/data/homeNeighborhood.json` và `.georef.json`): `138` đường, `317` building footprints (OSM ODbL 1.0), `0` lots/trees/props; chiều cao tường chỉ là `inferred`; tâm mới ở trạng thái `provisionally-accepted` (chưa phải `confirmed`).
    - Giữ `verificationStatus: "REAL_WORLD_NOT_VERIFIED"` cho đến khi chủ dự án cung cấp số đo/bản vẽ/ảnh khảo sát thực địa và nghiệm thu. Không tự ý bịa hoặc suy diễn ranh lô, hình khối căn nhà mới, hay cao độ thật.
    - **Cấm tuyệt đối Google Maps / Street View geometry:** Không trace, đo, chụp, cache hay dựng model 3D từ Google Maps, Street View, ảnh vệ tinh Google Earth hoặc 3D Tiles. Chỉ mở link Google Maps qua nút "Phố thật".
    - **Bảo vệ hash G1:** `homeNeighborhood.georef.json` khóa cứng `sha256(JSON.stringify(JSON.parse(file)))` (KHÔNG phải `sha256sum` byte thô của tệp) tại `cd4f0146fd3399d0995111bd19a46751c86e0347a56d3e2a770a4832852a7ce3`, kèm `origin` đã được chủ dự án phê duyệt (không phải rò rỉ nhầm — không tự ý xóa `origin` hay `.georef.json`). Tuyệt đối không chạy Prettier/formatter lên `src/world/data/*.json` (đã thêm vào `.prettierignore`). Lệnh kiểm tra đúng: `node -e "const c=require('crypto'),f=require('fs');console.log(c.createHash('sha256').update(JSON.stringify(JSON.parse(f.readFileSync('src/world/data/homeNeighborhood.json','utf8')))).digest('hex'))"`
-4. **Vệ sinh repo, công cụ & riêng tư hạ tầng:** Dùng Bun-only (`bun.lock`, không `npm install`); `.env` được commit có chủ đích và chỉ chứa biến công khai (không thêm secret vào `.env`). Không đưa đường dẫn máy cá nhân (`<user-home>/...`, `/home/...`), username, hostname, email cá nhân, ảnh riêng chưa kiểm duyệt, hoặc secret/token vào repo, commit, log, hay QA artifact. Không force-push `main`.
-5. **Trung thực kiểm thử:** Giữ đúng các nhãn `PASS`, `FAIL`, `SKIP`, `NOT_VERIFIED`. Skip WebGL2 (ví dụ Firefox CI thiếu WebGL2) **không** phải pass. Không nới lỏng assertion để che bug.
+5. **Vệ sinh repo, công cụ & riêng tư hạ tầng:** Dùng Bun-only (`bun.lock`, không `npm install`); `.env` được commit có chủ đích và chỉ chứa biến công khai (không thêm secret vào `.env`). Không đưa đường dẫn máy cá nhân (`<user-home>/...`, `/home/...`), username, hostname, email cá nhân, ảnh riêng chưa kiểm duyệt, hoặc secret/token vào repo, commit, log, hay QA artifact.
+6. **Trung thực kiểm thử:** Giữ đúng các nhãn `PASS`, `FAIL`, `SKIP`, `NOT_VERIFIED`. Skip WebGL2 (ví dụ Firefox CI thiếu WebGL2) **không** phải pass. Không nới lỏng assertion để che bug.
 
 ## 2. Những gì đã hoàn tất trên nhánh `codex/real-neighborhood-canonical`
 
@@ -76,8 +82,9 @@ Chủ dự án (Syringa) cấp quyền cho đội ngũ Grok tiếp quản toàn 
 
 ## 7. Danh sách việc đề xuất tiếp theo cho đội Grok (theo thứ tự ưu tiên)
 
-1. Kiểm `CHECKSUMS.sha256`, `git bundle verify`, checkout nhánh `codex/real-neighborhood-canonical`, chạy lại `bun run check` + `check:secrets` xác nhận môi trường sạch.
-2. Sửa regression layout `.h6-top-info` vs `.dock` trên `portrait and short-landscape` (`src/styles.css` / `TopInfo.tsx`) và điều tra/khắc phục timeout `fixed-home-recovery.spec.ts`, sau đó chạy full E2E Chromium/Firefox/WebKit.
-3. Đối chiếu và cập nhật `AGENTS.md` §2 cho khớp quyết định ngày 11/11/2026 về snapshot OSM/G1.
+1. Khôi phục từ bundle, kiểm `CHECKSUMS.sha256`, `git bundle verify`, checkout nhánh `codex/real-neighborhood-canonical`, cấu hình `origin` trỏ tới `https://github.com/sovergarden-dev/home-3d.git` (hoặc SSH), chạy lại `bun run check` + `check:secrets` xác nhận môi trường sạch.
+2. Sửa regression layout `.h6-top-info` vs `.dock` trên `portrait and short-landscape` (`src/styles.css` / `TopInfo.tsx`, giữ nguyên link `© OpenStreetMap contributors`) và điều tra/khắc phục timeout `fixed-home-recovery.spec.ts` (không tăng timeout để che lỗi), sau đó chạy full E2E Chromium/Firefox/WebKit.
+3. Push nhánh `codex/real-neighborhood-canonical` lên GitHub (xử lý chuyển repo sang private trước nếu muốn, vì push public là không thể đảo ngược), mở PR và merge vào `main` khi cổng xanh. Cập nhật `AGENTS.md` §2 trong PR riêng cho khớp ủy quyền ngày 11–12/11/2026 về snapshot OSM/G1 (giữ nguyên khối `LOVABLE:BEGIN`, ghi lý do vào `docs/DECISIONS.md`).
 4. Kiểm tra trực quan 3D trên trình duyệt thật (góc camera khởi tạo, tâm nhà, độ rộng đường) và chạy benchmark hiệu năng GPU thật (`fps.p50 ≥ 55`, `frameMs.max ≤ 50 ms`, `drawCalls ≤ 200`, `triangles ≤ 800.000`, `adapterUpperBoundBytes ≤ 350 MB`) trên cảnh 317 công trình.
-5. Khi chủ dự án cung cấp kích thước lô, hướng mặt tiền hoặc bản vẽ/chiều cao thực tế, bổ sung ranh lô + khối căn nhà đang xây tại tâm và làm giàu cao độ nhà lân cận theo từng tầng provenance rõ ràng.
+5. Publish/deploy lên `nhacvl.lovable.app` khi bước 1–4 đạt (nếu cần), ghi lại SHA đã publish + thời gian + URL vào `docs/CODEX_LOG.md` và Notion.
+6. Khi chủ dự án cung cấp kích thước lô, hướng mặt tiền hoặc bản vẽ/chiều cao thực tế, bổ sung ranh lô + khối căn nhà đang xây tại tâm và làm giàu cao độ nhà lân cận theo từng tầng provenance rõ ràng.
