@@ -218,6 +218,20 @@ When mounting the full OSM neighborhood (138 roads, 257 graph edges, 317 buildin
 - `safeAt` tests the sample point's circle bounding box against each solid's AABB before delegating to `inGeometry()`.
 - Equivalence: 100% invariant preservation across concave/complex polygons with holes. Drops candidate polygon evaluation by >99%, dropping startup duration from ~8.4s blocking down to ~289ms on Bun JIT (<50ms per simulation frame) without changing collision behavior.
 
+### Merge `codex/real-neighborhood-canonical` into main (2026-11-12)
+
+Merge the owner-authorized OSM canonical branch into `main` with a merge commit, not squash or rebase. `main` là nhánh Lovable sync: a merge commit keeps the existing audit and handoff history (`audit/*`, `handoff/*` tags stay untouched) and avoids rewriting commits already pushed, which would break Lovable history on the synced branch.
+
+The merge makes the authorized OSM snapshot canonical on `main`: 138 roads, 317 building footprints, ODbL 1.0, © OpenStreetMap contributors, plus the G1 companion. The focal house is under construction for rent. `verificationStatus` stays `REAL_WORLD_NOT_VERIFIED` until the owner supplies measurements and field acceptance; do not invent lot boundaries or elevations. `provisionally-accepted` is not `confirmed`. Google Maps, Street View, Earth and 3D Tiles geometry stay banned; Google Maps may only open as an external link from the "Phố thật" button.
+
+### AABB broadphase in `buildPovRoute` (2026-11-12)
+
+`buildPovRoute` used to run `pointInPolygon` against every solid for every probe. The exhaustive builder at `b6293467` takes about 40 s (see `docs/POV_ROUTE_GOLDEN.md`; commit `e433b9b` recorded about 39 s of main-thread CPU on G1 in Chromium). The AABB broadphase in `src/engine/life/pov.ts` pads each solid's bounds by `EPSILON` (inclusive) and cuts that to ~0.3 s on the same route (43 segments, byte-identical). Output is pinned by the G1 golden in `src/test/p9-pov-route-golden.test.ts` plus synthetic collision tests. Vitest must run under Node, not `bun --bun`. This is separate from the 2026-11-11 life-simulation broadphase in `createLifeSimulation`.
+
+### Short-landscape overlay (2026-11-12)
+
+On short-landscape, keep the scale bar in document flow under the measured info card (`d505b47`). Do not absolutely position the scale bar, widen the card, or set a card `max-height` that could clip attribution. The OSM credit uses `nowrap`, is never ellipsized or clipped, and must remain fully inside the viewport (assertion added in `32dfdd1`). The home label is clamped to two lines with `title={label}` (`d756dac`). Pixel accepted this tradeoff: the current real label fits two lines, the full text stays in the DOM and on the map marker, and touch users still read it there. Aegis gave architecture and security GO on `32dfdd1`.
+
 ## M5 — Height from local raster, no new footprints
 
 Chỉ đọc các GeoTIFF chủ dự án chỉ định trong config local; không tự tìm vùng, tải tile hoặc đăng nhập. Chọn năm lớn nhất trong danh sách đã cung cấp, không fallback năm cũ cho vùng thiếu mẫu. Mẫu hợp lệ nằm trong footprint hiện có và ngoài lỗ, có building_presence đạt ngưỡng explicit (không phải xác suất). Trung vị building_height là tổng chiều cao trên nền đất: trừ roofHeight đã biết, còn mái chưa biết giữ nguyên roofType và ghi inferred. Không gán giá trị 0/âm hoặc dữ liệu ngoài 0–100 m.
