@@ -64,7 +64,7 @@ Không Publish/sửa Lovable, đăng nhập/deploy Cloudflare hoặc Google, đ�
 - Repo chứa snapshot OSM canonical và companion G1 đã được chủ dự án cho phép (138 đường, 317 footprints, ODbL 1.0). Không chạy prettier hay formatter trên `src/world/data/*.json`. Không xóa `origin` khỏi `homeNeighborhood.georef.json`. Không thêm ranh lô, cao độ khảo sát, ảnh riêng hay dữ liệu thật khác khi chưa được chỉ định. ENU tương đối và số đo khảo sát mới vẫn riêng tư cho tới khi chủ dự án cung cấp và chấp nhận. Fixture tổng hợp vẫn dùng cho test.
 - Mọi ảnh đi qua pipeline phải xoá EXIF/GPS, có test.
 - Không đụng Google Cloud Console, Cloudflare, cài đặt Lovable, DNS, billing. Viết script hoặc hướng dẫn để Syringa tự chạy.
-- Không ghi secret, token, toạ độ, địa chỉ vào code, log, PR, issue, Notion.
+- Không ghi secret, token, toạ độ, địa chỉ vào code, log, PR, issue, Notion. Ngoại lệ hẹp: companion G1 đã được chủ dự án cho phép được giữ `origin` trong `src/world/data/homeNeighborhood.georef.json`; không lặp lại toạ độ ở chỗ khác và không xóa `origin` khỏi tệp đó.
 
 ### 3. Tương thích Lovable
 
