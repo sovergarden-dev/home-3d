@@ -148,6 +148,17 @@ test("portrait and short-landscape layouts keep all overlays in bounds and non-o
           )!;
           return link.scrollWidth > link.clientWidth;
         })(),
+        attributionText: (() => {
+          const range = document.createRange();
+          range.selectNodeContents(
+            document.querySelector(
+              ".h6-top-info a[href='https://www.openstreetmap.org/copyright']",
+            )!,
+          );
+          const box = range.getBoundingClientRect();
+          return { left: box.left, top: box.top, right: box.right, bottom: box.bottom };
+        })(),
+        buildInfo: rect("[data-testid='build-info']")!,
         documentWidth: document.documentElement.scrollWidth,
       };
     });
@@ -168,6 +179,12 @@ test("portrait and short-landscape layouts keep all overlays in bounds and non-o
     expect(result.attribution.left).toBeGreaterThanOrEqual(result.info.left);
     expect(result.attribution.right).toBeLessThanOrEqual(result.info.right);
     expect(result.attribution.bottom).toBeLessThanOrEqual(result.info.bottom);
+    // The rendered attribution text itself stays inside its link and card and never runs
+    // under the build stamp beside it.
+    expect(overlaps(result.attributionText, result.buildInfo)).toBe(false);
+    expect(result.attributionText.left).toBeGreaterThanOrEqual(result.attribution.left);
+    expect(result.attributionText.right).toBeLessThanOrEqual(result.attribution.right);
+    expect(result.attributionText.right).toBeLessThanOrEqual(result.info.right);
     expect(overlaps(result.info, result.dock)).toBe(false);
     expect(overlaps(result.mapControls, result.dock)).toBe(false);
     expect(overlaps(result.mapControls, result.actions)).toBe(false);
