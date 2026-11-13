@@ -47,6 +47,13 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun x playwright install --with-deps chromium
       - run: bun run test:e2e --project=chromium
+      - name: Scene geometry budget (report-only, counts not timings)
+        run: node scripts/scene-budget-report.mjs test-results/scene-budget
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: scene-budget
+          path: test-results/scene-budget
       - name: Verify production PWA and update lifecycle
         run: bun run build && bun run test:production
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
