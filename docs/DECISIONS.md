@@ -1,5 +1,9 @@
 # Quyết định — Codex hiện hành, các pha trước giữ làm lịch sử
 
+## PR-1 — Gộp mesh tĩnh theo material (draw-call)
+
+Cảnh OSM mặc định tạo một `THREE.Mesh` cho mỗi footprint/ribbon nên vượt ngân sách mid (draw calls ≤ 200). Gộp geometry tĩnh của lớp đường và nhà theo material (cùng `castShadow`/`receiveShadow` và bộ attribute) bằng `mergeGeometries` đã có trong three.js. Mesh gốc giữ làm proxy picking trên layer 1 (không vẽ); mesh gộp vẽ trên layer 0. Raycast đọc `featureId` từ proxy/group như cũ. Khi bật confidence hoặc chọn một feature, ẩn mesh gộp và đưa proxy về layer 0 để highlight/màu tin cậy từng nhà không đổi. Collision/POV vẫn lấy hộp từ `WorldData`, không từ mesh. Không gộp cây/đạo cụ/minh họa; không đổi camera hay G1.
+
 ## M2 — Chuẩn bị cô lập trong lúc đo M1
 
 Chuẩn bị build identity, CI và lint trong worktree riêng trong khi M1 đo ma trận A/B; không chạy build/test nặng đồng thời và không sửa source đang đo. Thứ tự chuẩn bị dự kiến M1 rồi M2; quyết định tích hợp cuối bên dưới ghi rõ cổng M1 đang chặn. Phiên bản lấy từ `package.json`; SHA ưu tiên giá trị full SHA hợp lệ do môi trường cấp, rồi Git của checkout, thiếu thì `null`/không xác định. Không thêm plugin Vite trùng và không đưa đường dẫn Git vào client.

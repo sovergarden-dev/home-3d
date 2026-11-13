@@ -1,4 +1,6 @@
 import * as THREE from "three";
+import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import { FEATURE_PICK_LAYER } from "@/engine/interaction/featurePicking";
 import {
   polygonsOf,
   ringWithoutClosure,
@@ -101,6 +103,103 @@ function createSurfaceMeshes(
   return group;
 }
 
+function attributeSignature(geometry: THREE.BufferGeometry) {
+  return `${geometry.index ? "i" : "n"}:${Object.keys(geometry.attributes).sort().join(",")}`;
+}
+
+function bakeWorldGeometry(mesh: THREE.Mesh) {
+  mesh.updateWorldMatrix(true, false);
+  const geometry = mesh.geometry.clone();
+  geometry.applyMatrix4(mesh.matrixWorld);
+  return geometry;
+}
+
+function mergeStaticLayer(
+  layer: THREE.Group,
+  disposables: Disposable[],
+  pickProxies: Set<THREE.Mesh>,
+  mergedMeshes: THREE.Mesh[],
+) {
+  const sources: THREE.Mesh[] = [];
+  layer.traverse((object) => {
+    if (!(object instanceof THREE.Mesh) || object instanceof THREE.InstancedMesh) return;
+    if (Array.isArray(object.material) || object.userData["mergedStatic"]) return;
+    sources.push(object);
+  });
+
+  const buckets = new Map<string, { material: THREE.Material; meshes: THREE.Mesh[] }>();
+  for (const mesh of sources) {
+    const material = mesh.material as THREE.Material;
+    const key = [
+      material.uuid,
+      mesh.castShadow ? "c" : "",
+      mesh.receiveShadow ? "r" : "",
+      attributeSignature(mesh.geometry),
+    ].join("|");
+    const bucket = buckets.get(key);
+    if (bucket) bucket.meshes.push(mesh);
+    else buckets.set(key, { material, meshes: [mesh] });
+  }
+
+  const mergedGroup = new THREE.Group();
+  mergedGroup.name = "merged-static";
+  mergedGroup.userData["nonPickable"] = true;
+
+  for (const [key, { material, meshes }] of buckets) {
+    if (meshes.length < 2) continue;
+    const baked = meshes.map(bakeWorldGeometry);
+    let mergedGeometry: THREE.BufferGeometry | null = null;
+    try {
+      mergedGeometry = mergeGeometries(baked, false);
+    } catch {
+      mergedGeometry = null;
+    }
+    baked.forEach((geometry) => geometry.dispose());
+    if (!mergedGeometry) continue;
+    mergedGeometry.computeBoundingBox();
+    mergedGeometry.computeBoundingSphere();
+    const merged = new THREE.Mesh(mergedGeometry, material);
+    merged.name = `merged:${material.uuid}`;
+    merged.castShadow = meshes[0]!.castShadow;
+    merged.receiveShadow = meshes[0]!.receiveShadow;
+    merged.userData["mergedStatic"] = true;
+    merged.userData["nonPickable"] = true;
+    merged.userData["mergeKey"] = key;
+    mergedGroup.add(merged);
+    disposables.push(mergedGeometry);
+    mergedMeshes.push(merged);
+    for (const mesh of meshes) {
+      mesh.layers.set(FEATURE_PICK_LAYER);
+      mesh.userData["staticPickProxy"] = true;
+      mesh.userData["mergeKey"] = key;
+      pickProxies.add(mesh);
+    }
+  }
+
+  if (mergedGroup.children.length > 0) layer.add(mergedGroup);
+}
+
+function roofMaterial(
+  roofType: RoofType,
+  cache: Map<string, THREE.MeshStandardMaterial>,
+  disposables: Disposable[],
+) {
+  const corrugated = roofType === "corrugated";
+  const key = corrugated ? "corrugated" : "tiled";
+  let material = cache.get(key);
+  if (!material) {
+    material = new THREE.MeshStandardMaterial({
+      color: corrugated ? "#9aa3a8" : "#7b4a3d",
+      roughness: corrugated ? 0.55 : 0.85,
+      metalness: corrugated ? 0.3 : 0.02,
+      side: THREE.DoubleSide,
+    });
+    cache.set(key, material);
+    disposables.push(material);
+  }
+  return material;
+}
+
 function footprintBounds(geometry: SurfaceGeometry) {
   let minX = Infinity;
   let minZ = Infinity;
@@ -136,6 +235,7 @@ function addRoofPrism(
   topY: number,
   roofType: RoofType,
   requestedRoofHeight: number | undefined,
+  material: THREE.MeshStandardMaterial,
   disposables: Disposable[],
 ) {
   // A bbox prism is footprint-safe only for a single, axis-aligned rectangle.
@@ -223,18 +323,12 @@ function addRoofPrism(
   const roofGeometry = new THREE.BufferGeometry();
   roofGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
   roofGeometry.computeVertexNormals();
-  const material = new THREE.MeshStandardMaterial({
-    color: roofType === "corrugated" ? "#9aa3a8" : "#7b4a3d",
-    roughness: roofType === "corrugated" ? 0.55 : 0.85,
-    metalness: roofType === "corrugated" ? 0.3 : 0.02,
-    side: THREE.DoubleSide,
-  });
   const roof = new THREE.Mesh(roofGeometry, material);
   roof.name = "roof-prism";
   roof.userData = { roofType, approximation: `${roofType}_prism_approx` };
   roof.castShadow = true;
   roof.receiveShadow = true;
-  disposables.push(roofGeometry, material);
+  disposables.push(roofGeometry);
   return roof;
 }
 
@@ -278,6 +372,7 @@ function addBuilding(
   materialFactory: MaterialFactory,
   disposables: Disposable[],
   syntheticWorld: boolean,
+  roofMaterials: Map<string, THREE.MeshStandardMaterial>,
 ) {
   if (building.hidden) return;
   if (
@@ -341,7 +436,14 @@ function addBuilding(
       part.heightAssessment.status !== "unknown" &&
       (part.roofType === "gabled" || part.roofType === "hipped" || part.roofType === "corrugated")
     ) {
-      const roof = addRoofPrism(part.geometry, topY, part.roofType, part.roofHeight, disposables);
+      const roof = addRoofPrism(
+        part.geometry,
+        topY,
+        part.roofType,
+        part.roofHeight,
+        roofMaterial(part.roofType, roofMaterials, disposables),
+        disposables,
+      );
       if (roof) {
         roof.name = `roof:${part.localId}`;
         shell.add(roof);
@@ -1059,6 +1161,9 @@ export function buildWorldMeshes(
     return material;
   };
   const roadMeshes = new Map<RoadSegment, THREE.Mesh>();
+  const roofMaterials = new Map<string, THREE.MeshStandardMaterial>();
+  const pickProxies = new Set<THREE.Mesh>();
+  const mergedStaticMeshes: THREE.Mesh[] = [];
   const confidenceOriginals = new Map<THREE.Mesh, THREE.Material | THREE.Material[]>();
   const confidenceVariants = new Map<string, THREE.Material>();
   let disposed = false;
@@ -1162,21 +1267,31 @@ export function buildWorldMeshes(
       materialFactory,
       disposables,
       world.manifest.isSynthetic,
+      roofMaterials,
     );
   });
   addHomeLotTreatment(world, layers.buildings, materialFactory, disposables);
+  mergeStaticLayer(layers.roads, disposables, pickProxies, mergedStaticMeshes);
+  mergeStaticLayer(layers.buildings, disposables, pickProxies, mergedStaticMeshes);
   rebuildLabels(currentLabelLanguage);
   addTrees(world, layers.trees, materialFactory, disposables);
   addProps(world, layers.props, materialFactory, disposables);
 
   group.traverse((object) => {
-    if (!(object instanceof THREE.Mesh)) return;
+    if (!(object instanceof THREE.Mesh) || object.userData["mergedStatic"]) return;
     let owner: THREE.Object3D | null = object;
     while (owner && owner !== group && !owner.userData["featureId"]) owner = owner.parent;
     if (owner?.userData["featureId"]) confidenceOriginals.set(object, object.material);
   });
 
   function updatePresentation() {
+    const inspecting = confidenceVisible || selectedFeatureId !== null;
+    mergedStaticMeshes.forEach((mesh) => {
+      mesh.visible = !inspecting;
+    });
+    pickProxies.forEach((mesh) => {
+      mesh.layers.set(inspecting ? 0 : FEATURE_PICK_LAYER);
+    });
     confidenceOriginals.forEach((original, mesh) => {
       let owner: THREE.Object3D | null = mesh;
       let status: "known" | "inferred" | "synthetic" | "unknown" | undefined;
