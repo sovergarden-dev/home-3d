@@ -186,6 +186,19 @@ describe("planSurroundings density and placement", () => {
     for (const kind of ["electric_pole", "street_light", "parked_motorbike", "vendor_cart"])
       expect(kinds.has(kind as never)).toBe(true);
   });
+  it("labels only sourced OSM point facts as osm; every generated item is estimated_procedural", () => {
+    const factIds = new Set(layer.pointFacts.map((fact) => fact.localId));
+    const items = [...plan.trees, ...plan.props];
+    const osmItems = items.filter((item) => item.origin === "osm");
+    expect(osmItems).toHaveLength(factIds.size);
+    for (const item of osmItems) expect(factIds.has(item.localId)).toBe(true);
+    for (const item of items) {
+      if (factIds.has(item.localId)) continue;
+      expect(item.origin).toBe("estimated_procedural");
+      expect(item.provenance.source).not.toBe("osm");
+    }
+    expect(items.length - osmItems.length).toBeGreaterThan(osmItems.length);
+  });
 });
 
 describe("surroundings meshes", () => {
