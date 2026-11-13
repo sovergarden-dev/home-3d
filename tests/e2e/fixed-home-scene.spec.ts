@@ -24,6 +24,10 @@ test("owner-provided OSM neighborhood stays immutable across views and illustrat
   await expect(scene).toHaveAttribute("data-illustrative-details", "true");
   await expect(scene).toHaveAttribute("data-illustrative-instances", /^[1-9]\d*$/);
   await expect(scene).toHaveAttribute("data-labels-visible", "false");
+  await expect(scene).toHaveAttribute("data-surroundings-tier", /^(low|mid)$/);
+  await expect(scene).toHaveAttribute("data-surroundings-trees", /^[1-9]\d*$/);
+  await expect(scene).toHaveAttribute("data-surroundings-props", /^[1-9]\d*$/);
+  await expect(scene).toHaveAttribute("data-props-visible", "true");
   const revision = await scene.getAttribute("data-world-revision");
   const resourceCounts: string[] = [];
 
@@ -34,6 +38,7 @@ test("owner-provided OSM neighborhood stays immutable across views and illustrat
     await expect(scene).toHaveAttribute("data-illustrative-details", "false");
     await expect(scene).toHaveAttribute("data-illustrative-instances", "0");
     await expect(scene).toHaveAttribute("data-labels-visible", "true");
+    await expect(scene).toHaveAttribute("data-props-visible", "false");
     await expect(scene).toHaveAttribute("data-world-revision", revision!);
     await expect(scene).toHaveAttribute("data-active-worlds", "1");
     await expect(canvas).toHaveCount(1);
@@ -43,6 +48,7 @@ test("owner-provided OSM neighborhood stays immutable across views and illustrat
     await expect(scene).toHaveAttribute("data-camera-type", "PerspectiveCamera");
     await expect(scene).toHaveAttribute("data-illustrative-details", "true");
     await expect(scene).toHaveAttribute("data-illustrative-instances", /^[1-9]\d*$/);
+    await expect(scene).toHaveAttribute("data-props-visible", "true");
     await expect(scene).toHaveAttribute("data-world-revision", revision!);
     await expect(scene).toHaveAttribute("data-active-worlds", "1");
     await expect(canvas).toHaveCount(1);
