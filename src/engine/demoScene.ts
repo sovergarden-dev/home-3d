@@ -10,6 +10,10 @@ import { createAtmosphereLayer } from "./atmosphere";
 import { getAstronomy, phaseMoon } from "@/atmosphere/astronomy";
 import { getEffectiveSeason } from "@/atmosphere/calendar";
 import { buildWorldMeshes, type WorldMeshBundle } from "./world/buildWorldMeshes";
+import { createSurroundingsMeshes, type SurroundingsMeshes } from "./world/surroundingsMeshes";
+import { HOME_ENRICHMENT } from "@/world/enrichment/homeEnrichment";
+import { planSurroundings } from "@/world/enrichment/planSurroundings";
+import { HOME_NEIGHBORHOOD } from "@/world/homeNeighborhood";
 import { createFrameMetrics } from "./quality/frameMetrics";
 import {
   configurePlanCamera,
@@ -249,6 +253,35 @@ export function createDemoScene(
   const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   let illustrativeDetails: ReturnType<typeof createIllustrativeDetails> | null = null;
+  let surroundings: SurroundingsMeshes | null = null;
+
+  /**
+   * Seeded OSM surroundings (trees + street furniture) for the canonical home world only. The
+   * layer is bound to G1 and fails closed to the base world; output is decoration, not collider.
+   */
+  function mountSurroundings(world: WorldData, bundle: WorldMeshBundle) {
+    surroundings?.dispose();
+    surroundings = null;
+    if (world !== HOME_NEIGHBORHOOD || !HOME_ENRICHMENT) {
+      host.dataset["surroundingsTier"] = "none";
+      host.dataset["surroundingsTrees"] = "0";
+      host.dataset["surroundingsProps"] = "0";
+      host.dataset["surroundingsInstances"] = "0";
+      return;
+    }
+    const tier =
+      renderer.capabilities.maxTextureSize <= 4096 || window.innerWidth < 768 ? "low" : "mid";
+    const startedAt = performance.now();
+    const plan = planSurroundings(world, HOME_ENRICHMENT, tier);
+    surroundings = createSurroundingsMeshes(plan);
+    bundle.layers.trees.add(surroundings.trees);
+    bundle.layers.props.add(surroundings.props);
+    host.dataset["surroundingsTier"] = tier;
+    host.dataset["surroundingsTrees"] = String(plan.trees.length);
+    host.dataset["surroundingsProps"] = String(plan.props.length);
+    host.dataset["surroundingsInstances"] = String(surroundings.instanceCount);
+    host.dataset["surroundingsPlanMs"] = String(Math.round(performance.now() - startedAt));
+  }
 
   function mountWorld() {
     const snapshot = homeWorldSession.getSnapshot();
@@ -260,6 +293,8 @@ export function createDemoScene(
     if (useAppStore.getState().soundOn) useAppStore.setState({ soundOn: false });
     illustrativeDetails?.dispose();
     illustrativeDetails = null;
+    surroundings?.dispose();
+    surroundings = null;
     worldBundle?.dispose();
     const meshBuildStartedAt = performance.now();
     worldBundle = buildWorldMeshes(
@@ -267,6 +302,7 @@ export function createDemoScene(
       materialFactory,
       useAppStore.getState().language,
     );
+    mountSurroundings(snapshot.world, worldBundle);
     atmosphere.invalidateWorld();
     host.dataset["meshBuildLatencyMs"] = String(performance.now() - meshBuildStartedAt);
     scene.add(worldBundle.group);
@@ -301,6 +337,8 @@ export function createDemoScene(
     if (useAppStore.getState().soundOn) useAppStore.setState({ soundOn: false });
     illustrativeDetails?.dispose();
     illustrativeDetails = null;
+    surroundings?.dispose();
+    surroundings = null;
     worldBundle?.dispose();
     worldBundle = null;
   }
@@ -499,6 +537,9 @@ export function createDemoScene(
     const planLabelsVisible = state.viewMode === "topdown" && state.showLabels;
     worldBundle.setLabelLanguage(state.language);
     worldBundle.setLayerVisible("trees", state.showTrees);
+    // Plan view shows buildings and tree canopies only; street furniture stays 3D-only.
+    worldBundle.setLayerVisible("props", state.viewMode !== "topdown");
+    host.dataset["propsVisible"] = String(state.viewMode !== "topdown");
     worldBundle.setLayerVisible("labels", planLabelsVisible);
     host.dataset["treesVisible"] = String(state.showTrees);
     host.dataset["labelsVisible"] = String(planLabelsVisible);

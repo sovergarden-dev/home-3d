@@ -15,6 +15,10 @@
 
 Mọi đường và footprint của gói này thuộc OSM ODbL 1.0. Ghi công hiển thị trong app trỏ tới copyright của OpenStreetMap. Không dùng Google Maps hoặc Street View để trace, đo hay bổ sung hình học. Overture/Open Buildings chưa được trộn vào snapshot này.
 
+## PR-2 — Lớp surroundings (OSM + procedural)
+
+`src/world/data/homeNeighborhood.enrichment.json` là Derivative Database của OpenStreetMap theo ODbL 1.0 §4.4, công khai cùng repo theo ODbL. Nó chỉ chứa fact OSM đã lọc tag (cây, cột điện, đèn đường, ghế, số tầng/kiểu mái của footprint đã có) ở toạ độ ENU cục bộ, cùng tham số generator; không tên, địa chỉ hay thông tin liên lạc. Header ghi nguồn Overpass, thời điểm tải, `osm_base`, template truy vấn và dòng "© OpenStreetMap contributors. Data available under the Open Database License (ODbL 1.0)". Cây, cột, đèn, xe máy đậu và xe đẩy sinh thêm là procedural trong mã dự án (Produced Work), không lấy từ Google Maps/Street View/Earth/3D Tiles hay asset bên ngoài.
+
 ## P9 — Tác nhân và âm thanh
 
 Mọi hình tác nhân (xe máy/ô tô/bus/ba gác/xe đạp/người/hàng rong/chó/mèo/gà), đèn xe và fixture P9 đều procedural/tổng hợp được tạo trong mã dự án; không asset bên ngoài, ảnh người, biển số, nội dung Google hoặc bản thu phố thật. WebAudio noise/tone/loop tự tổng hợp, không file loop/asset audio mới để phân phối. Không dependency mới; dùng lại Three.js MIT và `BufferGeometryUtils.mergeGeometries` trong gói đã khóa. Clip local do người xem chọn chỉ ở phiên, không phải asset phát hành; file audio-local bị gitignore. Không sao chép âm thanh bên thứ ba hoặc yêu cầu micro.
