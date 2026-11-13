@@ -66,7 +66,9 @@ export interface PointFact {
 export interface SnapshotHeader {
   source: "OpenStreetMap via Overpass API";
   endpoint: string;
+  /** UTC time the snapshot run started (before any endpoint retries). */
   fetchedAt: string;
+  /** OSM data revision (`osm3s.timestamp_osm_base`) reported by the endpoint that answered. */
   osmBaseTimestamp: string;
   queryTemplate: string;
   querySha256: string;
