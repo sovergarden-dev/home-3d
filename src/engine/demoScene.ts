@@ -551,25 +551,27 @@ export function createDemoScene(
       (currentWorld.world.manifest.isSynthetic ? "synthetic" : "REAL_WORLD_NOT_VERIFIED");
     host.dataset["activeWorlds"] = worldBundle ? "1" : "0";
     host.dataset["cameraType"] = activeCamera.type;
-    if (life && (lastLifeMetricsAt === 0 || renderedAt - lastLifeMetricsAt >= 250)) {
+    if (life) {
       const m = life.metrics();
       host.dataset["lifeAgents"] = String(m.agentCount);
-      host.dataset["lifeClock"] = String(m.simulatedSeconds);
-      host.dataset["lifeVisible"] = String(life.group.visible);
-      host.dataset["lifeCpuP50Ms"] = String(m.cpuP50Ms);
-      host.dataset["lifeCpuP95Ms"] = String(m.cpuP95Ms);
-      host.dataset["lifeCpuSamples"] = String(m.cpuSamples);
-      host.dataset["lifeGraphReady"] = String(m.graphEnabled);
       host.dataset["lifeTier"] = m.tier;
-      host.dataset["povMode"] = life.pov.diagnostics().mode ?? "none";
-      host.dataset["audioContexts"] = String(Number(audio.getDiagnostics().contextCreated));
-      const audioMetrics = audio.getDiagnostics();
-      host.dataset["audioVoices"] = String(audioMetrics.activeVoices);
-      host.dataset["audioNodes"] = String(audioMetrics.nodeCount);
-      host.dataset["audioTotalNodes"] = String(audioMetrics.totalNodeCount);
-      host.dataset["audioState"] = audioMetrics.contextState;
-      host.dataset["audioListeners"] = String(audioMetrics.listenerCount);
-      lastLifeMetricsAt = renderedAt;
+      if (lastLifeMetricsAt === 0 || renderedAt - lastLifeMetricsAt >= 250) {
+        host.dataset["lifeClock"] = String(m.simulatedSeconds);
+        host.dataset["lifeVisible"] = String(life.group.visible);
+        host.dataset["lifeCpuP50Ms"] = String(m.cpuP50Ms);
+        host.dataset["lifeCpuP95Ms"] = String(m.cpuP95Ms);
+        host.dataset["lifeCpuSamples"] = String(m.cpuSamples);
+        host.dataset["lifeGraphReady"] = String(m.graphEnabled);
+        host.dataset["povMode"] = life.pov.diagnostics().mode ?? "none";
+        host.dataset["audioContexts"] = String(Number(audio.getDiagnostics().contextCreated));
+        const audioMetrics = audio.getDiagnostics();
+        host.dataset["audioVoices"] = String(audioMetrics.activeVoices);
+        host.dataset["audioNodes"] = String(audioMetrics.nodeCount);
+        host.dataset["audioTotalNodes"] = String(audioMetrics.totalNodeCount);
+        host.dataset["audioState"] = audioMetrics.contextState;
+        host.dataset["audioListeners"] = String(audioMetrics.listenerCount);
+        lastLifeMetricsAt = renderedAt;
+      }
     }
   }
 

@@ -1,6 +1,9 @@
 import * as THREE from "three";
 import type { FeatureSelection } from "@/world/featureSelection";
 
+/** Rendered merged meshes stay on layer 0; per-feature pick proxies use this layer. */
+export const FEATURE_PICK_LAYER = 1;
+
 export interface PickableMesh extends THREE.Object3D {
   userData: THREE.Object3D["userData"] & {
     featureId?: string;
@@ -16,9 +19,12 @@ export function pickFeature(
   root: THREE.Object3D,
   hiddenLayers: ReadonlySet<string> = new Set(),
 ): FeatureSelection | null {
+  raycaster.layers.enable(0);
+  raycaster.layers.enable(FEATURE_PICK_LAYER);
   raycaster.setFromCamera(pointerNdc, camera);
   const hits = raycaster.intersectObject(root, true);
   for (const hit of hits) {
+    if (hit.object.userData["mergedStatic"]) continue;
     let current: THREE.Object3D | null = hit.object;
     let hidden = false;
     let candidate: FeatureSelection | null = null;
