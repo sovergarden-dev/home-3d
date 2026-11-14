@@ -327,6 +327,152 @@ const SYNTHETIC: Provenance = { source: "synthetic", quality: "synthetic" };
 interface Candidate<T> {
   item: T;
   priority: number;
+  clusterKey?: string | undefined;
+}
+
+const INSTANCE_CLEARANCE = 1.0;
+
+class ClearanceGrid {
+  private cells = new Map<string, Position2[]>();
+  private cellSize: number;
+
+  constructor(cellSize = 2.0) {
+    this.cellSize = cellSize;
+  }
+
+  insert(p: Position2) {
+    const key = `${Math.floor(p[0] / this.cellSize)}:${Math.floor(p[1] / this.cellSize)}`;
+    const list = this.cells.get(key);
+    if (list) list.push(p);
+    else this.cells.set(key, [p]);
+  }
+
+  hasConflict(p: Position2, minDistance = INSTANCE_CLEARANCE): boolean {
+    const cx = Math.floor(p[0] / this.cellSize);
+    const cz = Math.floor(p[1] / this.cellSize);
+    const minSq = minDistance * minDistance;
+    for (let dx = -1; dx <= 1; dx++) {
+      for (let dz = -1; dz <= 1; dz++) {
+        const list = this.cells.get(`${cx + dx}:${cz + dz}`);
+        if (!list) continue;
+        for (const other of list) {
+          const ddx = p[0] - other[0];
+          const ddz = p[1] - other[1];
+          if (ddx * ddx + ddz * ddz < minSq) return true;
+        }
+      }
+    }
+    return false;
+  }
+}
+
+class PropClearanceGrid {
+  private cells = new Map<string, Array<{ p: Position2; clusterKey?: string | undefined }>>();
+  private cellSize: number;
+
+  constructor(cellSize = 2.0) {
+    this.cellSize = cellSize;
+  }
+
+  insert(p: Position2, clusterKey?: string | undefined) {
+    const key = `${Math.floor(p[0] / this.cellSize)}:${Math.floor(p[1] / this.cellSize)}`;
+    const list = this.cells.get(key);
+    const entry: { p: Position2; clusterKey?: string | undefined } = { p, clusterKey };
+    if (list) list.push(entry);
+    else this.cells.set(key, [entry]);
+  }
+
+  hasConflict(
+    p: Position2,
+    clusterKey?: string | undefined,
+    minDistance = INSTANCE_CLEARANCE,
+  ): boolean {
+    const cx = Math.floor(p[0] / this.cellSize);
+    const cz = Math.floor(p[1] / this.cellSize);
+    const minSq = minDistance * minDistance;
+    for (let dx = -1; dx <= 1; dx++) {
+      for (let dz = -1; dz <= 1; dz++) {
+        const list = this.cells.get(`${cx + dx}:${cz + dz}`);
+        if (!list) continue;
+        for (const other of list) {
+          if (clusterKey && other.clusterKey && clusterKey === other.clusterKey) {
+            continue;
+          }
+          const ddx = p[0] - other.p[0];
+          const ddz = p[1] - other.p[1];
+          if (ddx * ddx + ddz * ddz < minSq) return true;
+        }
+      }
+    }
+    return false;
+  }
+}
+
+function filterTreeClearance(
+  candidates: Candidate<PlannedTree>[],
+  osmProps: readonly Position2[] = [],
+): Candidate<PlannedTree>[] {
+  const osmTrees = candidates.filter((c) => c.item.origin === "osm");
+  const proceduralTrees = candidates
+    .filter((c) => c.item.origin !== "osm")
+    .sort((a, b) => a.priority - b.priority || a.item.localId.localeCompare(b.item.localId));
+
+  const grid = new ClearanceGrid(2.0);
+  const accepted: Candidate<PlannedTree>[] = [];
+
+  // Seed authoritative OSM facts first so procedural trees yield to real-world OSM items
+  for (const propPos of osmProps) {
+    grid.insert(propPos);
+  }
+  for (const osm of osmTrees) {
+    accepted.push(osm);
+    grid.insert(osm.item.position);
+  }
+
+  for (const candidate of proceduralTrees) {
+    if (!grid.hasConflict(candidate.item.position, INSTANCE_CLEARANCE)) {
+      accepted.push(candidate);
+      grid.insert(candidate.item.position);
+    }
+  }
+  return accepted;
+}
+
+function filterPropClearance(
+  candidates: Candidate<PlannedProp>[],
+  acceptedTrees: Candidate<PlannedTree>[],
+): Candidate<PlannedProp>[] {
+  const osmProps = candidates.filter((c) => c.item.origin === "osm");
+  const proceduralProps = candidates
+    .filter((c) => c.item.origin !== "osm")
+    .sort((a, b) => a.priority - b.priority || a.item.localId.localeCompare(b.item.localId));
+
+  const treeGrid = new ClearanceGrid(2.0);
+  for (const tree of acceptedTrees) {
+    treeGrid.insert(tree.item.position);
+  }
+
+  const propGrid = new PropClearanceGrid(2.0);
+  const accepted: Candidate<PlannedProp>[] = [];
+
+  // Seed all OSM facts first: OSM facts are authoritative and never yielded
+  for (const osm of osmProps) {
+    accepted.push(osm);
+    propGrid.insert(osm.item.position, osm.clusterKey);
+  }
+
+  for (const candidate of proceduralProps) {
+    // Props yield to all accepted trees (trees win over bikes/props)
+    if (treeGrid.hasConflict(candidate.item.position, INSTANCE_CLEARANCE)) {
+      continue;
+    }
+    // Props check against other accepted props (allowing motorbike cluster rows)
+    if (!propGrid.hasConflict(candidate.item.position, candidate.clusterKey, INSTANCE_CLEARANCE)) {
+      accepted.push(candidate);
+      propGrid.insert(candidate.item.position, candidate.clusterKey);
+    }
+  }
+  return accepted;
 }
 
 function takeTier<T extends { localId: string }>(candidates: Candidate<T>[], cap: number): T[] {
@@ -484,6 +630,7 @@ export function planSurroundings(
             const wobble = (hash01(`${bikeSlot.key}|wobble`) - 0.5) * 0.35;
             props.push({
               priority: priority + bike * 1e-6,
+              clusterKey: slot.key,
               item: {
                 localId: generatedId("bike", bikeSlot.key),
                 position: bikeSlot.position,
@@ -522,11 +669,14 @@ export function planSurroundings(
     }
   }
 
+  const osmPropPositions = props.filter((c) => c.item.origin === "osm").map((c) => c.item.position);
+  const validTrees = filterTreeClearance(trees, osmPropPositions);
+  const validProps = filterPropClearance(props, validTrees);
   const caps = SURROUNDINGS_TIER_CAPS[tier];
   return {
     tier,
     seed,
-    trees: takeTier(trees, caps.trees),
-    props: takeTier(props, caps.props),
+    trees: takeTier(validTrees, caps.trees),
+    props: takeTier(validProps, caps.props),
   };
 }

@@ -24,18 +24,18 @@ const sha = (plan: SurroundingsPlan) =>
 /** Per-tier goldens; regenerating them is an explicit, reviewed act (docs/SURROUNDINGS_GOLDEN.md). */
 const GOLDEN: Record<DetailTier, { sha256: string; trees: number; props: number }> = {
   low: {
-    sha256: "d8d3e66ee15ff1c902e027c01214afc44bc31307b087313bdd6405a0cf7e396f",
+    sha256: "b632057c20115be3e9017f31e147bf4c2c1d7cb0b883b4a129e735baefd9541a",
     trees: 150,
     props: 80,
   },
   mid: {
-    sha256: "6e7a33f75d5d6223ba95a6bd7dc2e34bb99562ab1c7826d53f2858999e0f641f",
-    trees: 353,
+    sha256: "b3e7e0ad506a51e8479e6bab463a701fe6a34f628ba4b193d9419c9b2d8985b9",
+    trees: 352,
     props: 200,
   },
   high: {
-    sha256: "c8cc7c3a33e62c1db56d929618c97f8852daaab9759a21c6d684bf3adf132613",
-    trees: 353,
+    sha256: "eee40bacc5aae989ddccb942b6b633e8a161b0b506b9cb196ec8845b6b084055",
+    trees: 352,
     props: 400,
   },
 };
@@ -186,6 +186,73 @@ describe("planSurroundings density and placement", () => {
     for (const kind of ["electric_pole", "street_light", "parked_motorbike", "vendor_cart"])
       expect(kinds.has(kind as never)).toBe(true);
   });
+  it("enforces at least 1.0 m clearance between all trees and props across all tiers", () => {
+    for (const tier of tiers) {
+      const p = planSurroundings(HOME_NEIGHBORHOOD, layer, tier);
+      const violations: string[] = [];
+
+      // Check tree-tree pairs (≥ 1.0 m, exempt if both are sourced OSM facts)
+      for (let i = 0; i < p.trees.length; i++) {
+        for (let j = i + 1; j < p.trees.length; j++) {
+          const a = p.trees[i]!;
+          const b = p.trees[j]!;
+          if (a.origin === "osm" && b.origin === "osm") continue;
+          const d = Math.hypot(a.position[0] - b.position[0], a.position[1] - b.position[1]);
+          if (d < 1.0) {
+            violations.push(`tree-tree ${a.localId}/${b.localId} d=${d.toFixed(3)}`);
+          }
+        }
+      }
+
+      // Check tree-prop pairs (≥ 1.0 m, exempt if both are sourced OSM facts)
+      for (const tree of p.trees) {
+        for (const prop of p.props) {
+          if (tree.origin === "osm" && prop.origin === "osm") continue;
+          const d = Math.hypot(
+            tree.position[0] - prop.position[0],
+            tree.position[1] - prop.position[1],
+          );
+          if (d < 1.0) {
+            violations.push(
+              `tree-prop ${tree.localId}/${prop.localId} (${prop.kind}) d=${d.toFixed(3)}`,
+            );
+          }
+        }
+      }
+
+      // Check prop-prop pairs:
+      // Non-motorbike props (lights, poles, vendor carts) or cross-kind pairs must maintain >= 1.0 m clearance.
+      // Motorbikes within an intended parking row along the curb have nominal spacing 0.85 m;
+      // any motorbike pair with d < 1.0 m must be in the same row (sharing the same heading within wobble <= 0.36 rad,
+      // and maintaining d >= 0.83 m considering float/round2 coordinate quantization).
+      for (let i = 0; i < p.props.length; i++) {
+        for (let j = i + 1; j < p.props.length; j++) {
+          const a = p.props[i]!;
+          const b = p.props[j]!;
+          if (a.origin === "osm" && b.origin === "osm") continue;
+          const d = Math.hypot(a.position[0] - b.position[0], a.position[1] - b.position[1]);
+          if (a.kind !== "parked_motorbike" || b.kind !== "parked_motorbike") {
+            if (d < 1.0) {
+              violations.push(
+                `prop-prop ${a.localId}(${a.kind})/${b.localId}(${b.kind}) d=${d.toFixed(3)}`,
+              );
+            }
+          } else if (d < 1.0) {
+            const angleDiff = Math.abs(a.heading - b.heading);
+            const wrapped = Math.min(angleDiff, Math.PI * 2 - angleDiff);
+            if (wrapped > 0.36 || d < 0.83) {
+              violations.push(
+                `bike-row ${a.localId}/${b.localId} d=${d.toFixed(3)} angleDiff=${wrapped.toFixed(3)}`,
+              );
+            }
+          }
+        }
+      }
+
+      expect(violations, `Clearance violations in tier ${tier}`).toEqual([]);
+    }
+  }, 15000);
+
   it("labels only sourced OSM point facts as osm; every generated item is estimated_procedural", () => {
     const factIds = new Set(layer.pointFacts.map((fact) => fact.localId));
     const items = [...plan.trees, ...plan.props];
