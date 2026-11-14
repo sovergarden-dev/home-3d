@@ -1,0 +1,218 @@
+{
+  "schemaVersion": "1.0",
+  "layerRevision": "osm-surroundings-2026-11-13",
+  "basePackageSha256": "cd4f0146fd3399d0995111bd19a46751c86e0347a56d3e2a770a4832852a7ce3",
+  "verificationStatus": "REAL_WORLD_NOT_VERIFIED",
+  "licence": "ODbL-1.0",
+  "attribution": [
+    "© OpenStreetMap contributors"
+  ],
+  "sources": [
+    {
+      "namespace": "osm-300m-enrichment",
+      "kind": "osm",
+      "revision": "overpass-osm-base-2026-11-13T12:02:48Z",
+      "licence": "ODbL-1.0",
+      "observedAt": "2026-11-13T11:56:07Z"
+    }
+  ],
+  "snapshot": {
+    "source": "OpenStreetMap via Overpass API",
+    "endpoint": "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+    "fetchedAt": "2026-11-13T11:56:07Z",
+    "osmBaseTimestamp": "2026-11-13T12:02:48Z",
+    "queryTemplate": "[out:json][timeout:90][bbox:{{bbox}}];\n(\n  node[\"natural\"=\"tree\"];\n  node[\"power\"=\"pole\"];\n  node[\"highway\"=\"street_lamp\"];\n  node[\"amenity\"=\"bench\"];\n);\nout body qt;\n(\n  way[\"building\"][\"building:levels\"];\n  way[\"building\"][\"roof:shape\"];\n);\nout tags qt;",
+    "querySha256": "b041aab2515efe54effd7c38e46186465bfdcfa1aa44ce26d68fe7c01082fae2",
+    "bbox": {
+      "frame": "ENU_METRES_FROM_GEOREF_ORIGIN",
+      "originRef": "src/world/data/homeNeighborhood.georef.json#origin",
+      "halfSizeMetres": 300
+    },
+    "tagAllowlist": [
+      "amenity",
+      "building",
+      "building:levels",
+      "height",
+      "highway",
+      "leaf_type",
+      "natural",
+      "power",
+      "roof:shape"
+    ],
+    "attribution": "© OpenStreetMap contributors. Data available under the Open Database License (ODbL 1.0), https://www.openstreetmap.org/copyright",
+    "generatedBy": "scripts/osm-surroundings-snapshot.ts"
+  },
+  "buildingFacts": [
+    {
+      "buildingId": "building-osm-300m-primary-way-1518080726-f6d0a6b41d",
+      "levels": {
+        "value": 2,
+        "provenance": {
+          "origin": "osm",
+          "sourceNamespace": "osm-300m-enrichment",
+          "estimated": false
+        }
+      }
+    },
+    {
+      "buildingId": "building-osm-300m-primary-way-1518080727-a7383341f7",
+      "levels": {
+        "value": 2,
+        "provenance": {
+          "origin": "osm",
+          "sourceNamespace": "osm-300m-enrichment",
+          "estimated": false
+        }
+      }
+    }
+  ],
+  "pointFacts": [
+    {
+      "localId": "light-osm-node-12717417651",
+      "kind": "street_light",
+      "position": [
+        -176.71,
+        22.42
+      ],
+      "provenance": {
+        "origin": "osm",
+        "sourceNamespace": "osm-300m-enrichment",
+        "estimated": false
+      }
+    },
+    {
+      "localId": "pole-osm-node-12716038458",
+      "kind": "electric_pole",
+      "position": [
+        -256.4,
+        -226.13
+      ],
+      "provenance": {
+        "origin": "osm",
+        "sourceNamespace": "osm-300m-enrichment",
+        "estimated": false
+      }
+    },
+    {
+      "localId": "pole-osm-node-12716038459",
+      "kind": "electric_pole",
+      "position": [
+        -181.46,
+        -240.01
+      ],
+      "provenance": {
+        "origin": "osm",
+        "sourceNamespace": "osm-300m-enrichment",
+        "estimated": false
+      }
+    },
+    {
+      "localId": "pole-osm-node-12716038460",
+      "kind": "electric_pole",
+      "position": [
+        -52.96,
+        -263.81
+      ],
+      "provenance": {
+        "origin": "osm",
+        "sourceNamespace": "osm-300m-enrichment",
+        "estimated": false
+      }
+    },
+    {
+      "localId": "pole-osm-node-12716038461",
+      "kind": "electric_pole",
+      "position": [
+        -116.95,
+        -251.95
+      ],
+      "provenance": {
+        "origin": "osm",
+        "sourceNamespace": "osm-300m-enrichment",
+        "estimated": false
+      }
+    },
+    {
+      "localId": "pole-osm-node-12716038462",
+      "kind": "electric_pole",
+      "position": [
+        3.59,
+        -272.51
+      ],
+      "provenance": {
+        "origin": "osm",
+        "sourceNamespace": "osm-300m-enrichment",
+        "estimated": false
+      }
+    },
+    {
+      "localId": "pole-osm-node-12716038463",
+      "kind": "electric_pole",
+      "position": [
+        84.52,
+        -288.72
+      ],
+      "provenance": {
+        "origin": "osm",
+        "sourceNamespace": "osm-300m-enrichment",
+        "estimated": false
+      }
+    },
+    {
+      "localId": "tree-osm-node-13715535095",
+      "kind": "tree",
+      "position": [
+        190.22,
+        -85.46
+      ],
+      "provenance": {
+        "origin": "osm",
+        "sourceNamespace": "osm-300m-enrichment",
+        "estimated": false
+      }
+    }
+  ],
+  "generator": {
+    "seed": 20261113,
+    "homeExclusionRadius": 12,
+    "homeDominanceRadius": 30,
+    "homeMaxNeighbourLevels": 3,
+    "density": {
+      "denseRadius": 150,
+      "midRadius": 300,
+      "midFactor": 0.4,
+      "farFactor": 0.12
+    },
+    "streetTreeSpacing": {
+      "primary": 14,
+      "secondary": 16,
+      "residential": 20,
+      "alley": 0,
+      "service": 0,
+      "unknown": 0
+    },
+    "poleSpacing": 35,
+    "vendorCartsPer100m": 0.8,
+    "parkedMotorbikesPer100m": 6,
+    "massing": {
+      "levelsWeights": [
+        3,
+        4,
+        2,
+        1
+      ],
+      "roofWeights": {
+        "corrugated": 4,
+        "flat": 3,
+        "terrace_tum": 3
+      },
+      "balconyProbability": 0.6,
+      "shopProbabilityOnPrimary": 0.5,
+      "floorHeight": 3.3
+    },
+    "life": {
+      "motorbikeToCarRatio": 2.5,
+      "pedestriansPer100m": 3
+    }
+  }
+}

@@ -1,0 +1,489 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "home-3d/homeNeighborhood.enrichment.schema.json",
+  "title": "Home neighbourhood surroundings enrichment layer (PR-2)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "layerRevision",
+    "basePackageSha256",
+    "verificationStatus",
+    "licence",
+    "attribution",
+    "sources",
+    "snapshot",
+    "buildingFacts",
+    "pointFacts",
+    "generator"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "layerRevision": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9.-]{2,63}$"
+    },
+    "basePackageSha256": {
+      "const": "cd4f0146fd3399d0995111bd19a46751c86e0347a56d3e2a770a4832852a7ce3"
+    },
+    "verificationStatus": {
+      "const": "REAL_WORLD_NOT_VERIFIED"
+    },
+    "licence": {
+      "const": "ODbL-1.0"
+    },
+    "attribution": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "maxLength": 200
+      },
+      "contains": {
+        "const": "© OpenStreetMap contributors"
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["namespace", "kind", "revision", "licence"],
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{2,63}$"
+          },
+          "kind": {
+            "enum": ["osm", "mapillary", "owner_observation"]
+          },
+          "revision": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "licence": {
+            "const": "ODbL-1.0"
+          },
+          "observedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "endpoint",
+        "fetchedAt",
+        "osmBaseTimestamp",
+        "queryTemplate",
+        "querySha256",
+        "bbox",
+        "tagAllowlist",
+        "attribution",
+        "generatedBy"
+      ],
+      "properties": {
+        "source": {
+          "const": "OpenStreetMap via Overpass API"
+        },
+        "endpoint": {
+          "type": "string",
+          "pattern": "^https://"
+        },
+        "fetchedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "osmBaseTimestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "queryTemplate": {
+          "type": "string",
+          "pattern": "\\{\\{bbox\\}\\}",
+          "description": "Exact Overpass QL with the bbox literal replaced by {{bbox}}; no coordinates are stored."
+        },
+        "querySha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "sha256 of the exact request query that was sent."
+        },
+        "bbox": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["frame", "originRef", "halfSizeMetres"],
+          "properties": {
+            "frame": {
+              "const": "ENU_METRES_FROM_GEOREF_ORIGIN"
+            },
+            "originRef": {
+              "const": "src/world/data/homeNeighborhood.georef.json#origin"
+            },
+            "halfSizeMetres": {
+              "type": "number",
+              "minimum": 10,
+              "maximum": 300
+            }
+          }
+        },
+        "tagAllowlist": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "attribution": {
+          "type": "string",
+          "pattern": "© OpenStreetMap contributors"
+        },
+        "generatedBy": {
+          "const": "scripts/osm-surroundings-snapshot.ts"
+        }
+      }
+    },
+    "buildingFacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["buildingId"],
+        "properties": {
+          "buildingId": {
+            "type": "string",
+            "pattern": "^building-[a-z0-9-]+$"
+          },
+          "levels": {
+            "$ref": "#/$defs/intValue"
+          },
+          "roofType": {
+            "$ref": "#/$defs/roofValue"
+          }
+        }
+      }
+    },
+    "pointFacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["localId", "kind", "position", "provenance"],
+        "properties": {
+          "localId": {
+            "type": "string",
+            "pattern": "^(tree|pole|light|bench)-[a-z0-9-]+$"
+          },
+          "kind": {
+            "enum": ["tree", "electric_pole", "street_light", "bench"]
+          },
+          "position": {
+            "$ref": "#/$defs/position2"
+          },
+          "height": {
+            "$ref": "#/$defs/heightValue"
+          },
+          "archetype": {
+            "enum": ["broadleaf", "round", "conifer", "palm", "flowering"]
+          },
+          "provenance": {
+            "$ref": "#/$defs/sourcedProvenance"
+          }
+        }
+      }
+    },
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "seed",
+        "homeExclusionRadius",
+        "homeDominanceRadius",
+        "homeMaxNeighbourLevels",
+        "density",
+        "streetTreeSpacing",
+        "poleSpacing",
+        "vendorCartsPer100m",
+        "parkedMotorbikesPer100m",
+        "massing"
+      ],
+      "properties": {
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "homeExclusionRadius": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "homeDominanceRadius": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 200
+        },
+        "homeMaxNeighbourLevels": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "streetTreeSpacing": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^(primary|secondary|residential|alley|service|unknown)$": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 200
+            }
+          }
+        },
+        "poleSpacing": {
+          "type": "number",
+          "minimum": 5,
+          "maximum": 200
+        },
+        "vendorCartsPer100m": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "parkedMotorbikesPer100m": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 40
+        },
+        "massing": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "levelsWeights",
+            "roofWeights",
+            "balconyProbability",
+            "shopProbabilityOnPrimary",
+            "floorHeight"
+          ],
+          "properties": {
+            "levelsWeights": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": 0
+              },
+              "minItems": 4,
+              "maxItems": 4
+            },
+            "roofWeights": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "corrugated": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "flat": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "terrace_tum": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              }
+            },
+            "balconyProbability": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "shopProbabilityOnPrimary": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "floorHeight": {
+              "type": "number",
+              "minimum": 2.5,
+              "maximum": 5
+            }
+          },
+          "description": "Reserved for PR-3 estimated massing; not read by PR-2."
+        },
+        "life": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "motorbikeToCarRatio": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 20
+            },
+            "pedestriansPer100m": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 30
+            }
+          },
+          "description": "Reserved for PR-4 life density; not read by PR-2."
+        },
+        "density": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["denseRadius", "midRadius", "midFactor", "farFactor"],
+          "properties": {
+            "denseRadius": {
+              "type": "number",
+              "minimum": 10,
+              "maximum": 1000
+            },
+            "midRadius": {
+              "type": "number",
+              "minimum": 10,
+              "maximum": 2000
+            },
+            "midFactor": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "farFactor": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "position2": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "number",
+          "minimum": -2000,
+          "maximum": 2000
+        },
+        {
+          "type": "number",
+          "minimum": -2000,
+          "maximum": 2000
+        }
+      ],
+      "items": false,
+      "minItems": 2
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["origin", "estimated"],
+      "properties": {
+        "origin": {
+          "enum": ["osm", "owner_observation", "estimated_procedural"]
+        },
+        "sourceNamespace": {
+          "type": "string"
+        },
+        "estimated": {
+          "type": "boolean"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "origin": {
+                "const": "estimated_procedural"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "estimated": {
+                "const": true
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "origin": {
+                "enum": ["osm", "owner_observation"]
+              }
+            }
+          },
+          "then": {
+            "required": ["sourceNamespace"]
+          }
+        }
+      ]
+    },
+    "sourcedProvenance": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/provenance"
+        },
+        {
+          "properties": {
+            "origin": {
+              "enum": ["osm", "owner_observation"]
+            },
+            "estimated": {
+              "const": false
+            }
+          }
+        }
+      ]
+    },
+    "intValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "provenance"],
+      "properties": {
+        "value": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 30
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
+      }
+    },
+    "heightValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "provenance"],
+      "properties": {
+        "value": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 40
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
+      }
+    },
+    "roofValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "provenance"],
+      "properties": {
+        "value": {
+          "enum": ["flat", "terrace_tum", "gabled", "hipped", "corrugated"]
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
+      }
+    }
+  }
+}
