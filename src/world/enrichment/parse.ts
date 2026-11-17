@@ -246,7 +246,42 @@ function validate(value: unknown, base: EnrichmentBase): EnrichmentLayer {
   finite(generator["poleSpacing"], 5, 200, "GENERATOR_POLE_SPACING");
   finite(generator["vendorCartsPer100m"], 0, 10, "GENERATOR_CARTS");
   finite(generator["parkedMotorbikesPer100m"], 0, 40, "GENERATOR_MOTORBIKES");
-  if (!isObject(generator["massing"])) fail("GENERATOR_MASSING");
+  const massing = exactKeys(
+    generator["massing"],
+    [
+      "levelsWeights",
+      "roofWeights",
+      "balconyProbability",
+      "shopProbabilityOnPrimary",
+      "floorHeight",
+    ],
+    [],
+    "GENERATOR_MASSING",
+  );
+  const levelsWeights = massing["levelsWeights"];
+  if (!Array.isArray(levelsWeights) || levelsWeights.length !== 4)
+    return fail("GENERATOR_MASSING_LEVELS_WEIGHTS");
+  let levelsWeightTotal = 0;
+  for (const weight of levelsWeights) {
+    levelsWeightTotal += finite(weight, 0, 1000, "GENERATOR_MASSING_LEVELS_WEIGHTS");
+  }
+  if (levelsWeightTotal <= 0) fail("GENERATOR_MASSING_LEVELS_WEIGHTS");
+  const roofWeights = exactKeys(
+    massing["roofWeights"],
+    [],
+    ["corrugated", "flat", "terrace_tum"],
+    "GENERATOR_MASSING_ROOF_WEIGHTS",
+  );
+  let roofWeightTotal = 0;
+  for (const key of ["corrugated", "flat", "terrace_tum"] as const) {
+    if (roofWeights[key] !== undefined) {
+      roofWeightTotal += finite(roofWeights[key], 0, 1000, "GENERATOR_MASSING_ROOF_WEIGHTS");
+    }
+  }
+  if (roofWeightTotal <= 0) fail("GENERATOR_MASSING_ROOF_WEIGHTS");
+  finite(massing["balconyProbability"], 0, 1, "GENERATOR_MASSING_PROBABILITY");
+  finite(massing["shopProbabilityOnPrimary"], 0, 1, "GENERATOR_MASSING_PROBABILITY");
+  finite(massing["floorHeight"], 2.5, 5, "GENERATOR_MASSING_FLOOR_HEIGHT");
   if (generator["life"] !== undefined && !isObject(generator["life"])) fail("GENERATOR_LIFE");
   return value as EnrichmentLayer;
 }
