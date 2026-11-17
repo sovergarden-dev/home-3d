@@ -1,7 +1,12 @@
 import * as THREE from "three";
 import type { WorldData } from "@/world/schema";
 import { useAppStore } from "@/state/appStore";
-import { createLifeSimulation, type LifeSettings } from "./simulation";
+import {
+  createLifeSimulation,
+  type LifeGenerationProfile,
+  type LifeSettings,
+  type LifeTier,
+} from "./simulation";
 import { createLifeRenderer } from "./rendering";
 import { createPovController } from "./pov";
 import type { CollisionBox } from "./collision";
@@ -13,13 +18,20 @@ export function createLifeRuntime(options: {
   camera: THREE.PerspectiveCamera;
   canvas: HTMLCanvasElement;
   target: THREE.Vector3;
-  reducedMotion: boolean;
+  reducedMotion: boolean | (() => boolean);
+  tier?: LifeTier | undefined;
+  profile?: LifeGenerationProfile | undefined;
   invalidate: () => void;
 }) {
-  const simulation = createLifeSimulation(options.world, 90421);
+  const simulation = createLifeSimulation(options.world, 90421, options.profile);
   const rendering = createLifeRenderer(simulation);
   let disposed = false;
   let transitioning = false;
+  let currentTier: LifeTier = options.tier ?? "mid";
+  let manualReducedMotion =
+    typeof options.reducedMotion === "function" ? options.reducedMotion() : options.reducedMotion;
+  const isReducedMotion = () =>
+    typeof options.reducedMotion === "function" ? options.reducedMotion() : manualReducedMotion;
   const obstaclePool: CollisionBox[] = Array.from({ length: 2000 }, () => ({
     minX: 0,
     maxX: 0,
@@ -33,7 +45,7 @@ export function createLifeRuntime(options: {
     canvas: options.canvas,
     world: options.world,
     orbitTarget: options.target,
-    reducedMotion: options.reducedMotion,
+    reducedMotion: isReducedMotion(),
     onInvalidate: options.invalidate,
     onStateChange(mode) {
       if (
@@ -59,9 +71,9 @@ export function createLifeRuntime(options: {
   });
   function configure() {
     const state = useAppStore.getState();
-    settings.speed = 1;
+    settings.speed = isReducedMotion() ? 0 : state.timeSpeed;
     settings.visible = state.lifeEnabled && state.viewMode !== "topdown" && !document.hidden;
-    settings.tier = "mid";
+    settings.tier = currentTier;
     settings.hour = state.timeOfDayMinutes / 60;
     settings.weather =
       state.realWeatherEnabled && state.realWeatherKind ? state.realWeatherKind : state.weather;
@@ -77,6 +89,14 @@ export function createLifeRuntime(options: {
     simulation,
     pov,
     configure,
+    setTier(tier: LifeTier) {
+      currentTier = tier;
+      configure();
+    },
+    setReducedMotion(next: boolean) {
+      manualReducedMotion = next;
+      configure();
+    },
     setMode(mode: "walk" | "ride" | null) {
       transitioning = true;
       pov.setMode(mode);
@@ -120,8 +140,8 @@ export function createLifeRuntime(options: {
         }
       obstacles.length = count;
       const state = useAppStore.getState();
-      pov.pause(state.viewMode === "ride" && (state.ridePaused || settings.speed === 0));
-      pov.update(state.viewMode === "ride" ? dt * (settings.speed ?? 0) : dt);
+      pov.pause(state.viewMode === "ride" && (state.ridePaused || state.timeSpeed === 0));
+      pov.update(state.viewMode === "ride" ? dt * state.timeSpeed : dt);
       const data = pov.diagnostics();
       if (endedStatus.rideEnded !== data.rideEnded) {
         endedStatus.rideEnded = data.rideEnded;
@@ -132,7 +152,11 @@ export function createLifeRuntime(options: {
       const state = useAppStore.getState();
       return (
         !document.hidden &&
-        ((state.lifeEnabled && state.viewMode !== "topdown") ||
+        ((!isReducedMotion() &&
+          state.timeSpeed !== 0 &&
+          state.lifeEnabled &&
+          state.lifeDensity > 0 &&
+          state.viewMode !== "topdown") ||
           ((state.viewMode === "walk" || state.viewMode === "ride") && pov.active()))
       );
     },

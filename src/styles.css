@@ -152,6 +152,9 @@
     .h6-top-info {
       max-width: calc(100vw - 11rem);
     }
+    .h6-map-controls-anchor {
+      top: calc(50% + 2.25rem);
+    }
     .plan-scale-bar {
       left: auto;
       right: max(1rem, env(safe-area-inset-right));
@@ -233,7 +236,8 @@
       grid-template-columns: repeat(2, 44px);
     }
 
-    .h6-view-actions {
+    .h6-view-actions,
+    .h6-life-actions {
       display: grid;
       grid-template-columns: repeat(1, 44px);
     }

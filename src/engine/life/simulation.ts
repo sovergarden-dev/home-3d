@@ -53,6 +53,10 @@ export interface LifeDiagnostics {
   fps: number;
   edgeTransitions?: number;
 }
+export interface LifeGenerationProfile {
+  motorbikeToCarRatio: number;
+  pedestriansPer100m: number;
+}
 export interface LifeSimulation {
   readonly graph: LifeGraph;
   readonly agents: LifeAgent[];
@@ -63,6 +67,7 @@ export interface LifeSimulation {
 }
 const caps: Record<LifeTier, number> = { low: 60, mid: 200, high: 800, ultra: 2000 };
 const fixed = 1 / 30;
+const BASE_NON_PEDESTRIAN_PER_100M = 5.5;
 const clamp = (n: number, a: number, b: number) => Math.max(a, Math.min(b, n));
 const isWalker = (kind: LifeKind) =>
   kind === "pedestrian" ||
@@ -82,7 +87,7 @@ export const lifeRadius = (kind: LifeKind) =>
         : kind === "vendor"
           ? 0.75
           : 0.34;
-const kinds: LifeKind[] = [
+const defaultKinds: LifeKind[] = [
   "motorbike",
   "motorbike",
   "motorbike",
@@ -100,6 +105,60 @@ const kinds: LifeKind[] = [
   "cat",
   "chicken",
 ];
+
+function buildLifeRoster(profile?: LifeGenerationProfile | undefined): {
+  roster: LifeKind[];
+  hasPedestrians: boolean;
+  pedestriansPer100m: number | null;
+} {
+  if (!profile) {
+    return { roster: defaultKinds, hasPedestrians: true, pedestriansPer100m: null };
+  }
+  const ratio = clamp(
+    Number.isFinite(profile.motorbikeToCarRatio) ? profile.motorbikeToCarRatio : 2.5,
+    1,
+    20,
+  );
+  const pedsPer100m = clamp(
+    Number.isFinite(profile.pedestriansPer100m) ? profile.pedestriansPer100m : 3,
+    0,
+    30,
+  );
+  const carSlots = 2;
+  const motorbikeSlots = Math.max(2, Math.round(carSlots * ratio));
+  const supportKinds: LifeKind[] = [
+    "bus",
+    "tricycle",
+    "bicycle",
+    "vendor",
+    "dog",
+    "cat",
+    "chicken",
+  ];
+  const nonPedSlots = motorbikeSlots + carSlots + supportKinds.length;
+  const pedSlots =
+    pedsPer100m <= 0
+      ? 0
+      : Math.max(1, Math.round((nonPedSlots * pedsPer100m) / BASE_NON_PEDESTRIAN_PER_100M));
+  const groups: Array<{ kind: LifeKind; count: number }> = [
+    { kind: "motorbike", count: motorbikeSlots },
+    { kind: "car", count: carSlots },
+    ...(pedSlots > 0 ? [{ kind: "pedestrian" as const, count: pedSlots }] : []),
+    ...supportKinds.map((kind) => ({ kind, count: 1 })),
+  ];
+  const slots: Array<{ kind: LifeKind; position: number; order: number }> = [];
+  groups.forEach(({ kind, count }, order) => {
+    for (let slot = 0; slot < count; slot++) {
+      slots.push({ kind, position: (slot + 0.5) / count, order });
+    }
+  });
+  slots.sort((a, b) => a.position - b.position || a.order - b.order);
+  return {
+    roster: slots.map((slot) => slot.kind),
+    hasPedestrians: pedSlots > 0,
+    pedestriansPer100m: pedsPer100m,
+  };
+}
 function inRing(x: number, z: number, ring: readonly (readonly number[])[]) {
   let inside = false;
   for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
@@ -171,7 +230,12 @@ export function isBoxDisjoint(
   return false;
 }
 
-export function createLifeSimulation(world: WorldData, seed = 1): LifeSimulation {
+export function createLifeSimulation(
+  world: WorldData,
+  seed = 1,
+  profile?: LifeGenerationProfile | undefined,
+): LifeSimulation {
+  const { roster, hasPedestrians, pedestriansPer100m } = buildLifeRoster(profile);
   const graph = buildLifeGraph(world),
     agents: LifeAgent[] = [];
   const solids: SurfaceGeometry[] = [];
@@ -234,8 +298,12 @@ export function createLifeSimulation(world: WorldData, seed = 1): LifeSimulation
     clearances.set(key, safe);
     return safe;
   };
+  const precomputedKinds = new Set<LifeKind>([
+    ...roster,
+    hasPedestrians ? "pedestrian" : "bicycle",
+  ]);
   for (let i = 0; i < graph.edges.length; i++)
-    for (const kind of kinds) {
+    for (const kind of precomputedKinds) {
       suitable(i, kind, 1);
       suitable(i, kind, -1);
     }
@@ -328,10 +396,14 @@ export function createLifeSimulation(world: WorldData, seed = 1): LifeSimulation
     if (!graph.enabled || density === 0) return;
     let totalRoad = 0;
     for (const edge of graph.edges) totalRoad += edge.length;
-    const count = Math.min(caps[tier], Math.max(8, Math.round(totalRoad / 16)));
+    const rawTarget =
+      pedestriansPer100m === null
+        ? Math.round(totalRoad / 16)
+        : Math.round((totalRoad / 100) * (BASE_NON_PEDESTRIAN_PER_100M + pedestriansPer100m));
+    const count = Math.min(caps[tier], Math.max(8, rawTarget));
     for (let i = 0; i < count; i++) {
-      let kind = kinds[i % kinds.length]!;
-      if (tier === "low" && isAnimal(kind)) kind = "pedestrian";
+      let kind = roster[i % roster.length]!;
+      if (tier === "low" && isAnimal(kind)) kind = hasPedestrians ? "pedestrian" : "bicycle";
       const agent: LifeAgent = {
         id: i,
         kind,

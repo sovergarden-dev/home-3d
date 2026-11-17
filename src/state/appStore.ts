@@ -3,6 +3,7 @@ import { parseIsoDate } from "@/atmosphere/calendar";
 import { vietnamDateTime } from "@/atmosphere/clock";
 import { SITE_CONFIG } from "@/config/site";
 import { keepMoment, releaseMoment, clearMomentBlobs } from "@/memories/moments";
+import type { DetailTier } from "@/world/enrichment/schema";
 
 export type TimeSpeed = 0 | 1 | 4;
 export type Weather = "sunny" | "cloudy" | "rain" | "storm";
@@ -10,6 +11,20 @@ export type Festival = "normal" | "tet" | "midautumn" | "christmas" | "reunifica
 export type Season = "auto" | "dry" | "wet";
 export type ViewMode = "diorama" | "walk" | "topdown" | "real" | "ride";
 export type Language = "vi" | "en";
+export type SceneDetailPreference = "auto" | DetailTier;
+
+export function resolveSceneDetailTier(
+  preference: SceneDetailPreference,
+  maxTextureSize: number,
+  viewportWidth: number,
+): DetailTier {
+  if (preference !== "auto") return preference;
+  return maxTextureSize <= 4096 || viewportWidth < 768 ? "low" : "mid";
+}
+
+export function nextDetailTier(current: DetailTier): DetailTier {
+  return current === "low" ? "mid" : current === "mid" ? "high" : "low";
+}
 
 export interface PlanMeasurement {
   metresPerCssPixel: number;
@@ -36,6 +51,7 @@ export interface AppState {
   lifeEnabled: boolean;
   illustrativeDetails: boolean;
   lifeDensity: number;
+  detailTier: SceneDetailPreference;
   ridePaused: boolean;
   language: Language;
   loadingProgress: number;
@@ -70,6 +86,8 @@ export interface AppState {
   setLifeEnabled: (enabled: boolean) => void;
   setIllustrativeDetails: (enabled: boolean) => void;
   setLifeDensity: (density: number) => void;
+  setDetailTier: (tier: SceneDetailPreference) => void;
+  cycleDetailTier: (effectiveTier?: DetailTier) => void;
   setRidePaused: (paused: boolean) => void;
   toggleTrees: () => void;
   toggleLabels: () => void;
@@ -100,6 +118,7 @@ export const useAppStore = create<AppState>((set) => ({
   lifeEnabled: true,
   illustrativeDetails: true,
   lifeDensity: 1,
+  detailTier: "auto",
   ridePaused: false,
   language: "vi",
   loadingProgress: 0,
@@ -157,6 +176,11 @@ export const useAppStore = create<AppState>((set) => ({
   setIllustrativeDetails: (illustrativeDetails) => set({ illustrativeDetails }),
   setLifeDensity: (density) =>
     set({ lifeDensity: Math.max(0, Math.min(1, Number.isFinite(density) ? density : 0)) }),
+  setDetailTier: (detailTier) => set({ detailTier }),
+  cycleDetailTier: (effectiveTier = "mid") =>
+    set((s) => ({
+      detailTier: nextDetailTier(s.detailTier === "auto" ? effectiveTier : s.detailTier),
+    })),
   setRidePaused: (ridePaused) => set({ ridePaused }),
   toggleTrees: () => set((s) => ({ showTrees: !s.showTrees })),
   toggleLabels: () => set((s) => ({ showLabels: !s.showLabels })),
