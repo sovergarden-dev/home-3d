@@ -10,8 +10,9 @@ export const vi = {
   referencePoint: "Điểm tham chiếu",
   unmeasuredBoundary: "Ranh chưa đo",
   temporaryLotIllustration: "Lô trống · minh họa tạm · ranh chưa đo",
+  sceneSummary: "Đường, footprint OSM · khối nhà ước lượng, chưa đo.",
   sceneControls:
-    "Mặt bằng đường và công trình theo OpenStreetMap; chiều cao suy luận, ranh chưa khảo sát. Kéo để xoay, chụm để zoom. Phím mũi tên hoặc WASD; R về tâm nhà.",
+    "Mặt bằng đường và công trình theo OpenStreetMap; khối nhà quanh khu là ước lượng procedural, không phải số đo thực địa, ranh chưa khảo sát. Kéo để xoay, chụm để zoom. Phím mũi tên hoặc WASD; R về tâm nhà.",
   sceneHint: "Kéo để xoay · Chụm / cuộn để zoom",
   fallbackTitle: "Thiết bị chưa mở được 3D",
   fallbackBody:
@@ -170,6 +171,7 @@ export const vi = {
     heightSynthetic: "dữ liệu tổng hợp",
     heightUnknownNote:
       "Nguồn chưa có chiều cao hoặc số tầng; giữ footprint và không dựng khối cao.",
+    heightEstimatedProcedural: "Khối ước lượng (estimated_procedural · không phải số đo)",
     collapse: "Thu gọn bảng riêng",
     expand: "Mở bảng riêng",
     partsParentNote:

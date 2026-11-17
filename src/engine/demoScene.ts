@@ -12,8 +12,10 @@ import { getEffectiveSeason } from "@/atmosphere/calendar";
 import { buildWorldMeshes, type WorldMeshBundle } from "./world/buildWorldMeshes";
 import { createSurroundingsMeshes, type SurroundingsMeshes } from "./world/surroundingsMeshes";
 import { HOME_ENRICHMENT } from "@/world/enrichment/homeEnrichment";
+import { planMassing, type MassingPlan } from "@/world/enrichment/planMassing";
 import { planSurroundings } from "@/world/enrichment/planSurroundings";
 import { HOME_NEIGHBORHOOD } from "@/world/homeNeighborhood";
+import { assessWallHeight } from "@/world/wallHeight";
 import { createFrameMetrics } from "./quality/frameMetrics";
 import {
   configurePlanCamera,
@@ -112,6 +114,99 @@ export function worldHomeCentre(world: WorldData) {
   return new THREE.Vector3(x, 0, z);
 }
 
+export interface ShadowCameraBounds {
+  centre: { x: number; z: number };
+  horizontalRadius: number;
+  maxBuildingHeight: number;
+  frustumHalfSize: number;
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+  near: number;
+  far: number;
+  sunDistance: number;
+}
+
+export function deriveShadowCameraBounds(
+  world: WorldData,
+  massingPlan?: MassingPlan | null,
+): ShadowCameraBounds {
+  const centre = worldHomeCentre(world);
+  let maxHorizontalRadius = 0;
+  let maxBuildingHeight = 0;
+
+  const visitGeometry = (geometry: WorldData["buildings"][number]["geometry"]) => {
+    const polygons = geometry.type === "Polygon" ? [geometry.coordinates] : geometry.coordinates;
+    for (const rings of polygons) {
+      for (const ring of rings) {
+        for (const [x, z] of ring) {
+          maxHorizontalRadius = Math.max(
+            maxHorizontalRadius,
+            Math.hypot(x - centre.x, z - centre.z),
+          );
+        }
+      }
+    }
+  };
+
+  for (const lot of world.lots) {
+    visitGeometry(lot.geometry);
+  }
+  const elevationByBuildingId = new Map<string, number>();
+  for (const building of world.buildings) {
+    if (building.hidden) continue;
+    const base = building.baseElevation ?? 0;
+    elevationByBuildingId.set(building.localId, base);
+    visitGeometry(building.geometry);
+    const parts = building.parts?.length ? building.parts : [building];
+    for (const part of parts) {
+      visitGeometry(part.geometry);
+      const rendered = assessWallHeight(part, world.manifest.isSynthetic).renderedHeight;
+      if (rendered <= 0) continue;
+      const roofAllowance =
+        part.roofHeight ??
+        (part.roofType === "gabled" || part.roofType === "hipped" || part.roofType === "corrugated"
+          ? 4
+          : 0.2);
+      maxBuildingHeight = Math.max(
+        maxBuildingHeight,
+        (part.baseElevation ?? base) + rendered + roofAllowance,
+      );
+    }
+  }
+  if (massingPlan) {
+    for (const item of massingPlan.items) {
+      visitGeometry(item.footprint);
+      const base = elevationByBuildingId.get(item.sourceBuildingId) ?? 0;
+      const roofAllowance = item.roofType === "terrace_tum" ? 2.3 : 0.2;
+      maxBuildingHeight = Math.max(maxBuildingHeight, base + item.wallHeight + roofAllowance);
+    }
+  }
+
+  const effectiveHeight = Math.max(maxBuildingHeight, 4);
+  const shadowThrow = Math.ceil(effectiveHeight * 2);
+  const coveredHorizontal = Math.max(60, maxHorizontalRadius + shadowThrow);
+  const frustumHalfSize = Math.ceil(Math.hypot(coveredHorizontal, effectiveHeight));
+  const sunDistance = Math.max(100, frustumHalfSize + 24);
+  const near = Math.max(1, sunDistance - frustumHalfSize - 16);
+  const far = Math.ceil(sunDistance + frustumHalfSize + effectiveHeight + 24);
+
+  return {
+    centre: { x: centre.x, z: centre.z },
+    horizontalRadius: maxHorizontalRadius,
+    maxBuildingHeight,
+    frustumHalfSize,
+    left: -frustumHalfSize,
+    right: frustumHalfSize,
+    top: frustumHalfSize,
+    bottom: -frustumHalfSize,
+    near,
+    far,
+    sunDistance,
+  };
+}
+
 export function createDemoScene(
   host: HTMLDivElement,
   marker: HTMLDivElement,
@@ -164,20 +259,23 @@ export function createDemoScene(
   const hemisphere = new THREE.HemisphereLight("#fff8e8", "#5e6658", 2.2);
   const sun = new THREE.DirectionalLight("#fff0cd", 3.3);
   const moon = new THREE.DirectionalLight("#b9d5ff", 0);
+  const shadowMapSize = renderer.capabilities.maxTextureSize <= 4096 ? 1024 : 2048;
   sun.position.set(-45, 70, 36);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(1024, 1024);
+  sun.shadow.mapSize.set(shadowMapSize, shadowMapSize);
+  const initialShadowBounds = fallbackWorld ? deriveShadowCameraBounds(fallbackWorld) : null;
   Object.assign(sun.shadow.camera, {
-    left: -90,
-    right: 90,
-    top: 90,
-    bottom: -90,
-    near: 1,
-    far: 250,
+    left: initialShadowBounds?.left ?? -90,
+    right: initialShadowBounds?.right ?? 90,
+    top: initialShadowBounds?.top ?? 90,
+    bottom: initialShadowBounds?.bottom ?? -90,
+    near: initialShadowBounds?.near ?? 1,
+    far: initialShadowBounds?.far ?? 250,
   });
+  sun.shadow.camera.updateProjectionMatrix();
   sun.shadow.bias = -0.0007;
   sun.shadow.normalBias = 0.12;
-  scene.add(hemisphere, sun, moon);
+  scene.add(hemisphere, sun, moon, sun.target);
 
   const ground = new THREE.Mesh(
     new THREE.PlaneGeometry(
@@ -283,6 +381,22 @@ export function createDemoScene(
     host.dataset["surroundingsPlanMs"] = String(Math.round(performance.now() - startedAt));
   }
 
+  function applyShadowBounds(world: WorldData, massingPlan: MassingPlan | null) {
+    const bounds = deriveShadowCameraBounds(world, massingPlan);
+    Object.assign(sun.shadow.camera, {
+      left: bounds.left,
+      right: bounds.right,
+      top: bounds.top,
+      bottom: bounds.bottom,
+      near: bounds.near,
+      far: bounds.far,
+    });
+    sun.shadow.camera.updateProjectionMatrix();
+    atmosphere.setSunDistance(bounds.sunDistance);
+    host.dataset["shadowFrustumHalfSize"] = String(bounds.frustumHalfSize);
+    host.dataset["shadowMaxHeight"] = String(Math.round(bounds.maxBuildingHeight * 100) / 100);
+  }
+
   function mountWorld() {
     const snapshot = homeWorldSession.getSnapshot();
     currentWorld = snapshot;
@@ -297,12 +411,20 @@ export function createDemoScene(
     surroundings = null;
     worldBundle?.dispose();
     const meshBuildStartedAt = performance.now();
+    const massingPlan =
+      snapshot.world === HOME_NEIGHBORHOOD && HOME_ENRICHMENT
+        ? planMassing(snapshot.world, HOME_ENRICHMENT)
+        : null;
     worldBundle = buildWorldMeshes(
       snapshot.world,
       materialFactory,
       useAppStore.getState().language,
+      massingPlan,
     );
+    host.dataset["massingCount"] = String(massingPlan?.items.length ?? 0);
+    host.dataset["massingOrigin"] = massingPlan ? "estimated_procedural" : "none";
     mountSurroundings(snapshot.world, worldBundle);
+    applyShadowBounds(snapshot.world, massingPlan);
     atmosphere.invalidateWorld();
     host.dataset["meshBuildLatencyMs"] = String(performance.now() - meshBuildStartedAt);
     scene.add(worldBundle.group);

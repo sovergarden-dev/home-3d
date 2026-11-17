@@ -24,7 +24,7 @@ export function TopInfo() {
         </span>
       </div>
       <div className="mt-1 text-xs font-medium text-muted-foreground">
-        {SITE_CONFIG.description[lang]} · {t.presets[periodKey]} · {t.weather[activeWeather]}
+        {t.sceneSummary} · {t.presets[periodKey]} · {t.weather[activeWeather]}
       </div>
       <a
         className="mt-1 inline-block text-[10px] text-muted-foreground underline decoration-dotted underline-offset-2"

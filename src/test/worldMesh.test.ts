@@ -2,9 +2,12 @@ import { describe, expect, it, vi } from "vitest";
 import * as THREE from "three";
 import { pickFeature } from "@/engine/interaction/featurePicking";
 import { buildWorldMeshes } from "@/engine/world/buildWorldMeshes";
+import { HOME_ENRICHMENT } from "@/world/enrichment/homeEnrichment";
+import { planMassing } from "@/world/enrichment/planMassing";
 import { SYNTHETIC_NEIGHBORHOOD } from "@/world/fixtures/syntheticNeighborhood";
 import { HOME_NEIGHBORHOOD } from "@/world/homeNeighborhood";
 import type { Building, RoadSegment, WorldData } from "@/world/schema";
+import { assessWallHeight } from "@/world/wallHeight";
 
 describe("world mesh lifecycle", () => {
   it("creates one layered world with real label and tree visibility controls", () => {
@@ -441,6 +444,76 @@ describe("static mesh merge by material", () => {
       );
       expect(mergedMesh.geometry.getAttribute("position").count).toBe(sourceVertices);
     }
+    bundle.dispose();
+    materials.forEach((material) => material.dispose());
+  });
+
+  it("mounts estimated massing as a separate merged layer with procedural provenance and budget compliance", () => {
+    const materials = new Map<string, THREE.MeshStandardMaterial>();
+    const massingPlan = planMassing(HOME_NEIGHBORHOOD, HOME_ENRICHMENT!);
+    const bundle = buildWorldMeshes(
+      HOME_NEIGHBORHOOD,
+      (color, roughness = 0.82, metalness = 0) => {
+        const key = `${color}:${roughness}:${metalness}`;
+        let material = materials.get(key);
+        if (!material) {
+          material = new THREE.MeshStandardMaterial({ color, roughness, metalness });
+          materials.set(key, material);
+        }
+        return material;
+      },
+      "vi",
+      massingPlan,
+    );
+
+    const estimatedGroup = bundle.layers.buildings.getObjectByName("estimated-massing");
+    expect(estimatedGroup).toBeTruthy();
+    expect(estimatedGroup!.userData).toMatchObject({
+      origin: "estimated_procedural",
+      estimated: true,
+      provenance: { origin: "estimated_procedural", estimated: true },
+    });
+
+    const { render, merged } = staticLayerMeshes(bundle);
+    expect(render.length).toBeLessThan(60);
+    const estimatedMerged = merged.filter(
+      (mesh) => mesh.userData["origin"] === "estimated_procedural",
+    );
+    expect(estimatedMerged.length).toBeGreaterThan(0);
+    expect(estimatedMerged.length).toBeLessThanOrEqual(15);
+
+    // Canonical unknown-height buildings remain untouched at status="unknown"
+    const unknownCount = HOME_NEIGHBORHOOD.buildings.filter(
+      (building) => assessWallHeight(building, false).status === "unknown",
+    ).length;
+    expect(unknownCount).toBe(315);
+
+    // Picking a 3D estimated building returns estimated_procedural provenance
+    const sample = massingPlan.items[0]!;
+    const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 200);
+    camera.position.set(sample.position[0], sample.wallHeight + 25, sample.position[1]);
+    camera.lookAt(sample.position[0], 0, sample.position[1]);
+    camera.updateMatrixWorld();
+    const picked = pickFeature(
+      new THREE.Raycaster(),
+      new THREE.Vector2(0, 0),
+      camera,
+      bundle.group,
+    );
+    expect(picked).toMatchObject({
+      featureId: sample.sourceBuildingId,
+      featureType: "building",
+      confidence: "unknown",
+      estimatedOrigin: "estimated_procedural",
+      estimatedLevels: sample.levels,
+    });
+
+    // Geometry confidence mode hides procedural volumes so canonical unknown status is visible
+    bundle.setConfidenceVisible(true);
+    expect(estimatedGroup!.visible).toBe(false);
+    bundle.setConfidenceVisible(false);
+    expect(estimatedGroup!.visible).toBe(true);
+
     bundle.dispose();
     materials.forEach((material) => material.dispose());
   });

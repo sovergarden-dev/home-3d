@@ -583,7 +583,12 @@ export function PrivateWorldPanel({ enabled, dockExpanded = false }: PrivateWorl
                   : `${assessWallHeight(selected, synthetic).renderedHeight.toFixed(1)} m`}
               </div>
               {assessWallHeight(selected, synthetic).status === "unknown" && (
-                <p role="note">{t.localPreview.heightUnknownNote}</p>
+                <p role="note">
+                  {selectedFeature?.featureId === selected.localId &&
+                  selectedFeature.estimatedOrigin === "estimated_procedural"
+                    ? `${t.localPreview.heightEstimatedProcedural} (${selectedFeature.estimatedLevels ?? "?"}F · ${(selectedFeature.estimatedWallHeight ?? 0).toFixed(1)} m)`
+                    : t.localPreview.heightUnknownNote}
+                </p>
               )}
               <div>
                 {t.localPreview.source}: {field(selected, "wallHeight")}

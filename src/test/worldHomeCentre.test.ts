@@ -1,5 +1,13 @@
+import * as THREE from "three";
 import { describe, expect, it } from "vitest";
-import { worldCameraCentre, worldCameraFrame, worldHomeCentre } from "@/engine/demoScene";
+import {
+  deriveShadowCameraBounds,
+  worldCameraCentre,
+  worldCameraFrame,
+  worldHomeCentre,
+} from "@/engine/demoScene";
+import { HOME_ENRICHMENT } from "@/world/enrichment/homeEnrichment";
+import { planMassing } from "@/world/enrichment/planMassing";
 import { HOME_NEIGHBORHOOD } from "@/world/homeNeighborhood";
 import type { WorldData } from "@/world/schema";
 
@@ -57,5 +65,67 @@ describe("private-world home centre", () => {
   it("uses the configured ENU origin when parcel geometry is not available", () => {
     const centre = worldHomeCentre(worldWithoutLot);
     expect([centre.x, centre.z]).toEqual([0, 0]);
+  });
+});
+
+describe("shadow camera bounds", () => {
+  it("derives orthographic shadow frustum from real building footprint and 4-storey massing bounds", () => {
+    const massingPlan = planMassing(HOME_NEIGHBORHOOD, HOME_ENRICHMENT!);
+    const bounds = deriveShadowCameraBounds(HOME_NEIGHBORHOOD, massingPlan);
+
+    expect(bounds.centre).toEqual({ x: 0, z: 0 });
+    expect(bounds.maxBuildingHeight).toBeGreaterThanOrEqual(
+      4 * HOME_ENRICHMENT!.generator.massing.floorHeight,
+    );
+    expect(bounds.frustumHalfSize).toBeGreaterThan(bounds.horizontalRadius);
+    expect(bounds.near).toBeGreaterThanOrEqual(1);
+    expect(bounds.far).toBeGreaterThan(bounds.sunDistance + bounds.frustumHalfSize);
+
+    const sun = new THREE.DirectionalLight("#ffffff", 1);
+    Object.assign(sun.shadow.camera, {
+      left: bounds.left,
+      right: bounds.right,
+      top: bounds.top,
+      bottom: bounds.bottom,
+      near: bounds.near,
+      far: bounds.far,
+    });
+    sun.shadow.camera.updateProjectionMatrix();
+    sun.target.position.set(bounds.centre.x, 0, bounds.centre.z);
+    sun.target.updateMatrixWorld();
+
+    const point = new THREE.Vector3();
+    for (const [azDeg, elDeg] of [
+      [95, 22],
+      [180, 68],
+      [265, 20],
+    ] as const) {
+      const az = THREE.MathUtils.degToRad(azDeg);
+      const el = THREE.MathUtils.degToRad(elDeg);
+      sun.position.set(
+        Math.sin(az) * Math.cos(el) * bounds.sunDistance,
+        Math.sin(el) * bounds.sunDistance,
+        -Math.cos(az) * Math.cos(el) * bounds.sunDistance,
+      );
+      sun.updateMatrixWorld();
+      sun.shadow.camera.position.copy(sun.position);
+      sun.shadow.camera.lookAt(sun.target.position);
+      sun.shadow.camera.updateMatrixWorld();
+
+      for (const item of massingPlan.items) {
+        const rings =
+          item.footprint.type === "Polygon"
+            ? item.footprint.coordinates
+            : item.footprint.coordinates.flat();
+        for (const [x, z] of rings[0] ?? []) {
+          for (const y of [0, item.wallHeight]) {
+            point.set(x, y, z).project(sun.shadow.camera);
+            expect(Math.abs(point.x)).toBeLessThanOrEqual(1);
+            expect(Math.abs(point.y)).toBeLessThanOrEqual(1);
+            expect(Math.abs(point.z)).toBeLessThanOrEqual(1);
+          }
+        }
+      }
+    }
   });
 });
