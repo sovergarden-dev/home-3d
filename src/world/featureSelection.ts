@@ -3,6 +3,10 @@ export interface FeatureSelection {
   featureType: "building" | "building-part" | "road" | "lot" | "tree" | "prop";
   parentFeatureId?: string;
   confidence?: "known" | "inferred" | "synthetic" | "unknown";
+  estimatedOrigin?: "estimated_procedural";
+  estimatedLevels?: number;
+  estimatedWallHeight?: number;
+  estimatedRoofType?: "corrugated" | "flat" | "terrace_tum";
 }
 
 export const FEATURE_SELECTION_EVENT = "home3d:feature-selection";

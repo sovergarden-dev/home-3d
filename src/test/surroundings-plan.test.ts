@@ -307,6 +307,7 @@ describe("no external network access from runtime code (Aegis condition 3)", () 
     "world/enrichment/schema.ts",
     "world/enrichment/parse.ts",
     "world/enrichment/planSurroundings.ts",
+    "world/enrichment/planMassing.ts",
     "world/enrichment/homeEnrichment.ts",
     "world/enrichment/defaults.ts",
     "engine/world/surroundingsMeshes.ts",

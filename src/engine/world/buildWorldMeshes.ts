@@ -1,7 +1,9 @@
 import * as THREE from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { FEATURE_PICK_LAYER } from "@/engine/interaction/featurePicking";
+import type { MassingPlan, PlannedMassingItem } from "@/world/enrichment/planMassing";
 import {
+  pointInPolygon,
   polygonsOf,
   ringWithoutClosure,
   surfaceCentroid,
@@ -1126,10 +1128,110 @@ function addHomeLotTreatment(
   }
 }
 
+function tumBoxFitsFootprint(
+  geometry: SurfaceGeometry,
+  centre: Position2,
+  halfSpan: number,
+): boolean {
+  const polygons = polygonsOf(geometry);
+  if (polygons.length !== 1) return false;
+  const polygon = polygons[0]!;
+  const corners: Position2[] = [
+    [centre[0] - halfSpan, centre[1] - halfSpan],
+    [centre[0] + halfSpan, centre[1] - halfSpan],
+    [centre[0] + halfSpan, centre[1] + halfSpan],
+    [centre[0] - halfSpan, centre[1] + halfSpan],
+  ];
+  return corners.every((corner) => pointInPolygon(corner, polygon));
+}
+
+function addEstimatedMassingItem(
+  item: PlannedMassingItem,
+  baseElevation: number,
+  group: THREE.Group,
+  materialFactory: MaterialFactory,
+  roofMaterials: Map<string, THREE.MeshStandardMaterial>,
+  flatCapMaterial: THREE.MeshStandardMaterial,
+  tumMaterial: THREE.MeshStandardMaterial,
+  tumGeometry: THREE.BoxGeometry,
+  disposables: Disposable[],
+) {
+  const itemGroup = new THREE.Group();
+  itemGroup.name = `estimated-building:${item.localId}`;
+  itemGroup.userData = {
+    localId: item.localId,
+    sourceBuildingId: item.sourceBuildingId,
+    featureId: item.sourceBuildingId,
+    featureType: "building",
+    confidence: "unknown",
+    origin: "estimated_procedural",
+    estimated: true,
+    estimatedLevels: item.levels,
+    estimatedWallHeight: item.wallHeight,
+    estimatedRoofType: item.roofType,
+    provenance: { origin: "estimated_procedural", estimated: true },
+  };
+  const wallMaterial = materialFactory(colorFor(item.sourceBuildingId), 0.84, 0.03);
+  const shell = createSurfaceMeshes(
+    item.footprint,
+    item.wallHeight,
+    baseElevation,
+    wallMaterial,
+    disposables,
+  );
+  shell.name = `estimated-shell:${item.localId}`;
+  shell.userData["origin"] = "estimated_procedural";
+  shell.userData["estimated"] = true;
+  itemGroup.add(shell);
+
+  const roofBaseY = baseElevation + item.wallHeight;
+  if (item.roofType === "corrugated") {
+    const corrugatedMat = roofMaterial("corrugated", roofMaterials, disposables);
+    const prism = addRoofPrism(
+      item.footprint,
+      roofBaseY,
+      "corrugated",
+      undefined,
+      corrugatedMat,
+      disposables,
+    );
+    if (prism) {
+      prism.name = `estimated-roof:${item.localId}`;
+      prism.userData["origin"] = "estimated_procedural";
+      itemGroup.add(prism);
+    } else {
+      const cap = createSurfaceMeshes(item.footprint, 0.18, roofBaseY, corrugatedMat, disposables);
+      cap.name = `estimated-roof:${item.localId}`;
+      cap.userData["origin"] = "estimated_procedural";
+      itemGroup.add(cap);
+    }
+  } else {
+    const cap = createSurfaceMeshes(item.footprint, 0.16, roofBaseY, flatCapMaterial, disposables);
+    cap.name = `estimated-roof:${item.localId}`;
+    cap.userData["origin"] = "estimated_procedural";
+    itemGroup.add(cap);
+    if (
+      item.roofType === "terrace_tum" &&
+      tumBoxFitsFootprint(item.footprint, item.position, 1.1)
+    ) {
+      const tum = new THREE.Mesh(tumGeometry, tumMaterial);
+      tum.name = `estimated-tum:${item.localId}`;
+      tum.position.set(item.position[0], roofBaseY + 0.16 + 1.05, item.position[1]);
+      tum.castShadow = true;
+      tum.receiveShadow = true;
+      tum.userData["origin"] = "estimated_procedural";
+      itemGroup.add(tum);
+    }
+  }
+
+  group.add(itemGroup);
+}
+
 export function buildWorldMeshes(
   world: WorldData,
   materialFactory: MaterialFactory,
   labelLanguage?: "vi" | "en",
+  massingPlan?: MassingPlan | null,
 ): WorldMeshBundle {
   const disposables: Disposable[] = [];
   const group = new THREE.Group();
@@ -1164,6 +1266,9 @@ export function buildWorldMeshes(
   const roofMaterials = new Map<string, THREE.MeshStandardMaterial>();
   const pickProxies = new Set<THREE.Mesh>();
   const mergedStaticMeshes: THREE.Mesh[] = [];
+  const estimatedPickProxies = new Set<THREE.Mesh>();
+  const estimatedMergedMeshes: THREE.Mesh[] = [];
+  let estimatedMassingGroup: THREE.Group | null = null;
   const confidenceOriginals = new Map<THREE.Mesh, THREE.Material | THREE.Material[]>();
   const confidenceVariants = new Map<string, THREE.Material>();
   let disposed = false;
@@ -1273,6 +1378,53 @@ export function buildWorldMeshes(
   addHomeLotTreatment(world, layers.buildings, materialFactory, disposables);
   mergeStaticLayer(layers.roads, disposables, pickProxies, mergedStaticMeshes);
   mergeStaticLayer(layers.buildings, disposables, pickProxies, mergedStaticMeshes);
+  if (massingPlan && massingPlan.items.length > 0) {
+    const canonicalById = new Map(world.buildings.map((building) => [building.localId, building]));
+    estimatedMassingGroup = new THREE.Group();
+    estimatedMassingGroup.name = "estimated-massing";
+    estimatedMassingGroup.userData = {
+      origin: "estimated_procedural",
+      estimated: true,
+      seed: massingPlan.seed,
+      provenance: { origin: "estimated_procedural", estimated: true },
+    };
+    const flatCapMaterial = materialFactory("#b5ada0", 0.88, 0.02);
+    const tumMaterial = materialFactory("#dfd5c3", 0.84, 0.02);
+    const tumGeometry = new THREE.BoxGeometry(2.2, 2.1, 2.2);
+    disposables.push(tumGeometry);
+    for (const item of massingPlan.items) {
+      const sourceBuilding = canonicalById.get(item.sourceBuildingId);
+      if (!sourceBuilding || sourceBuilding.hidden) continue;
+      if (assessWallHeight(sourceBuilding, world.manifest.isSynthetic).status !== "unknown")
+        continue;
+      addEstimatedMassingItem(
+        item,
+        sourceBuilding.baseElevation ?? 0,
+        estimatedMassingGroup,
+        materialFactory,
+        roofMaterials,
+        flatCapMaterial,
+        tumMaterial,
+        tumGeometry,
+        disposables,
+      );
+    }
+    mergeStaticLayer(
+      estimatedMassingGroup,
+      disposables,
+      estimatedPickProxies,
+      estimatedMergedMeshes,
+    );
+    for (const mergedMesh of estimatedMergedMeshes) {
+      mergedMesh.userData["origin"] = "estimated_procedural";
+      mergedMesh.userData["estimated"] = true;
+    }
+    if (estimatedMassingGroup.children.length > 0) {
+      layers.buildings.add(estimatedMassingGroup);
+    } else {
+      estimatedMassingGroup = null;
+    }
+  }
   rebuildLabels(currentLabelLanguage);
   addTrees(world, layers.trees, materialFactory, disposables);
   addProps(world, layers.props, materialFactory, disposables);
@@ -1292,6 +1444,17 @@ export function buildWorldMeshes(
     pickProxies.forEach((mesh) => {
       mesh.layers.set(inspecting ? 0 : FEATURE_PICK_LAYER);
     });
+    if (estimatedMassingGroup) {
+      // Geometry confidence inspects canonical heights only; hide procedural massing while active.
+      estimatedMassingGroup.visible = !confidenceVisible;
+      const inspectingSelection = !confidenceVisible && selectedFeatureId !== null;
+      estimatedMergedMeshes.forEach((mesh) => {
+        mesh.visible = !inspectingSelection;
+      });
+      estimatedPickProxies.forEach((mesh) => {
+        mesh.layers.set(inspectingSelection ? 0 : FEATURE_PICK_LAYER);
+      });
+    }
     confidenceOriginals.forEach((original, mesh) => {
       let owner: THREE.Object3D | null = mesh;
       let status: "known" | "inferred" | "synthetic" | "unknown" | undefined;

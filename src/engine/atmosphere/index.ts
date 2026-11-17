@@ -291,7 +291,8 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
   let disposed = false,
     activeRain = false,
     lastWet: boolean | undefined,
-    hasAppliedInitial = false;
+    hasAppliedInitial = false,
+    sunDistance = 100;
   let lastState: AtmosphereState | undefined;
   const TRANSITION_DURATION = 0.35;
   let transitionElapsed = TRANSITION_DURATION;
@@ -420,7 +421,7 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
       toLighting.hemiColor.copy(toLighting.sky);
       toLighting.hemiGround.set("#626b68");
       toLighting.hemiIntensity = THREE.MathUtils.lerp(0.9, 0.55 + 1.3 * cloud, daylight);
-      enu(solar.azimuthDeg, solar.elevationDeg, 100, sunPosition);
+      enu(solar.azimuthDeg, solar.elevationDeg, sunDistance, sunPosition);
       toLighting.sunPos.copy(sunPosition);
       if (anchor) {
         toLighting.sunPos.add(anchor);
@@ -449,7 +450,7 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
       toLighting.hemiIntensity = 0.8;
       toLighting.sunIntensity = 1;
       toLighting.sunColor.set("#ffffff");
-      toLighting.sunPos.set(0, 100, 0);
+      toLighting.sunPos.set(0, sunDistance, 0);
       toLighting.moonPos.set(0, -100, 0);
       toLighting.moonIntensity = 0;
       toLighting.useFog = false;
@@ -732,12 +733,16 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
   const invalidateWorld = () => {
     lastWet = undefined;
   };
+  const setSunDistance = (distance: number) => {
+    sunDistance = Number.isFinite(distance) && distance >= 100 ? distance : 100;
+  };
   return {
     group,
     update,
     tick,
     warm,
     invalidateWorld,
+    setSunDistance,
     markOptionChanged: () => undefined,
     dispose,
     get rainVisible() {

@@ -43,6 +43,24 @@ export function pickFeature(
           ...(typeof current.userData["parentFeatureId"] === "string"
             ? { parentFeatureId: current.userData["parentFeatureId"] as string }
             : {}),
+          ...(current.userData["origin"] === "estimated_procedural"
+            ? {
+                estimatedOrigin: "estimated_procedural" as const,
+                ...(typeof current.userData["estimatedLevels"] === "number"
+                  ? { estimatedLevels: current.userData["estimatedLevels"] as number }
+                  : {}),
+                ...(typeof current.userData["estimatedWallHeight"] === "number"
+                  ? { estimatedWallHeight: current.userData["estimatedWallHeight"] as number }
+                  : {}),
+                ...(typeof current.userData["estimatedRoofType"] === "string"
+                  ? {
+                      estimatedRoofType: current.userData["estimatedRoofType"] as NonNullable<
+                        FeatureSelection["estimatedRoofType"]
+                      >,
+                    }
+                  : {}),
+              }
+            : {}),
         };
       }
       current = current.parent;

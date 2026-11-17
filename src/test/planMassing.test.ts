@@ -1,0 +1,209 @@
+import { createHash } from "node:crypto";
+import { describe, expect, it } from "vitest";
+import { polygonsOf, surfaceContains, surfaceIntersects } from "@/world/geometry";
+import {
+  enrichmentBounds,
+  HOME_ENRICHMENT,
+  homeEnrichmentBase,
+} from "@/world/enrichment/homeEnrichment";
+import { parseEnrichmentLayer } from "@/world/enrichment/parse";
+import { minDistanceToPolygon, planMassing } from "@/world/enrichment/planMassing";
+import { HOME_NEIGHBORHOOD } from "@/world/homeNeighborhood";
+import type { Building, Lot, WorldData } from "@/world/schema";
+
+function canonicalJson(value: unknown): string {
+  if (value === null || typeof value === "string" || typeof value === "boolean")
+    return JSON.stringify(value);
+  if (typeof value === "number") {
+    if (!Number.isFinite(value)) throw new Error("NON_FINITE_GOLDEN_VALUE");
+    return JSON.stringify(value);
+  }
+  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(",")}]`;
+  if (value && typeof value === "object") {
+    return `{${Object.entries(value as Record<string, unknown>)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([key, child]) => `${JSON.stringify(key)}:${canonicalJson(child)}`)
+      .join(",")}}`;
+  }
+  throw new Error("UNSUPPORTED_GOLDEN_VALUE");
+}
+
+const sha = (value: unknown) => createHash("sha256").update(canonicalJson(value)).digest("hex");
+
+export const MASSING_GOLDEN_SHA256 =
+  "9e47e8b5561515380303677837c73e7a55fa302819a84ae570fe9635965cf6a7";
+
+function shuffled<T>(items: readonly T[], seed: number): T[] {
+  const copy = [...items];
+  let state = seed;
+  for (let index = copy.length - 1; index > 0; index--) {
+    state = (Math.imul(state, 1103515245) + 12345) >>> 0;
+    const other = state % (index + 1);
+    [copy[index], copy[other]] = [copy[other]!, copy[index]!];
+  }
+  return copy;
+}
+
+function squareBuilding(localId: string, cx: number, cz: number, half = 3): Building {
+  return {
+    localId,
+    geometry: {
+      type: "Polygon",
+      coordinates: [
+        [
+          [cx - half, cz - half],
+          [cx + half, cz - half],
+          [cx + half, cz + half],
+          [cx - half, cz + half],
+          [cx - half, cz - half],
+        ],
+      ],
+    },
+    footprintKind: "footprint",
+    wallHeight: 6,
+    roofType: "unknown",
+    provenance: { source: "osm", quality: "source_only", licence: "ODbL-1.0" },
+    attributes: { wallHeight: { source: "osm", quality: "inferred" } },
+  };
+}
+
+describe("planMassing", () => {
+  it("plans deterministic estimated massing for unknown neighboring buildings only", () => {
+    expect(HOME_ENRICHMENT).not.toBeNull();
+    const layer = HOME_ENRICHMENT!;
+    const sourceIds = new Set(layer.buildingFacts.map((fact) => fact.buildingId));
+    const plan = planMassing(HOME_NEIGHBORHOOD, layer);
+    const again = planMassing(HOME_NEIGHBORHOOD, layer);
+    const reordered: WorldData = {
+      ...structuredClone(HOME_NEIGHBORHOOD),
+      buildings: shuffled(HOME_NEIGHBORHOOD.buildings, 17),
+      roads: shuffled(HOME_NEIGHBORHOOD.roads, 23),
+    };
+    const [minX, minZ, maxX, maxZ] = enrichmentBounds(HOME_NEIGHBORHOOD);
+    const buildingById = new Map(
+      HOME_NEIGHBORHOOD.buildings.map((building) => [building.localId, building]),
+    );
+
+    expect(plan).toEqual(again);
+    expect(plan).toEqual(planMassing(reordered, layer));
+    expect(plan.items).toHaveLength(HOME_NEIGHBORHOOD.buildings.length - sourceIds.size);
+    expect(new Set(plan.items.map((item) => item.localId)).size).toBe(plan.items.length);
+    expect(plan.items.every((item) => item.origin === "estimated_procedural")).toBe(true);
+    expect(plan.items.every((item) => item.levels >= 1 && item.levels <= 4)).toBe(true);
+    expect(
+      plan.items.every((item) =>
+        Math.hypot(item.position[0], item.position[1]) < layer.generator.homeDominanceRadius
+          ? item.levels <= layer.generator.homeMaxNeighbourLevels
+          : true,
+      ),
+    ).toBe(true);
+    expect(
+      plan.items.every(
+        (item) => item.wallHeight === item.levels * layer.generator.massing.floorHeight,
+      ),
+    ).toBe(true);
+    expect(
+      plan.items.every((item) => ["corrugated", "flat", "terrace_tum"].includes(item.roofType)),
+    ).toBe(true);
+    expect(plan.items.every((item) => item.footprint.type === "Polygon")).toBe(true);
+    expect(
+      plan.items.every(
+        (item) =>
+          item.position[0] >= minX &&
+          item.position[0] <= maxX &&
+          item.position[1] >= minZ &&
+          item.position[1] <= maxZ,
+      ),
+    ).toBe(true);
+    for (const item of plan.items) {
+      expect(sourceIds.has(item.sourceBuildingId)).toBe(false);
+      const source = buildingById.get(item.sourceBuildingId);
+      expect(source).toBeDefined();
+      expect(surfaceContains(source!.geometry, item.footprint, 1e-3)).toBe(true);
+      for (const building of HOME_NEIGHBORHOOD.buildings) {
+        if (building.localId === item.sourceBuildingId) continue;
+        expect(surfaceIntersects(item.footprint, building.geometry)).toBe(false);
+      }
+    }
+    expect(plan.skippedSourceBuildingIds).toEqual([...sourceIds].sort());
+    expect(sha(plan)).toBe(MASSING_GOLDEN_SHA256);
+  });
+
+  it("verifies canonical OSM footprints keep clear of the home origin and enforces exclusion + dominance caps", () => {
+    const layer = HOME_ENRICHMENT!;
+    const minCanonicalDistance = Math.min(
+      ...HOME_NEIGHBORHOOD.buildings.flatMap((building) =>
+        polygonsOf(building.geometry).map((polygon) => minDistanceToPolygon([0, 0], polygon)),
+      ),
+    );
+    expect(minCanonicalDistance).toBeGreaterThan(layer.generator.homeDominanceRadius);
+    expect(minCanonicalDistance).toBeGreaterThan(layer.generator.homeExclusionRadius);
+
+    const homeLot: Lot = {
+      localId: "lot-home-empty",
+      geometry: squareBuilding("lot-shape", 0, 0, 5).geometry,
+      status: "empty",
+      confirmed: true,
+      provenance: { source: "survey", quality: "verified" },
+    };
+    const world: WorldData = {
+      manifest: {
+        ...structuredClone(HOME_NEIGHBORHOOD.manifest),
+        isSynthetic: false,
+      },
+      roads: [],
+      lots: [homeLot],
+      buildings: [
+        squareBuilding("b-on-home-lot", 2, 0, 3),
+        squareBuilding("b-in-exclusion", 9, 0, 2),
+        squareBuilding("b-in-dominance", 20, 0, 3),
+        squareBuilding("b-far", 80, 0, 3),
+      ],
+    };
+    const fourStoreyHeavyLayer = {
+      ...layer,
+      buildingFacts: [],
+      generator: {
+        ...layer.generator,
+        massing: {
+          ...layer.generator.massing,
+          levelsWeights: [0, 0, 0, 10] as [number, number, number, number],
+        },
+      },
+    };
+    const result = planMassing(world, fourStoreyHeavyLayer);
+    expect(result.skippedSourceBuildingIds).toEqual(["b-in-exclusion", "b-on-home-lot"]);
+    expect(result.items.map((item) => [item.sourceBuildingId, item.levels])).toEqual([
+      ["b-far", 4],
+      ["b-in-dominance", layer.generator.homeMaxNeighbourLevels],
+    ]);
+  });
+
+  it("rejects malformed massing generator parameters fail-closed", () => {
+    const base = homeEnrichmentBase();
+    const raw = JSON.parse(JSON.stringify(HOME_ENRICHMENT));
+    raw.generator.massing.floorHeight = 0;
+    expect(parseEnrichmentLayer(raw, base)).toEqual({
+      ok: false,
+      errorCode: "GENERATOR_MASSING_FLOOR_HEIGHT",
+    });
+
+    const badWeights = JSON.parse(JSON.stringify(HOME_ENRICHMENT));
+    badWeights.generator.massing.levelsWeights = [0, 0, 0, 0];
+    expect(parseEnrichmentLayer(badWeights, base)).toEqual({
+      ok: false,
+      errorCode: "GENERATOR_MASSING_LEVELS_WEIGHTS",
+    });
+  });
+
+  it("does not mutate the canonical world or enrichment layer", () => {
+    expect(HOME_ENRICHMENT).not.toBeNull();
+    const worldBefore = JSON.stringify(HOME_NEIGHBORHOOD);
+    const layerBefore = JSON.stringify(HOME_ENRICHMENT);
+
+    planMassing(HOME_NEIGHBORHOOD, HOME_ENRICHMENT!);
+
+    expect(JSON.stringify(HOME_NEIGHBORHOOD)).toBe(worldBefore);
+    expect(JSON.stringify(HOME_ENRICHMENT)).toBe(layerBefore);
+  });
+});

@@ -27,7 +27,13 @@ test("owner-provided OSM neighborhood stays immutable across views and illustrat
   await expect(scene).toHaveAttribute("data-surroundings-tier", /^(low|mid)$/);
   await expect(scene).toHaveAttribute("data-surroundings-trees", /^[1-9]\d*$/);
   await expect(scene).toHaveAttribute("data-surroundings-props", /^[1-9]\d*$/);
+  await expect(scene).toHaveAttribute("data-massing-count", "315");
+  await expect(scene).toHaveAttribute("data-massing-origin", "estimated_procedural");
+  await expect(scene).toHaveAttribute("data-shadow-frustum-half-size", /^[3-9]\d\d$/);
   await expect(scene).toHaveAttribute("data-props-visible", "true");
+  const initialDrawCalls = Number(await scene.getAttribute("data-draw-calls"));
+  expect(Number.isFinite(initialDrawCalls)).toBe(true);
+  expect(initialDrawCalls).toBeLessThanOrEqual(200);
   const revision = await scene.getAttribute("data-world-revision");
   const resourceCounts: string[] = [];
 

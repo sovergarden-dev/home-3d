@@ -12,8 +12,9 @@ export const en: Dict = {
   referencePoint: "Reference point",
   unmeasuredBoundary: "Boundary not surveyed",
   temporaryLotIllustration: "Empty lot · temporary illustration · boundary not surveyed",
+  sceneSummary: "OSM roads & footprints · estimated massing, unmeasured.",
   sceneControls:
-    "Roads and buildings use OpenStreetMap; heights are inferred and boundaries are not surveyed. Drag to orbit, pinch to zoom. Arrows or WASD; R to reset to the house.",
+    "Roads and footprints use OpenStreetMap; neighboring building volumes are procedural estimates, not surveyed measurements, and boundaries are not surveyed. Drag to orbit, pinch to zoom. Arrows or WASD; R to reset to the house.",
   sceneHint: "Drag to orbit · Pinch / scroll to zoom",
   fallbackTitle: "3D is not available on this device",
   fallbackBody:
@@ -177,6 +178,7 @@ export const en: Dict = {
     heightSynthetic: "synthetic data",
     heightUnknownNote:
       "The source has no height or level data; the footprint is kept flat without a raised mass.",
+    heightEstimatedProcedural: "Estimated massing (estimated_procedural · not a measurement)",
     collapse: "Collapse private panel",
     expand: "Expand private panel",
     partsParentNote:
