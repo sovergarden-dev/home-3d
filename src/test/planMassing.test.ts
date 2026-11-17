@@ -115,6 +115,7 @@ describe("planMassing", () => {
           item.position[1] <= maxZ,
       ),
     ).toBe(true);
+    const overlaps: string[] = [];
     for (const item of plan.items) {
       expect(sourceIds.has(item.sourceBuildingId)).toBe(false);
       const source = buildingById.get(item.sourceBuildingId);
@@ -122,9 +123,12 @@ describe("planMassing", () => {
       expect(surfaceContains(source!.geometry, item.footprint, 1e-3)).toBe(true);
       for (const building of HOME_NEIGHBORHOOD.buildings) {
         if (building.localId === item.sourceBuildingId) continue;
-        expect(surfaceIntersects(item.footprint, building.geometry)).toBe(false);
+        if (surfaceIntersects(item.footprint, building.geometry)) {
+          overlaps.push(`${item.localId}:${building.localId}`);
+        }
       }
     }
+    expect(overlaps).toEqual([]);
     expect(plan.skippedSourceBuildingIds).toEqual([...sourceIds].sort());
     expect(sha(plan)).toBe(MASSING_GOLDEN_SHA256);
   });

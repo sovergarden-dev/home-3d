@@ -126,11 +126,43 @@ export function polygonsOf(geometry: SurfaceGeometry): PolygonGeometry[] {
     : geometry.coordinates.map((coordinates) => ({ type: "Polygon", coordinates }));
 }
 
+function polygonBounds(polygon: PolygonGeometry) {
+  let minX = Infinity,
+    minZ = Infinity,
+    maxX = -Infinity,
+    maxZ = -Infinity,
+    hasPoints = false;
+  for (const ring of polygon.coordinates) {
+    for (const [x, z] of ring) {
+      hasPoints = true;
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      if (z < minZ) minZ = z;
+      if (z > maxZ) maxZ = z;
+    }
+  }
+  return hasPoints ? { minX, minZ, maxX, maxZ } : null;
+}
+
 function polygonsIntersect(a: PolygonGeometry, b: PolygonGeometry) {
+  const boundsA = polygonBounds(a);
+  const boundsB = polygonBounds(b);
+  if (
+    !boundsA ||
+    !boundsB ||
+    boundsA.maxX + EPSILON < boundsB.minX ||
+    boundsB.maxX + EPSILON < boundsA.minX ||
+    boundsA.maxZ + EPSILON < boundsB.minZ ||
+    boundsB.maxZ + EPSILON < boundsA.minZ
+  ) {
+    return false;
+  }
+  const bEdgesByRing = b.coordinates.map(ringEdges);
   for (const ringA of a.coordinates) {
-    for (const ringB of b.coordinates) {
-      for (const [a1, a2] of ringEdges(ringA)) {
-        for (const [b1, b2] of ringEdges(ringB)) {
+    const edgesA = ringEdges(ringA);
+    for (const edgesB of bEdgesByRing) {
+      for (const [a1, a2] of edgesA) {
+        for (const [b1, b2] of edgesB) {
           if (segmentsIntersect(a1, a2, b1, b2)) return true;
         }
       }
