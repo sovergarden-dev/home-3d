@@ -39,3 +39,13 @@ road/building order, and that `low ⊆ mid ⊆ high`.
 Surroundings are decoration only. They are not colliders and are never passed to
 `buildPovRoute` or to life solids, so the POV route golden in `docs/POV_ROUTE_GOLDEN.md` is
 unaffected by construction (and is still asserted by `p9-pov-route-golden.test.ts`).
+
+## Estimated building massing golden (PR-3)
+
+`src/test/planMassing.test.ts` pins the canonical-JSON SHA-256 of `planMassing(HOME_NEIGHBORHOOD, HOME_ENRICHMENT)` on the same G1 package and enrichment layer (seed `20261113`, `floorHeight = 3.3`, `levelsWeights = [3, 4, 2, 1]`, `roofWeights = { corrugated: 4, flat: 3, terrace_tum: 3 }`, `homeExclusionRadius = 12`, `homeDominanceRadius = 30`, `homeMaxNeighbourLevels = 3`):
+
+| Plan | Items | Skipped (OSM `buildingFacts`) | SHA-256 |
+| --- | ---: | ---: | --- |
+| `planMassing` | 315 | 2 | `9e47e8b5561515380303677837c73e7a55fa302819a84ae570fe9635965cf6a7` |
+
+Composition: 81 × 1F, 129 × 2F, 69 × 3F, 36 × 4F; roofs: 119 `corrugated`, 98 `flat`, 98 `terrace_tum`. Every item carries `origin: "estimated_procedural"` and is inset `0.08 m` inside its canonical OSM footprint so party-wall neighbours neither intersect nor z-fight.
