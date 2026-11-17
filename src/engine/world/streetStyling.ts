@@ -11,7 +11,6 @@ export type StreetSurfaceStyleClass =
   | "primary_asphalt"
   | "secondary_asphalt"
   | "residential_asphalt"
-  | "unclassified_asphalt"
   | "service_pavement"
   | "alley_concrete"
   | "surveyed_concrete"
@@ -100,12 +99,12 @@ const SIDEWALK_WIDTH_TIERS: Partial<Record<RoadClass, readonly number[]>> = {
 const SPATIAL_CELL_METRES = 24;
 const CURB_WIDTH_METRES = 0.18;
 const ALLEY_TRIM_WIDTH_METRES = 0.14;
-const STEP_TARGET_METRES = 2.0;
-const MIN_SIDEWALK_RUN_METRES = 1.4;
-const MIN_ALLEY_TRIM_RUN_METRES = 1.2;
+const STEP_TARGET_METRES = 3.0;
+const MIN_SIDEWALK_RUN_METRES = 1.8;
+const MIN_ALLEY_TRIM_RUN_METRES = 1.5;
 const JUNCTION_NODE_RADIUS_METRES = 1.0;
 const LANE_MARK_JUNCTION_CLEARANCE_METRES = 3.6;
-const LANE_MARK_END_MARGIN_METRES = 2.2;
+const LANE_MARK_END_MARGIN_METRES = 2.4;
 const SAME_ELEVATION_TOLERANCE_METRES = 0.5;
 
 const round3 = (value: number) => Math.round(value * 1000) / 1000;
@@ -154,14 +153,8 @@ export function resolveRoadSurfaceStyle(road: RoadSegment): RoadSurfaceStyle {
     case "secondary":
       return { styleClass: "secondary_asphalt", color: "#444d49", roughness: 0.92, metalness: 0 };
     case "residential":
-      return { styleClass: "residential_asphalt", color: "#4c5551", roughness: 0.92, metalness: 0 };
     case "unknown":
-      return {
-        styleClass: "unclassified_asphalt",
-        color: "#535b57",
-        roughness: 0.92,
-        metalness: 0,
-      };
+      return { styleClass: "residential_asphalt", color: "#4c5551", roughness: 0.92, metalness: 0 };
     case "service":
       return { styleClass: "service_pavement", color: "#636862", roughness: 0.92, metalness: 0 };
     case "alley":
@@ -196,9 +189,18 @@ class SpatialGrid<T> {
   }
 }
 
+interface BoundedEdge {
+  a: Position2;
+  b: Position2;
+  minX: number;
+  minZ: number;
+  maxX: number;
+  maxZ: number;
+}
+
 interface IndexedBuilding {
   polygon: PolygonGeometry;
-  edges: [Position2, Position2][];
+  edges: BoundedEdge[];
   probe: Position2 | undefined;
   minX: number;
   minZ: number;
@@ -317,7 +319,6 @@ function emptyStyledCounts(): Record<StreetSurfaceStyleClass, number> {
     primary_asphalt: 0,
     secondary_asphalt: 0,
     residential_asphalt: 0,
-    unclassified_asphalt: 0,
     service_pavement: 0,
     alley_concrete: 0,
     surveyed_concrete: 0,
@@ -364,9 +365,16 @@ export function planProceduralStreetTrim(world: WorldData): ProceduralStreetTrim
         if (x > maxX) maxX = x;
         if (z > maxZ) maxZ = z;
       }
-      buildingGrid.insert(minX - 2.0, minZ - 2.0, maxX + 2.0, maxZ + 2.0, {
+      buildingGrid.insert(minX - 2.5, minZ - 2.5, maxX + 2.5, maxZ + 2.5, {
         polygon,
-        edges: polygon.coordinates.flatMap(ringEdges),
+        edges: polygon.coordinates.flatMap(ringEdges).map(([e1, e2]) => ({
+          a: e1,
+          b: e2,
+          minX: Math.min(e1[0], e2[0]),
+          minZ: Math.min(e1[1], e2[1]),
+          maxX: Math.max(e1[0], e2[0]),
+          maxZ: Math.max(e1[1], e2[1]),
+        })),
         probe: ringWithoutClosure(outer)[0],
         minX,
         minZ,
@@ -574,12 +582,20 @@ export function planProceduralStreetTrim(world: WorldData): ProceduralStreetTrim
                   continue;
                 }
                 let edgeHit = false;
-                for (const [e1, e2] of candidateBuilding.edges) {
+                for (const edge of candidateBuilding.edges) {
                   if (
-                    segmentsIntersect(q0, q1, e1, e2) ||
-                    segmentsIntersect(q1, q2, e1, e2) ||
-                    segmentsIntersect(q2, q3, e1, e2) ||
-                    segmentsIntersect(q3, q0, e1, e2)
+                    maxX < edge.minX ||
+                    minX > edge.maxX ||
+                    maxZ < edge.minZ ||
+                    minZ > edge.maxZ
+                  ) {
+                    continue;
+                  }
+                  if (
+                    segmentsIntersect(q0, q1, edge.a, edge.b) ||
+                    segmentsIntersect(q1, q2, edge.a, edge.b) ||
+                    segmentsIntersect(q2, q3, edge.a, edge.b) ||
+                    segmentsIntersect(q3, q0, edge.a, edge.b)
                   ) {
                     edgeHit = true;
                     break;
@@ -706,9 +722,9 @@ export function planProceduralStreetTrim(world: WorldData): ProceduralStreetTrim
     ) {
       const oneWay = road.direction === "forward" || road.direction === "reverse";
       const offsets = oneWay && width >= 11 ? [-width / 6, width / 6] : [0];
-      const dashLen = oneWay ? 2.6 : 3.0;
-      const gapLen = oneWay ? 3.8 : 3.6;
-      const markHalfWidth = oneWay ? 0.07 : 0.08;
+      const dashLen = oneWay ? 3.6 : 4.0;
+      const gapLen = oneWay ? 5.4 : 5.5;
+      const markHalfWidth = oneWay ? 0.08 : 0.09;
       const period = dashLen + gapLen;
 
       let totalLength = 0;

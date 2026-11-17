@@ -39,6 +39,13 @@ import { runStartupSequence, type StartupOutcome } from "./startupSequence";
 
 const STARTUP_PROGRAM_POLL_MS = 10;
 const STARTUP_PROGRAM_TIMEOUT_MS = 10_000;
+let cachedHomeMassingPlan: MassingPlan | null = null;
+
+function getHomeMassingPlan(): MassingPlan | null {
+  if (!HOME_ENRICHMENT) return null;
+  cachedHomeMassingPlan ??= planMassing(HOME_NEIGHBORHOOD, HOME_ENRICHMENT);
+  return cachedHomeMassingPlan;
+}
 
 export interface SceneRuntime {
   setLabel: (label: string) => void;
@@ -444,10 +451,7 @@ export function createDemoScene(
     worldBundle?.dispose();
     appliedDetailTier = currentDetailTier();
     const meshBuildStartedAt = performance.now();
-    const massingPlan =
-      snapshot.world === HOME_NEIGHBORHOOD && HOME_ENRICHMENT
-        ? planMassing(snapshot.world, HOME_ENRICHMENT)
-        : null;
+    const massingPlan = snapshot.world === HOME_NEIGHBORHOOD ? getHomeMassingPlan() : null;
     worldBundle = buildWorldMeshes(
       snapshot.world,
       materialFactory,
@@ -1098,10 +1102,12 @@ export function createDemoScene(
 
   const unsubscribeStore = useAppStore.subscribe((state, previous) => {
     if (disposed) return;
+    let needsRender = false;
+    let needsSchedule = false;
     if (state.detailTier !== previous.detailTier) {
       syncDetailTier(state);
-      render();
-      if (lifeActive()) scheduleFrame();
+      needsRender = true;
+      if (lifeActive()) needsSchedule = true;
     }
     if (
       state.lifeEnabled !== previous.lifeEnabled ||
@@ -1114,8 +1120,8 @@ export function createDemoScene(
       life?.update(0);
       // Publish the paused/configured clock now, not a throttled pre-pause snapshot.
       lastLifeMetricsAt = 0;
-      render();
-      if (lifeActive()) scheduleFrame();
+      needsRender = true;
+      if (lifeActive()) needsSchedule = true;
     }
     if (["walk", "ride"].includes(previous.viewMode) && !["walk", "ride"].includes(state.viewMode))
       restorePovCamera = true;
@@ -1130,7 +1136,10 @@ export function createDemoScene(
       state.zoom !== previous.zoom ||
       state.viewReset !== previous.viewReset
     ) {
-      if (!syncingControlsState) applyView(state.viewMode === previous.viewMode);
+      if (!syncingControlsState) {
+        applyView(false);
+        needsRender = true;
+      }
     }
     if (
       state.showTrees !== previous.showTrees ||
@@ -1140,7 +1149,7 @@ export function createDemoScene(
       state.viewMode !== previous.viewMode
     ) {
       updateLayerVisibility();
-      render();
+      needsRender = true;
     }
     if (
       state.weather !== previous.weather ||
@@ -1156,9 +1165,13 @@ export function createDemoScene(
         state.viewMode === previous.viewMode &&
         Math.abs(state.timeOfDayMinutes - previous.timeOfDayMinutes) <= 2;
       applyEnvironment(clockTickOnly || state.viewMode !== previous.viewMode);
-      render();
-      if (atmosphere.rainVisible || atmosphere.transitionActive || lifeActive()) scheduleFrame();
+      needsRender = true;
+      if (atmosphere.rainVisible || atmosphere.transitionActive || lifeActive()) {
+        needsSchedule = true;
+      }
     }
+    if (needsRender) render();
+    if (needsSchedule) scheduleFrame();
   });
 
   const unsubscribeWorld = homeWorldSession.subscribe((snapshot) => {

@@ -524,21 +524,20 @@ describe("static mesh merge by material", () => {
   it("plans deterministic, order-independent street styling without overlapping buildings or mutating canonical roads", () => {
     const plan = planProceduralStreetTrim(HOME_NEIGHBORHOOD);
     const goldenSha = createHash("sha256").update(JSON.stringify(plan)).digest("hex");
-    expect(goldenSha).toBe("d324b18505e9736b45861badc25caf9a30f6f6466deb9cd6b7377d8815640bc0");
+    expect(goldenSha).toBe("f4f060c1f4df8c3804537ac809b059778e1d66fa26121147370ac2b64a8645e2");
     expect(plan.styledRoadCounts).toEqual({
       primary_asphalt: 35,
       secondary_asphalt: 26,
-      residential_asphalt: 11,
-      unclassified_asphalt: 9,
+      residential_asphalt: 20,
       service_pavement: 39,
       alley_concrete: 18,
       surveyed_concrete: 0,
       surveyed_paving: 0,
     });
     expect(plan.countsByKind).toEqual({
-      inferred_sidewalk: 729,
-      curb: 729,
-      lane_marking: 1602,
+      inferred_sidewalk: 696,
+      curb: 696,
+      lane_marking: 1162,
       alley_trim: 94,
     });
 
@@ -585,7 +584,7 @@ describe("static mesh merge by material", () => {
     expect(syntheticPlan.countsByKind).toEqual({
       inferred_sidewalk: 0,
       curb: 0,
-      lane_marking: 39,
+      lane_marking: 30,
       alley_trim: 8,
     });
     expect(
@@ -614,17 +613,18 @@ describe("static mesh merge by material", () => {
       trimMeshCount: number;
     };
     expect(stylingMeta.origin).toBe("estimated_procedural");
-    expect(stylingMeta.styleClasses).toHaveLength(6);
-    expect(stylingMeta.trimMeshCount).toBe(4);
+    expect(stylingMeta.styleClasses).toHaveLength(5);
+    expect(stylingMeta.trimMeshCount).toBe(1);
 
     const trimGroup = bundle.layers.roads.getObjectByName("estimated-street-styling");
     expect(trimGroup).toBeTruthy();
-    expect(trimGroup!.children).toHaveLength(4);
-    for (const child of trimGroup!.children) {
-      expect(child).toBeInstanceOf(THREE.Mesh);
-      const normals = (child as THREE.Mesh).geometry.getAttribute("normal");
-      expect(normals.getY(0)).toBeGreaterThan(0.99);
-    }
+    expect(trimGroup!.children).toHaveLength(1);
+    const instancedTrim = trimGroup!.getObjectByName(
+      "street-trim:instanced",
+    ) as THREE.InstancedMesh;
+    expect(instancedTrim).toBeInstanceOf(THREE.InstancedMesh);
+    expect(instancedTrim.count).toBe(2648);
+    expect(instancedTrim.geometry.getAttribute("normal").getY(0)).toBeGreaterThan(0.99);
 
     const plan = planProceduralStreetTrim(HOME_NEIGHBORHOOD);
     const mark = plan.quads.find((quad) => quad.kind === "lane_marking")!;
@@ -647,8 +647,7 @@ describe("static mesh merge by material", () => {
     bundle.setConfidenceVisible(false);
     expect(trimGroup!.visible).toBe(true);
 
-    const markMesh = trimGroup!.getObjectByName("street-trim:lane_marking") as THREE.Mesh;
-    const markMat = markMesh.material as THREE.MeshStandardMaterial;
+    const markMat = instancedTrim.material as THREE.MeshStandardMaterial;
     const dryMarkRoughness = markMat.roughness;
     bundle.setRoadWet(true);
     expect(markMat.roughness).toBeLessThan(dryMarkRoughness);

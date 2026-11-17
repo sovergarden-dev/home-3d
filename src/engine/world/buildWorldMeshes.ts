@@ -545,27 +545,17 @@ function getStreetTrimPlan(world: WorldData): ProceduralStreetTrimPlan {
   return planProceduralStreetTrim(world);
 }
 
-const STREET_TRIM_KINDS: readonly ProceduralStreetTrimKind[] = [
-  "alley_trim",
-  "lane_marking",
-  "inferred_sidewalk",
-  "curb",
-];
-
 function createStreetTrimGroup(
   quads: readonly StreetTrimQuad[],
-  materialFactory: MaterialFactory,
   disposables: Disposable[],
 ): {
   group: THREE.Group | null;
-  meshes: Array<{ mesh: THREE.Mesh; material: THREE.MeshStandardMaterial; dryRoughness: number }>;
+  mesh: THREE.InstancedMesh | null;
+  material: THREE.MeshStandardMaterial | null;
+  dryRoughness: number;
 } {
-  if (quads.length === 0) return { group: null, meshes: [] };
-  const byKind = new Map<ProceduralStreetTrimKind, StreetTrimQuad[]>();
-  for (const quad of quads) {
-    const list = byKind.get(quad.kind);
-    if (list) list.push(quad);
-    else byKind.set(quad.kind, [quad]);
+  if (quads.length === 0) {
+    return { group: null, mesh: null, material: null, dryRoughness: 0.88 };
   }
 
   const trimGroup = new THREE.Group();
@@ -576,66 +566,83 @@ function createStreetTrimGroup(
     estimated: true,
     provenance: { origin: "estimated_procedural", estimated: true },
   };
-  const meshes: Array<{
-    mesh: THREE.Mesh;
-    material: THREE.MeshStandardMaterial;
-    dryRoughness: number;
-  }> = [];
 
-  for (const kind of STREET_TRIM_KINDS) {
-    const kindQuads = byKind.get(kind);
-    if (!kindQuads || kindQuads.length === 0) continue;
-    const positions = new Float32Array(kindQuads.length * 18);
-    let cursor = 0;
-    const writeUpwardTriangle = (a: Position2, b: Position2, c: Position2, y: number) => {
-      const signedArea = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
-      const p1 = a;
-      const p2 = signedArea > 0 ? c : b;
-      const p3 = signedArea > 0 ? b : c;
-      positions[cursor] = p1[0];
-      positions[cursor + 1] = y;
-      positions[cursor + 2] = p1[1];
-      positions[cursor + 3] = p2[0];
-      positions[cursor + 4] = y;
-      positions[cursor + 5] = p2[1];
-      positions[cursor + 6] = p3[0];
-      positions[cursor + 7] = y;
-      positions[cursor + 8] = p3[1];
-      cursor += 9;
-    };
-    for (const quad of kindQuads) {
-      writeUpwardTriangle(quad.aLeft, quad.bLeft, quad.bRight, quad.y);
-      writeUpwardTriangle(quad.aLeft, quad.bRight, quad.aRight, quad.y);
-    }
+  const unitQuad = new THREE.PlaneGeometry(1, 1);
+  unitQuad.rotateX(-Math.PI / 2);
+  const dryRoughness = 0.88;
+  const material = new THREE.MeshStandardMaterial({
+    roughness: dryRoughness,
+    metalness: 0,
+    polygonOffset: true,
+    polygonOffsetFactor: -2,
+    polygonOffsetUnits: -3,
+  });
+  const instanced = new THREE.InstancedMesh(unitQuad, material, quads.length);
+  instanced.name = "street-trim:instanced";
+  instanced.receiveShadow = false;
+  instanced.castShadow = false;
+  instanced.raycast = () => {};
+  instanced.userData = {
+    nonPickable: true,
+    origin: "estimated_procedural",
+    estimated: true,
+  };
 
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    geometry.computeVertexNormals();
-    geometry.computeBoundingBox();
-    geometry.computeBoundingSphere();
+  const position = new THREE.Vector3();
+  const quaternion = new THREE.Quaternion();
+  const scale = new THREE.Vector3();
+  const upAxis = new THREE.Vector3(0, 1, 0);
+  const matrix = new THREE.Matrix4();
+  const paletteByKind: Record<ProceduralStreetTrimKind, THREE.Color> = {
+    alley_trim: new THREE.Color(STREET_TRIM_MATERIALS.alley_trim.color),
+    lane_marking: new THREE.Color(STREET_TRIM_MATERIALS.lane_marking.color),
+    inferred_sidewalk: new THREE.Color(STREET_TRIM_MATERIALS.inferred_sidewalk.color),
+    curb: new THREE.Color(STREET_TRIM_MATERIALS.curb.color),
+  };
 
-    const style = STREET_TRIM_MATERIALS[kind];
-    const material = materialFactory(style.color, style.roughness, style.metalness).clone();
-    material.polygonOffset = true;
-    material.polygonOffsetFactor = style.polygonOffsetFactor;
-    material.polygonOffsetUnits = style.polygonOffsetUnits;
-
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.name = `street-trim:${kind}`;
-    mesh.receiveShadow = true;
-    mesh.castShadow = false;
-    mesh.userData = {
-      nonPickable: true,
-      origin: "estimated_procedural",
-      estimated: true,
-      trimKind: kind,
-    };
-    trimGroup.add(mesh);
-    disposables.push(geometry, material);
-    meshes.push({ mesh, material, dryRoughness: style.roughness });
+  let minX = Infinity;
+  let minY = Infinity;
+  let minZ = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  let maxZ = -Infinity;
+  for (let index = 0; index < quads.length; index += 1) {
+    const quad = quads[index]!;
+    const cx = (quad.aLeft[0] + quad.bRight[0]) * 0.5;
+    const cz = (quad.aLeft[1] + quad.bRight[1]) * 0.5;
+    const dx = quad.bLeft[0] - quad.aLeft[0];
+    const dz = quad.bLeft[1] - quad.aLeft[1];
+    const length = Math.max(1e-3, Math.hypot(dx, dz));
+    const width = Math.max(
+      1e-3,
+      Math.hypot(quad.aLeft[0] - quad.aRight[0], quad.aLeft[1] - quad.aRight[1]),
+    );
+    const halfSpan = (length + width) * 0.5;
+    if (cx - halfSpan < minX) minX = cx - halfSpan;
+    if (cx + halfSpan > maxX) maxX = cx + halfSpan;
+    if (cz - halfSpan < minZ) minZ = cz - halfSpan;
+    if (cz + halfSpan > maxZ) maxZ = cz + halfSpan;
+    if (quad.y < minY) minY = quad.y;
+    if (quad.y > maxY) maxY = quad.y;
+    position.set(cx, quad.y, cz);
+    quaternion.setFromAxisAngle(upAxis, -Math.atan2(dz, dx));
+    scale.set(length, 1, width);
+    matrix.compose(position, quaternion, scale);
+    instanced.setMatrixAt(index, matrix);
+    instanced.setColorAt(index, paletteByKind[quad.kind]);
   }
+  instanced.instanceMatrix.needsUpdate = true;
+  if (instanced.instanceColor) instanced.instanceColor.needsUpdate = true;
+  const boundsBox = new THREE.Box3(
+    new THREE.Vector3(minX, minY, minZ),
+    new THREE.Vector3(maxX, maxY, maxZ),
+  );
+  instanced.boundingBox = boundsBox;
+  instanced.boundingSphere = boundsBox.getBoundingSphere(new THREE.Sphere());
 
-  return trimGroup.children.length > 0 ? { group: trimGroup, meshes } : { group: null, meshes: [] };
+  trimGroup.add(instanced);
+  disposables.push(unitQuad, material, instanced);
+  return { group: trimGroup, mesh: instanced, material, dryRoughness };
 }
 
 const ROAD_NODE_TOLERANCE_METRES = 0.001;
@@ -1501,7 +1508,7 @@ export function buildWorldMeshes(
   mergeStaticLayer(layers.roads, disposables, pickProxies, mergedStaticMeshes);
   mergeStaticLayer(layers.buildings, disposables, pickProxies, mergedStaticMeshes);
   const streetTrimPlan = getStreetTrimPlan(world);
-  const streetTrimBatch = createStreetTrimGroup(streetTrimPlan.quads, materialFactory, disposables);
+  const streetTrimBatch = createStreetTrimGroup(streetTrimPlan.quads, disposables);
   const estimatedStreetStylingGroup = streetTrimBatch.group;
   if (estimatedStreetStylingGroup) {
     layers.roads.add(estimatedStreetStylingGroup);
@@ -1514,7 +1521,7 @@ export function buildWorldMeshes(
     styleClasses: activeStyleClasses,
     styledRoadCounts: streetTrimPlan.styledRoadCounts,
     countsByKind: streetTrimPlan.countsByKind,
-    trimMeshCount: streetTrimBatch.meshes.length,
+    trimMeshCount: streetTrimBatch.mesh ? 1 : 0,
   };
   if (massingPlan && massingPlan.items.length > 0) {
     const canonicalById = new Map(world.buildings.map((building) => [building.localId, building]));
@@ -1654,11 +1661,11 @@ export function buildWorldMeshes(
           original.roughness = roughness;
         }
       });
-      streetTrimBatch.meshes.forEach((entry) => {
-        entry.material.roughness = wet
-          ? Math.max(0.38, entry.dryRoughness - 0.42)
-          : entry.dryRoughness;
-      });
+      if (streetTrimBatch.material) {
+        streetTrimBatch.material.roughness = wet
+          ? Math.max(0.38, streetTrimBatch.dryRoughness - 0.42)
+          : streetTrimBatch.dryRoughness;
+      }
       updatePresentation();
     },
     setAtmospherePresentation(season, night) {
