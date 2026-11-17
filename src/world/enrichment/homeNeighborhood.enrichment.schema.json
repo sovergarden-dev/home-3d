@@ -317,6 +317,7 @@
         "life": {
           "type": "object",
           "additionalProperties": false,
+          "required": ["motorbikeToCarRatio", "pedestriansPer100m"],
           "properties": {
             "motorbikeToCarRatio": {
               "type": "number",
@@ -329,7 +330,7 @@
               "maximum": 30
             }
           },
-          "description": "Reserved for PR-4 life density; not read by PR-2."
+          "description": "Ambient street-life mix and pedestrian density parameters (PR-4)."
         },
         "density": {
           "type": "object",

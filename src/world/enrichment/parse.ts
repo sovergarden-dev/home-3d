@@ -282,7 +282,16 @@ function validate(value: unknown, base: EnrichmentBase): EnrichmentLayer {
   finite(massing["balconyProbability"], 0, 1, "GENERATOR_MASSING_PROBABILITY");
   finite(massing["shopProbabilityOnPrimary"], 0, 1, "GENERATOR_MASSING_PROBABILITY");
   finite(massing["floorHeight"], 2.5, 5, "GENERATOR_MASSING_FLOOR_HEIGHT");
-  if (generator["life"] !== undefined && !isObject(generator["life"])) fail("GENERATOR_LIFE");
+  if (generator["life"] !== undefined) {
+    const life = exactKeys(
+      generator["life"],
+      ["motorbikeToCarRatio", "pedestriansPer100m"],
+      [],
+      "GENERATOR_LIFE",
+    );
+    finite(life["motorbikeToCarRatio"], 1, 20, "GENERATOR_LIFE_RATIO");
+    finite(life["pedestriansPer100m"], 0, 30, "GENERATOR_LIFE_PEDESTRIANS");
+  }
   return value as EnrichmentLayer;
 }
 

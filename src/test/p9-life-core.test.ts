@@ -123,4 +123,63 @@ describe("P9 life graph and simulation", () => {
     for (const agent of sim.agents)
       expect(Math.abs(agent.x) > 8 || Math.abs(agent.z) > 8).toBe(true);
   });
+
+  it("applies generator.life motorbikeToCarRatio and pedestriansPer100m deterministically", () => {
+    const network = world([
+      road(
+        "avenue-1",
+        [
+          [-250, -40],
+          [250, -40],
+        ],
+        8,
+      ),
+      road(
+        "avenue-2",
+        [
+          [-250, 40],
+          [250, 40],
+        ],
+        8,
+      ),
+    ]);
+    const balanced = createLifeSimulation(network, 77, {
+      motorbikeToCarRatio: 1,
+      pedestriansPer100m: 2,
+    });
+    const scooterHeavy = createLifeSimulation(network, 77, {
+      motorbikeToCarRatio: 8,
+      pedestriansPer100m: 2,
+    });
+    balanced.update(0, { speed: 0, tier: "high", visible: true });
+    scooterHeavy.update(0, { speed: 0, tier: "high", visible: true });
+
+    const countKind = (agents: typeof balanced.agents, kind: string) =>
+      agents.filter((agent) => agent.kind === kind).length;
+    const balancedRatio =
+      countKind(balanced.agents, "motorbike") / Math.max(1, countKind(balanced.agents, "car"));
+    const heavyRatio =
+      countKind(scooterHeavy.agents, "motorbike") /
+      Math.max(1, countKind(scooterHeavy.agents, "car"));
+    expect(heavyRatio).toBeGreaterThan(balancedRatio * 3);
+
+    const zeroPed = createLifeSimulation(network, 77, {
+      motorbikeToCarRatio: 2.5,
+      pedestriansPer100m: 0,
+    });
+    zeroPed.update(0, { speed: 0, tier: "mid", visible: true });
+    expect(countKind(zeroPed.agents, "pedestrian")).toBe(0);
+    zeroPed.update(0, { speed: 0, tier: "low", visible: true });
+    expect(countKind(zeroPed.agents, "pedestrian")).toBe(0);
+    expect(zeroPed.agents.length).toBeGreaterThan(0);
+
+    const livelyPed = createLifeSimulation(network, 77, {
+      motorbikeToCarRatio: 2.5,
+      pedestriansPer100m: 12,
+    });
+    livelyPed.update(0, { speed: 0, tier: "high", visible: true });
+    expect(countKind(livelyPed.agents, "pedestrian")).toBeGreaterThan(
+      countKind(balanced.agents, "pedestrian") * 2,
+    );
+  });
 });

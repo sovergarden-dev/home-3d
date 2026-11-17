@@ -288,6 +288,24 @@ describe("surroundings snapshot: privacy and tag allowlist (Aegis conditions 1â€
         (l) => (l["snapshot"]["queryTemplate"] = "{{bbox}} 1.23456"),
       ],
       ["LAYER_NON_FINITE_NUMBER", (l) => (l["generator"]["poleSpacing"] = Number.NaN)],
+      ["GENERATOR_LIFE_NOT_OBJECT", (l) => (l["generator"]["life"] = "high")],
+      [
+        "GENERATOR_LIFE_MISSING_pedestriansPer100m",
+        (l) => (l["generator"]["life"] = { motorbikeToCarRatio: 2.5 }),
+      ],
+      [
+        "GENERATOR_LIFE_UNKNOWN_KEY",
+        (l) =>
+          (l["generator"]["life"] = {
+            motorbikeToCarRatio: 2.5,
+            pedestriansPer100m: 3,
+            carsPer100m: 1,
+          }),
+      ],
+      ["GENERATOR_LIFE_RATIO", (l) => (l["generator"]["life"]["motorbikeToCarRatio"] = 0.5)],
+      ["GENERATOR_LIFE_RATIO", (l) => (l["generator"]["life"]["motorbikeToCarRatio"] = 25)],
+      ["GENERATOR_LIFE_PEDESTRIANS", (l) => (l["generator"]["life"]["pedestriansPer100m"] = -1)],
+      ["GENERATOR_LIFE_PEDESTRIANS", (l) => (l["generator"]["life"]["pedestriansPer100m"] = 35)],
     ];
     expect(HOME_ENRICHMENT!.pointFacts.length).toBeGreaterThan(0);
     for (const [code, mutate] of cases) {

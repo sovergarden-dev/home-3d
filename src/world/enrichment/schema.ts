@@ -104,7 +104,7 @@ export interface GeneratorParams {
   poleSpacing: number;
   vendorCartsPer100m: number;
   parkedMotorbikesPer100m: number;
-  /** Reserved for the estimated-massing PR (PR-3); not read by PR-2. */
+  /** Estimated neighboring massing parameters (read by planMassing in PR-3). */
   massing: {
     levelsWeights: [number, number, number, number];
     roofWeights: Partial<Record<"corrugated" | "flat" | "terrace_tum", number>>;
@@ -112,7 +112,7 @@ export interface GeneratorParams {
     shopProbabilityOnPrimary: number;
     floorHeight: number;
   };
-  /** Reserved for the life-density PR (PR-4); not read by PR-2. */
+  /** Ambient street-life mix and pedestrian density parameters (read by simulation in PR-4). */
   life?: { motorbikeToCarRatio: number; pedestriansPer100m: number };
 }
 
