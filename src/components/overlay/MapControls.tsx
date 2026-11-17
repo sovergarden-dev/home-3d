@@ -1,5 +1,15 @@
-import { Compass, Box, Minus, Plus, LocateFixed, Map as MapIcon } from "lucide-react";
+import {
+  Activity,
+  Box,
+  Compass,
+  Layers,
+  LocateFixed,
+  Map as MapIcon,
+  Minus,
+  Plus,
+} from "lucide-react";
 import { useAppStore, type ViewMode } from "@/state/appStore";
+import type { DetailTier } from "@/world/enrichment/schema";
 import { useT } from "@/i18n";
 
 const modes: { id: ViewMode; Icon: typeof Box }[] = [
@@ -10,8 +20,33 @@ const modes: { id: ViewMode; Icon: typeof Box }[] = [
 export function MapControls() {
   const t = useT();
   const ready = useAppStore((s) => s.sceneStatus === "ready");
-  const { zoomIn, zoomOut, resetView, heading, setHeading, viewMode, setViewMode } = useAppStore();
+  const {
+    zoomIn,
+    zoomOut,
+    resetView,
+    heading,
+    setHeading,
+    viewMode,
+    setViewMode,
+    lifeEnabled,
+    setLifeEnabled,
+    detailTier,
+    cycleDetailTier,
+  } = useAppStore();
   const btn = "ctl text-foreground hover:bg-secondary";
+  const densityLabel = t.life.densityCycle.replace("{tier}", t.life.tiers[detailTier]);
+  const handleCycleDensity = () => {
+    const attr = document.querySelector<HTMLElement>('[data-testid="demo-scene"]')?.dataset[
+      "detailTier"
+    ];
+    const effective: DetailTier =
+      attr === "low" || attr === "mid" || attr === "high"
+        ? attr
+        : window.innerWidth < 768
+          ? "low"
+          : "mid";
+    cycleDetailTier(effective);
+  };
 
   return (
     <div className="h6-map-controls pointer-events-auto flex flex-col gap-2">
@@ -80,6 +115,32 @@ export function MapControls() {
             <Icon className="h-5 w-5" />
           </button>
         ))}
+      </div>
+      <div className="h6-life-actions glass flex flex-col p-1">
+        <button
+          type="button"
+          data-testid="life-quick-toggle"
+          disabled={!ready}
+          aria-pressed={lifeEnabled}
+          aria-label={t.life.quickToggle}
+          title={t.life.quickToggle}
+          onClick={() => setLifeEnabled(!lifeEnabled)}
+          className={`${btn} aria-pressed:bg-primary aria-pressed:text-primary-foreground`}
+        >
+          <Activity className="h-5 w-5" />
+        </button>
+        <button
+          type="button"
+          data-testid="density-tier-cycle"
+          data-detail-tier={detailTier}
+          disabled={!ready}
+          aria-label={densityLabel}
+          title={densityLabel}
+          onClick={handleCycleDensity}
+          className={detailTier === "high" ? "ctl bg-primary text-primary-foreground" : btn}
+        >
+          <Layers className="h-5 w-5" />
+        </button>
       </div>
     </div>
   );

@@ -99,6 +99,8 @@ export const vi = {
     label: "Mô phỏng",
     layer: "Lớp sống",
     density: "Mật độ mô phỏng",
+    densityCycle: "Mật độ cảnh: {tier}",
+    tiers: { auto: "Tự động", low: "Thấp", mid: "Vừa", high: "Cao" },
     note: "Xe, người, hàng rong và động vật minh họa; Diorama phóng đại để dễ nhìn. Làn và lối đi suy ra, không phải dữ liệu thực địa.",
     audio: "Âm thanh tổng hợp",
     localAudio: "Âm thanh cục bộ · chỉ trong phiên",

@@ -1,6 +1,6 @@
 import { worldDataProvider } from "@/world/privateWorldSession";
 import { useEffect, useSyncExternalStore } from "react";
-import { useAppStore } from "@/state/appStore";
+import { useAppStore, type SceneDetailPreference } from "@/state/appStore";
 import { useT } from "@/i18n";
 import {
   getLifeStatus,
@@ -8,6 +8,8 @@ import {
   sendLifeCommand,
   subscribeLifeStatus,
 } from "@/engine/life/session";
+
+const detailChoices: SceneDetailPreference[] = ["auto", "low", "mid", "high"];
 
 export function LifeControls() {
   const t = useT();
@@ -28,6 +30,20 @@ export function LifeControls() {
         <span className="text-xs text-muted-foreground">
           {t.life.label} · {t.life.audio}
         </span>
+      </div>
+      <div className="flex flex-wrap items-center gap-1" aria-label={t.life.density}>
+        <span className="mr-1 text-xs text-muted-foreground">{t.life.density}</span>
+        {detailChoices.map((tier) => (
+          <button
+            key={tier}
+            type="button"
+            aria-pressed={state.detailTier === tier}
+            onClick={() => state.setDetailTier(tier)}
+            className="chip px-2.5 text-xs"
+          >
+            {t.life.tiers[tier]}
+          </button>
+        ))}
       </div>
       {status.reason && (
         <p role="status" className="text-xs">

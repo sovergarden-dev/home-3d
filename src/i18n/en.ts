@@ -105,6 +105,8 @@ export const en: Dict = {
     label: "Simulation",
     layer: "Life layer",
     density: "Simulation density",
+    densityCycle: "Scene density: {tier}",
+    tiers: { auto: "Auto", low: "Low", mid: "Medium", high: "High" },
     note: "Illustrative traffic, people, vendors and animals, enlarged in Diorama for readability; inferred lanes and paths, not surveyed data.",
     audio: "Synthesized audio",
     localAudio: "Local audio · session only",

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { clearMomentBlobs } from "@/memories/moments";
-import { useAppStore } from "@/state/appStore";
+import { nextDetailTier, resolveSceneDetailTier, useAppStore } from "@/state/appStore";
 
 const initialState = useAppStore.getState();
 
@@ -112,5 +112,28 @@ describe("application state boundaries", () => {
       planMeasurement: null,
       loadingProgress: 1,
     });
+  });
+
+  it("resolves and cycles scene detail tiers across auto, low, mid, and high", () => {
+    expect(useAppStore.getState().detailTier).toBe("auto");
+    expect(resolveSceneDetailTier("auto", 4096, 1440)).toBe("low");
+    expect(resolveSceneDetailTier("auto", 8192, 640)).toBe("low");
+    expect(resolveSceneDetailTier("auto", 8192, 1280)).toBe("mid");
+    expect(resolveSceneDetailTier("high", 4096, 390)).toBe("high");
+    expect(resolveSceneDetailTier("low", 8192, 1440)).toBe("low");
+    expect(nextDetailTier("low")).toBe("mid");
+    expect(nextDetailTier("mid")).toBe("high");
+    expect(nextDetailTier("high")).toBe("low");
+
+    useAppStore.getState().cycleDetailTier();
+    expect(useAppStore.getState().detailTier).toBe("high");
+    useAppStore.getState().cycleDetailTier("mid");
+    expect(useAppStore.getState().detailTier).toBe("low");
+    useAppStore.getState().cycleDetailTier("high");
+    expect(useAppStore.getState().detailTier).toBe("mid");
+
+    useAppStore.getState().setDetailTier("auto");
+    useAppStore.getState().cycleDetailTier("low");
+    expect(useAppStore.getState().detailTier).toBe("mid");
   });
 });

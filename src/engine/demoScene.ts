@@ -14,6 +14,7 @@ import { createSurroundingsMeshes, type SurroundingsMeshes } from "./world/surro
 import { HOME_ENRICHMENT } from "@/world/enrichment/homeEnrichment";
 import { planMassing, type MassingPlan } from "@/world/enrichment/planMassing";
 import { planSurroundings } from "@/world/enrichment/planSurroundings";
+import type { DetailTier } from "@/world/enrichment/schema";
 import { HOME_NEIGHBORHOOD } from "@/world/homeNeighborhood";
 import { assessWallHeight } from "@/world/wallHeight";
 import { createFrameMetrics } from "./quality/frameMetrics";
@@ -29,7 +30,7 @@ import {
   type PrivateWorldPlanFrame,
 } from "./view/privateWorldPlanFrame";
 import { projectMarkerAndCull } from "./view/cameraFrame";
-import { useAppStore } from "@/state/appStore";
+import { resolveSceneDetailTier, useAppStore } from "@/state/appStore";
 import { SITE_CONFIG } from "@/config/site";
 import { surfaceCentroid } from "@/world/geometry";
 import { homeWorldSession } from "@/world/homeWorldSession";
@@ -349,17 +350,28 @@ export function createDemoScene(
   let interactionActive = false;
   let interactionTimer = 0;
   const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const isReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   let illustrativeDetails: ReturnType<typeof createIllustrativeDetails> | null = null;
+  let illustrativeDetailsTier: DetailTier | null = null;
   let surroundings: SurroundingsMeshes | null = null;
+  const currentDetailTier = (state = useAppStore.getState()): DetailTier =>
+    resolveSceneDetailTier(
+      state.detailTier,
+      renderer.capabilities.maxTextureSize,
+      window.innerWidth,
+    );
+  let appliedDetailTier: DetailTier = currentDetailTier();
 
   /**
    * Seeded OSM surroundings (trees + street furniture) for the canonical home world only. The
    * layer is bound to G1 and fails closed to the base world; output is decoration, not collider.
    */
-  function mountSurroundings(world: WorldData, bundle: WorldMeshBundle) {
+  function mountSurroundings(world: WorldData, bundle: WorldMeshBundle, tier: DetailTier) {
     surroundings?.dispose();
     surroundings = null;
+    host.dataset["detailTier"] = tier;
+    host.dataset["reducedMotion"] = String(isReducedMotion());
     if (world !== HOME_NEIGHBORHOOD || !HOME_ENRICHMENT) {
       host.dataset["surroundingsTier"] = "none";
       host.dataset["surroundingsTrees"] = "0";
@@ -367,8 +379,6 @@ export function createDemoScene(
       host.dataset["surroundingsInstances"] = "0";
       return;
     }
-    const tier =
-      renderer.capabilities.maxTextureSize <= 4096 || window.innerWidth < 768 ? "low" : "mid";
     const startedAt = performance.now();
     const plan = planSurroundings(world, HOME_ENRICHMENT, tier);
     surroundings = createSurroundingsMeshes(plan);
@@ -379,6 +389,27 @@ export function createDemoScene(
     host.dataset["surroundingsProps"] = String(plan.props.length);
     host.dataset["surroundingsInstances"] = String(surroundings.instanceCount);
     host.dataset["surroundingsPlanMs"] = String(Math.round(performance.now() - startedAt));
+  }
+
+  function syncDetailTier(state = useAppStore.getState()): boolean {
+    const nextTier = currentDetailTier(state);
+    host.dataset["detailTier"] = nextTier;
+    if (nextTier === appliedDetailTier) return false;
+    appliedDetailTier = nextTier;
+    if ("world" in currentWorld && worldBundle) {
+      mountSurroundings(currentWorld.world, worldBundle, nextTier);
+    }
+    if (illustrativeDetails && illustrativeDetailsTier !== nextTier) {
+      illustrativeDetails.dispose();
+      illustrativeDetails = null;
+      illustrativeDetailsTier = null;
+    }
+    updateLayerVisibility();
+    life?.setTier(nextTier);
+    life?.configure();
+    life?.update(0);
+    lastLifeMetricsAt = 0;
+    return true;
   }
 
   function applyShadowBounds(world: WorldData, massingPlan: MassingPlan | null) {
@@ -407,9 +438,11 @@ export function createDemoScene(
     if (useAppStore.getState().soundOn) useAppStore.setState({ soundOn: false });
     illustrativeDetails?.dispose();
     illustrativeDetails = null;
+    illustrativeDetailsTier = null;
     surroundings?.dispose();
     surroundings = null;
     worldBundle?.dispose();
+    appliedDetailTier = currentDetailTier();
     const meshBuildStartedAt = performance.now();
     const massingPlan =
       snapshot.world === HOME_NEIGHBORHOOD && HOME_ENRICHMENT
@@ -423,7 +456,7 @@ export function createDemoScene(
     );
     host.dataset["massingCount"] = String(massingPlan?.items.length ?? 0);
     host.dataset["massingOrigin"] = massingPlan ? "estimated_procedural" : "none";
-    mountSurroundings(snapshot.world, worldBundle);
+    mountSurroundings(snapshot.world, worldBundle, appliedDetailTier);
     applyShadowBounds(snapshot.world, massingPlan);
     atmosphere.invalidateWorld();
     host.dataset["meshBuildLatencyMs"] = String(performance.now() - meshBuildStartedAt);
@@ -437,12 +470,16 @@ export function createDemoScene(
     });
     resetPlanCentre();
     span = frame.span;
+    const lifeProfile =
+      snapshot.world === HOME_NEIGHBORHOOD ? HOME_ENRICHMENT?.generator.life : undefined;
     life = createLifeRuntime({
       world: snapshot.world,
       camera: perspectiveCamera,
       canvas,
       target: controls.target,
-      reducedMotion: motion.matches,
+      reducedMotion: isReducedMotion,
+      tier: appliedDetailTier,
+      profile: lifeProfile,
       invalidate: scheduleFrame,
     });
     scene.add(life.group);
@@ -459,6 +496,7 @@ export function createDemoScene(
     if (useAppStore.getState().soundOn) useAppStore.setState({ soundOn: false });
     illustrativeDetails?.dispose();
     illustrativeDetails = null;
+    illustrativeDetailsTier = null;
     surroundings?.dispose();
     surroundings = null;
     worldBundle?.dispose();
@@ -505,7 +543,7 @@ export function createDemoScene(
       delete host.dataset["planZenith"];
       useAppStore.getState().setPlanMeasurement(null);
       life?.setMode(povMode);
-      if (!motion.matches) scheduleFrame();
+      if (!isReducedMotion()) scheduleFrame();
       return;
     }
     if (wasPov) {
@@ -616,7 +654,7 @@ export function createDemoScene(
       },
       worldRenderable() && state.viewMode !== "topdown",
       homeCentre,
-      immediate || motion.matches ? 0 : 350,
+      immediate || isReducedMotion() ? 0 : 350,
     );
     audio.set(
       state.soundOn && !document.hidden && worldRenderable(),
@@ -641,11 +679,14 @@ export function createDemoScene(
   function updateLayerVisibility() {
     const showDetails =
       useAppStore.getState().illustrativeDetails && useAppStore.getState().viewMode === "diorama";
+    if (illustrativeDetails && illustrativeDetailsTier !== appliedDetailTier) {
+      illustrativeDetails.dispose();
+      illustrativeDetails = null;
+      illustrativeDetailsTier = null;
+    }
     if (showDetails && "world" in currentWorld && !illustrativeDetails) {
-      illustrativeDetails = createIllustrativeDetails(
-        currentWorld.world,
-        renderer.capabilities.maxTextureSize <= 4096 ? "low" : "mid",
-      );
+      illustrativeDetails = createIllustrativeDetails(currentWorld.world, appliedDetailTier);
+      illustrativeDetailsTier = appliedDetailTier;
     }
     if (showDetails && illustrativeDetails) scene.add(illustrativeDetails.group);
     else illustrativeDetails?.group.removeFromParent();
@@ -714,6 +755,7 @@ export function createDemoScene(
       (currentWorld.world.manifest.isSynthetic ? "synthetic" : "REAL_WORLD_NOT_VERIFIED");
     host.dataset["activeWorlds"] = worldBundle ? "1" : "0";
     host.dataset["cameraType"] = activeCamera.type;
+    host.dataset["reducedMotion"] = String(isReducedMotion());
     if (life) {
       const m = life.metrics();
       host.dataset["lifeAgents"] = String(m.agentCount);
@@ -747,7 +789,7 @@ export function createDemoScene(
       disposed ||
       !firstFrameReady ||
       document.hidden ||
-      (motion.matches && !lifeActive()) ||
+      (isReducedMotion() && !lifeActive()) ||
       animationFrame !== 0
     )
       return;
@@ -765,7 +807,16 @@ export function createDemoScene(
 
   function tick(now: number) {
     animationFrame = 0;
-    if (disposed || document.hidden || (motion.matches && !lifeActive())) return;
+    if (disposed || document.hidden) return;
+    if (isReducedMotion() && !lifeActive()) {
+      if (host.dataset["reducedMotion"] !== "true") {
+        life?.configure();
+        life?.update(0);
+        lastLifeMetricsAt = 0;
+        render();
+      }
+      return;
+    }
     const delta = lastFrame === 0 ? 0.016 : Math.min(0.1, (now - lastFrame) / 1000);
     lastFrame = now;
 
@@ -803,6 +854,7 @@ export function createDemoScene(
     perspectiveCamera.aspect = host.clientWidth / host.clientHeight;
     perspectiveCamera.updateProjectionMatrix();
     renderer.setSize(host.clientWidth, host.clientHeight, false);
+    syncDetailTier();
     applyView();
     render();
   }
@@ -944,8 +996,18 @@ export function createDemoScene(
     animationFrame = 0;
     lastFrame = 0;
     frameMetrics.reset();
+    life?.configure();
+    life?.update(0);
+    lastLifeMetricsAt = 0;
     render();
-    if (!motion.matches && !document.hidden && !disposed) scheduleFrame();
+    if (
+      !isReducedMotion() &&
+      !document.hidden &&
+      !disposed &&
+      (atmosphere.rainVisible || atmosphere.transitionActive || lifeActive())
+    ) {
+      scheduleFrame();
+    }
   }
 
   function onKey(event: KeyboardEvent) {
@@ -1032,6 +1094,11 @@ export function createDemoScene(
 
   const unsubscribeStore = useAppStore.subscribe((state, previous) => {
     if (disposed) return;
+    if (state.detailTier !== previous.detailTier) {
+      syncDetailTier(state);
+      render();
+      if (lifeActive()) scheduleFrame();
+    }
     if (
       state.lifeEnabled !== previous.lifeEnabled ||
       state.lifeDensity !== previous.lifeDensity ||

@@ -72,4 +72,56 @@ test("owner-provided OSM neighborhood stays immutable across views and illustrat
   });
   expect(resourceCounts.every((count) => /^\d+$/.test(count))).toBe(true);
   expect(new Set(resourceCounts).size).toBe(1);
+
+  const baselineMidGeometries = resourceCounts[0]!;
+  const densityToggle = page.getByTestId("density-tier-cycle");
+  const lifeToggle = page.getByTestId("life-quick-toggle");
+
+  await densityToggle.click();
+  await expect(scene).toHaveAttribute("data-detail-tier", "high");
+  await expect(scene).toHaveAttribute("data-surroundings-tier", "high");
+  await expect(scene).toHaveAttribute("data-surroundings-trees", "352");
+  await expect(scene).toHaveAttribute("data-surroundings-props", "400");
+  // Software WebGL (SwiftShader < 24 FPS) legitimately triggers P9's automatic FPS tier step-down.
+  await expect(scene).toHaveAttribute("data-life-tier", /^(low|mid|high)$/);
+  const highDrawCalls = Number(await scene.getAttribute("data-draw-calls"));
+  expect(Number.isFinite(highDrawCalls)).toBe(true);
+  expect(highDrawCalls).toBeLessThanOrEqual(200);
+
+  await densityToggle.click();
+  await expect(scene).toHaveAttribute("data-detail-tier", "low");
+  await expect(scene).toHaveAttribute("data-surroundings-tier", "low");
+  await expect(scene).toHaveAttribute("data-surroundings-trees", "150");
+  await expect(scene).toHaveAttribute("data-surroundings-props", "80");
+
+  await densityToggle.click();
+  await expect(scene).toHaveAttribute("data-detail-tier", "mid");
+  await expect(scene).toHaveAttribute("data-surroundings-tier", "mid");
+  await expect(scene).toHaveAttribute("data-memory-geometries", baselineMidGeometries);
+
+  await lifeToggle.click();
+  await expect(scene).toHaveAttribute("data-life-visible", "false");
+  await lifeToggle.click();
+  await expect(scene).toHaveAttribute("data-life-visible", "true");
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(scene).toHaveAttribute("data-reduced-motion", "true");
+  const pausedClock = await scene.getAttribute("data-life-clock");
+  await page.waitForTimeout(350);
+  await expect(scene).toHaveAttribute("data-life-clock", pausedClock!);
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.getByRole("radio", { name: "Chiều", exact: true }).click();
+  await expect(scene).toHaveAttribute("data-reduced-motion", "false");
+});
+
+test("cold start under prefers-reduced-motion keeps street presence stationary", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const { scene } = await waitForRenderedHome(page);
+  await expect(scene).toHaveAttribute("data-reduced-motion", "true");
+  await expect(scene).toHaveAttribute("data-life-agents", /^[1-9]\d*$/);
+  await expect(scene).toHaveAttribute("data-life-clock", "0");
+  await page.waitForTimeout(350);
+  await expect(scene).toHaveAttribute("data-life-clock", "0");
 });
