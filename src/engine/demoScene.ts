@@ -456,6 +456,10 @@ export function createDemoScene(
     );
     host.dataset["massingCount"] = String(massingPlan?.items.length ?? 0);
     host.dataset["massingOrigin"] = massingPlan ? "estimated_procedural" : "none";
+    const streetStylingMeta = worldBundle.layers.roads.userData["streetStyling"] as
+      { styleClasses: string[]; trimMeshCount: number } | undefined;
+    host.dataset["streetStyleClasses"] = String(streetStylingMeta?.styleClasses.length ?? 0);
+    host.dataset["streetTrimMeshes"] = String(streetStylingMeta?.trimMeshCount ?? 0);
     mountSurroundings(snapshot.world, worldBundle, appliedDetailTier);
     applyShadowBounds(snapshot.world, massingPlan);
     atmosphere.invalidateWorld();

@@ -430,4 +430,46 @@ describe("road ribbon geometry and same-layer junction coverage", () => {
     bundle.dispose();
     sourceMaterials.forEach((material) => material.dispose());
   });
+
+  it("assigns mixed-class junction patches to the dominant road regardless of input order", () => {
+    const alley = road(
+      "alley-branch",
+      [
+        [0, 0],
+        [0, 10],
+      ],
+      3,
+      { roadClass: "alley", surface: "unknown" },
+    );
+    const avenue = road(
+      "primary-avenue",
+      [
+        [-12, 0],
+        [0, 0],
+      ],
+      12,
+      { roadClass: "primary", surface: "unknown" },
+    );
+
+    for (const ordered of [
+      [alley, avenue],
+      [avenue, alley],
+    ]) {
+      const { bundle, dispose } = build(ordered);
+      expect(junctionPatches(bundle)).toHaveLength(1);
+      const avenueMesh = bundle.group.getObjectByName("road:primary-avenue")
+        ?.children[0] as THREE.Mesh;
+      const alleyMesh = bundle.group.getObjectByName("road:alley-branch")
+        ?.children[0] as THREE.Mesh;
+      expect(avenueMesh.userData["junctionPatchCount"]).toBe(1);
+      expect(alleyMesh.userData["junctionPatchCount"]).toBeUndefined();
+      expect((avenueMesh.material as THREE.MeshStandardMaterial).color.getHexString()).toBe(
+        "3d4542",
+      );
+      expect((alleyMesh.material as THREE.MeshStandardMaterial).color.getHexString()).toBe(
+        "8b887e",
+      );
+      dispose();
+    }
+  });
 });

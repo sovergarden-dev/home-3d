@@ -21,6 +21,16 @@ import type {
 import { assessWallHeight } from "@/world/wallHeight";
 import { confidenceColor } from "@/engine/confidence/wallConfidence";
 import { createBuildingLabelBatches } from "@/engine/world/buildingLabels";
+import {
+  planProceduralStreetTrim,
+  resolveRoadSurfaceStyle,
+  roadDisplayElevation,
+  roadDominanceRank,
+  STREET_TRIM_MATERIALS,
+  type ProceduralStreetTrimKind,
+  type ProceduralStreetTrimPlan,
+  type StreetTrimQuad,
+} from "@/engine/world/streetStyling";
 
 type Disposable = { dispose: () => void };
 type LayerName = "roads" | "buildings" | "trees" | "props" | "labels";
@@ -522,14 +532,110 @@ function createStrip(
   return mesh;
 }
 
-function roadDisplayElevation(road: RoadSegment) {
-  const structuralLayer =
-    road.structure === "tunnel"
-      ? Math.min(road.elevationLayer, -1)
-      : road.structure === "bridge"
-        ? Math.max(road.elevationLayer, 1)
-        : road.elevationLayer;
-  return road.baseElevation ?? 0.02 + structuralLayer * 4.5;
+const frozenStreetTrimCache = new WeakMap<WorldData, ProceduralStreetTrimPlan>();
+
+function getStreetTrimPlan(world: WorldData): ProceduralStreetTrimPlan {
+  if (Object.isFrozen(world) && Object.isFrozen(world.roads) && Object.isFrozen(world.buildings)) {
+    const cached = frozenStreetTrimCache.get(world);
+    if (cached) return cached;
+    const computed = planProceduralStreetTrim(world);
+    frozenStreetTrimCache.set(world, computed);
+    return computed;
+  }
+  return planProceduralStreetTrim(world);
+}
+
+const STREET_TRIM_KINDS: readonly ProceduralStreetTrimKind[] = [
+  "alley_trim",
+  "lane_marking",
+  "inferred_sidewalk",
+  "curb",
+];
+
+function createStreetTrimGroup(
+  quads: readonly StreetTrimQuad[],
+  materialFactory: MaterialFactory,
+  disposables: Disposable[],
+): {
+  group: THREE.Group | null;
+  meshes: Array<{ mesh: THREE.Mesh; material: THREE.MeshStandardMaterial; dryRoughness: number }>;
+} {
+  if (quads.length === 0) return { group: null, meshes: [] };
+  const byKind = new Map<ProceduralStreetTrimKind, StreetTrimQuad[]>();
+  for (const quad of quads) {
+    const list = byKind.get(quad.kind);
+    if (list) list.push(quad);
+    else byKind.set(quad.kind, [quad]);
+  }
+
+  const trimGroup = new THREE.Group();
+  trimGroup.name = "estimated-street-styling";
+  trimGroup.userData = {
+    nonPickable: true,
+    origin: "estimated_procedural",
+    estimated: true,
+    provenance: { origin: "estimated_procedural", estimated: true },
+  };
+  const meshes: Array<{
+    mesh: THREE.Mesh;
+    material: THREE.MeshStandardMaterial;
+    dryRoughness: number;
+  }> = [];
+
+  for (const kind of STREET_TRIM_KINDS) {
+    const kindQuads = byKind.get(kind);
+    if (!kindQuads || kindQuads.length === 0) continue;
+    const positions = new Float32Array(kindQuads.length * 18);
+    let cursor = 0;
+    const writeUpwardTriangle = (a: Position2, b: Position2, c: Position2, y: number) => {
+      const signedArea = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+      const p1 = a;
+      const p2 = signedArea > 0 ? c : b;
+      const p3 = signedArea > 0 ? b : c;
+      positions[cursor] = p1[0];
+      positions[cursor + 1] = y;
+      positions[cursor + 2] = p1[1];
+      positions[cursor + 3] = p2[0];
+      positions[cursor + 4] = y;
+      positions[cursor + 5] = p2[1];
+      positions[cursor + 6] = p3[0];
+      positions[cursor + 7] = y;
+      positions[cursor + 8] = p3[1];
+      cursor += 9;
+    };
+    for (const quad of kindQuads) {
+      writeUpwardTriangle(quad.aLeft, quad.bLeft, quad.bRight, quad.y);
+      writeUpwardTriangle(quad.aLeft, quad.bRight, quad.aRight, quad.y);
+    }
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    geometry.computeVertexNormals();
+    geometry.computeBoundingBox();
+    geometry.computeBoundingSphere();
+
+    const style = STREET_TRIM_MATERIALS[kind];
+    const material = materialFactory(style.color, style.roughness, style.metalness).clone();
+    material.polygonOffset = true;
+    material.polygonOffsetFactor = style.polygonOffsetFactor;
+    material.polygonOffsetUnits = style.polygonOffsetUnits;
+
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.name = `street-trim:${kind}`;
+    mesh.receiveShadow = true;
+    mesh.castShadow = false;
+    mesh.userData = {
+      nonPickable: true,
+      origin: "estimated_procedural",
+      estimated: true,
+      trimKind: kind,
+    };
+    trimGroup.add(mesh);
+    disposables.push(geometry, material);
+    meshes.push({ mesh, material, dryRoughness: style.roughness });
+  }
+
+  return trimGroup.children.length > 0 ? { group: trimGroup, meshes } : { group: null, meshes: [] };
 }
 
 const ROAD_NODE_TOLERANCE_METRES = 0.001;
@@ -685,7 +791,15 @@ function addRoadJunctionCoverage(roads: RoadSegment[], roadMeshes: Map<RoadSegme
 
         const hull = convexHull(boundaryPoints);
         if (hull.length < 3 || polygonArea(hull) < 1e-3) return;
-        const targetMesh = roadMeshes.get(sameElevationEndpoints[0]!.road);
+        const dominantEndpoint = sameElevationEndpoints.reduce((best, candidate) => {
+          const bestRank = roadDominanceRank(best.road);
+          const candidateRank = roadDominanceRank(candidate.road);
+          if (candidateRank !== bestRank) return candidateRank > bestRank ? candidate : best;
+          return (candidate.road.carriagewayWidth ?? 0) > (best.road.carriagewayWidth ?? 0)
+            ? candidate
+            : best;
+        });
+        const targetMesh = roadMeshes.get(dominantEndpoint.road);
         if (!targetMesh) return;
 
         const positions =
@@ -722,6 +836,7 @@ function addRoad(
   disposables: Disposable[],
 ): THREE.Mesh | null {
   if (road.polylineENU.length < 2 || !road.carriagewayWidth) return null;
+  const surfaceStyle = resolveRoadSurfaceStyle(road);
   const roadGroup = new THREE.Group();
   roadGroup.name = `road:${road.localId}`;
   roadGroup.userData = {
@@ -729,6 +844,7 @@ function addRoad(
     elevationLayer: road.elevationLayer,
     featureId: road.localId,
     featureType: "road",
+    surfaceStyle: surfaceStyle.styleClass,
   };
   const halfCarriageway = road.carriagewayWidth / 2;
   const left = offsetPolyline(road.polylineENU, halfCarriageway);
@@ -736,7 +852,13 @@ function addRoad(
   // Vertical placement: an explicit surveyed baseElevation wins; otherwise respect the tagged
   // structural layer for bridges and tunnels. This is only a display prior, never source fact.
   const y = roadDisplayElevation(road);
-  const carriageway = createStrip(left, right, y, materialFactory("#4c5551", 0.92, 0), disposables);
+  const carriageway = createStrip(
+    left,
+    right,
+    y,
+    materialFactory(surfaceStyle.color, surfaceStyle.roughness, surfaceStyle.metalness),
+    disposables,
+  );
   roadGroup.add(carriageway);
 
   const [leftSidewalk = 0, rightSidewalk = 0] = road.sidewalkWidths ?? [];
@@ -1378,6 +1500,22 @@ export function buildWorldMeshes(
   addHomeLotTreatment(world, layers.buildings, materialFactory, disposables);
   mergeStaticLayer(layers.roads, disposables, pickProxies, mergedStaticMeshes);
   mergeStaticLayer(layers.buildings, disposables, pickProxies, mergedStaticMeshes);
+  const streetTrimPlan = getStreetTrimPlan(world);
+  const streetTrimBatch = createStreetTrimGroup(streetTrimPlan.quads, materialFactory, disposables);
+  const estimatedStreetStylingGroup = streetTrimBatch.group;
+  if (estimatedStreetStylingGroup) {
+    layers.roads.add(estimatedStreetStylingGroup);
+  }
+  const activeStyleClasses = Object.entries(streetTrimPlan.styledRoadCounts)
+    .filter(([, count]) => count > 0)
+    .map(([styleClass]) => styleClass);
+  layers.roads.userData["streetStyling"] = {
+    origin: "estimated_procedural",
+    styleClasses: activeStyleClasses,
+    styledRoadCounts: streetTrimPlan.styledRoadCounts,
+    countsByKind: streetTrimPlan.countsByKind,
+    trimMeshCount: streetTrimBatch.meshes.length,
+  };
   if (massingPlan && massingPlan.items.length > 0) {
     const canonicalById = new Map(world.buildings.map((building) => [building.localId, building]));
     estimatedMassingGroup = new THREE.Group();
@@ -1444,6 +1582,9 @@ export function buildWorldMeshes(
     pickProxies.forEach((mesh) => {
       mesh.layers.set(inspecting ? 0 : FEATURE_PICK_LAYER);
     });
+    if (estimatedStreetStylingGroup) {
+      estimatedStreetStylingGroup.visible = !confidenceVisible;
+    }
     if (estimatedMassingGroup) {
       // Geometry confidence inspects canonical heights only; hide procedural massing while active.
       estimatedMassingGroup.visible = !confidenceVisible;
@@ -1512,6 +1653,11 @@ export function buildWorldMeshes(
         if (original instanceof THREE.MeshStandardMaterial) {
           original.roughness = roughness;
         }
+      });
+      streetTrimBatch.meshes.forEach((entry) => {
+        entry.material.roughness = wet
+          ? Math.max(0.38, entry.dryRoughness - 0.42)
+          : entry.dryRoughness;
       });
       updatePresentation();
     },
