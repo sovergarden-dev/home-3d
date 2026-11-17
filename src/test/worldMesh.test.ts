@@ -1,10 +1,13 @@
+import { createHash } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
 import * as THREE from "three";
 import { pickFeature } from "@/engine/interaction/featurePicking";
 import { buildWorldMeshes } from "@/engine/world/buildWorldMeshes";
+import { planProceduralStreetTrim, resolveRoadSurfaceStyle } from "@/engine/world/streetStyling";
 import { HOME_ENRICHMENT } from "@/world/enrichment/homeEnrichment";
 import { planMassing } from "@/world/enrichment/planMassing";
 import { SYNTHETIC_NEIGHBORHOOD } from "@/world/fixtures/syntheticNeighborhood";
+import { surfaceBounds, surfaceIntersects } from "@/world/geometry";
 import { HOME_NEIGHBORHOOD } from "@/world/homeNeighborhood";
 import type { Building, RoadSegment, WorldData } from "@/world/schema";
 import { assessWallHeight } from "@/world/wallHeight";
@@ -513,6 +516,143 @@ describe("static mesh merge by material", () => {
     expect(estimatedGroup!.visible).toBe(false);
     bundle.setConfidenceVisible(false);
     expect(estimatedGroup!.visible).toBe(true);
+
+    bundle.dispose();
+    materials.forEach((material) => material.dispose());
+  });
+
+  it("plans deterministic, order-independent street styling without overlapping buildings or mutating canonical roads", () => {
+    const plan = planProceduralStreetTrim(HOME_NEIGHBORHOOD);
+    const goldenSha = createHash("sha256").update(JSON.stringify(plan)).digest("hex");
+    expect(goldenSha).toBe("f4f060c1f4df8c3804537ac809b059778e1d66fa26121147370ac2b64a8645e2");
+    expect(plan.styledRoadCounts).toEqual({
+      primary_asphalt: 35,
+      secondary_asphalt: 26,
+      residential_asphalt: 20,
+      service_pavement: 39,
+      alley_concrete: 18,
+      surveyed_concrete: 0,
+      surveyed_paving: 0,
+    });
+    expect(plan.countsByKind).toEqual({
+      inferred_sidewalk: 696,
+      curb: 696,
+      lane_marking: 1162,
+      alley_trim: 94,
+    });
+
+    const shuffled = planProceduralStreetTrim({
+      ...HOME_NEIGHBORHOOD,
+      roads: [...HOME_NEIGHBORHOOD.roads].reverse(),
+      buildings: [...HOME_NEIGHBORHOOD.buildings].reverse(),
+    });
+    expect(createHash("sha256").update(JSON.stringify(shuffled)).digest("hex")).toBe(goldenSha);
+    expect(HOME_NEIGHBORHOOD.roads.every((road) => road.sidewalkWidths === undefined)).toBe(true);
+    expect(HOME_NEIGHBORHOOD.roads.every((road) => road.surface === "unknown")).toBe(true);
+
+    const activeBuildings = HOME_NEIGHBORHOOD.buildings
+      .filter((building) => !building.hidden)
+      .map((building) => ({ building, bounds: surfaceBounds(building.geometry) }));
+    const overlaps: string[] = [];
+    for (const quad of plan.quads) {
+      if (quad.kind !== "inferred_sidewalk" && quad.kind !== "curb") continue;
+      const minX = Math.min(quad.aLeft[0], quad.aRight[0], quad.bLeft[0], quad.bRight[0]);
+      const maxX = Math.max(quad.aLeft[0], quad.aRight[0], quad.bLeft[0], quad.bRight[0]);
+      const minZ = Math.min(quad.aLeft[1], quad.aRight[1], quad.bLeft[1], quad.bRight[1]);
+      const maxZ = Math.max(quad.aLeft[1], quad.aRight[1], quad.bLeft[1], quad.bRight[1]);
+      const quadPoly = {
+        type: "Polygon" as const,
+        coordinates: [[quad.aLeft, quad.bLeft, quad.bRight, quad.aRight, quad.aLeft]],
+      };
+      for (const { building, bounds } of activeBuildings) {
+        if (
+          maxX + 1e-6 < bounds.minX ||
+          minX - 1e-6 > bounds.maxX ||
+          maxZ + 1e-6 < bounds.minZ ||
+          minZ - 1e-6 > bounds.maxZ
+        ) {
+          continue;
+        }
+        if (surfaceIntersects(quadPoly, building.geometry)) {
+          overlaps.push(`${quad.roadId}:${building.localId}`);
+        }
+      }
+    }
+    expect(overlaps).toEqual([]);
+
+    const syntheticPlan = planProceduralStreetTrim(SYNTHETIC_NEIGHBORHOOD);
+    expect(syntheticPlan.countsByKind).toEqual({
+      inferred_sidewalk: 0,
+      curb: 0,
+      lane_marking: 30,
+      alley_trim: 8,
+    });
+    expect(
+      resolveRoadSurfaceStyle({
+        ...SYNTHETIC_NEIGHBORHOOD.roads[0]!,
+        surface: "paving",
+      }).styleClass,
+    ).toBe("surveyed_paving");
+  });
+
+  it("renders road-class surface styles, keeps canonical road picking through lane markings, and hides procedural trim in confidence mode", () => {
+    const materials = new Map<string, THREE.MeshStandardMaterial>();
+    const bundle = buildWorldMeshes(HOME_NEIGHBORHOOD, (color, roughness = 0.82, metalness = 0) => {
+      const key = `${color}:${roughness}:${metalness}`;
+      let material = materials.get(key);
+      if (!material) {
+        material = new THREE.MeshStandardMaterial({ color, roughness, metalness });
+        materials.set(key, material);
+      }
+      return material;
+    });
+
+    const stylingMeta = bundle.layers.roads.userData["streetStyling"] as {
+      origin: string;
+      styleClasses: string[];
+      trimMeshCount: number;
+    };
+    expect(stylingMeta.origin).toBe("estimated_procedural");
+    expect(stylingMeta.styleClasses).toHaveLength(5);
+    expect(stylingMeta.trimMeshCount).toBe(1);
+
+    const trimGroup = bundle.layers.roads.getObjectByName("estimated-street-styling");
+    expect(trimGroup).toBeTruthy();
+    expect(trimGroup!.children).toHaveLength(1);
+    const instancedTrim = trimGroup!.getObjectByName(
+      "street-trim:instanced",
+    ) as THREE.InstancedMesh;
+    expect(instancedTrim).toBeInstanceOf(THREE.InstancedMesh);
+    expect(instancedTrim.count).toBe(2648);
+    expect(instancedTrim.geometry.getAttribute("normal").getY(0)).toBeGreaterThan(0.99);
+
+    const plan = planProceduralStreetTrim(HOME_NEIGHBORHOOD);
+    const mark = plan.quads.find((quad) => quad.kind === "lane_marking")!;
+    const cx = (mark.aLeft[0] + mark.bRight[0]) / 2;
+    const cz = (mark.aLeft[1] + mark.bRight[1]) / 2;
+    const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 200);
+    camera.position.set(cx, 25, cz);
+    camera.lookAt(cx, 0, cz);
+    camera.updateMatrixWorld();
+    const picked = pickFeature(
+      new THREE.Raycaster(),
+      new THREE.Vector2(0, 0),
+      camera,
+      bundle.group,
+    );
+    expect(picked).toMatchObject({ featureId: mark.roadId, featureType: "road" });
+
+    bundle.setConfidenceVisible(true);
+    expect(trimGroup!.visible).toBe(false);
+    bundle.setConfidenceVisible(false);
+    expect(trimGroup!.visible).toBe(true);
+
+    const markMat = instancedTrim.material as THREE.MeshStandardMaterial;
+    const dryMarkRoughness = markMat.roughness;
+    bundle.setRoadWet(true);
+    expect(markMat.roughness).toBeLessThan(dryMarkRoughness);
+    bundle.setRoadWet(false);
+    expect(markMat.roughness).toBeCloseTo(dryMarkRoughness);
 
     bundle.dispose();
     materials.forEach((material) => material.dispose());

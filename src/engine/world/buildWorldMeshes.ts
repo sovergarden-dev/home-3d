@@ -21,6 +21,16 @@ import type {
 import { assessWallHeight } from "@/world/wallHeight";
 import { confidenceColor } from "@/engine/confidence/wallConfidence";
 import { createBuildingLabelBatches } from "@/engine/world/buildingLabels";
+import {
+  planProceduralStreetTrim,
+  resolveRoadSurfaceStyle,
+  roadDisplayElevation,
+  roadDominanceRank,
+  STREET_TRIM_MATERIALS,
+  type ProceduralStreetTrimKind,
+  type ProceduralStreetTrimPlan,
+  type StreetTrimQuad,
+} from "@/engine/world/streetStyling";
 
 type Disposable = { dispose: () => void };
 type LayerName = "roads" | "buildings" | "trees" | "props" | "labels";
@@ -522,14 +532,117 @@ function createStrip(
   return mesh;
 }
 
-function roadDisplayElevation(road: RoadSegment) {
-  const structuralLayer =
-    road.structure === "tunnel"
-      ? Math.min(road.elevationLayer, -1)
-      : road.structure === "bridge"
-        ? Math.max(road.elevationLayer, 1)
-        : road.elevationLayer;
-  return road.baseElevation ?? 0.02 + structuralLayer * 4.5;
+const frozenStreetTrimCache = new WeakMap<WorldData, ProceduralStreetTrimPlan>();
+
+function getStreetTrimPlan(world: WorldData): ProceduralStreetTrimPlan {
+  if (Object.isFrozen(world) && Object.isFrozen(world.roads) && Object.isFrozen(world.buildings)) {
+    const cached = frozenStreetTrimCache.get(world);
+    if (cached) return cached;
+    const computed = planProceduralStreetTrim(world);
+    frozenStreetTrimCache.set(world, computed);
+    return computed;
+  }
+  return planProceduralStreetTrim(world);
+}
+
+function createStreetTrimGroup(
+  quads: readonly StreetTrimQuad[],
+  disposables: Disposable[],
+): {
+  group: THREE.Group | null;
+  mesh: THREE.InstancedMesh | null;
+  material: THREE.MeshStandardMaterial | null;
+  dryRoughness: number;
+} {
+  if (quads.length === 0) {
+    return { group: null, mesh: null, material: null, dryRoughness: 0.88 };
+  }
+
+  const trimGroup = new THREE.Group();
+  trimGroup.name = "estimated-street-styling";
+  trimGroup.userData = {
+    nonPickable: true,
+    origin: "estimated_procedural",
+    estimated: true,
+    provenance: { origin: "estimated_procedural", estimated: true },
+  };
+
+  const unitQuad = new THREE.PlaneGeometry(1, 1);
+  unitQuad.rotateX(-Math.PI / 2);
+  const dryRoughness = 0.88;
+  const material = new THREE.MeshStandardMaterial({
+    roughness: dryRoughness,
+    metalness: 0,
+    polygonOffset: true,
+    polygonOffsetFactor: -2,
+    polygonOffsetUnits: -3,
+  });
+  const instanced = new THREE.InstancedMesh(unitQuad, material, quads.length);
+  instanced.name = "street-trim:instanced";
+  instanced.receiveShadow = false;
+  instanced.castShadow = false;
+  instanced.raycast = () => {};
+  instanced.userData = {
+    nonPickable: true,
+    origin: "estimated_procedural",
+    estimated: true,
+  };
+
+  const position = new THREE.Vector3();
+  const quaternion = new THREE.Quaternion();
+  const scale = new THREE.Vector3();
+  const upAxis = new THREE.Vector3(0, 1, 0);
+  const matrix = new THREE.Matrix4();
+  const paletteByKind: Record<ProceduralStreetTrimKind, THREE.Color> = {
+    alley_trim: new THREE.Color(STREET_TRIM_MATERIALS.alley_trim.color),
+    lane_marking: new THREE.Color(STREET_TRIM_MATERIALS.lane_marking.color),
+    inferred_sidewalk: new THREE.Color(STREET_TRIM_MATERIALS.inferred_sidewalk.color),
+    curb: new THREE.Color(STREET_TRIM_MATERIALS.curb.color),
+  };
+
+  let minX = Infinity;
+  let minY = Infinity;
+  let minZ = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  let maxZ = -Infinity;
+  for (let index = 0; index < quads.length; index += 1) {
+    const quad = quads[index]!;
+    const cx = (quad.aLeft[0] + quad.bRight[0]) * 0.5;
+    const cz = (quad.aLeft[1] + quad.bRight[1]) * 0.5;
+    const dx = quad.bLeft[0] - quad.aLeft[0];
+    const dz = quad.bLeft[1] - quad.aLeft[1];
+    const length = Math.max(1e-3, Math.hypot(dx, dz));
+    const width = Math.max(
+      1e-3,
+      Math.hypot(quad.aLeft[0] - quad.aRight[0], quad.aLeft[1] - quad.aRight[1]),
+    );
+    const halfSpan = (length + width) * 0.5;
+    if (cx - halfSpan < minX) minX = cx - halfSpan;
+    if (cx + halfSpan > maxX) maxX = cx + halfSpan;
+    if (cz - halfSpan < minZ) minZ = cz - halfSpan;
+    if (cz + halfSpan > maxZ) maxZ = cz + halfSpan;
+    if (quad.y < minY) minY = quad.y;
+    if (quad.y > maxY) maxY = quad.y;
+    position.set(cx, quad.y, cz);
+    quaternion.setFromAxisAngle(upAxis, -Math.atan2(dz, dx));
+    scale.set(length, 1, width);
+    matrix.compose(position, quaternion, scale);
+    instanced.setMatrixAt(index, matrix);
+    instanced.setColorAt(index, paletteByKind[quad.kind]);
+  }
+  instanced.instanceMatrix.needsUpdate = true;
+  if (instanced.instanceColor) instanced.instanceColor.needsUpdate = true;
+  const boundsBox = new THREE.Box3(
+    new THREE.Vector3(minX, minY, minZ),
+    new THREE.Vector3(maxX, maxY, maxZ),
+  );
+  instanced.boundingBox = boundsBox;
+  instanced.boundingSphere = boundsBox.getBoundingSphere(new THREE.Sphere());
+
+  trimGroup.add(instanced);
+  disposables.push(unitQuad, material, instanced);
+  return { group: trimGroup, mesh: instanced, material, dryRoughness };
 }
 
 const ROAD_NODE_TOLERANCE_METRES = 0.001;
@@ -685,7 +798,15 @@ function addRoadJunctionCoverage(roads: RoadSegment[], roadMeshes: Map<RoadSegme
 
         const hull = convexHull(boundaryPoints);
         if (hull.length < 3 || polygonArea(hull) < 1e-3) return;
-        const targetMesh = roadMeshes.get(sameElevationEndpoints[0]!.road);
+        const dominantEndpoint = sameElevationEndpoints.reduce((best, candidate) => {
+          const bestRank = roadDominanceRank(best.road);
+          const candidateRank = roadDominanceRank(candidate.road);
+          if (candidateRank !== bestRank) return candidateRank > bestRank ? candidate : best;
+          return (candidate.road.carriagewayWidth ?? 0) > (best.road.carriagewayWidth ?? 0)
+            ? candidate
+            : best;
+        });
+        const targetMesh = roadMeshes.get(dominantEndpoint.road);
         if (!targetMesh) return;
 
         const positions =
@@ -722,6 +843,7 @@ function addRoad(
   disposables: Disposable[],
 ): THREE.Mesh | null {
   if (road.polylineENU.length < 2 || !road.carriagewayWidth) return null;
+  const surfaceStyle = resolveRoadSurfaceStyle(road);
   const roadGroup = new THREE.Group();
   roadGroup.name = `road:${road.localId}`;
   roadGroup.userData = {
@@ -729,6 +851,7 @@ function addRoad(
     elevationLayer: road.elevationLayer,
     featureId: road.localId,
     featureType: "road",
+    surfaceStyle: surfaceStyle.styleClass,
   };
   const halfCarriageway = road.carriagewayWidth / 2;
   const left = offsetPolyline(road.polylineENU, halfCarriageway);
@@ -736,7 +859,13 @@ function addRoad(
   // Vertical placement: an explicit surveyed baseElevation wins; otherwise respect the tagged
   // structural layer for bridges and tunnels. This is only a display prior, never source fact.
   const y = roadDisplayElevation(road);
-  const carriageway = createStrip(left, right, y, materialFactory("#4c5551", 0.92, 0), disposables);
+  const carriageway = createStrip(
+    left,
+    right,
+    y,
+    materialFactory(surfaceStyle.color, surfaceStyle.roughness, surfaceStyle.metalness),
+    disposables,
+  );
   roadGroup.add(carriageway);
 
   const [leftSidewalk = 0, rightSidewalk = 0] = road.sidewalkWidths ?? [];
@@ -1378,6 +1507,22 @@ export function buildWorldMeshes(
   addHomeLotTreatment(world, layers.buildings, materialFactory, disposables);
   mergeStaticLayer(layers.roads, disposables, pickProxies, mergedStaticMeshes);
   mergeStaticLayer(layers.buildings, disposables, pickProxies, mergedStaticMeshes);
+  const streetTrimPlan = getStreetTrimPlan(world);
+  const streetTrimBatch = createStreetTrimGroup(streetTrimPlan.quads, disposables);
+  const estimatedStreetStylingGroup = streetTrimBatch.group;
+  if (estimatedStreetStylingGroup) {
+    layers.roads.add(estimatedStreetStylingGroup);
+  }
+  const activeStyleClasses = Object.entries(streetTrimPlan.styledRoadCounts)
+    .filter(([, count]) => count > 0)
+    .map(([styleClass]) => styleClass);
+  layers.roads.userData["streetStyling"] = {
+    origin: "estimated_procedural",
+    styleClasses: activeStyleClasses,
+    styledRoadCounts: streetTrimPlan.styledRoadCounts,
+    countsByKind: streetTrimPlan.countsByKind,
+    trimMeshCount: streetTrimBatch.mesh ? 1 : 0,
+  };
   if (massingPlan && massingPlan.items.length > 0) {
     const canonicalById = new Map(world.buildings.map((building) => [building.localId, building]));
     estimatedMassingGroup = new THREE.Group();
@@ -1444,6 +1589,9 @@ export function buildWorldMeshes(
     pickProxies.forEach((mesh) => {
       mesh.layers.set(inspecting ? 0 : FEATURE_PICK_LAYER);
     });
+    if (estimatedStreetStylingGroup) {
+      estimatedStreetStylingGroup.visible = !confidenceVisible;
+    }
     if (estimatedMassingGroup) {
       // Geometry confidence inspects canonical heights only; hide procedural massing while active.
       estimatedMassingGroup.visible = !confidenceVisible;
@@ -1513,6 +1661,11 @@ export function buildWorldMeshes(
           original.roughness = roughness;
         }
       });
+      if (streetTrimBatch.material) {
+        streetTrimBatch.material.roughness = wet
+          ? Math.max(0.38, streetTrimBatch.dryRoughness - 0.42)
+          : streetTrimBatch.dryRoughness;
+      }
       updatePresentation();
     },
     setAtmospherePresentation(season, night) {
