@@ -1,3 +1,5 @@
+import type { EstimatedRoofType } from "./enrichment/planMassing";
+
 export interface FeatureSelection {
   featureId: string;
   featureType: "building" | "building-part" | "road" | "lot" | "tree" | "prop";
@@ -6,7 +8,7 @@ export interface FeatureSelection {
   estimatedOrigin?: "estimated_procedural";
   estimatedLevels?: number;
   estimatedWallHeight?: number;
-  estimatedRoofType?: "corrugated" | "flat" | "terrace_tum";
+  estimatedRoofType?: EstimatedRoofType;
 }
 
 export const FEATURE_SELECTION_EVENT = "home3d:feature-selection";

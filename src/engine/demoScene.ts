@@ -122,7 +122,7 @@ export function worldHomeCentre(world: WorldData) {
   return new THREE.Vector3(x, 0, z);
 }
 
-export interface ShadowCameraBounds {
+interface ShadowCameraBounds {
   centre: { x: number; z: number };
   horizontalRadius: number;
   maxBuildingHeight: number;

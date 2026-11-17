@@ -7,7 +7,7 @@ import {
 } from "@/world/geometry";
 import type { PolygonGeometry, Position2, RoadClass, RoadSegment, WorldData } from "@/world/schema";
 
-export type StreetSurfaceStyleClass =
+type StreetSurfaceStyleClass =
   | "primary_asphalt"
   | "secondary_asphalt"
   | "residential_asphalt"
@@ -16,7 +16,7 @@ export type StreetSurfaceStyleClass =
   | "surveyed_concrete"
   | "surveyed_paving";
 
-export interface RoadSurfaceStyle {
+interface RoadSurfaceStyle {
   styleClass: StreetSurfaceStyleClass;
   color: string;
   roughness: number;
@@ -24,14 +24,6 @@ export interface RoadSurfaceStyle {
 }
 
 export type ProceduralStreetTrimKind = "inferred_sidewalk" | "curb" | "lane_marking" | "alley_trim";
-
-export interface StreetTrimMaterialStyle {
-  color: string;
-  roughness: number;
-  metalness: number;
-  polygonOffsetFactor: number;
-  polygonOffsetUnits: number;
-}
 
 export interface StreetTrimQuad {
   roadId: string;
@@ -50,35 +42,11 @@ export interface ProceduralStreetTrimPlan {
   styledRoadCounts: Record<StreetSurfaceStyleClass, number>;
 }
 
-export const STREET_TRIM_MATERIALS: Record<ProceduralStreetTrimKind, StreetTrimMaterialStyle> = {
-  inferred_sidewalk: {
-    color: "#b8ab96",
-    roughness: 0.95,
-    metalness: 0,
-    polygonOffsetFactor: -1,
-    polygonOffsetUnits: -1,
-  },
-  curb: {
-    color: "#d8d0c1",
-    roughness: 0.86,
-    metalness: 0,
-    polygonOffsetFactor: -2,
-    polygonOffsetUnits: -2,
-  },
-  lane_marking: {
-    color: "#e6dcc5",
-    roughness: 0.78,
-    metalness: 0,
-    polygonOffsetFactor: -3,
-    polygonOffsetUnits: -4,
-  },
-  alley_trim: {
-    color: "#6e6b62",
-    roughness: 0.94,
-    metalness: 0,
-    polygonOffsetFactor: -2,
-    polygonOffsetUnits: -3,
-  },
+export const STREET_TRIM_MATERIALS: Record<ProceduralStreetTrimKind, { readonly color: string }> = {
+  inferred_sidewalk: { color: "#b8ab96" },
+  curb: { color: "#d8d0c1" },
+  lane_marking: { color: "#e6dcc5" },
+  alley_trim: { color: "#6e6b62" },
 };
 
 const ROAD_DOMINANCE_BY_CLASS: Record<RoadClass, number> = {
