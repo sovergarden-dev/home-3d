@@ -74,6 +74,9 @@ export async function launchBenchmark(extraArgs = []) {
             renderer: gl.getParameter(info.UNMASKED_RENDERER_WEBGL),
             vendor: gl.getParameter(info.UNMASKED_VENDOR_WEBGL),
             dpr: window.devicePixelRatio,
+            syntheticOnly:
+              document.querySelector('[data-testid="demo-scene"]')?.dataset.verificationStatus ===
+              "synthetic",
           };
         });
         const software = /swiftshader|llvmpipe|software|basic render/i.test(gpu.renderer);
@@ -99,7 +102,6 @@ export async function launchBenchmark(extraArgs = []) {
           harnessSha,
           harnessTreeClean,
           platform: process.platform === "win32" ? "WINDOWS_LOCAL" : process.platform,
-          syntheticOnly: true,
           rendererClass: software ? "SWIFTSHADER" : headed ? "REAL_GPU" : "HARDWARE_HEADLESS",
           headed,
           channel: firefoxRun ? "playwright-firefox" : headed ? channel : "playwright-chromium",

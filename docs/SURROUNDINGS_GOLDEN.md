@@ -59,3 +59,13 @@ Composition: 81 × 1F, 129 × 2F, 69 × 3F, 36 × 4F; roofs: 119 `corrugated`, 9
 | `planProceduralStreetTrim` | 696 | 696 | 1162 | 94 | `f4f060c1f4df8c3804537ac809b059778e1d66fa26121147370ac2b64a8645e2` |
 
 Carriageway style classes across the 138 canonical roads (`surface: "unknown"`): 35 `primary_asphalt`, 26 `secondary_asphalt`, 20 `residential_asphalt` (11 `residential` + 9 `unknown`), 39 `service_pavement`, 18 `alley_concrete`. Every procedural trim quad (`2648` total) carries `origin: "estimated_procedural"`, renders in a single `InstancedMesh` draw call (`receiveShadow = false`), avoids canonical building footprints (`0` overlaps), and hides under geometry-confidence inspection (`setConfidenceVisible(true)`).
+
+## Procedural massing facades golden (PR-6)
+
+`src/test/planMassing.test.ts` pins the canonical-JSON SHA-256 of `planMassingFacades(HOME_NEIGHBORHOOD, HOME_ENRICHMENT, planMassing(HOME_NEIGHBORHOOD, HOME_ENRICHMENT))` (`balconyProbability = 0.6`, `shopProbabilityOnPrimary = 0.5`, `floorHeight = 3.3`):
+
+| Plan | Balcony buildings | Primary-road shop buildings | Box instances | SHA-256 |
+| --- | ---: | ---: | ---: | --- |
+| `planMassingFacades` | 70 | 8 | 242 | `27323e0cf2a95eb75c8ad533d55e3bb9ed79577924956fc42915819defe3b321` |
+
+Composition across `227` unobstructed street-fronting massing footprints (`16` `primary`, `153` `secondary`, `32` `residential`, `15` `service`, `11` `alley`): `111` `balcony_slab` + `111` `balcony_railing` on upper floors (`2F–4F`), plus `8` `shop_shutter` + `8` `shop_sign_band` + `4` `shop_awning` on `primary`-road ground floors. Rendered in a single `InstancedMesh` (`estimated-facades:instanced`, `castShadow = false`, `receiveShadow = false`, no-op `raycast`, `0` neighbor building overlaps, hidden under `setConfidenceVisible(true)`).

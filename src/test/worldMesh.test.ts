@@ -6,6 +6,7 @@ import { buildWorldMeshes } from "@/engine/world/buildWorldMeshes";
 import { planProceduralStreetTrim, resolveRoadSurfaceStyle } from "@/engine/world/streetStyling";
 import { HOME_ENRICHMENT } from "@/world/enrichment/homeEnrichment";
 import { planMassing } from "@/world/enrichment/planMassing";
+import { planMassingFacades } from "@/world/enrichment/planMassingFacades";
 import { SYNTHETIC_NEIGHBORHOOD } from "@/world/fixtures/syntheticNeighborhood";
 import { surfaceBounds, surfaceIntersects } from "@/world/geometry";
 import { HOME_NEIGHBORHOOD } from "@/world/homeNeighborhood";
@@ -454,6 +455,7 @@ describe("static mesh merge by material", () => {
   it("mounts estimated massing as a separate merged layer with procedural provenance and budget compliance", () => {
     const materials = new Map<string, THREE.MeshStandardMaterial>();
     const massingPlan = planMassing(HOME_NEIGHBORHOOD, HOME_ENRICHMENT!);
+    const facadePlan = planMassingFacades(HOME_NEIGHBORHOOD, HOME_ENRICHMENT!, massingPlan);
     const bundle = buildWorldMeshes(
       HOME_NEIGHBORHOOD,
       (color, roughness = 0.82, metalness = 0) => {
@@ -467,6 +469,7 @@ describe("static mesh merge by material", () => {
       },
       "vi",
       massingPlan,
+      facadePlan,
     );
 
     const estimatedGroup = bundle.layers.buildings.getObjectByName("estimated-massing");
@@ -475,7 +478,19 @@ describe("static mesh merge by material", () => {
       origin: "estimated_procedural",
       estimated: true,
       provenance: { origin: "estimated_procedural", estimated: true },
+      facades: {
+        origin: "estimated_procedural",
+        balconyBuildingCount: 70,
+        shopBuildingCount: 8,
+        instanceCount: 242,
+        meshCount: 1,
+      },
     });
+    const facadeInstanced = estimatedGroup!.getObjectByName(
+      "estimated-facades:instanced",
+    ) as THREE.InstancedMesh;
+    expect(facadeInstanced).toBeInstanceOf(THREE.InstancedMesh);
+    expect(facadeInstanced.count).toBe(242);
 
     const { render, merged } = staticLayerMeshes(bundle);
     expect(render.length).toBeLessThan(60);
