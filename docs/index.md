@@ -1,12 +1,6 @@
 # Tài liệu Phố Nhà Mình
 
-- [Bàn giao hiện hành cho Codex](CODEX_HANDOFF.md): phạm vi M0–M5, quyền hạn, cổng và vạch đích.
-- [Nhật ký Codex](CODEX_LOG.md): trạng thái mới nhất và evidence từng PR/milestone.
-- [Gói audit cuối](AUDIT_PACKET.md): các cổng, giới hạn và câu hỏi cho chủ dự án.
-- [Quyết định](DECISIONS.md), [Backlog](BACKLOG.md), [Attribution](ATTRIBUTION.md).
-- Runbook: [H6](H6_PRIVATE_WORLD_RUNBOOK.md), [P7](P7_REAL_STREET_RUNBOOK.md), [P8](P8_RUNBOOK.md), [P9](P9_RUNBOOK.md), [P10](P10_RUNBOOK.md).
-- [Pipeline cục bộ](../pipeline/README.md).
-- [Roadmap lịch sử](PLAN.md): snapshot, không thay chỉ đạo bàn giao.
-
-- [P10.1 — ghim, độ trễ và bưu thiếp](P10_1_RUNBOOK.md)
-- [POV route golden (G1)](POV_ROUTE_GOLDEN.md): hash cố định của route POV và cách tạo lại.
+- **Chỉ đạo & bàn giao:** [Bàn giao toàn bộ cho Codex](CODEX_HANDOFF.md), [Bàn giao khu phố canonical cho đội Grok](GROK_HANDOFF.md), [Roadmap lịch sử](PLAN.md) (snapshot tham khảo, không ghi đè bàn giao).
+- **Trạng thái, quyết định & đóng băng:** [Nhật ký Codex](CODEX_LOG.md), [Gói audit cuối](AUDIT_PACKET.md), [Quyết định kiến trúc](DECISIONS.md), [Backlog](BACKLOG.md), [Attribution & giấy phép dữ liệu](ATTRIBUTION.md), [Sổ tay tái sử dụng & luồng đã gỡ](REUSE_PLAYBOOK.md).
+- **Bảng mã băm chuẩn (Golden):** [Surroundings, khối nhà, mặt đường & mặt tiền (PR-2..PR-6)](SURROUNDINGS_GOLDEN.md), [Tuyến POV (G1)](POV_ROUTE_GOLDEN.md), [Lịch âm & lễ hội P8](P8_CALENDAR_GOLDENS.md).
+- **Runbook tính năng & hạ tầng:** [H6 thế giới riêng](H6_PRIVATE_WORLD_RUNBOOK.md), [P7 phố thật](P7_REAL_STREET_RUNBOOK.md), [P8 không khí](P8_RUNBOOK.md) ([nguồn lịch](p8-calendar-sources.md), [nguồn thời tiết](P8_WEATHER_SOURCES.md)), [P9 lớp sống & POV](P9_RUNBOOK.md), [P10 kỷ niệm](P10_RUNBOOK.md), [P10.1 độ trễ ghim & bưu thiếp](P10_1_RUNBOOK.md), [M2 độ tin cậy](M2_RELIABILITY_RUNBOOK.md), [M3 hiệu năng desktop](M3_DESKTOP_RUNBOOK.md), [Open Buildings 2.5D](OPEN_BUILDINGS_RUNBOOK.md), [Deploy bản riêng tư Cloudflare](PRIVATE_DEPLOY_RUNBOOK.md), [Pipeline dữ liệu cục bộ](../pipeline/README.md).
