@@ -2,6 +2,10 @@ import * as THREE from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { FEATURE_PICK_LAYER } from "@/engine/interaction/featurePicking";
 import type { MassingPlan, PlannedMassingItem } from "@/world/enrichment/planMassing";
+import type {
+  MassingFacadePlan,
+  PlannedFacadeInstance,
+} from "@/world/enrichment/planMassingFacades";
 import {
   pointInPolygon,
   polygonsOf,
@@ -1356,11 +1360,79 @@ function addEstimatedMassingItem(
   group.add(itemGroup);
 }
 
+function createMassingFacadesMesh(
+  instances: readonly PlannedFacadeInstance[],
+  disposables: Disposable[],
+): THREE.InstancedMesh | null {
+  if (instances.length === 0) return null;
+  const unitBox = new THREE.BoxGeometry(1, 1, 1);
+  const material = new THREE.MeshStandardMaterial({
+    roughness: 0.84,
+    metalness: 0.04,
+  });
+  const instanced = new THREE.InstancedMesh(unitBox, material, instances.length);
+  instanced.name = "estimated-facades:instanced";
+  instanced.castShadow = false;
+  instanced.receiveShadow = false;
+  instanced.raycast = () => {};
+  instanced.userData = {
+    nonPickable: true,
+    origin: "estimated_procedural",
+    estimated: true,
+  };
+
+  const dummy = new THREE.Object3D();
+  const colorCache = new Map<string, THREE.Color>();
+  let minX = Infinity;
+  let minY = Infinity;
+  let minZ = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  let maxZ = -Infinity;
+
+  for (let index = 0; index < instances.length; index += 1) {
+    const inst = instances[index]!;
+    dummy.position.set(inst.x, inst.y, inst.z);
+    dummy.rotation.set(0, inst.angle, 0);
+    dummy.scale.set(inst.sx, inst.sy, inst.sz);
+    dummy.updateMatrix();
+    instanced.setMatrixAt(index, dummy.matrix);
+
+    let color = colorCache.get(inst.color);
+    if (!color) {
+      color = new THREE.Color(inst.color);
+      colorCache.set(inst.color, color);
+    }
+    instanced.setColorAt(index, color);
+
+    const halfXZ = (inst.sx + inst.sz) * 0.5;
+    const halfY = inst.sy * 0.5;
+    if (inst.x - halfXZ < minX) minX = inst.x - halfXZ;
+    if (inst.x + halfXZ > maxX) maxX = inst.x + halfXZ;
+    if (inst.y - halfY < minY) minY = inst.y - halfY;
+    if (inst.y + halfY > maxY) maxY = inst.y + halfY;
+    if (inst.z - halfXZ < minZ) minZ = inst.z - halfXZ;
+    if (inst.z + halfXZ > maxZ) maxZ = inst.z + halfXZ;
+  }
+
+  instanced.instanceMatrix.needsUpdate = true;
+  if (instanced.instanceColor) instanced.instanceColor.needsUpdate = true;
+  const boundsBox = new THREE.Box3(
+    new THREE.Vector3(minX, minY, minZ),
+    new THREE.Vector3(maxX, maxY, maxZ),
+  );
+  instanced.boundingBox = boundsBox;
+  instanced.boundingSphere = boundsBox.getBoundingSphere(new THREE.Sphere());
+  disposables.push(unitBox, material, instanced);
+  return instanced;
+}
+
 export function buildWorldMeshes(
   world: WorldData,
   materialFactory: MaterialFactory,
   labelLanguage?: "vi" | "en",
   massingPlan?: MassingPlan | null,
+  facadePlan?: MassingFacadePlan | null,
 ): WorldMeshBundle {
   const disposables: Disposable[] = [];
   const group = new THREE.Group();
@@ -1563,6 +1635,19 @@ export function buildWorldMeshes(
     for (const mergedMesh of estimatedMergedMeshes) {
       mergedMesh.userData["origin"] = "estimated_procedural";
       mergedMesh.userData["estimated"] = true;
+    }
+    if (facadePlan && facadePlan.instances.length > 0) {
+      const facadeMesh = createMassingFacadesMesh(facadePlan.instances, disposables);
+      if (facadeMesh) {
+        estimatedMassingGroup.add(facadeMesh);
+        estimatedMassingGroup.userData["facades"] = {
+          origin: "estimated_procedural",
+          balconyBuildingCount: facadePlan.balconyBuildingCount,
+          shopBuildingCount: facadePlan.shopBuildingCount,
+          instanceCount: facadePlan.instances.length,
+          meshCount: 1,
+        };
+      }
     }
     if (estimatedMassingGroup.children.length > 0) {
       layers.buildings.add(estimatedMassingGroup);

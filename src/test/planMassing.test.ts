@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { describe, expect, it } from "vitest";
-import { polygonsOf, surfaceContains, surfaceIntersects } from "@/world/geometry";
+import { polygonsOf, surfaceBounds, surfaceContains, surfaceIntersects } from "@/world/geometry";
 import {
   enrichmentBounds,
   HOME_ENRICHMENT,
@@ -8,8 +8,9 @@ import {
 } from "@/world/enrichment/homeEnrichment";
 import { parseEnrichmentLayer } from "@/world/enrichment/parse";
 import { minDistanceToPolygon, planMassing } from "@/world/enrichment/planMassing";
+import { planMassingFacades } from "@/world/enrichment/planMassingFacades";
 import { HOME_NEIGHBORHOOD } from "@/world/homeNeighborhood";
-import type { Building, Lot, WorldData } from "@/world/schema";
+import type { Building, Lot, RoadSegment, WorldData } from "@/world/schema";
 
 function canonicalJson(value: unknown): string {
   if (value === null || typeof value === "string" || typeof value === "boolean")
@@ -32,6 +33,8 @@ const sha = (value: unknown) => createHash("sha256").update(canonicalJson(value)
 
 export const MASSING_GOLDEN_SHA256 =
   "9e47e8b5561515380303677837c73e7a55fa302819a84ae570fe9635965cf6a7";
+const MASSING_FACADES_GOLDEN_SHA256 =
+  "27323e0cf2a95eb75c8ad533d55e3bb9ed79577924956fc42915819defe3b321";
 
 function shuffled<T>(items: readonly T[], seed: number): T[] {
   const copy = [...items];
@@ -209,5 +212,157 @@ describe("planMassing", () => {
 
     expect(JSON.stringify(HOME_NEIGHBORHOOD)).toBe(worldBefore);
     expect(JSON.stringify(HOME_ENRICHMENT)).toBe(layerBefore);
+  });
+
+  it("plans deterministic street-frontage balconies and primary-road shopfronts without overlapping neighbors or roads", () => {
+    const layer = HOME_ENRICHMENT!;
+    const massingPlan = planMassing(HOME_NEIGHBORHOOD, layer);
+    const facadePlan = planMassingFacades(HOME_NEIGHBORHOOD, layer, massingPlan);
+    const reorderedWorld: WorldData = {
+      ...structuredClone(HOME_NEIGHBORHOOD),
+      buildings: shuffled(HOME_NEIGHBORHOOD.buildings, 29),
+      roads: shuffled(HOME_NEIGHBORHOOD.roads, 31),
+    };
+    const reorderedFacades = planMassingFacades(
+      reorderedWorld,
+      layer,
+      planMassing(reorderedWorld, layer),
+    );
+
+    expect(facadePlan).toEqual(reorderedFacades);
+    expect(facadePlan.origin).toBe("estimated_procedural");
+    expect(facadePlan.balconyBuildingCount).toBe(70);
+    expect(facadePlan.shopBuildingCount).toBe(8);
+    expect(facadePlan.instances).toHaveLength(242);
+    expect(sha(facadePlan)).toBe(MASSING_FACADES_GOLDEN_SHA256);
+
+    const shopInstances = facadePlan.instances.filter((inst) => inst.kind.startsWith("shop_"));
+    expect(shopInstances.length).toBeGreaterThan(0);
+    expect(shopInstances.every((inst) => inst.roadClass === "primary")).toBe(true);
+
+    const massingById = new Map(massingPlan.items.map((item) => [item.localId, item]));
+    const buildingBounds = HOME_NEIGHBORHOOD.buildings.map((building) => ({
+      building,
+      bounds: surfaceBounds(building.geometry),
+    }));
+    const facadeOverlaps: string[] = [];
+    for (const inst of facadePlan.instances) {
+      if (inst.kind.startsWith("balcony_")) {
+        expect(massingById.get(inst.massingId)!.levels).toBeGreaterThanOrEqual(2);
+      }
+      const ex = Math.cos(inst.angle);
+      const ez = -Math.sin(inst.angle);
+      const nx = ez;
+      const nz = -ex;
+      const halfW = inst.sx * 0.5;
+      const halfD = inst.sz * 0.5;
+      const c0: [number, number] = [
+        inst.x - ex * halfW - nx * halfD,
+        inst.z - ez * halfW - nz * halfD,
+      ];
+      const c1: [number, number] = [
+        inst.x + ex * halfW - nx * halfD,
+        inst.z + ez * halfW - nz * halfD,
+      ];
+      const c2: [number, number] = [
+        inst.x + ex * halfW + nx * halfD,
+        inst.z + ez * halfW + nz * halfD,
+      ];
+      const c3: [number, number] = [
+        inst.x - ex * halfW + nx * halfD,
+        inst.z - ez * halfW + nz * halfD,
+      ];
+      const boxPoly = { type: "Polygon" as const, coordinates: [[c0, c1, c2, c3, c0]] };
+      const pb = surfaceBounds(boxPoly);
+      for (const { building, bounds } of buildingBounds) {
+        if (building.localId === inst.sourceBuildingId) continue;
+        if (
+          pb.maxX + 1e-6 < bounds.minX ||
+          pb.minX - 1e-6 > bounds.maxX ||
+          pb.maxZ + 1e-6 < bounds.minZ ||
+          pb.minZ - 1e-6 > bounds.maxZ
+        ) {
+          continue;
+        }
+        if (surfaceIntersects(boxPoly, building.geometry)) {
+          facadeOverlaps.push(`${inst.massingId}:${building.localId}`);
+        }
+      }
+    }
+    expect(facadeOverlaps).toEqual([]);
+
+    const zeroLayer = {
+      ...layer,
+      generator: {
+        ...layer.generator,
+        massing: {
+          ...layer.generator.massing,
+          balconyProbability: 0,
+          shopProbabilityOnPrimary: 0,
+        },
+      },
+    };
+    const zeroPlan = planMassingFacades(HOME_NEIGHBORHOOD, zeroLayer, massingPlan);
+    expect(zeroPlan.balconyBuildingCount).toBe(0);
+    expect(zeroPlan.shopBuildingCount).toBe(0);
+    expect(zeroPlan.instances).toHaveLength(0);
+
+    const roadAvenue: RoadSegment = {
+      localId: "road-primary-test",
+      polylineENU: [
+        [-20, -6],
+        [20, -6],
+      ],
+      connectorIds: [],
+      roadClass: "primary",
+      carriagewayWidth: 6,
+      elevationLayer: 0,
+      structure: "surface",
+      direction: "both",
+      surface: "unknown",
+      provenance: { source: "osm", quality: "source_only", licence: "ODbL-1.0" },
+    };
+    const roadSecondary: RoadSegment = {
+      ...roadAvenue,
+      localId: "road-secondary-test",
+      polylineENU: [
+        [-20, 26],
+        [20, 26],
+      ],
+      roadClass: "secondary",
+    };
+    const synthWorld: WorldData = {
+      manifest: { ...structuredClone(HOME_NEIGHBORHOOD.manifest), isSynthetic: false },
+      roads: [roadAvenue, roadSecondary],
+      lots: [],
+      buildings: [
+        squareBuilding("b-primary-front", 0, 2, 3),
+        squareBuilding("b-secondary-front", 0, 18, 3),
+      ],
+    };
+    const allEnabledLayer = {
+      ...layer,
+      buildingFacts: [],
+      generator: {
+        ...layer.generator,
+        homeExclusionRadius: 0,
+        homeDominanceRadius: 0,
+        massing: {
+          ...layer.generator.massing,
+          levelsWeights: [0, 0, 10, 0] as [number, number, number, number],
+          balconyProbability: 1,
+          shopProbabilityOnPrimary: 1,
+        },
+      },
+    };
+    const synthMassing = planMassing(synthWorld, allEnabledLayer);
+    const synthFacades = planMassingFacades(synthWorld, allEnabledLayer, synthMassing);
+    expect(synthFacades.balconyBuildingCount).toBe(2);
+    expect(synthFacades.shopBuildingCount).toBe(1);
+    expect(
+      synthFacades.instances
+        .filter((inst) => inst.kind.startsWith("shop_"))
+        .every((inst) => inst.sourceBuildingId === "b-primary-front"),
+    ).toBe(true);
   });
 });

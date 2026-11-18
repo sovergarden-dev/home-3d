@@ -115,8 +115,9 @@ try {
       await imported("/src/engine/quality/frameMetrics.ts")
     ).observeRenderedFrames;
     const provider = (await imported("/src/world/homeWorldSession.ts")).homeWorldSession;
-    if (!provider.getSnapshot().world?.manifest.isSynthetic)
-      throw Error("SYNTHETIC_WORLD_REQUIRED");
+    const snap = provider.getSnapshot();
+    if (snap.mode !== "home" && !snap.world?.manifest.isSynthetic)
+      throw Error("CANONICAL_OR_SYNTHETIC_WORLD_REQUIRED");
   });
   for (const scenario of [
     {
@@ -312,7 +313,7 @@ try {
     `${output}/report.json`,
     JSON.stringify(
       {
-        syntheticOnly: true,
+        syntheticOnly: Boolean(HOME_NEIGHBORHOOD.manifest.isSynthetic),
         gpuMemory,
         environment: metadata,
         fixtureSha256: createHash("sha256").update(JSON.stringify(HOME_NEIGHBORHOOD)).digest("hex"),
@@ -359,7 +360,7 @@ try {
     path.join(output, "incomplete.json"),
     JSON.stringify(
       {
-        syntheticOnly: true,
+        syntheticOnly: Boolean(HOME_NEIGHBORHOOD.manifest.isSynthetic),
         complete: false,
         errorType: error.name,
         rows,

@@ -13,6 +13,7 @@ import { buildWorldMeshes, type WorldMeshBundle } from "./world/buildWorldMeshes
 import { createSurroundingsMeshes, type SurroundingsMeshes } from "./world/surroundingsMeshes";
 import { HOME_ENRICHMENT } from "@/world/enrichment/homeEnrichment";
 import { planMassing, type MassingPlan } from "@/world/enrichment/planMassing";
+import { planMassingFacades, type MassingFacadePlan } from "@/world/enrichment/planMassingFacades";
 import { planSurroundings } from "@/world/enrichment/planSurroundings";
 import type { DetailTier } from "@/world/enrichment/schema";
 import { HOME_NEIGHBORHOOD } from "@/world/homeNeighborhood";
@@ -40,11 +41,18 @@ import { runStartupSequence, type StartupOutcome } from "./startupSequence";
 const STARTUP_PROGRAM_POLL_MS = 10;
 const STARTUP_PROGRAM_TIMEOUT_MS = 10_000;
 let cachedHomeMassingPlan: MassingPlan | null = null;
+let cachedHomeFacadePlan: MassingFacadePlan | null = null;
 
 function getHomeMassingPlan(): MassingPlan | null {
   if (!HOME_ENRICHMENT) return null;
   cachedHomeMassingPlan ??= planMassing(HOME_NEIGHBORHOOD, HOME_ENRICHMENT);
   return cachedHomeMassingPlan;
+}
+
+function getHomeFacadePlan(massingPlan: MassingPlan | null): MassingFacadePlan | null {
+  if (!HOME_ENRICHMENT || !massingPlan) return null;
+  cachedHomeFacadePlan ??= planMassingFacades(HOME_NEIGHBORHOOD, HOME_ENRICHMENT, massingPlan);
+  return cachedHomeFacadePlan;
 }
 
 export interface SceneRuntime {
@@ -452,14 +460,18 @@ export function createDemoScene(
     appliedDetailTier = currentDetailTier();
     const meshBuildStartedAt = performance.now();
     const massingPlan = snapshot.world === HOME_NEIGHBORHOOD ? getHomeMassingPlan() : null;
+    const facadePlan = snapshot.world === HOME_NEIGHBORHOOD ? getHomeFacadePlan(massingPlan) : null;
     worldBundle = buildWorldMeshes(
       snapshot.world,
       materialFactory,
       useAppStore.getState().language,
       massingPlan,
+      facadePlan,
     );
     host.dataset["massingCount"] = String(massingPlan?.items.length ?? 0);
     host.dataset["massingOrigin"] = massingPlan ? "estimated_procedural" : "none";
+    host.dataset["massingBalconies"] = String(facadePlan?.balconyBuildingCount ?? 0);
+    host.dataset["massingShops"] = String(facadePlan?.shopBuildingCount ?? 0);
     const streetStylingMeta = worldBundle.layers.roads.userData["streetStyling"] as
       { styleClasses: string[]; trimMeshCount: number } | undefined;
     host.dataset["streetStyleClasses"] = String(streetStylingMeta?.styleClasses.length ?? 0);
