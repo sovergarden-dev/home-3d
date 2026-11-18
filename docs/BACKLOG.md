@@ -1,6 +1,21 @@
 # Backlog — Codex tiếp quản
 
-## Hiện hành từ 11/11/2026
+## Hiện hành từ 18/11/2026 — Khu phố canonical OSM + lộ trình PR-0 → PR-6
+
+- **Trạng thái `main`:** PR #33 đã merge tại `c5cbeeb5f58eb3bb907cb8445ac2706e51accb94` (runtime ứng dụng cuối `17c93f835a043aed3034b774b93c9362e250aa23`), PR CI `44218242709` 4/4 và `main` CI `44222066005` 4/4 PASS (`quality` `134526096903`, `e2e-full-chromium` `134526096739`, `e2e-full-firefox` `134526096470`, `e2e-full-webkit` `134526096957`). Toàn bộ tag lịch sử (`audit/2026-11-09`, `audit/2026-11-10`, `audit/2026-11-11`, `audit/2026-11-11-receipts`, `baseline/p10-published`, `handoff/2026-11-11-grok`, `handoff/2026-11-12-grok`) và bất biến G1 (`cd4f0146fd3399d0995111bd19a46751c86e0347a56d3e2a770a4832852a7ce3`) đều giữ nguyên.
+- **Lộ trình khu phố canonical đã hoàn tất (PR #24 → #33):**
+  - PR #24 (`74ca7149`) & PR-0 (#25 `64952ee8`): tích hợp khu phố OSM canonical (`138` đường, `317` công trình, ODbL 1.0) + companion G1 do chủ dự án phê duyệt ([GROK_HANDOFF.md](GROK_HANDOFF.md)), khoá `g1-pin.test.ts` và ngân sách hình học trong CI.
+  - PR-1 (#26 `15e65f4c`): gộp tĩnh mesh đường và nhà theo vật liệu (`mergeGeometries`), giữ proxy raycast trên layer 1.
+  - PR-2 (#28 `19f50765`): lớp `homeNeighborhood.enrichment.json` + `planSurroundings` (`InstancedMesh` cây/đạo cụ, lọc khoảng cách `1,0 m`).
+  - PR-3 (#29 `5a4b63f6`): `planMassing` (`315` khối nhà ước lượng, `0,08 m` inset, golden `9e47e8b5…`) + `deriveShadowCameraBounds`.
+  - PR-4 (#30 `7db13926`): `generator.life`, bậc `high`, cụm nút `.h6-life-actions`, và tạm dừng thực chất theo `prefers-reduced-motion`.
+  - PR-5 (#31 `201837a8`): phân tầng `5` lớp mặt đường + `planProceduralStreetTrim` (`2.648` tứ giác vỉa hè/bó vỉa/vạch phân làn/rãnh hẻm trong `1` `InstancedMesh`, golden `f4f060c1…`) + hợp nhất lượt `render()` store.
+  - PR #32 (`a0e5fda6`): đồng bộ nhật ký PR #23–#31, làm rõ `AGENTS.md`, dọn export/type nội bộ thừa.
+  - PR-6 (#33 `c5cbeeb5`, runtime `17c93f83`): `planMassingFacades` (`70` nhà có ban công + `8` cửa hàng trục chính = `242` hộp trong `1` `InstancedMesh`, golden `27323e0c…`) + mở khoá `desktop-benchmark.mjs` cho `mode === "home"` (vẫn chặn cứng `mode === "private"`).
+- **Biên nhận GPU vật lý khu phố canonical (`17c93f83`, Chrome `157.0.8103.78` headed, `NVIDIA GeForce GTX 1660 Ti`, driver `32.0.16.1074`, `1440×900`, `DPR 1`):** cả `4/4` kịch bản × 600 bước xoay/zoom đều **`MET`** (`fps.p50 = 137,14–143,99 >= 55`, `frameMs.max = 8,40–20,10 ms <= 50 ms`, `drawCalls = 48–52 <= 200`, `triangles = 92.992–138.740 <= 800.000`, `adapterUpperBoundBytes = 160.686.080 B <= 350.000.000 B` `MET`, `perProcessPeakBytes = 213.172.224 B`).
+- **Các mục giữ nhãn trung thực cho giai đoạn sau (`NOT_VERIFIED` / `REAL_WORLD_NOT_VERIFIED` / `NOT_DONE`):** khảo sát thực địa, ranh lô, cao độ đo đạc, model kiến trúc sư (P6) và bản quét nhà hoàn thiện (P11) tại lô tâm; đo lại cảnh canonical 317 công trình trên trình duyệt/GPU khác hoặc `DPR > 1`; thiết bị thật iOS Safari / Android; chọn `LICENSE`; Publish lên `nhacvl.lovable.app` và deploy riêng tư Cloudflare Workers + Access ([AUDIT_PACKET.md](AUDIT_PACKET.md)).
+
+## Hiện hành từ 11/11/2026 (lịch sử đóng băng trước khi nạp khu phố canonical)
 
 ### Gói B — bundle, startup shaders và CI
 
