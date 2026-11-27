@@ -19,6 +19,7 @@ export function createLifeRuntime(options: {
   canvas: HTMLCanvasElement;
   target: THREE.Vector3;
   reducedMotion: boolean | (() => boolean);
+  isInputBlocked?: (() => boolean) | undefined;
   tier?: LifeTier | undefined;
   profile?: LifeGenerationProfile | undefined;
   invalidate: () => void;
@@ -46,6 +47,7 @@ export function createLifeRuntime(options: {
     world: options.world,
     orbitTarget: options.target,
     reducedMotion: isReducedMotion(),
+    isInputBlocked: options.isInputBlocked,
     onInvalidate: options.invalidate,
     onStateChange(mode) {
       if (
