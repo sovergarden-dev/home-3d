@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SITE_CONFIG } from "@/config/site";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { SceneViewport } from "@/components/overlay/SceneViewport";
 import { TopInfo } from "@/components/overlay/TopInfo";
 import { TopActions } from "@/components/overlay/TopActions";
@@ -34,8 +34,55 @@ function Home() {
   useSceneShortcuts();
   const lang = useAppStore((s) => s.language);
   const viewMode = useAppStore((s) => s.viewMode);
+  const sceneStatus = useAppStore((s) => s.sceneStatus);
   // While the splash covers startup, keyboard focus must not reach the controls behind it either.
   const startingUp = useAppStore((s) => s.loadingProgress < 1);
+  const mainRef = useRef<HTMLElement>(null);
+  const lastFocusedRef = useRef<{ element: HTMLElement; inSceneRoot: boolean } | null>(null);
+  const pendingRestoreRef = useRef<{ element: HTMLElement; inSceneRoot: boolean } | null>(null);
+  const wasStartingUpRef = useRef(startingUp);
+
+  useLayoutEffect(() => {
+    if (!wasStartingUpRef.current && startingUp) {
+      if (
+        mainRef.current &&
+        document.activeElement instanceof HTMLElement &&
+        mainRef.current.contains(document.activeElement)
+      ) {
+        lastFocusedRef.current = {
+          element: document.activeElement,
+          inSceneRoot: Boolean(document.activeElement.closest("#scene-root")),
+        };
+        document.activeElement.blur();
+      }
+      pendingRestoreRef.current = lastFocusedRef.current;
+    }
+    wasStartingUpRef.current = startingUp;
+  }, [startingUp]);
+
+  useEffect(() => {
+    if (startingUp || sceneStatus === "loading" || !pendingRestoreRef.current) return;
+    if (sceneStatus === "fallback" && mainRef.current?.querySelector("#scene-root button:disabled"))
+      return;
+    const saved = pendingRestoreRef.current;
+    pendingRestoreRef.current = null;
+    if (
+      document.activeElement &&
+      document.activeElement !== document.body &&
+      document.activeElement !== document.documentElement
+    )
+      return;
+    if (saved.element.isConnected && !(saved.element as HTMLButtonElement).disabled) {
+      saved.element.focus();
+      return;
+    }
+    if (saved.inSceneRoot && mainRef.current) {
+      const replacement = mainRef.current.querySelector<HTMLElement>(
+        sceneStatus === "fallback" ? "#scene-root button:not(:disabled)" : "#scene-root canvas",
+      );
+      replacement?.focus();
+    }
+  }, [startingUp, sceneStatus]);
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -56,9 +103,30 @@ function Home() {
   return (
     <>
       <main
+        ref={mainRef}
         className="fixed inset-0 overflow-hidden overscroll-none"
         data-view-mode={viewMode}
         inert={startingUp}
+        onFocusCapture={(event) => {
+          if (!startingUp && event.target instanceof HTMLElement) {
+            lastFocusedRef.current = {
+              element: event.target,
+              inSceneRoot: Boolean(event.target.closest("#scene-root")),
+            };
+          }
+        }}
+        onBlurCapture={(event) => {
+          if (startingUp || mainRef.current?.inert) return;
+          if (event.relatedTarget instanceof Node && mainRef.current?.contains(event.relatedTarget))
+            return;
+          const target = event.target;
+          if (
+            target instanceof HTMLElement &&
+            (!target.isConnected || (target as HTMLButtonElement).disabled)
+          )
+            return;
+          lastFocusedRef.current = null;
+        }}
       >
         <SceneViewport />
         <div

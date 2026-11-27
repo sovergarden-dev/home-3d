@@ -498,6 +498,10 @@ export function createDemoScene(
       canvas,
       target: controls.target,
       reducedMotion: isReducedMotion,
+      isInputBlocked: () =>
+        !firstFrameReady ||
+        useAppStore.getState().loadingProgress < 1 ||
+        useAppStore.getState().sceneStatus !== "ready",
       tier: appliedDetailTier,
       profile: lifeProfile,
       invalidate: scheduleFrame,

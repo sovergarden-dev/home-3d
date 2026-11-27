@@ -156,8 +156,11 @@ function ViewportInner() {
             </button>
           </div>
         </div>
-      ) : viewMode !== "topdown" ? (
-        <p className="pointer-events-none absolute bottom-32 left-4 hidden max-w-[230px] rounded-lg bg-background/80 px-3 py-2 text-xs text-foreground sm:bottom-5 sm:block">
+      ) : viewMode === "diorama" ? (
+        <p
+          data-testid="scene-hint"
+          className="h6-scene-hint pointer-events-none absolute bottom-36 left-4 hidden max-w-56 rounded-lg bg-background/80 px-3 py-2 text-xs text-foreground md:block lg:bottom-5"
+        >
           {t.sceneHint}
         </p>
       ) : null}

@@ -11,6 +11,12 @@ const runtime = vi.hoisted(() => ({
 }));
 vi.mock("@tanstack/react-router", () => ({
   ClientOnly: ({ children }: { children: ReactNode }) => children,
+  Link: ({ children, to, ...props }: { children: ReactNode; to: string }) => (
+    <a href={to} {...props}>
+      {children}
+    </a>
+  ),
+  createFileRoute: () => (options: unknown) => ({ options }),
   useBlocker: vi.fn(),
 }));
 vi.mock("@/components/overlay/PrivateWorldPanel", () => ({ PrivateWorldPanel: () => null }));
@@ -18,6 +24,7 @@ vi.mock("@/engine/demoScene", () => ({
   createDemoScene: (host: HTMLElement, marker: HTMLElement, onLost: () => void) => {
     runtime.losses.push(onLost);
     const canvas = document.createElement("canvas");
+    canvas.tabIndex = 0;
     host.appendChild(canvas);
     runtime.created++;
     const root = canvas.getRootNode();
@@ -42,6 +49,7 @@ vi.mock("@/engine/demoScene", () => ({
 }));
 import { SceneViewport } from "@/components/overlay/SceneViewport";
 import { Splash } from "@/components/overlay/Splash";
+import { Route as HomeRoute } from "@/routes/index";
 import { useAppStore } from "@/state/appStore";
 
 describe("scene DOM lifecycle", () => {
@@ -204,5 +212,44 @@ describe("scene DOM lifecycle", () => {
     await new Promise((resolve) => setTimeout(resolve, 300));
     expect(runtime.created).toBe(1);
     expect(runtime.disposed).toHaveLength(1);
+  });
+
+  it("restores focus inside main after inert re-engages across context loss and manual retry", async () => {
+    const Home = (HomeRoute as unknown as { options: { component: () => ReactNode } }).options
+      .component;
+    const mounted = render(<Home />);
+    await waitFor(() => expect(useAppStore.getState().sceneStatus).toBe("ready"));
+
+    const afternoon = screen.getByRole("radio", { name: "Chiều" });
+    afternoon.focus();
+    expect(document.activeElement).toBe(afternoon);
+
+    let releaseRecovery = () => {};
+    runtime.ready = new Promise((resolve) => (releaseRecovery = () => resolve("interactive")));
+    act(() => runtime.losses[0]!());
+    await waitFor(() => expect(runtime.created).toBe(2));
+    expect(document.activeElement).not.toBe(afternoon);
+    await act(async () => releaseRecovery());
+    await waitFor(() => expect(useAppStore.getState().sceneStatus).toBe("ready"));
+    expect(document.activeElement).toBe(afternoon);
+
+    runtime.ready = new Promise(() => {});
+    act(() => runtime.losses[1]!());
+    expect(useAppStore.getState().sceneStatus).toBe("fallback");
+    const firstRetry = screen.getByRole("button", { name: "Thử lại 3D" });
+    firstRetry.focus();
+    expect(document.activeElement).toBe(firstRetry);
+
+    fireEvent.click(firstRetry);
+    await waitFor(() => expect(runtime.created).toBe(3));
+    expect(document.activeElement).toBe(document.body);
+    act(() => runtime.losses[2]!());
+    await waitFor(() => expect(runtime.created).toBe(4));
+    act(() => runtime.losses[3]!());
+    await waitFor(() => expect(useAppStore.getState().sceneStatus).toBe("fallback"));
+
+    const secondRetry = screen.getByRole("button", { name: "Thử lại 3D" });
+    expect(document.activeElement).toBe(secondRetry);
+    mounted.unmount();
   });
 });

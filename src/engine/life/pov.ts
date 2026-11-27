@@ -26,6 +26,7 @@ export interface PovControllerOptions {
   dynamicObstacles?: DynamicObstacles;
   eyeHeight?: number;
   reducedMotion?: boolean;
+  isInputBlocked?: (() => boolean) | undefined;
   onStateChange?: (mode: PovMode) => void;
   onInvalidate?: () => void;
 }
@@ -473,8 +474,14 @@ export function createPovController(options: PovControllerOptions): PovControlle
       (element.isContentEditable || /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(element.tagName)),
     );
   };
+  const isBlocked = () =>
+    Boolean(canvas.closest?.("[inert]")) || Boolean(options.isInputBlocked?.());
   const keyDown = (event: KeyboardEvent) => {
     if (!mode) return;
+    if (isBlocked()) {
+      clearKeys();
+      return;
+    }
     const key = event.key.toLowerCase();
     if (key === "escape") {
       event.preventDefault();
@@ -498,7 +505,12 @@ export function createPovController(options: PovControllerOptions): PovControlle
   const keyUp = (event: KeyboardEvent) => {
     const key = event.key.toLowerCase();
     keys.delete(key);
-    if (!mode || isEditable(event.target)) return;
+    if (!mode) return;
+    if (isBlocked()) {
+      clearKeys();
+      return;
+    }
+    if (isEditable(event.target)) return;
     if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(key)) {
       event.preventDefault();
       move({

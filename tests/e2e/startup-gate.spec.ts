@@ -166,12 +166,14 @@ test("startup keeps input closed until every shader variant settles, across cont
   await expect(page.getByTestId("static-scene")).toBeVisible();
   await expect(splash).toHaveCount(0);
   const retry = page.getByRole("button", { name: "Thử lại 3D", exact: true });
-  await retry.click({ trial: true });
-  await retry.click();
+  await retry.focus();
+  await expect(retry).toBeFocused();
+  await retry.press("Enter");
 
   // The retried startup remains covered until all queued programs finish linking.
   await setHold(page, "none");
   await expect(root).toHaveAttribute("data-scene-state", "ready", { timeout: 60000 });
+  await expect(canvas).toBeFocused();
   const [, total] = (await scene.getAttribute("data-startup-variants"))!.split("/").map(Number);
   expect(total).toBe(6);
   await expect(scene).toHaveAttribute("data-startup-variants", "6/6");
@@ -219,7 +221,10 @@ test("an interactive scene that loses its context is covered again until recover
   expect(await tabReachesShell(page)).toBe(true);
   expect(await presetTakesFocus(page)).toBe(true);
 
-  // Lose the interactive scene's context and hold the programs of its automatic recovery.
+  // Lose the interactive scene's context while a shell control holds focus, and hold recovery.
+  const afternoon = page.getByRole("radio", { name: "Chiều", exact: true });
+  await afternoon.focus();
+  await expect(afternoon).toBeFocused();
   await setHold(page, "existing");
   await canvas.evaluate((element: HTMLCanvasElement) => {
     element.dataset["lostCanvas"] = "after-ready";
@@ -232,6 +237,7 @@ test("an interactive scene that loses its context is covered again until recover
   await page.waitForTimeout(400);
   await expect(root).toHaveAttribute("data-scene-state", "loading");
   await expect(splash).toBeVisible();
+  await expect(afternoon).not.toBeFocused();
   expect(await pointerTargets(page)).toEqual(["splash", "splash"]);
   expect(await tabReachesShell(page)).toBe(false);
   expect(await presetTakesFocus(page)).toBe(false);
@@ -239,6 +245,7 @@ test("an interactive scene that loses its context is covered again until recover
   await setHold(page, "none");
   await expect(root).toHaveAttribute("data-scene-state", "ready", { timeout: 60000 });
   await expect(splash).toHaveCount(0);
+  await expect(afternoon).toBeFocused();
   expect(await pointerTargets(page)).toEqual(["itself", "itself"]);
   expect(await tabReachesShell(page)).toBe(true);
   expect(await presetTakesFocus(page)).toBe(true);

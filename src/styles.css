@@ -266,6 +266,12 @@
       padding: 0 0.65rem;
     }
   }
+
+  @media (max-height: 520px) {
+    .h6-scene-hint {
+      display: none;
+    }
+  }
 }
 
 @media (max-width: 767px) and (min-height: 481px) {

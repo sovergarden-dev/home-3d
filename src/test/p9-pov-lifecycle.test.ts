@@ -168,4 +168,71 @@ describe("P9 POV lifecycle", () => {
     expect(samples).toHaveLength(0);
     controller.dispose();
   });
+
+  it("ignores window keyboard controls in walk and ride while main is inert or startup input is blocked", () => {
+    const host = document.createElement("main");
+    host.setAttribute("inert", "");
+    const canvas = canvasStub();
+    host.appendChild(canvas);
+    document.body.appendChild(host);
+    let blocked = false;
+    const camera = new THREE.PerspectiveCamera();
+    const controller = createPovController({
+      camera,
+      canvas,
+      world,
+      isInputBlocked: () => blocked,
+    });
+    try {
+      controller.setMode("walk");
+      const inertWalkKey = new KeyboardEvent("keydown", { key: "w", cancelable: true });
+      window.dispatchEvent(inertWalkKey);
+      controller.update(0.1);
+      expect(inertWalkKey.defaultPrevented).toBe(false);
+      expect(
+        Math.hypot(controller.diagnostics().velocity.x, controller.diagnostics().velocity.z),
+      ).toBe(0);
+
+      const inertEsc = new KeyboardEvent("keydown", { key: "Escape", cancelable: true });
+      window.dispatchEvent(inertEsc);
+      expect(inertEsc.defaultPrevented).toBe(false);
+      expect(controller.diagnostics().mode).toBe("walk");
+
+      host.removeAttribute("inert");
+      blocked = true;
+      controller.setMode("ride");
+      const blockedRideEsc = new KeyboardEvent("keydown", { key: "Escape", cancelable: true });
+      window.dispatchEvent(blockedRideEsc);
+      expect(blockedRideEsc.defaultPrevented).toBe(false);
+      expect(controller.diagnostics().mode).toBe("ride");
+
+      blocked = false;
+      controller.setMode("walk");
+      const activeWalkKey = new KeyboardEvent("keydown", { key: "w", cancelable: true });
+      window.dispatchEvent(activeWalkKey);
+      controller.update(0.1);
+      expect(activeWalkKey.defaultPrevented).toBe(true);
+      expect(
+        Math.hypot(controller.diagnostics().velocity.x, controller.diagnostics().velocity.z),
+      ).toBeGreaterThan(0);
+      // Releasing a pre-recovery key must not leave movement latched after the splash.
+      blocked = true;
+      const release = new KeyboardEvent("keyup", { key: "w", cancelable: true });
+      window.dispatchEvent(release);
+      expect(release.defaultPrevented).toBe(false);
+      blocked = false;
+      controller.update(0.1);
+      expect(
+        Math.hypot(controller.diagnostics().velocity.x, controller.diagnostics().velocity.z),
+      ).toBe(0);
+
+      const activeEsc = new KeyboardEvent("keydown", { key: "Escape", cancelable: true });
+      window.dispatchEvent(activeEsc);
+      expect(activeEsc.defaultPrevented).toBe(true);
+      expect(controller.diagnostics().mode).toBeNull();
+    } finally {
+      controller.dispose();
+      host.remove();
+    }
+  });
 });

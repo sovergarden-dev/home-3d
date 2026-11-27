@@ -197,6 +197,39 @@ test("portrait and short-landscape layouts keep all overlays in bounds and non-o
       expect(overlaps(result.scaleBar, result.mapControls)).toBe(false);
     }
   }
+
+  for (const viewport of [
+    { width: 1280, height: 720 },
+    { width: 768, height: 1024 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await openHome(page);
+    const state = await page.locator("#scene-root").getAttribute("data-scene-state");
+    if (state !== "ready") continue;
+    for (const langCode of ["vi", "en"] as const) {
+      await page.getByRole("radio", { name: langCode, exact: true }).click();
+      await expect(page.getByTestId("scene-hint")).toBeVisible();
+      const boxes = await page.evaluate(() => {
+        const rect = (selector: string) => {
+          const box = document.querySelector<HTMLElement>(selector)!.getBoundingClientRect();
+          return { left: box.left, top: box.top, right: box.right, bottom: box.bottom };
+        };
+        return {
+          viewport: { width: innerWidth, height: innerHeight },
+          hint: rect("[data-testid='scene-hint']"),
+          dock: rect("[role='region']"),
+          info: rect(".h6-top-info"),
+          mapControls: rect(".h6-map-controls"),
+        };
+      });
+      expect(boxes.hint.left).toBeGreaterThanOrEqual(0);
+      expect(boxes.hint.bottom).toBeLessThanOrEqual(boxes.viewport.height);
+      expect(overlaps(boxes.hint, boxes.dock)).toBe(false);
+      expect(overlaps(boxes.hint, boxes.info)).toBe(false);
+      expect(overlaps(boxes.hint, boxes.mapControls)).toBe(false);
+    }
+    await page.getByRole("radio", { name: "vi", exact: true }).click();
+  }
 });
 
 test("Plan can pan, then home reset returns to the home-centred Diorama", async ({ page }) => {
