@@ -1,1 +1,8 @@
-{"schemaVersion":"1.0","packageSha256":"6f2f2dd0a7d6cd176bfde825d164b314ddd59c75efef56733e4ea1decb9ddb48","origin":{"latitude":10.752187,"longitude":106.659106}}
+{
+  "schemaVersion": "1.0",
+  "packageSha256": "a6cdca34ee2f29f374259cca3489ed4c62c19dfbd0f5f31a0bac85f546172c9a",
+  "origin": {
+    "latitude": 10.752187,
+    "longitude": 106.659106
+  }
+}

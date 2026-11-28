@@ -151,6 +151,7 @@ function mergeStaticLayer(
       material.uuid,
       mesh.castShadow ? "c" : "",
       mesh.receiveShadow ? "r" : "",
+      mesh.userData["coveredByMassing"] ? "m" : "",
       attributeSignature(mesh.geometry),
     ].join("|");
     const bucket = buckets.get(key);
@@ -182,6 +183,10 @@ function mergeStaticLayer(
     merged.userData["mergedStatic"] = true;
     merged.userData["nonPickable"] = true;
     merged.userData["mergeKey"] = key;
+    if (meshes[0]!.userData["coveredByMassing"]) {
+      merged.userData["coveredByMassing"] = true;
+      merged.visible = false;
+    }
     mergedGroup.add(merged);
     disposables.push(mergedGeometry);
     mergedMeshes.push(merged);
@@ -1599,6 +1604,17 @@ export function buildWorldMeshes(
     if (mesh) roadMeshes.set(road, mesh);
   });
   addRoadJunctionCoverage(world.roads, roadMeshes);
+  const massingCoveredIds = new Set<string>();
+  if (massingPlan && massingPlan.items.length > 0) {
+    const canonicalById = new Map(world.buildings.map((building) => [building.localId, building]));
+    for (const item of massingPlan.items) {
+      const sourceBuilding = canonicalById.get(item.sourceBuildingId);
+      if (!sourceBuilding || sourceBuilding.hidden) continue;
+      if (assessWallHeight(sourceBuilding, world.manifest.isSynthetic).status === "unknown") {
+        massingCoveredIds.add(sourceBuilding.localId);
+      }
+    }
+  }
   world.buildings.forEach((building) => {
     addBuilding(
       building,
@@ -1609,6 +1625,15 @@ export function buildWorldMeshes(
       roofMaterials,
     );
   });
+  if (massingCoveredIds.size > 0) {
+    layers.buildings.children.forEach((child) => {
+      const featureId = child.userData["featureId"];
+      if (typeof featureId !== "string" || !massingCoveredIds.has(featureId)) return;
+      child.traverse((object) => {
+        if (object instanceof THREE.Mesh) object.userData["coveredByMassing"] = true;
+      });
+    });
+  }
   addHomeLotTreatment(world, layers.buildings, materialFactory, disposables);
   mergeStaticLayer(layers.roads, disposables, pickProxies, mergedStaticMeshes);
   mergeStaticLayer(layers.buildings, disposables, pickProxies, mergedStaticMeshes);
@@ -1702,7 +1727,8 @@ export function buildWorldMeshes(
   function updatePresentation() {
     const inspecting = confidenceVisible || selectedFeatureId !== null;
     mergedStaticMeshes.forEach((mesh) => {
-      mesh.visible = !inspecting;
+      const covered = Boolean(mesh.userData["coveredByMassing"]) && estimatedMassingGroup !== null;
+      mesh.visible = !inspecting && !covered;
     });
     pickProxies.forEach((mesh) => {
       mesh.layers.set(inspecting ? 0 : FEATURE_PICK_LAYER);

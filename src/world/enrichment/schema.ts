@@ -12,7 +12,7 @@ export const ENRICHMENT_SCHEMA_VERSION = "1.0" as const;
 
 /** Canonical neighborhood package SHA-256: sha256(JSON.stringify(JSON.parse(homeNeighborhood.json))). */
 export const G1_PACKAGE_SHA256 =
-  "6f2f2dd0a7d6cd176bfde825d164b314ddd59c75efef56733e4ea1decb9ddb48" as const;
+  "a6cdca34ee2f29f374259cca3489ed4c62c19dfbd0f5f31a0bac85f546172c9a" as const;
 
 export const OSM_ATTRIBUTION = "© OpenStreetMap contributors" as const;
 export const OSM_ODBL_LINE =

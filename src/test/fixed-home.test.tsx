@@ -149,7 +149,9 @@ describe("fixed home experience", () => {
     expect(Object.isFrozen(HOME_NEIGHBORHOOD.lots)).toBe(true);
     expect(HOME_NEIGHBORHOOD.manifest.verificationStatus).toBe("REAL_WORLD_NOT_VERIFIED");
     expect(HOME_NEIGHBORHOOD.manifest.isSynthetic).toBe(false);
-    expect(HOME_NEIGHBORHOOD.manifest.datasetRevision).toBe("h6-osm-overture-focal-2026-11-28");
+    expect(HOME_NEIGHBORHOOD.manifest.datasetRevision).toBe(
+      "h6-osm-overture-focal-180m-2026-11-28",
+    );
     expect(HOME_NEIGHBORHOOD.manifest.sources?.map((source) => source.namespace)).toEqual([
       "osm-300m-primary",
       "overture-2026-11-18",
@@ -157,7 +159,7 @@ describe("fixed home experience", () => {
       "owner-focal-block-2026-11",
     ]);
     expect(HOME_NEIGHBORHOOD.roads).toHaveLength(138);
-    expect(HOME_NEIGHBORHOOD.buildings).toHaveLength(1300);
+    expect(HOME_NEIGHBORHOOD.buildings).toHaveLength(339);
     expect(HOME_NEIGHBORHOOD.lots).toHaveLength(0);
     expect(
       HOME_NEIGHBORHOOD.buildings.every((building) =>

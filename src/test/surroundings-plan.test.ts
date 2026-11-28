@@ -24,19 +24,19 @@ const sha = (plan: SurroundingsPlan) =>
 /** Per-tier goldens; regenerating them is an explicit, reviewed act (docs/SURROUNDINGS_GOLDEN.md). */
 const GOLDEN: Record<DetailTier, { sha256: string; trees: number; props: number }> = {
   low: {
-    sha256: "29f0729e8ec3173bfe0705063ae34cfa682ec6d78ebea7f3b9110fa4d1bde264",
+    sha256: "97704fcbb6ad3e60c86a49ed65e1639fbeb9f951f14382e2c74648e1bf748ed3",
     trees: 150,
     props: 80,
   },
   mid: {
-    sha256: "cb4a3bf45024e229bac83592b24afdadb2fe706aef3b2ead6609d08c93a2112e",
-    trees: 285,
+    sha256: "0470e95578570fc113a7b33a0bb53a923a38e9fedb0bc3f712d209cee2b3f938",
+    trees: 271,
     props: 200,
   },
   high: {
-    sha256: "53c586aa98719748a3a4adc4f0931d43378f6014fc94c8d24d9399f78e64cca5",
-    trees: 285,
-    props: 344,
+    sha256: "6d826d53dbf451e231ef07e339a560419e9a56f500a589ee697444f7789410a1",
+    trees: 271,
+    props: 369,
   },
 };
 

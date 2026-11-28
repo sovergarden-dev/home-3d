@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
   "layerRevision": "osm-surroundings-2026-11-13",
-  "basePackageSha256": "6f2f2dd0a7d6cd176bfde825d164b314ddd59c75efef56733e4ea1decb9ddb48",
+  "basePackageSha256": "a6cdca34ee2f29f374259cca3489ed4c62c19dfbd0f5f31a0bac85f546172c9a",
   "verificationStatus": "REAL_WORLD_NOT_VERIFIED",
   "licence": "ODbL-1.0",
   "attribution": [
@@ -180,7 +180,7 @@
     "density": {
       "denseRadius": 150,
       "midRadius": 300,
-      "midFactor": 0.35,
+      "midFactor": 0.25,
       "farFactor": 0.12
     },
     "streetTreeSpacing": {

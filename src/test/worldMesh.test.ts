@@ -434,7 +434,7 @@ describe("static mesh merge by material", () => {
       return material;
     });
     const { render, proxies, merged } = staticLayerMeshes(bundle);
-    expect(HOME_NEIGHBORHOOD.buildings).toHaveLength(1300);
+    expect(HOME_NEIGHBORHOOD.buildings).toHaveLength(339);
     expect(HOME_NEIGHBORHOOD.roads).toHaveLength(138);
     expect(merged.length).toBeGreaterThan(0);
     expect(render.length).toBeLessThan(40);
@@ -481,9 +481,9 @@ describe("static mesh merge by material", () => {
       provenance: { origin: "estimated_procedural", estimated: true },
       facades: {
         origin: "estimated_procedural",
-        balconyBuildingCount: 237,
-        shopBuildingCount: 40,
-        instanceCount: 858,
+        balconyBuildingCount: 58,
+        shopBuildingCount: 15,
+        instanceCount: 207,
         meshCount: 1,
       },
     });
@@ -491,10 +491,15 @@ describe("static mesh merge by material", () => {
       "estimated-facades:instanced",
     ) as THREE.InstancedMesh;
     expect(facadeInstanced).toBeInstanceOf(THREE.InstancedMesh);
-    expect(facadeInstanced.count).toBe(858);
+    expect(facadeInstanced.count).toBe(207);
 
     const { render, merged } = staticLayerMeshes(bundle);
     expect(render.length).toBeLessThan(60);
+    const coveredUnknownMerged = merged.filter(
+      (mesh) => mesh.userData["coveredByMassing"] === true,
+    );
+    expect(coveredUnknownMerged.length).toBeGreaterThan(0);
+    expect(coveredUnknownMerged.every((mesh) => mesh.visible === false)).toBe(true);
     const estimatedMerged = merged.filter(
       (mesh) => mesh.userData["origin"] === "estimated_procedural",
     );
@@ -505,7 +510,7 @@ describe("static mesh merge by material", () => {
     const unknownCount = HOME_NEIGHBORHOOD.buildings.filter(
       (building) => assessWallHeight(building, false).status === "unknown",
     ).length;
-    expect(unknownCount).toBe(1280);
+    expect(unknownCount).toBe(322);
 
     // Picking a 3D estimated building returns estimated_procedural provenance
     const sample = massingPlan.items[0]!;
@@ -530,8 +535,14 @@ describe("static mesh merge by material", () => {
     // Geometry confidence mode hides procedural volumes so canonical unknown status is visible
     bundle.setConfidenceVisible(true);
     expect(estimatedGroup!.visible).toBe(false);
+    expect(
+      staticLayerMeshes(bundle).proxies.some(
+        (mesh) => mesh.userData["coveredByMassing"] === true && mesh.layers.isEnabled(0),
+      ),
+    ).toBe(true);
     bundle.setConfidenceVisible(false);
     expect(estimatedGroup!.visible).toBe(true);
+    expect(coveredUnknownMerged.every((mesh) => mesh.visible === false)).toBe(true);
 
     bundle.dispose();
     materials.forEach((material) => material.dispose());
@@ -540,7 +551,7 @@ describe("static mesh merge by material", () => {
   it("plans deterministic, order-independent street styling without overlapping buildings or mutating canonical roads", () => {
     const plan = planProceduralStreetTrim(HOME_NEIGHBORHOOD);
     const goldenSha = createHash("sha256").update(JSON.stringify(plan)).digest("hex");
-    expect(goldenSha).toBe("71b7443a3ce0db34b2eb2f6bc9728414940bed46180b284236d29cc26ec7991a");
+    expect(goldenSha).toBe("456ec49c79233b8677e48e85baa4ea05fbc36834678ad8297e11253827c4818c");
     expect(plan.styledRoadCounts).toEqual({
       primary_asphalt: 35,
       secondary_asphalt: 26,
@@ -551,8 +562,8 @@ describe("static mesh merge by material", () => {
       surveyed_paving: 0,
     });
     expect(plan.countsByKind).toEqual({
-      inferred_sidewalk: 776,
-      curb: 776,
+      inferred_sidewalk: 706,
+      curb: 706,
       lane_marking: 1102,
       alley_trim: 83,
     });
@@ -651,7 +662,7 @@ describe("static mesh merge by material", () => {
       "street-trim:instanced",
     ) as THREE.InstancedMesh;
     expect(instancedTrim).toBeInstanceOf(THREE.InstancedMesh);
-    expect(instancedTrim.count).toBe(2737);
+    expect(instancedTrim.count).toBe(2597);
     expect(instancedTrim.geometry.getAttribute("normal").getY(0)).toBeGreaterThan(0.99);
 
     const plan = planProceduralStreetTrim(HOME_NEIGHBORHOOD);

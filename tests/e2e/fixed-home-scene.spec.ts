@@ -17,7 +17,7 @@ test("owner-provided OSM neighborhood stays immutable across views and illustrat
   const canvas = root.locator("canvas");
   await expect(canvas).toHaveCount(1);
   await expect(scene).toHaveAttribute("data-world-mode", "home");
-  await expect(scene).toHaveAttribute("data-world-buildings", "1300");
+  await expect(scene).toHaveAttribute("data-world-buildings", "339");
   await expect(scene).toHaveAttribute("data-world-roads", "138");
   await expect(scene).toHaveAttribute("data-verification-status", "REAL_WORLD_NOT_VERIFIED");
   await expect(scene).toHaveAttribute("data-active-worlds", "1");
@@ -27,13 +27,13 @@ test("owner-provided OSM neighborhood stays immutable across views and illustrat
   await expect(scene).toHaveAttribute("data-surroundings-tier", /^(low|mid)$/);
   await expect(scene).toHaveAttribute("data-surroundings-trees", /^[1-9]\d*$/);
   await expect(scene).toHaveAttribute("data-surroundings-props", /^[1-9]\d*$/);
-  await expect(scene).toHaveAttribute("data-massing-count", "1280");
+  await expect(scene).toHaveAttribute("data-massing-count", "322");
   await expect(scene).toHaveAttribute("data-massing-origin", "estimated_procedural");
-  await expect(scene).toHaveAttribute("data-massing-balconies", "237");
-  await expect(scene).toHaveAttribute("data-massing-shops", "40");
+  await expect(scene).toHaveAttribute("data-massing-balconies", "58");
+  await expect(scene).toHaveAttribute("data-massing-shops", "15");
   await expect(scene).toHaveAttribute("data-street-style-classes", "5");
   await expect(scene).toHaveAttribute("data-street-trim-meshes", "1");
-  await expect(scene).toHaveAttribute("data-shadow-frustum-half-size", /^[3-9]\d\d$/);
+  await expect(scene).toHaveAttribute("data-shadow-frustum-half-size", /^[2-9]\d\d$/);
   await expect(scene).toHaveAttribute("data-props-visible", "true");
   const initialDrawCalls = Number(await scene.getAttribute("data-draw-calls"));
   expect(Number.isFinite(initialDrawCalls)).toBe(true);
@@ -76,16 +76,23 @@ test("owner-provided OSM neighborhood stays immutable across views and illustrat
   });
   expect(resourceCounts.every((count) => /^\d+$/.test(count))).toBe(true);
   expect(new Set(resourceCounts).size).toBe(1);
+});
 
-  const baselineMidGeometries = resourceCounts[0]!;
+test("detail tiers, street life toggle, and live reduced-motion stay within budget without geometry leaks", async ({
+  page,
+}) => {
+  const { scene } = await waitForRenderedHome(page);
+  const baselineMidGeometries = await scene.getAttribute("data-memory-geometries");
+  expect(baselineMidGeometries).toMatch(/^\d+$/);
+
   const densityToggle = page.getByTestId("density-tier-cycle");
   const lifeToggle = page.getByTestId("life-quick-toggle");
 
   await densityToggle.click();
   await expect(scene).toHaveAttribute("data-detail-tier", "high");
   await expect(scene).toHaveAttribute("data-surroundings-tier", "high");
-  await expect(scene).toHaveAttribute("data-surroundings-trees", "285");
-  await expect(scene).toHaveAttribute("data-surroundings-props", "344");
+  await expect(scene).toHaveAttribute("data-surroundings-trees", "271");
+  await expect(scene).toHaveAttribute("data-surroundings-props", "369");
   // Software WebGL (SwiftShader < 24 FPS) legitimately triggers P9's automatic FPS tier step-down.
   await expect(scene).toHaveAttribute("data-life-tier", /^(low|mid|high)$/);
   const highDrawCalls = Number(await scene.getAttribute("data-draw-calls"));
@@ -101,7 +108,7 @@ test("owner-provided OSM neighborhood stays immutable across views and illustrat
   await densityToggle.click();
   await expect(scene).toHaveAttribute("data-detail-tier", "mid");
   await expect(scene).toHaveAttribute("data-surroundings-tier", "mid");
-  await expect(scene).toHaveAttribute("data-memory-geometries", baselineMidGeometries);
+  await expect(scene).toHaveAttribute("data-memory-geometries", baselineMidGeometries!);
 
   await lifeToggle.click();
   await expect(scene).toHaveAttribute("data-life-visible", "false");
