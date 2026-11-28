@@ -124,14 +124,27 @@ describe("planMassing", () => {
           item.position[1] <= maxZ,
       ),
     ).toBe(true);
+    const buildingBounds = HOME_NEIGHBORHOOD.buildings.map((building) => ({
+      building,
+      bounds: surfaceBounds(building.geometry),
+    }));
     const overlaps: string[] = [];
     for (const item of plan.items) {
       expect(sourceIds.has(item.sourceBuildingId)).toBe(false);
       const source = buildingById.get(item.sourceBuildingId);
       expect(source).toBeDefined();
       expect(surfaceContains(source!.geometry, item.footprint, 1e-3)).toBe(true);
-      for (const building of HOME_NEIGHBORHOOD.buildings) {
+      const ib = surfaceBounds(item.footprint);
+      for (const { building, bounds } of buildingBounds) {
         if (building.localId === item.sourceBuildingId) continue;
+        if (
+          ib.maxX + 1e-6 < bounds.minX ||
+          ib.minX - 1e-6 > bounds.maxX ||
+          ib.maxZ + 1e-6 < bounds.minZ ||
+          ib.minZ - 1e-6 > bounds.maxZ
+        ) {
+          continue;
+        }
         if (surfaceIntersects(item.footprint, building.geometry)) {
           overlaps.push(`${item.localId}:${building.localId}`);
         }

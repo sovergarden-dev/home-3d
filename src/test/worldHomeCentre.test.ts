@@ -189,6 +189,9 @@ describe("shadow camera bounds", () => {
       sun.shadow.camera.lookAt(sun.target.position);
       sun.shadow.camera.updateMatrixWorld();
 
+      let maxAbsX = 0;
+      let maxAbsY = 0;
+      let maxAbsZ = 0;
       for (const item of massingPlan.items) {
         const rings =
           item.footprint.type === "Polygon"
@@ -197,12 +200,15 @@ describe("shadow camera bounds", () => {
         for (const [x, z] of rings[0] ?? []) {
           for (const y of [0, item.wallHeight]) {
             point.set(x, y, z).project(sun.shadow.camera);
-            expect(Math.abs(point.x)).toBeLessThanOrEqual(1);
-            expect(Math.abs(point.y)).toBeLessThanOrEqual(1);
-            expect(Math.abs(point.z)).toBeLessThanOrEqual(1);
+            maxAbsX = Math.max(maxAbsX, Math.abs(point.x));
+            maxAbsY = Math.max(maxAbsY, Math.abs(point.y));
+            maxAbsZ = Math.max(maxAbsZ, Math.abs(point.z));
           }
         }
       }
+      expect(maxAbsX).toBeLessThanOrEqual(1);
+      expect(maxAbsY).toBeLessThanOrEqual(1);
+      expect(maxAbsZ).toBeLessThanOrEqual(1);
     }
   });
 });
