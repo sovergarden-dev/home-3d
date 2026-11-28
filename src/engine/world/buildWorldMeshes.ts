@@ -51,7 +51,6 @@ export interface WorldMeshBundle {
   setLabelLanguage: (language: "vi" | "en") => void;
   setRoadWet: (wet: boolean) => void;
   setAtmospherePresentation: (season: "dry" | "wet" | null, night: boolean) => void;
-  setDioramaVeilVisible?: (visible: boolean) => void;
   setConfidenceVisible: (visible: boolean) => void;
   setSelectedFeature: (featureId: string | null) => void;
   dispose: () => void;
@@ -1855,9 +1854,6 @@ export function buildWorldMeshes(
         }
       });
       focalStreetscape?.setNight(night);
-    },
-    setDioramaVeilVisible(visible) {
-      focalStreetscape?.setDioramaVeilVisible(visible);
     },
     setConfidenceVisible(visible) {
       confidenceVisible = visible;

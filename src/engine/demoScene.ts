@@ -296,7 +296,7 @@ export function createDemoScene(
   const renderer = new THREE.WebGLRenderer({ canvas, context, antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 768 ? 1 : 1.5));
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.shadowMap.autoUpdate = false;
   renderer.shadowMap.needsUpdate = true;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -802,7 +802,6 @@ export function createDemoScene(
     worldBundle.setLayerVisible("props", state.viewMode !== "topdown");
     host.dataset["propsVisible"] = String(state.viewMode !== "topdown");
     worldBundle.setLayerVisible("labels", planLabelsVisible);
-    worldBundle.setDioramaVeilVisible?.(state.viewMode === "diorama");
     host.dataset["treesVisible"] = String(state.showTrees);
     host.dataset["labelsVisible"] = String(planLabelsVisible);
   }

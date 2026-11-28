@@ -36,7 +36,6 @@ interface LanternItem {
 
 export interface FocalStreetscapeBundle {
   group: THREE.Group;
-  setDioramaVeilVisible: (visible: boolean) => void;
   setNight: (night: boolean) => void;
   setInspecting: (inspecting: boolean) => void;
 }
@@ -131,7 +130,7 @@ function buildDetailInstancedMesh(
   const mesh = new THREE.InstancedMesh(geometry, material, items.length);
   mesh.name = name;
   mesh.castShadow = false;
-  mesh.receiveShadow = true;
+  mesh.receiveShadow = false;
   mesh.raycast = () => {};
   mesh.userData["nonPickable"] = true;
 
@@ -278,45 +277,6 @@ function addZebraCrosswalk(
       color: "#ede8dc",
     });
   }
-}
-
-function createOuterHorizonVeil(disposables: Disposable[]): THREE.Mesh {
-  const innerRadius = 192;
-  const outerRadius = 920;
-  const geometry = new THREE.RingGeometry(innerRadius, outerRadius, 64, 4);
-  geometry.rotateX(-Math.PI / 2);
-
-  const pos = geometry.getAttribute("position");
-  const colors = new Float32Array(pos.count * 4);
-  const groundColor = new THREE.Color("#cfc5ad");
-  for (let i = 0; i < pos.count; i += 1) {
-    const x = pos.getX(i);
-    const z = pos.getZ(i);
-    const r = Math.hypot(x, z);
-    const t = Math.max(0, Math.min(1, (r - innerRadius) / 95));
-    const alpha = t * t * (3 - 2 * t) * 0.94;
-    colors[i * 4] = groundColor.r;
-    colors[i * 4 + 1] = groundColor.g;
-    colors[i * 4 + 2] = groundColor.b;
-    colors[i * 4 + 3] = alpha;
-  }
-  geometry.setAttribute("color", new THREE.BufferAttribute(colors, 4));
-  const material = new THREE.MeshStandardMaterial({
-    vertexColors: true,
-    roughness: 0.95,
-    metalness: 0,
-    transparent: true,
-    depthWrite: false,
-  });
-  const mesh = new THREE.Mesh(geometry, material);
-  mesh.name = "focal-streetscape:outer-veil";
-  mesh.position.y = 0.044;
-  mesh.receiveShadow = false;
-  mesh.castShadow = false;
-  mesh.raycast = () => {};
-  mesh.userData["nonPickable"] = true;
-  disposables.push(geometry, material);
-  return mesh;
 }
 
 export function createFocalStreetscape(
@@ -510,8 +470,16 @@ export function createFocalStreetscape(
     });
   }
 
+  // Zebra crosswalks around Châu Văn Liêm × Trần Hưng Đạo intersection
+  addZebraCrosswalk(details, 2.8, 18.7, 0.9998, -0.015, 7.6, 6);
+  addZebraCrosswalk(details, -35.6, 19.3, -0.9998, 0.018, 7.6, 6);
+  addZebraCrosswalk(details, -7.8, 1.5, -0.178, -0.984, 10.2, 7);
+  addZebraCrosswalk(details, -19.8, 2.4, -0.189, -0.982, 10.2, 7);
+  addZebraCrosswalk(details, -6.2, 28.4, 0.181, 0.983, 10.2, 7);
+  addZebraCrosswalk(details, -25.2, 29.8, 0.15, 0.989, 10.2, 7);
+
   const unitBox = new THREE.BoxGeometry(1, 1, 1);
-  const detailMaterial = new THREE.MeshStandardMaterial({ roughness: 0.8, metalness: 0.04 });
+  const detailMaterial = new THREE.MeshStandardMaterial({ roughness: 0.82, metalness: 0.03 });
   disposables.push(unitBox, detailMaterial);
   if (details.length > 0) {
     group.add(
@@ -526,41 +494,8 @@ export function createFocalStreetscape(
     group.add(built.mesh);
   }
 
-  // Zebra crosswalks around Châu Văn Liêm × Trần Hưng Đạo intersection
-  const streetMarks: DetailBox[] = [];
-  addZebraCrosswalk(streetMarks, 2.8, 18.7, 0.9998, -0.015, 7.6, 6);
-  addZebraCrosswalk(streetMarks, -35.6, 19.3, -0.9998, 0.018, 7.6, 6);
-  addZebraCrosswalk(streetMarks, -7.8, 1.5, -0.178, -0.984, 10.2, 7);
-  addZebraCrosswalk(streetMarks, -19.8, 2.4, -0.189, -0.982, 10.2, 7);
-  addZebraCrosswalk(streetMarks, -6.2, 28.4, 0.181, 0.983, 10.2, 7);
-  addZebraCrosswalk(streetMarks, -25.2, 29.8, 0.15, 0.989, 10.2, 7);
-
-  const streetMarkMaterial = new THREE.MeshStandardMaterial({
-    roughness: 0.88,
-    metalness: 0.02,
-    polygonOffset: true,
-    polygonOffsetFactor: -3,
-    polygonOffsetUnits: -3,
-  });
-  disposables.push(streetMarkMaterial);
-  const streetMarkMesh = buildDetailInstancedMesh(
-    "focal-streetscape:street-marks",
-    unitBox,
-    streetMarkMaterial,
-    streetMarks,
-  );
-  streetMarkMesh.castShadow = false;
-  streetMarkMesh.receiveShadow = false;
-  group.add(streetMarkMesh);
-
-  const outerVeil = createOuterHorizonVeil(disposables);
-  group.add(outerVeil);
-
   return {
     group,
-    setDioramaVeilVisible(visible: boolean) {
-      outerVeil.visible = visible;
-    },
     setNight(night: boolean) {
       if (lanternMaterial) {
         lanternMaterial.emissiveIntensity = night ? 2.2 : 0.4;

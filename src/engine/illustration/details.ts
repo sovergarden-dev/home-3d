@@ -95,9 +95,15 @@ export function planIllustrativeDetails(
     instances.push({ shape, x, y, z, sx, sy, sz, color, angle, ...(tilt ? { tilt } : {}) });
     categories.add(category);
   };
-  const distanceSq = (geometry: SurfaceGeometry) => {
-    const [cx, cz] = surfaceCentroid(geometry);
-    return cx * cx + cz * cz;
+  const distanceSqById = new Map<string, number>();
+  const getDistanceSq = (localId: string, geometry: SurfaceGeometry) => {
+    let d = distanceSqById.get(localId);
+    if (d === undefined) {
+      const [cx, cz] = surfaceCentroid(geometry);
+      d = cx * cx + cz * cz;
+      distanceSqById.set(localId, d);
+    }
+    return d;
   };
   const buildings = [...world.buildings]
     .filter((b) => !b.hidden && !HANDCRAFTED_FOCAL_BUILDING_IDS.has(b.localId))
@@ -111,7 +117,8 @@ export function planIllustrativeDetails(
     )
     .sort(
       (a, b) =>
-        distanceSq(a.geometry) - distanceSq(b.geometry) || a.localId.localeCompare(b.localId),
+        getDistanceSq(a.localId, a.geometry) - getDistanceSq(b.localId, b.geometry) ||
+        a.localId.localeCompare(b.localId),
     );
   for (const building of buildings.slice(0, limit.features)) {
     const height = assessWallHeight(building, world.manifest.isSynthetic).renderedHeight;
@@ -438,7 +445,7 @@ export function createIllustrativeDetails(world: WorldData, tier: DetailTier) {
   const geometries = {
     box: new THREE.BoxGeometry(1, 1, 1),
     cylinder: new THREE.CylinderGeometry(0.5, 0.5, 1, 6),
-    sphere: new THREE.SphereGeometry(0.5, 8, 5),
+    sphere: new THREE.SphereGeometry(0.5, 5, 3),
   };
   const material = new THREE.MeshStandardMaterial({ roughness: 0.85 });
   const dummy = new THREE.Object3D(),
