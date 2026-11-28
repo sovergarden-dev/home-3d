@@ -184,14 +184,12 @@ function buildDetailInstancedMesh(
 function buildLanternInstancedMesh(
   items: readonly LanternItem[],
   disposables: Disposable[],
-): { mesh: THREE.InstancedMesh; material: THREE.MeshStandardMaterial } {
-  const geo = new THREE.SphereGeometry(0.5, 10, 8);
-  const material = new THREE.MeshStandardMaterial({
+): { mesh: THREE.InstancedMesh; material: THREE.MeshLambertMaterial } {
+  const geo = new THREE.SphereGeometry(0.5, 6, 4);
+  const material = new THREE.MeshLambertMaterial({
     color: "#ffffff",
     emissive: "#ff7b29",
-    emissiveIntensity: 0.35,
-    roughness: 0.45,
-    metalness: 0.05,
+    emissiveIntensity: 0.4,
   });
   const mesh = new THREE.InstancedMesh(geo, material, items.length);
   mesh.name = "focal-streetscape:lanterns";
@@ -479,7 +477,7 @@ export function createFocalStreetscape(
   addZebraCrosswalk(details, -25.2, 29.8, 0.15, 0.989, 10.2, 7);
 
   const unitBox = new THREE.BoxGeometry(1, 1, 1);
-  const detailMaterial = new THREE.MeshStandardMaterial({ roughness: 0.82, metalness: 0.03 });
+  const detailMaterial = new THREE.MeshLambertMaterial();
   disposables.push(unitBox, detailMaterial);
   if (details.length > 0) {
     group.add(
@@ -487,7 +485,7 @@ export function createFocalStreetscape(
     );
   }
 
-  let lanternMaterial: THREE.MeshStandardMaterial | null = null;
+  let lanternMaterial: THREE.MeshLambertMaterial | null = null;
   if (lanterns.length > 0) {
     const built = buildLanternInstancedMesh(lanterns, disposables);
     lanternMaterial = built.material;

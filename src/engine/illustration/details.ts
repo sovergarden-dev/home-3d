@@ -447,7 +447,7 @@ export function createIllustrativeDetails(world: WorldData, tier: DetailTier) {
     cylinder: new THREE.CylinderGeometry(0.5, 0.5, 1, 6),
     sphere: new THREE.SphereGeometry(0.5, 5, 3),
   };
-  const material = new THREE.MeshStandardMaterial({ roughness: 0.85 });
+  const material = new THREE.MeshLambertMaterial();
   const dummy = new THREE.Object3D(),
     color = new THREE.Color(),
     meshes: THREE.InstancedMesh[] = [];

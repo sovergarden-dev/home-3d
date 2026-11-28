@@ -1405,10 +1405,7 @@ function createMassingFacadesMesh(
 ): THREE.InstancedMesh | null {
   if (instances.length === 0) return null;
   const unitBox = new THREE.BoxGeometry(1, 1, 1);
-  const material = new THREE.MeshStandardMaterial({
-    roughness: 0.84,
-    metalness: 0.04,
-  });
+  const material = new THREE.MeshLambertMaterial();
   const instanced = new THREE.InstancedMesh(unitBox, material, instances.length);
   instanced.name = "estimated-facades:instanced";
   instanced.castShadow = false;

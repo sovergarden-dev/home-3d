@@ -180,7 +180,7 @@ export function createSurroundingsMeshes(plan: SurroundingsPlan): SurroundingsMe
     box: new THREE.BoxGeometry(1, 1, 1),
     umbrella: new THREE.ConeGeometry(1, 1, 8),
   };
-  const treeMaterial = new THREE.MeshStandardMaterial({ roughness: 0.8, metalness: 0 });
+  const treeMaterial = new THREE.MeshLambertMaterial();
   const propMaterial = new THREE.MeshStandardMaterial({ roughness: 0.6, metalness: 0.15 });
 
   const trunk: Part[] = [];

@@ -819,10 +819,11 @@ export function createDemoScene(
       return;
     }
     if (
-      lastShadowWorld !== worldBundle ||
-      lastShadowFrustum !== sun.shadow.camera.right ||
-      !lastShadowSunPos.equals(sun.position) ||
-      !lastShadowTargetPos.equals(sun.target.position)
+      activeCamera !== planCamera &&
+      (lastShadowWorld !== worldBundle ||
+        lastShadowFrustum !== sun.shadow.camera.right ||
+        !lastShadowSunPos.equals(sun.position) ||
+        !lastShadowTargetPos.equals(sun.target.position))
     ) {
       renderer.shadowMap.needsUpdate = true;
       lastShadowWorld = worldBundle;
