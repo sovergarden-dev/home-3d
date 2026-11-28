@@ -5,6 +5,7 @@ import { SceneViewport } from "@/components/overlay/SceneViewport";
 import { TopInfo } from "@/components/overlay/TopInfo";
 import { TopActions } from "@/components/overlay/TopActions";
 import { MapControls } from "@/components/overlay/MapControls";
+import { FeatureInspectorCard } from "@/components/overlay/FeatureInspectorCard";
 import { PovControls } from "@/components/overlay/LifeControls";
 import { SceneExtras } from "@/components/overlay/SceneExtras";
 import { ScaleBar } from "@/components/overlay/ScaleBar";
@@ -145,6 +146,7 @@ function Home() {
           </div>
 
           <ScaleBar />
+          <FeatureInspectorCard />
           <PovControls worldSource="home" />
 
           {/* Right vertical camera controls (Diorama, Mặt bằng, Đi bộ, Ngồi sau xe ôm, zoom, reset, compass) */}

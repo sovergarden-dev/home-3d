@@ -31,6 +31,22 @@ export interface PlanMeasurement {
   revision: number;
 }
 
+export interface SelectedFeatureInfo {
+  id: string;
+  kind: "building" | "road";
+  nameVi: string;
+  nameEn: string;
+  subtitleVi?: string;
+  subtitleEn?: string;
+  heightMetres?: number;
+  levels?: number;
+  roofType?: string;
+  roadClass?: string;
+  widthMetres?: number;
+  estimated?: boolean;
+  provenanceSource?: string;
+}
+
 export interface AppState {
   selectedDate: string;
   timeOfDayMinutes: number;
@@ -60,6 +76,7 @@ export interface AppState {
   showTrees: boolean;
   showLabels: boolean;
   planMeasurement: PlanMeasurement | null;
+  selectedFeature: SelectedFeatureInfo | null;
   moments: { id: number; minutes: number }[];
   addMoment: (image: string) => void;
   clearMoments: () => void;
@@ -92,6 +109,7 @@ export interface AppState {
   toggleTrees: () => void;
   toggleLabels: () => void;
   setPlanMeasurement: (measurement: PlanMeasurement | null) => void;
+  setSelectedFeature: (feature: SelectedFeatureInfo | null) => void;
   setLanguage: (l: Language) => void;
   setLoadingProgress: (p: number) => void;
 }
@@ -127,6 +145,7 @@ export const useAppStore = create<AppState>((set) => ({
   showTrees: true,
   showLabels: true,
   planMeasurement: null,
+  selectedFeature: null,
   moments: [],
   addMoment: (image) => {
     const id = keepMoment(image);
@@ -185,6 +204,7 @@ export const useAppStore = create<AppState>((set) => ({
   toggleTrees: () => set((s) => ({ showTrees: !s.showTrees })),
   toggleLabels: () => set((s) => ({ showLabels: !s.showLabels })),
   setPlanMeasurement: (planMeasurement) => set({ planMeasurement }),
+  setSelectedFeature: (selectedFeature) => set({ selectedFeature }),
   setLanguage: (language) => set({ language }),
   setLoadingProgress: (p) => set({ loadingProgress: Math.max(0, Math.min(1, p)) }),
 }));

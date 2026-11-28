@@ -59,10 +59,17 @@ export function useSceneShortcuts() {
         return;
       }
       if (state.sceneStatus !== "ready") return;
-      if (event.key === "Escape" && (state.viewMode === "walk" || state.viewMode === "ride")) {
-        event.preventDefault();
-        state.setViewMode("diorama");
-        return;
+      if (event.key === "Escape") {
+        if (state.viewMode === "walk" || state.viewMode === "ride") {
+          event.preventDefault();
+          state.setViewMode("diorama");
+          return;
+        }
+        if (state.selectedFeature) {
+          event.preventDefault();
+          state.setSelectedFeature(null);
+          return;
+        }
       }
       if (key === "m") {
         event.preventDefault();

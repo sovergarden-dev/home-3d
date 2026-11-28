@@ -21,9 +21,11 @@ vi.mock("@tanstack/react-router", () => ({
 
 import * as THREE from "three";
 import { Dock } from "@/components/overlay/Dock";
+import { FeatureInspectorCard } from "@/components/overlay/FeatureInspectorCard";
 import { SceneExtras } from "@/components/overlay/SceneExtras";
 import { useSceneShortcuts } from "@/components/overlay/useSceneShortcuts";
 import { createAtmosphereLayer } from "@/engine/atmosphere";
+import { resolveBuildingDisplayName, resolveRoadDisplayName } from "@/world/neighborhoodLabels";
 import { centerMarkerLabels } from "@/components/overlay/centerMarkerLabels";
 import { TopActions } from "@/components/overlay/TopActions";
 import { TopInfo } from "@/components/overlay/TopInfo";
@@ -317,22 +319,24 @@ describe("fixed home experience", () => {
 
   it("keeps bilingual About copy and shortcut legend aligned with the street-experience scope", () => {
     for (const paragraph of viDict.aboutBody) {
-      expect(paragraph).not.toMatch(/Trung Thu|lễ hội|tiếng rao/i);
+      expect(paragraph).not.toMatch(/tiếng rao/i);
     }
     for (const paragraph of enDict.aboutBody) {
-      expect(paragraph).not.toMatch(/Mid-Autumn|festival|street calls/i);
+      expect(paragraph).not.toMatch(/street calls/i);
     }
+    expect(viDict.aboutBody.join(" ")).toMatch(/Tết.*Trung Thu.*2K/);
+    expect(enDict.aboutBody.join(" ")).toMatch(/Tet.*Mid-Autumn.*2K/);
     expect(viDict.aboutShortcuts.length).toBeGreaterThanOrEqual(4);
     expect(enDict.aboutShortcuts.length).toBe(viDict.aboutShortcuts.length);
   });
 
-  it("warms only the compact fixed-home shader variants when configured without festivals or flood", () => {
+  it("warms only configured shader variants for fixed-home without flood", () => {
     const scene = new THREE.Scene();
     const sky = new THREE.Color("#000000");
     const hemisphere = new THREE.HemisphereLight("#ffffff", "#555555", 1);
     const sun = new THREE.DirectionalLight("#ffffff", 1);
     const moon = new THREE.DirectionalLight("#ffffff", 0);
-    const layer = createAtmosphereLayer({
+    const quietLayer = createAtmosphereLayer({
       scene,
       sky,
       hemisphere,
@@ -342,20 +346,120 @@ describe("fixed home experience", () => {
       festivalsEnabled: false,
       floodEnabled: false,
     });
-    const festivalNames = layer.group.children
+    expect(
+      quietLayer.group.children.filter((child) => child.name.startsWith("festival-decoration-")),
+    ).toEqual([]);
+    expect(
+      quietLayer.group.children.filter((child) => child.name === "simulation-flood-water"),
+    ).toEqual([]);
+    let quietCompiled = 0;
+    const quietRenderer = {
+      compile: () => (quietCompiled += 1),
+    } as unknown as THREE.WebGLRenderer;
+    expect(quietLayer.warm(quietRenderer, new THREE.PerspectiveCamera())).toBe(6);
+    expect(quietCompiled).toBe(6);
+    quietLayer.dispose();
+
+    const festivalLayer = createAtmosphereLayer({
+      scene,
+      sky,
+      hemisphere,
+      sun,
+      moon,
+      onRoadWet: () => {},
+      festivalsEnabled: true,
+      enabledFestivals: ["normal", "tet", "midautumn"],
+      warmFestivals: false,
+      floodEnabled: false,
+    });
+    const mountedFestivals = festivalLayer.group.children
       .map((child) => child.name)
       .filter((name) => name.startsWith("festival-decoration-"));
-    expect(festivalNames).toEqual([]);
-    const floodNames = layer.group.children
-      .map((child) => child.name)
-      .filter((name) => name === "simulation-flood-water");
-    expect(floodNames).toEqual([]);
-    let compiled = 0;
-    const renderer = { compile: () => (compiled += 1) } as unknown as THREE.WebGLRenderer;
-    const total = layer.warm(renderer, new THREE.PerspectiveCamera());
-    expect(total).toBe(6);
-    expect(compiled).toBe(6);
-    layer.dispose();
+    expect(mountedFestivals).toEqual([
+      "festival-decoration-normal",
+      "festival-decoration-tet",
+      "festival-decoration-midautumn",
+    ]);
+    let festivalCompiled = 0;
+    const festivalRenderer = {
+      compile: () => (festivalCompiled += 1),
+    } as unknown as THREE.WebGLRenderer;
+    expect(festivalLayer.warm(festivalRenderer, new THREE.PerspectiveCamera())).toBe(6);
+    expect(festivalCompiled).toBe(6);
+    festivalLayer.dispose();
+  });
+
+  it("resolves verified neighborhood road and focal-building labels in Vietnamese and English", () => {
+    expect(
+      resolveRoadDisplayName("road-osm-300m-primary-way-32575864-1047ada6fe", "primary", "vi"),
+    ).toBe("Đ. Châu Văn Liêm");
+    expect(
+      resolveRoadDisplayName("road-osm-300m-primary-way-720034787-5f2878ec44", "primary", "en"),
+    ).toBe("Tran Hung Dao St");
+    expect(resolveBuildingDisplayName("building-focal-home", "vi")).toContain("58 Châu Văn Liêm");
+    expect(resolveBuildingDisplayName("building-focal-home", "en")).toContain("58 Chau Van Liem");
+  });
+
+  it("renders FeatureInspectorCard for a tapped feature and dismisses via close button or Escape", () => {
+    useAppStore.setState({ loadingProgress: 1, sceneStatus: "ready" });
+    useAppStore.getState().setSelectedFeature({
+      id: "building-focal-home",
+      kind: "building",
+      nameVi: "Nhà của tôi · 58 Châu Văn Liêm",
+      nameEn: "My house · 58 Chau Van Liem",
+      subtitleVi: "Cụm tâm · mặt tiền hẻm cạnh số 62",
+      subtitleEn: "Focal block · next to 62 Chau Van Liem",
+      heightMetres: 9.2,
+      levels: 3,
+      roofType: "corrugated",
+      estimated: false,
+      provenanceSource: "Syringa",
+    });
+
+    render(
+      <>
+        <ShortcutHarness />
+        <FeatureInspectorCard />
+      </>,
+    );
+
+    expect(screen.getByTestId("feature-inspector-card")).toHaveTextContent("58 Châu Văn Liêm");
+    expect(screen.getByTestId("feature-inspector-card")).toHaveTextContent("~9.2 m");
+
+    fireEvent.click(screen.getByTestId("feature-inspector-close"));
+    expect(useAppStore.getState().selectedFeature).toBeNull();
+    expect(screen.queryByTestId("feature-inspector-card")).toBeNull();
+
+    act(() => {
+      useAppStore.getState().setSelectedFeature({
+        id: "road-osm-300m-primary-way-32575864-1047ada6fe",
+        kind: "road",
+        nameVi: "Đ. Châu Văn Liêm",
+        nameEn: "Chau Van Liem St",
+        roadClass: "primary",
+        widthMetres: 14,
+      });
+    });
+    expect(screen.getByTestId("feature-inspector-card")).toHaveTextContent("Đ. Châu Văn Liêm");
+
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(useAppStore.getState().selectedFeature).toBeNull();
+  });
+
+  it("switches festivals and enables 2K postcard export in SceneExtras when scene is ready", () => {
+    render(<SceneExtras />);
+    fireEvent.click(screen.getByTestId("scene-extras-toggle"));
+    expect(screen.getByTestId("postcard-download-btn")).toBeDisabled();
+
+    fireEvent.click(screen.getByTestId("festival-tet"));
+    expect(useAppStore.getState().festival).toBe("tet");
+    fireEvent.click(screen.getByTestId("festival-midautumn"));
+    expect(useAppStore.getState().festival).toBe("midautumn");
+
+    act(() => {
+      useAppStore.setState({ sceneStatus: "ready" });
+    });
+    expect(screen.getByTestId("postcard-download-btn")).toBeEnabled();
   });
 });
 

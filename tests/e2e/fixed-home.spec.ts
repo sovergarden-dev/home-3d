@@ -60,6 +60,13 @@ test("time, weather, camera and language controls update the fixed-home view", a
   await expect(page.locator(".h6-top-info")).toContainText("Mưa");
 
   await page.getByTestId("scene-extras-toggle").click();
+  await page.getByTestId("festival-tet").click();
+  await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-festival", "tet");
+  await page.getByTestId("festival-normal").click();
+  await expect(page.getByTestId("demo-scene")).toHaveAttribute("data-festival", "normal");
+  if ((await page.locator("#scene-root").getAttribute("data-scene-state")) === "ready") {
+    await expect(page.getByTestId("postcard-download-btn")).toBeEnabled();
+  }
   await page.getByTestId("sunset-preset-toggle").click();
   await expect(page.locator(".h6-top-info")).toContainText("Hoàng hôn");
 
@@ -297,7 +304,8 @@ test("owner-provided OSM neighborhood renders and survives a route remount", asy
   await page.getByRole("link", { name: "Giới thiệu", exact: true }).click();
   await expect(page).toHaveURL(/\/gioi-thieu$/);
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await expect(page.locator("main")).not.toContainText(/Trung Thu|tiếng rao/i);
+  await expect(page.locator("main")).not.toContainText(/tiếng rao/i);
+  await expect(page.locator("main")).toContainText(/Tết|Trung Thu/i);
   await page.getByRole("link", { name: "Về phố", exact: true }).click();
   await expect(page).toHaveURL(/\/$/);
   await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "ready");

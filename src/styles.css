@@ -278,6 +278,14 @@
     .h6-dock .chip {
       padding: 0 0.65rem;
     }
+
+    .h6-feature-inspector {
+      bottom: auto;
+      top: max(1rem, env(safe-area-inset-top));
+      max-width: 240px;
+      max-height: calc(100dvh - 8rem);
+      overflow-y: auto;
+    }
   }
 
   @media (max-height: 520px) {

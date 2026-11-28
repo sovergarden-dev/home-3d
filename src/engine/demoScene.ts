@@ -4,6 +4,8 @@ import { bindLifeCommands, resetLifeSession, updateLifeStatus } from "./life/ses
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { bindCapture } from "./capture";
+import { pickFeature, isTap } from "./interaction/featurePicking";
+import { bindPostcardCapture } from "@/memories/postcard";
 import { bindRealStreetView } from "./view/externalMapView";
 import { createDemoAudio } from "./demoAudio";
 import { createAtmosphereLayer } from "./atmosphere";
@@ -21,6 +23,7 @@ import {
   type SurroundingsPlan,
 } from "@/world/enrichment/planSurroundings";
 import type { DetailTier } from "@/world/enrichment/schema";
+import type { FeatureSelection } from "@/world/featureSelection";
 import { HOME_NEIGHBORHOOD } from "@/world/homeNeighborhood";
 import { assessWallHeight } from "@/world/wallHeight";
 import { createFrameMetrics } from "./quality/frameMetrics";
@@ -36,8 +39,13 @@ import {
   type PrivateWorldPlanFrame,
 } from "./view/privateWorldPlanFrame";
 import { projectMarkerAndCull } from "./view/cameraFrame";
-import { resolveSceneDetailTier, useAppStore } from "@/state/appStore";
+import { resolveSceneDetailTier, useAppStore, type SelectedFeatureInfo } from "@/state/appStore";
 import { SITE_CONFIG } from "@/config/site";
+import {
+  FOCAL_BUILDING_SUBTITLES,
+  resolveBuildingDisplayName,
+  resolveRoadDisplayName,
+} from "@/world/neighborhoodLabels";
 import { pointInPolygon, polygonsOf, surfaceCentroid } from "@/world/geometry";
 import { homeWorldSession } from "@/world/homeWorldSession";
 import type { Position2, WorldData } from "@/world/schema";
@@ -404,6 +412,9 @@ export function createDemoScene(
   const planPointers = new Map<number, THREE.Vector2>();
   const planPointerStarts = new Map<number, THREE.Vector2>();
   let lastPinchDistance: number | null = null;
+  let tapStart: { pointerId: number; pos: THREE.Vector2 } | null = null;
+  const raycaster = new THREE.Raycaster();
+  const pointerNdc = new THREE.Vector2();
   let disposed = false;
   // Nothing draws before the startup sequence's first frame; see runStartupSequence().
   let firstFrameReady = false;
@@ -711,7 +722,9 @@ export function createDemoScene(
     onRoadWet: (wet) => worldBundle?.setRoadWet(wet),
     host,
     tier: renderer.capabilities.maxTextureSize <= 4096 ? "low" : "mid",
-    festivalsEnabled: false,
+    festivalsEnabled: true,
+    enabledFestivals: ["normal", "tet", "midautumn"],
+    warmFestivals: false,
     floodEnabled: false,
   });
 
@@ -720,7 +733,7 @@ export function createDemoScene(
     const effectiveWeather = state.weather;
     const selectedDate = state.selectedDate;
     const astronomy = getAstronomy(selectedDate, state.timeOfDayMinutes, null);
-    const effectiveFestival = "normal" as const;
+    const effectiveFestival = state.festival;
     const effectiveSeason = getEffectiveSeason(state);
     const presentationVisible =
       state.atmosphereEnabled && worldRenderable() && state.viewMode !== "topdown";
@@ -1016,8 +1029,16 @@ export function createDemoScene(
 
   function onPlanPointerDown(event: PointerEvent) {
     if (!worldRenderable()) return;
-    const isPlan = useAppStore.getState().viewMode === "topdown";
-    if (isPlan) canvas.setPointerCapture(event.pointerId);
+    if (event.isPrimary && (event.pointerType !== "mouse" || event.button === 0) && !tapStart) {
+      tapStart = {
+        pointerId: event.pointerId,
+        pos: new THREE.Vector2(event.clientX, event.clientY),
+      };
+    } else if (tapStart && tapStart.pointerId !== event.pointerId) {
+      tapStart = null;
+    }
+    if (useAppStore.getState().viewMode !== "topdown") return;
+    canvas.setPointerCapture(event.pointerId);
     interactionActive = true;
     planPointers.set(event.pointerId, new THREE.Vector2(event.clientX, event.clientY));
     planPointerStarts.set(event.pointerId, new THREE.Vector2(event.clientX, event.clientY));
@@ -1071,7 +1092,93 @@ export function createDemoScene(
     event.preventDefault();
   }
 
+  function resolveSelectedFeatureInfo(selection: FeatureSelection): SelectedFeatureInfo | null {
+    if (!("world" in currentWorld)) return null;
+    const world = currentWorld.world;
+    if (selection.featureType === "road") {
+      const road = world.roads.find((item) => item.localId === selection.featureId);
+      if (!road) return null;
+      return {
+        id: road.localId,
+        kind: "road",
+        nameVi: resolveRoadDisplayName(road.localId, road.roadClass, "vi"),
+        nameEn: resolveRoadDisplayName(road.localId, road.roadClass, "en"),
+        roadClass: road.roadClass,
+        ...(typeof road.carriagewayWidth === "number"
+          ? { widthMetres: Math.round(road.carriagewayWidth * 10) / 10 }
+          : {}),
+        provenanceSource: road.provenance.source,
+      };
+    }
+    if (selection.featureType === "building" || selection.featureType === "building-part") {
+      const targetId =
+        selection.featureType === "building-part" && selection.parentFeatureId
+          ? selection.parentFeatureId
+          : selection.featureId;
+      const building = world.buildings.find((item) => item.localId === targetId);
+      if (!building) return null;
+      const assessed = assessWallHeight(building, world.manifest.isSynthetic);
+      const heightMetres = selection.estimatedWallHeight ?? assessed.renderedHeight;
+      const levels = selection.estimatedLevels ?? building.levels;
+      const roofType = selection.estimatedRoofType ?? building.roofType;
+      const subtitle = FOCAL_BUILDING_SUBTITLES[building.localId];
+      return {
+        id: building.localId,
+        kind: "building",
+        nameVi: resolveBuildingDisplayName(building.localId, "vi"),
+        nameEn: resolveBuildingDisplayName(building.localId, "en"),
+        ...(subtitle ? { subtitleVi: subtitle.vi, subtitleEn: subtitle.en } : {}),
+        ...(heightMetres > 0 ? { heightMetres: Math.round(heightMetres * 10) / 10 } : {}),
+        ...(typeof levels === "number" && levels > 0 ? { levels } : {}),
+        ...(roofType ? { roofType } : {}),
+        ...(selection.estimatedOrigin === "estimated_procedural" ? { estimated: true } : {}),
+        provenanceSource: building.provenance.source,
+      };
+    }
+    return null;
+  }
+
   function onPlanPointerEnd(event: PointerEvent) {
+    const startTap = tapStart;
+    if (event.type === "pointercancel" || startTap?.pointerId === event.pointerId) {
+      tapStart = null;
+    }
+    if (
+      event.type === "pointerup" &&
+      startTap &&
+      startTap.pointerId === event.pointerId &&
+      worldBundle &&
+      worldRenderable()
+    ) {
+      const state = useAppStore.getState();
+      if (
+        (state.viewMode === "diorama" || state.viewMode === "topdown") &&
+        isTap(startTap.pos, new THREE.Vector2(event.clientX, event.clientY), 6)
+      ) {
+        const rect = canvas.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          pointerNdc.set(
+            ((event.clientX - rect.left) / rect.width) * 2 - 1,
+            -((event.clientY - rect.top) / rect.height) * 2 + 1,
+          );
+          const hiddenLayers = new Set<string>();
+          if (!state.showTrees) hiddenLayers.add("trees");
+          if (state.viewMode === "topdown") hiddenLayers.add("props");
+          const selection = pickFeature(
+            raycaster,
+            pointerNdc,
+            activeCamera,
+            worldBundle.group,
+            hiddenLayers,
+          );
+          const nextInfo = selection ? resolveSelectedFeatureInfo(selection) : null;
+          if (nextInfo || state.selectedFeature) {
+            state.setSelectedFeature(nextInfo);
+          }
+        }
+      }
+    }
+    if (!planPointers.has(event.pointerId)) return;
     planPointers.delete(event.pointerId);
     planPointerStarts.delete(event.pointerId);
     interactionActive = planPointers.size > 0;
@@ -1183,6 +1290,7 @@ export function createDemoScene(
   function handleContextLost(event: Event) {
     event.preventDefault();
     bindCapture(null);
+    bindPostcardCapture(null);
     onContextLost();
   }
 
@@ -1256,6 +1364,7 @@ export function createDemoScene(
     }
     if (
       state.weather !== previous.weather ||
+      state.festival !== previous.festival ||
       state.viewMode !== previous.viewMode ||
       state.timeOfDayMinutes !== previous.timeOfDayMinutes ||
       state.soundOn !== previous.soundOn ||
@@ -1265,6 +1374,7 @@ export function createDemoScene(
     ) {
       const clockTickOnly =
         state.weather === previous.weather &&
+        state.festival === previous.festival &&
         state.viewMode === previous.viewMode &&
         Math.abs(state.timeOfDayMinutes - previous.timeOfDayMinutes) <= 2;
       applyEnvironment(clockTickOnly || state.viewMode !== previous.viewMode);
@@ -1272,6 +1382,17 @@ export function createDemoScene(
       if (atmosphere.rainVisible || atmosphere.transitionActive || lifeActive()) {
         needsSchedule = true;
       }
+    }
+    if (
+      state.viewMode !== previous.viewMode &&
+      (state.viewMode === "walk" || state.viewMode === "ride") &&
+      state.selectedFeature !== null
+    ) {
+      useAppStore.getState().setSelectedFeature(null);
+    }
+    if (state.selectedFeature !== previous.selectedFeature) {
+      worldBundle?.setSelectedFeature(state.selectedFeature?.id ?? null);
+      needsRender = true;
     }
     if (needsRender) render();
     if (needsSchedule) scheduleFrame();
@@ -1371,6 +1492,44 @@ export function createDemoScene(
     host.dataset["captureLatencyMs"] = String(performance.now() - captureStartedAt);
     return image;
   });
+  bindPostcardCapture(async (targetWidth, targetHeight) => {
+    if (disposed || !firstFrameReady || !worldRenderable() || document.hidden) {
+      throw new Error("SCENE_UNAVAILABLE");
+    }
+    const prevSize = renderer.getSize(new THREE.Vector2());
+    const prevPixelRatio = renderer.getPixelRatio();
+    const prevAspect = perspectiveCamera.aspect;
+    try {
+      renderer.setPixelRatio(1);
+      renderer.setSize(targetWidth, targetHeight, false);
+      if (activeCamera === planCamera) {
+        configurePlanCamera(planCamera, {
+          ...planConfig(),
+          viewportWidthCss: targetWidth,
+          viewportHeightCss: targetHeight,
+        });
+      } else {
+        perspectiveCamera.aspect = targetWidth / targetHeight;
+        perspectiveCamera.updateProjectionMatrix();
+      }
+      renderer.render(scene, activeCamera);
+      return await new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob(
+          (blob) => (blob ? resolve(blob) : reject(new Error("CAPTURE_ENCODE_FAILED"))),
+          "image/png",
+        );
+      });
+    } finally {
+      renderer.setPixelRatio(prevPixelRatio);
+      renderer.setSize(prevSize.x, prevSize.y, false);
+      perspectiveCamera.aspect = prevAspect;
+      perspectiveCamera.updateProjectionMatrix();
+      if (activeCamera === planCamera) {
+        configurePlanCamera(planCamera, planConfig());
+      }
+      render();
+    }
+  });
 
   return {
     ready: startup.ready,
@@ -1381,6 +1540,7 @@ export function createDemoScene(
       if (disposed) return;
       disposed = true;
       bindCapture(null);
+      bindPostcardCapture(null);
       bindRealStreetView(null);
       window.clearTimeout(interactionTimer);
       startup.stop();
