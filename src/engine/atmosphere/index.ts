@@ -30,6 +30,7 @@ export interface AtmosphereLayerOptions {
   tier?: "low" | "mid" | "high";
   festivalsEnabled?: boolean;
   enabledFestivals?: readonly AtmosphereFestival[];
+  warmFestivals?: boolean;
   floodEnabled?: boolean;
 }
 
@@ -87,6 +88,7 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
     return m;
   };
   const festivalsEnabled = options.festivalsEnabled !== false;
+  const warmFestivals = options.warmFestivals ?? festivalsEnabled;
   const activeFestivals = options.enabledFestivals ?? DEFAULT_FESTIVALS;
   const floodEnabled = options.floodEnabled !== false;
   const decorations = new Map<AtmosphereFestival, THREE.Group>();
@@ -617,7 +619,7 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
       };
       for (const weather of ["sunny", "cloudy", "rain", "storm"] as const)
         compile({ ...base, weather, festival: "normal", atmosphereEnabled: true, floodLevel: 0 });
-      if (festivalsEnabled) {
+      if (warmFestivals) {
         for (const festival of activeFestivals)
           compile({ ...base, weather: "sunny", festival, atmosphereEnabled: true, floodLevel: 0 });
       }
@@ -645,7 +647,7 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
         floodLevel: 0,
       });
       // Only a second light topology is needed at night; reuse each real decorative material.
-      if (festivalsEnabled) {
+      if (warmFestivals) {
         for (const festival of activeFestivals) {
           if (festival === "normal") continue;
           compile({

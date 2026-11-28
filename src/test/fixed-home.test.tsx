@@ -369,6 +369,7 @@ describe("fixed home experience", () => {
       onRoadWet: () => {},
       festivalsEnabled: true,
       enabledFestivals: ["normal", "tet", "midautumn"],
+      warmFestivals: false,
       floodEnabled: false,
     });
     const mountedFestivals = festivalLayer.group.children
@@ -383,8 +384,8 @@ describe("fixed home experience", () => {
     const festivalRenderer = {
       compile: () => (festivalCompiled += 1),
     } as unknown as THREE.WebGLRenderer;
-    expect(festivalLayer.warm(festivalRenderer, new THREE.PerspectiveCamera())).toBe(11);
-    expect(festivalCompiled).toBe(11);
+    expect(festivalLayer.warm(festivalRenderer, new THREE.PerspectiveCamera())).toBe(6);
+    expect(festivalCompiled).toBe(6);
     festivalLayer.dispose();
   });
 

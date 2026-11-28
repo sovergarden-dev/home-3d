@@ -724,6 +724,7 @@ export function createDemoScene(
     tier: renderer.capabilities.maxTextureSize <= 4096 ? "low" : "mid",
     festivalsEnabled: true,
     enabledFestivals: ["normal", "tet", "midautumn"],
+    warmFestivals: false,
     floodEnabled: false,
   });
 
