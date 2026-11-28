@@ -112,7 +112,7 @@ export const useAppStore = create<AppState>((set) => ({
   realWeatherKind: null,
   festival: "normal",
   viewMode: SITE_CONFIG.defaultViewMode,
-  heading: 28,
+  heading: 330,
   zoom: 1,
   soundOn: false,
   lifeEnabled: true,

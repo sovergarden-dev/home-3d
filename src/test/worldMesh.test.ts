@@ -745,4 +745,52 @@ describe("static mesh merge by material", () => {
     bundle.dispose();
     materials.forEach((material) => material.dispose());
   });
+
+  it("hides a single unknown-height building slab coveredByMassing on layer 0 until confidence inspection", () => {
+    const base = structuredClone(SYNTHETIC_NEIGHBORHOOD);
+    const loneUnknown: Building = {
+      ...rectangleBuilding("building-lone-unknown", 25, 25),
+      wallHeight: 0,
+      provenance: { source: "osm", quality: "source_only" },
+      attributes: { wallHeight: { source: "osm", quality: "unknown" } },
+    };
+    const world: WorldData = {
+      ...base,
+      manifest: { ...base.manifest, isSynthetic: false },
+      buildings: [loneUnknown],
+      roads: [],
+      lots: [],
+    };
+    const massingPlan = planMassing(world, HOME_ENRICHMENT!);
+    expect(massingPlan.items).toHaveLength(1);
+    const materials = new Map<string, THREE.MeshStandardMaterial>();
+    const bundle = buildWorldMeshes(
+      world,
+      (color, roughness = 0.82, metalness = 0) => {
+        const key = `${color}:${roughness}:${metalness}`;
+        let material = materials.get(key);
+        if (!material) {
+          material = new THREE.MeshStandardMaterial({ color, roughness, metalness });
+          materials.set(key, material);
+        }
+        return material;
+      },
+      "vi",
+      massingPlan,
+    );
+
+    const coveredProxy = staticLayerMeshes(bundle).proxies.find(
+      (mesh) => mesh.userData["coveredByMassing"] === true,
+    );
+    expect(coveredProxy).toBeDefined();
+    expect(coveredProxy!.layers.isEnabled(0)).toBe(false);
+
+    bundle.setConfidenceVisible(true);
+    expect(coveredProxy!.layers.isEnabled(0)).toBe(true);
+    bundle.setConfidenceVisible(false);
+    expect(coveredProxy!.layers.isEnabled(0)).toBe(false);
+
+    bundle.dispose();
+    materials.forEach((material) => material.dispose());
+  });
 });

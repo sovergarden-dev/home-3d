@@ -26,6 +26,10 @@ import { assessWallHeight } from "@/world/wallHeight";
 import { confidenceColor } from "@/engine/confidence/wallConfidence";
 import { createBuildingLabelBatches } from "@/engine/world/buildingLabels";
 import {
+  createFocalStreetscape,
+  type FocalStreetscapeBundle,
+} from "@/engine/world/focalStreetscape";
+import {
   planProceduralStreetTrim,
   resolveRoadSurfaceStyle,
   roadDisplayElevation,
@@ -47,6 +51,7 @@ export interface WorldMeshBundle {
   setLabelLanguage: (language: "vi" | "en") => void;
   setRoadWet: (wet: boolean) => void;
   setAtmospherePresentation: (season: "dry" | "wet" | null, night: boolean) => void;
+  setDioramaVeilVisible?: (visible: boolean) => void;
   setConfidenceVisible: (visible: boolean) => void;
   setSelectedFeature: (featureId: string | null) => void;
   dispose: () => void;
@@ -164,6 +169,16 @@ function mergeStaticLayer(
   mergedGroup.userData["nonPickable"] = true;
 
   for (const [key, { material, meshes }] of buckets) {
+    if (meshes.length === 1) {
+      const single = meshes[0]!;
+      if (single.userData["coveredByMassing"]) {
+        single.layers.set(FEATURE_PICK_LAYER);
+        single.userData["staticPickProxy"] = true;
+        single.userData["mergeKey"] = key;
+        pickProxies.add(single);
+      }
+      continue;
+    }
     if (meshes.length < 2) continue;
     const baked = meshes.map(bakeWorldGeometry);
     let mergedGeometry: THREE.BufferGeometry | null = null;
@@ -1508,6 +1523,7 @@ export function buildWorldMeshes(
   const estimatedPickProxies = new Set<THREE.Mesh>();
   const estimatedMergedMeshes: THREE.Mesh[] = [];
   let estimatedMassingGroup: THREE.Group | null = null;
+  let focalStreetscape: FocalStreetscapeBundle | null = null;
   const confidenceOriginals = new Map<THREE.Mesh, THREE.Material | THREE.Material[]>();
   const confidenceVariants = new Map<string, THREE.Material>();
   let disposed = false;
@@ -1716,6 +1732,10 @@ export function buildWorldMeshes(
   rebuildLabels(currentLabelLanguage);
   addTrees(world, layers.trees, materialFactory, disposables);
   addProps(world, layers.props, materialFactory, disposables);
+  focalStreetscape = createFocalStreetscape(world, disposables);
+  if (focalStreetscape) {
+    layers.buildings.add(focalStreetscape.group);
+  }
 
   group.traverse((object) => {
     if (!(object instanceof THREE.Mesh) || object.userData["mergedStatic"]) return;
@@ -1736,6 +1756,7 @@ export function buildWorldMeshes(
     if (estimatedStreetStylingGroup) {
       estimatedStreetStylingGroup.visible = !confidenceVisible;
     }
+    focalStreetscape?.setInspecting(confidenceVisible);
     if (estimatedMassingGroup) {
       // Geometry confidence inspects canonical heights only; hide procedural massing while active.
       estimatedMassingGroup.visible = !confidenceVisible;
@@ -1833,6 +1854,10 @@ export function buildWorldMeshes(
           object.material.emissiveIntensity = night ? 1 : 0;
         }
       });
+      focalStreetscape?.setNight(night);
+    },
+    setDioramaVeilVisible(visible) {
+      focalStreetscape?.setDioramaVeilVisible(visible);
     },
     setConfidenceVisible(visible) {
       confidenceVisible = visible;

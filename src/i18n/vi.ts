@@ -9,10 +9,11 @@ export const vi = {
   emptyLot: "Lô trống · vị trí giả lập",
   referencePoint: "Điểm tham chiếu",
   unmeasuredBoundary: "Ranh chưa đo",
+  homePinSubtitle: "Châu Văn Liêm · Quận 5",
   temporaryLotIllustration: "Lô trống · minh họa tạm · ranh chưa đo",
-  sceneSummary: "Đường OSM · nhà quanh khu (Overture/Open Buildings) & cụm tâm.",
+  sceneSummary: "Đường OSM · nhà quanh khu (Overture/Open Buildings) & cụm tâm",
   sceneControls:
-    "Mặt bằng đường và công trình theo OpenStreetMap; khối nhà quanh khu là ước lượng procedural, không phải số đo thực địa, ranh chưa khảo sát. Kéo để xoay, chụm để zoom. Phím mũi tên hoặc WASD; R về tâm nhà.",
+    "Sa bàn khu phố lõi 180 m quanh ngã tư Châu Văn Liêm × Trần Hưng Đạo dùng đường OpenStreetMap, khối nhà Overture / Open Buildings (CC BY 4.0) và 15 công trình cụm tâm; cao độ và ranh lô mang tính minh họa. Kéo để xoay, chụm hoặc cuộn để thu phóng, R về tâm nhà.",
   sceneHint: "Kéo để xoay · Chụm / cuộn để zoom",
   fallbackTitle: "Thiết bị chưa mở được 3D",
   fallbackBody:
@@ -335,8 +336,8 @@ export const vi = {
   sheetHandle: "Kéo để mở rộng bảng điều khiển",
   aboutTitle: "Về Phố Nhà Mình",
   aboutBody: [
-    "Một sa bàn 3D tĩnh của khu phố quanh nhà — nơi bạn có thể xoay nhìn dãy nhà ống, tán cây ven đường, dòng xe qua lại và đổi sắc thái bầu trời qua ba buổi Sáng, Chiều, Tối cùng ba trạng thái Nắng, Mây, Mưa.",
-    "Dữ liệu đang dựng là khu phố tổng hợp minh họa, không phải bản khảo sát địa chính hay tọa độ nhà thật; lô đất trung tâm được giữ trống làm điểm neo và ứng dụng hoạt động độc lập, không gửi dữ liệu vị trí ra ngoài.",
+    "Sa bàn 3D khu phố bán kính 180 m quanh ngã tư Châu Văn Liêm × Trần Hưng Đạo — xoay nhìn cụm nhà tâm điểm, dãy nhà phố, tán cây ven đường, dòng xe qua lại và sắc thái bầu trời qua Sáng · Chiều · Tối cùng Nắng · Mây · Mưa.",
+    "Mặt đường dùng dữ liệu OpenStreetMap, khối nhà quanh khu kết hợp Overture Maps / Google Open Buildings (CC BY 4.0) cùng 15 công trình cụm tâm; cao độ suy luận và ranh lô mang tính minh họa trực quan.",
   ],
   aboutShortcutsTitle: "Phím tắt nhanh",
   aboutShortcuts: [

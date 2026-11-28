@@ -11,10 +11,11 @@ export const en: Dict = {
   emptyLot: "Empty lot · invented location",
   referencePoint: "Reference point",
   unmeasuredBoundary: "Boundary not surveyed",
+  homePinSubtitle: "Chau Van Liem · District 5",
   temporaryLotIllustration: "Empty lot · temporary illustration · boundary not surveyed",
-  sceneSummary: "OSM roads · surrounding buildings (Overture/Open Buildings) & focal block.",
+  sceneSummary: "OSM roads · surrounding buildings (Overture/Open Buildings) & focal block",
   sceneControls:
-    "Roads and footprints use OpenStreetMap; neighboring building volumes are procedural estimates, not surveyed measurements, and boundaries are not surveyed. Drag to orbit, pinch to zoom. Arrows or WASD; R to reset to the house.",
+    "180 m neighborhood diorama around the Chau Van Liem & Tran Hung Dao intersection built from OpenStreetMap roads, Overture / Open Buildings massing (CC BY 4.0), and 15 focal-block buildings; heights and boundaries remain illustrative. Drag to orbit, pinch or scroll to zoom, R to reset to the house.",
   sceneHint: "Drag to orbit · Pinch / scroll to zoom",
   fallbackTitle: "3D is not available on this device",
   fallbackBody:
@@ -343,8 +344,8 @@ export const en: Dict = {
   sheetHandle: "Drag to expand the control panel",
   aboutTitle: "About Phố Nhà Mình",
   aboutBody: [
-    "A quiet 3D neighborhood diorama around home — orbit across townhouses, street trees, and passing traffic while shifting the sky through Morning, Afternoon, and Evening across Sunny, Cloudy, and Rain presets.",
-    "The scene uses a sanitized synthetic neighborhood dataset rather than a cadastral survey or real coordinates; the central home lot remains empty as the reference anchor, and no location data leaves your browser.",
+    "A 180 m 3D neighborhood diorama centered on the Chau Van Liem & Tran Hung Dao intersection — orbit across the focal shopfront block, surrounding townhouses, street trees, and traffic while shifting the sky through Morning · Afternoon · Evening across Sunny · Cloudy · Rain.",
+    "Roads come from OpenStreetMap and surrounding volumes blend Overture Maps / Google Open Buildings (CC BY 4.0) with 15 focal-block buildings; heights and boundaries remain illustrative.",
   ],
   aboutShortcutsTitle: "Keyboard shortcuts",
   aboutShortcuts: [
