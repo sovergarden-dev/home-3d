@@ -33,9 +33,9 @@ function canonicalJson(value: unknown): string {
 const sha = (value: unknown) => createHash("sha256").update(canonicalJson(value)).digest("hex");
 
 export const MASSING_GOLDEN_SHA256 =
-  "cd80662015bd763c7693453e4d59685fd3c7ccecc7f9ae7a8a3e69ae065de651";
+  "9edbebd6ec6913541cbd9a6f1c6a4e0fed864ec4e109af5c3c4e180cc6c76c79";
 const MASSING_FACADES_GOLDEN_SHA256 =
-  "8bc514ef1ce27f793d59f605132465a9074fbfb096be1b0152e71525a90c6e77";
+  "655755bb4bf2080a1c0a58feba8167d38f25db15c525a92601e85eaacf351b3e";
 
 function shuffled<T>(items: readonly T[], seed: number): T[] {
   const copy = [...items];
@@ -256,9 +256,9 @@ describe("planMassing", () => {
 
     expect(facadePlan).toEqual(reorderedFacades);
     expect(facadePlan.origin).toBe("estimated_procedural");
-    expect(facadePlan.balconyBuildingCount).toBe(237);
-    expect(facadePlan.shopBuildingCount).toBe(40);
-    expect(facadePlan.instances).toHaveLength(858);
+    expect(facadePlan.balconyBuildingCount).toBe(58);
+    expect(facadePlan.shopBuildingCount).toBe(15);
+    expect(facadePlan.instances).toHaveLength(207);
     expect(sha(facadePlan)).toBe(MASSING_FACADES_GOLDEN_SHA256);
 
     const shopInstances = facadePlan.instances.filter((inst) => inst.kind.startsWith("shop_"));

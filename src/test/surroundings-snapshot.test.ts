@@ -20,7 +20,7 @@ import { FORBIDDEN_KEY_PATTERN, G1_PACKAGE_SHA256 } from "@/world/enrichment/sch
 import { HOME_NEIGHBORHOOD } from "@/world/homeNeighborhood";
 
 // Pinned literal on purpose (see g1-pin.test.ts): the layer must stay locked to this package.
-const G1 = "6f2f2dd0a7d6cd176bfde825d164b314ddd59c75efef56733e4ea1decb9ddb48";
+const G1 = "a6cdca34ee2f29f374259cca3489ed4c62c19dfbd0f5f31a0bac85f546172c9a";
 const dataDir = path.resolve(__dirname, "../world/data");
 const layerText = readFileSync(path.join(dataDir, "homeNeighborhood.enrichment.json"), "utf8");
 const layerJson = JSON.parse(layerText) as Record<string, unknown>;

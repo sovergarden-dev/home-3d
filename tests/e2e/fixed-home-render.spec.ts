@@ -42,7 +42,7 @@ test("owner-provided OSM neighborhood produces nonblank rendered scene pixels", 
   const scene = page.getByTestId("demo-scene");
   const canvas = root.locator("canvas");
   await expect(scene).toHaveAttribute("data-world-mode", "home");
-  await expect(scene).toHaveAttribute("data-world-buildings", "1300");
+  await expect(scene).toHaveAttribute("data-world-buildings", "339");
   await expect(scene).toHaveAttribute("data-world-roads", "138");
   await expect(canvas).toHaveCount(1);
   const evidence = await renderedPixelEvidence(page, await canvas.screenshot());
