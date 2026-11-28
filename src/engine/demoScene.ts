@@ -14,7 +14,12 @@ import { createSurroundingsMeshes, type SurroundingsMeshes } from "./world/surro
 import { HOME_ENRICHMENT } from "@/world/enrichment/homeEnrichment";
 import { planMassing, type MassingPlan } from "@/world/enrichment/planMassing";
 import { planMassingFacades, type MassingFacadePlan } from "@/world/enrichment/planMassingFacades";
-import { planSurroundings } from "@/world/enrichment/planSurroundings";
+import {
+  createPlacementContext,
+  planSurroundings,
+  type PlacementContext,
+  type SurroundingsPlan,
+} from "@/world/enrichment/planSurroundings";
 import type { DetailTier } from "@/world/enrichment/schema";
 import { HOME_NEIGHBORHOOD } from "@/world/homeNeighborhood";
 import { assessWallHeight } from "@/world/wallHeight";
@@ -42,6 +47,8 @@ const STARTUP_PROGRAM_POLL_MS = 10;
 const STARTUP_PROGRAM_TIMEOUT_MS = 10_000;
 let cachedHomeMassingPlan: MassingPlan | null = null;
 let cachedHomeFacadePlan: MassingFacadePlan | null = null;
+let cachedHomeSurroundingsContext: PlacementContext | null = null;
+const cachedHomeSurroundingsPlans: Partial<Record<DetailTier, SurroundingsPlan>> = {};
 
 function getHomeMassingPlan(): MassingPlan | null {
   if (!HOME_ENRICHMENT) return null;
@@ -53,6 +60,21 @@ function getHomeFacadePlan(massingPlan: MassingPlan | null): MassingFacadePlan |
   if (!HOME_ENRICHMENT || !massingPlan) return null;
   cachedHomeFacadePlan ??= planMassingFacades(HOME_NEIGHBORHOOD, HOME_ENRICHMENT, massingPlan);
   return cachedHomeFacadePlan;
+}
+
+function getHomeSurroundingsPlan(tier: DetailTier): SurroundingsPlan | null {
+  if (!HOME_ENRICHMENT) return null;
+  const existing = cachedHomeSurroundingsPlans[tier];
+  if (existing) return existing;
+  cachedHomeSurroundingsContext ??= createPlacementContext(HOME_NEIGHBORHOOD);
+  const computed = planSurroundings(
+    HOME_NEIGHBORHOOD,
+    HOME_ENRICHMENT,
+    tier,
+    cachedHomeSurroundingsContext,
+  );
+  cachedHomeSurroundingsPlans[tier] = computed;
+  return computed;
 }
 
 export interface SceneRuntime {
@@ -257,6 +279,8 @@ export function createDemoScene(
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 768 ? 1 : 1.5));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.autoUpdate = false;
+  renderer.shadowMap.needsUpdate = true;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.08;
   // Keep offscreen postcard pixels on the same display-referred path as the canvas.
@@ -328,6 +352,10 @@ export function createDemoScene(
 
   const materials = new Map<string, THREE.MeshStandardMaterial>();
   const markerPosition = new THREE.Vector3();
+  const lastShadowSunPos = new THREE.Vector3(NaN, NaN, NaN);
+  const lastShadowTargetPos = new THREE.Vector3(NaN, NaN, NaN);
+  let lastShadowWorld: WorldMeshBundle | null = null;
+  let lastShadowFrustum = NaN;
   const materialFactory = (color: string, roughness = 0.82, metalness = 0) => {
     const key = `${color}:${roughness}:${metalness}`;
     let material = materials.get(key);
@@ -419,7 +447,8 @@ export function createDemoScene(
       return;
     }
     const startedAt = performance.now();
-    const plan = planSurroundings(world, HOME_ENRICHMENT, tier);
+    const plan = getHomeSurroundingsPlan(tier);
+    if (!plan) return;
     surroundings = createSurroundingsMeshes(plan);
     bundle.layers.trees.add(surroundings.trees);
     bundle.layers.props.add(surroundings.props);
@@ -768,6 +797,18 @@ export function createDemoScene(
       host.dataset["activeWorlds"] = "0";
       host.dataset["worldMode"] = currentWorld.mode;
       return;
+    }
+    if (
+      lastShadowWorld !== worldBundle ||
+      lastShadowFrustum !== sun.shadow.camera.right ||
+      !lastShadowSunPos.equals(sun.position) ||
+      !lastShadowTargetPos.equals(sun.target.position)
+    ) {
+      renderer.shadowMap.needsUpdate = true;
+      lastShadowWorld = worldBundle;
+      lastShadowFrustum = sun.shadow.camera.right;
+      lastShadowSunPos.copy(sun.position);
+      lastShadowTargetPos.copy(sun.target.position);
     }
     renderer.render(scene, activeCamera);
     host.dataset["memoryTextures"] = String(renderer.info.memory.textures);

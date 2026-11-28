@@ -64,7 +64,18 @@ interface RouteSegment {
   length: number;
 }
 
+const frozenPovRouteCache = new WeakMap<WorldData, readonly RouteSegment[]>();
+
 export function buildPovRoute(world: WorldData): RouteSegment[] {
+  const isFrozenWorld =
+    Object.isFrozen(world) &&
+    Object.isFrozen(world.roads) &&
+    Object.isFrozen(world.buildings) &&
+    Object.isFrozen(world.lots);
+  if (isFrozenWorld) {
+    const cached = frozenPovRouteCache.get(world);
+    if (cached) return cached.map((segment) => ({ ...segment }));
+  }
   const graph = buildLifeGraph(world);
   if (!graph.enabled) return [];
   const solids = world.buildings
@@ -211,6 +222,12 @@ export function buildPovRoute(world: WorldData): RouteSegment[] {
       const length = Math.hypot(bx - ax, bz - az);
       if (Number.isFinite(length) && length > 0.01) result.push({ ax, az, bx, bz, length });
     }
+  }
+  if (isFrozenWorld) {
+    frozenPovRouteCache.set(
+      world,
+      result.map((segment) => ({ ...segment })),
+    );
   }
   return result;
 }
