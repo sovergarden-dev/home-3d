@@ -12,7 +12,7 @@ export const en: Dict = {
   referencePoint: "Reference point",
   unmeasuredBoundary: "Boundary not surveyed",
   temporaryLotIllustration: "Empty lot · temporary illustration · boundary not surveyed",
-  sceneSummary: "OSM roads & footprints · estimated massing, unmeasured.",
+  sceneSummary: "OSM roads · surrounding buildings (Overture/Open Buildings) & focal block.",
   sceneControls:
     "Roads and footprints use OpenStreetMap; neighboring building volumes are procedural estimates, not surveyed measurements, and boundaries are not surveyed. Drag to orbit, pinch to zoom. Arrows or WASD; R to reset to the house.",
   sceneHint: "Drag to orbit · Pinch / scroll to zoom",

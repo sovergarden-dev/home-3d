@@ -149,23 +149,26 @@ describe("fixed home experience", () => {
     expect(Object.isFrozen(HOME_NEIGHBORHOOD.lots)).toBe(true);
     expect(HOME_NEIGHBORHOOD.manifest.verificationStatus).toBe("REAL_WORLD_NOT_VERIFIED");
     expect(HOME_NEIGHBORHOOD.manifest.isSynthetic).toBe(false);
-    expect(HOME_NEIGHBORHOOD.manifest.datasetRevision).toBe(
-      "h6-osm-center-confirmed-2026-10-16-r2",
-    );
+    expect(HOME_NEIGHBORHOOD.manifest.datasetRevision).toBe("h6-osm-overture-focal-2026-11-28");
     expect(HOME_NEIGHBORHOOD.manifest.sources?.map((source) => source.namespace)).toEqual([
       "osm-300m-primary",
+      "overture-2026-11-18",
+      "overture-2026-11-18-open-buildings",
+      "owner-focal-block-2026-11",
     ]);
     expect(HOME_NEIGHBORHOOD.roads).toHaveLength(138);
-    expect(HOME_NEIGHBORHOOD.buildings).toHaveLength(317);
+    expect(HOME_NEIGHBORHOOD.buildings).toHaveLength(1300);
     expect(HOME_NEIGHBORHOOD.lots).toHaveLength(0);
     expect(
-      HOME_NEIGHBORHOOD.buildings.every(
-        (building) => building.provenance.quality === "source_only",
+      HOME_NEIGHBORHOOD.buildings.every((building) =>
+        ["source_only", "verified"].includes(building.provenance.quality),
       ),
     ).toBe(true);
     expect(
-      HOME_NEIGHBORHOOD.buildings.every(
-        (building) => building.attributes?.["wallHeight"]?.quality === "inferred",
+      HOME_NEIGHBORHOOD.buildings.every((building) =>
+        ["inferred", "unknown", "verified"].includes(
+          building.attributes?.["wallHeight"]?.quality ?? "",
+        ),
       ),
     ).toBe(true);
     expect(HOME_CENTER_CONFIRMATION.status).toBe("provisionally-accepted");

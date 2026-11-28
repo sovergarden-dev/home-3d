@@ -10,7 +10,7 @@ export const vi = {
   referencePoint: "Điểm tham chiếu",
   unmeasuredBoundary: "Ranh chưa đo",
   temporaryLotIllustration: "Lô trống · minh họa tạm · ranh chưa đo",
-  sceneSummary: "Đường, footprint OSM · khối nhà ước lượng, chưa đo.",
+  sceneSummary: "Đường OSM · nhà quanh khu (Overture/Open Buildings) & cụm tâm.",
   sceneControls:
     "Mặt bằng đường và công trình theo OpenStreetMap; khối nhà quanh khu là ước lượng procedural, không phải số đo thực địa, ranh chưa khảo sát. Kéo để xoay, chụm để zoom. Phím mũi tên hoặc WASD; R về tâm nhà.",
   sceneHint: "Kéo để xoay · Chụm / cuộn để zoom",

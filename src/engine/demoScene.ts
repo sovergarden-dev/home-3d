@@ -33,9 +33,9 @@ import {
 import { projectMarkerAndCull } from "./view/cameraFrame";
 import { resolveSceneDetailTier, useAppStore } from "@/state/appStore";
 import { SITE_CONFIG } from "@/config/site";
-import { surfaceCentroid } from "@/world/geometry";
+import { pointInPolygon, polygonsOf, surfaceCentroid } from "@/world/geometry";
 import { homeWorldSession } from "@/world/homeWorldSession";
-import type { WorldData } from "@/world/schema";
+import type { Position2, WorldData } from "@/world/schema";
 import { runStartupSequence, type StartupOutcome } from "./startupSequence";
 
 const STARTUP_PROGRAM_POLL_MS = 10;
@@ -128,6 +128,27 @@ export function worldHomeCentre(world: WorldData) {
   if (!homeLot) return new THREE.Vector3(0, 0, 0);
   const [x, z] = surfaceCentroid(homeLot.geometry);
   return new THREE.Vector3(x, 0, z);
+}
+
+export function homeMarkerElevation(world: WorldData, centre: Position2): number {
+  let highestTop = 0;
+  for (const building of world.buildings) {
+    if (building.hidden) continue;
+    const baseElevation = building.baseElevation ?? 0;
+    const elements = building.parts?.length ? building.parts : [building];
+    for (const element of elements) {
+      const assessment = assessWallHeight(element, world.manifest.isSynthetic);
+      if (assessment.status !== "known" && assessment.status !== "inferred") continue;
+      if (!polygonsOf(element.geometry).some((polygon) => pointInPolygon(centre, polygon)))
+        continue;
+      const topY =
+        (element.baseElevation ?? baseElevation) +
+        assessment.renderedHeight +
+        (element.roofHeight ?? 0);
+      if (topY > highestTop) highestTop = topY;
+    }
+  }
+  return highestTop > 0 ? highestTop + 0.8 : 0.35;
 }
 
 interface ShadowCameraBounds {
@@ -319,6 +340,9 @@ export function createDemoScene(
 
   let worldBundle: WorldMeshBundle | null = null;
   let homeCentre = fallbackWorld ? worldHomeCentre(fallbackWorld) : new THREE.Vector3();
+  let homeMarkerY = fallbackWorld
+    ? homeMarkerElevation(fallbackWorld, [homeCentre.x, homeCentre.z])
+    : 0.35;
   let centre = initialPerspectiveFrame?.centre ?? new THREE.Vector3();
   let span = initialPerspectiveFrame?.span ?? 100;
   let privatePlanFrame: PrivateWorldPlanFrame | null = null;
@@ -484,6 +508,7 @@ export function createDemoScene(
     const frame = perspectiveFrame(snapshot.world);
     centre = frame.centre;
     homeCentre = worldHomeCentre(snapshot.world);
+    homeMarkerY = homeMarkerElevation(snapshot.world, [homeCentre.x, homeCentre.z]);
     privatePlanFrame = derivePrivateWorldPlanFrame(snapshot.world, {
       x: SITE_CONFIG.heroCenter[0],
       z: SITE_CONFIG.heroCenter[1],
@@ -758,7 +783,7 @@ export function createDemoScene(
       frameSnapshot = frameMetrics.snapshot();
       lastMetricsSnapshotAt = renderedAt;
     }
-    markerPosition.set(homeCentre.x, 0.35, homeCentre.z);
+    markerPosition.set(homeCentre.x, homeMarkerY, homeCentre.z);
     const projected = projectMarkerAndCull(activeCamera, markerPosition, -0.06);
     marker.style.transform = `translate(-50%, -100%) translate(${projected.x * host.clientWidth}px, ${projected.y * host.clientHeight - 10}px)`;
     marker.style.visibility = projected.visible ? "visible" : "hidden";

@@ -11,6 +11,7 @@ import { SYNTHETIC_NEIGHBORHOOD } from "@/world/fixtures/syntheticNeighborhood";
 import { surfaceBounds, surfaceIntersects } from "@/world/geometry";
 import { HOME_NEIGHBORHOOD } from "@/world/homeNeighborhood";
 import type { Building, RoadSegment, WorldData } from "@/world/schema";
+import { validateWorld } from "@/world/validate";
 import { assessWallHeight } from "@/world/wallHeight";
 
 describe("world mesh lifecycle", () => {
@@ -433,7 +434,7 @@ describe("static mesh merge by material", () => {
       return material;
     });
     const { render, proxies, merged } = staticLayerMeshes(bundle);
-    expect(HOME_NEIGHBORHOOD.buildings).toHaveLength(317);
+    expect(HOME_NEIGHBORHOOD.buildings).toHaveLength(1300);
     expect(HOME_NEIGHBORHOOD.roads).toHaveLength(138);
     expect(merged.length).toBeGreaterThan(0);
     expect(render.length).toBeLessThan(40);
@@ -480,9 +481,9 @@ describe("static mesh merge by material", () => {
       provenance: { origin: "estimated_procedural", estimated: true },
       facades: {
         origin: "estimated_procedural",
-        balconyBuildingCount: 70,
-        shopBuildingCount: 8,
-        instanceCount: 242,
+        balconyBuildingCount: 237,
+        shopBuildingCount: 40,
+        instanceCount: 858,
         meshCount: 1,
       },
     });
@@ -490,7 +491,7 @@ describe("static mesh merge by material", () => {
       "estimated-facades:instanced",
     ) as THREE.InstancedMesh;
     expect(facadeInstanced).toBeInstanceOf(THREE.InstancedMesh);
-    expect(facadeInstanced.count).toBe(242);
+    expect(facadeInstanced.count).toBe(858);
 
     const { render, merged } = staticLayerMeshes(bundle);
     expect(render.length).toBeLessThan(60);
@@ -504,7 +505,7 @@ describe("static mesh merge by material", () => {
     const unknownCount = HOME_NEIGHBORHOOD.buildings.filter(
       (building) => assessWallHeight(building, false).status === "unknown",
     ).length;
-    expect(unknownCount).toBe(315);
+    expect(unknownCount).toBe(1280);
 
     // Picking a 3D estimated building returns estimated_procedural provenance
     const sample = massingPlan.items[0]!;
@@ -539,7 +540,7 @@ describe("static mesh merge by material", () => {
   it("plans deterministic, order-independent street styling without overlapping buildings or mutating canonical roads", () => {
     const plan = planProceduralStreetTrim(HOME_NEIGHBORHOOD);
     const goldenSha = createHash("sha256").update(JSON.stringify(plan)).digest("hex");
-    expect(goldenSha).toBe("520954ef815605b66fd1a6aa8cb5fa4ee4e27239a32501cae7f28076a6fc22a4");
+    expect(goldenSha).toBe("71b7443a3ce0db34b2eb2f6bc9728414940bed46180b284236d29cc26ec7991a");
     expect(plan.styledRoadCounts).toEqual({
       primary_asphalt: 35,
       secondary_asphalt: 26,
@@ -550,8 +551,8 @@ describe("static mesh merge by material", () => {
       surveyed_paving: 0,
     });
     expect(plan.countsByKind).toEqual({
-      inferred_sidewalk: 696,
-      curb: 696,
+      inferred_sidewalk: 776,
+      curb: 776,
       lane_marking: 1102,
       alley_trim: 83,
     });
@@ -650,7 +651,7 @@ describe("static mesh merge by material", () => {
       "street-trim:instanced",
     ) as THREE.InstancedMesh;
     expect(instancedTrim).toBeInstanceOf(THREE.InstancedMesh);
-    expect(instancedTrim.count).toBe(2577);
+    expect(instancedTrim.count).toBe(2737);
     expect(instancedTrim.geometry.getAttribute("normal").getY(0)).toBeGreaterThan(0.99);
 
     const plan = planProceduralStreetTrim(HOME_NEIGHBORHOOD);
@@ -681,6 +682,55 @@ describe("static mesh merge by material", () => {
     bundle.setRoadWet(false);
     expect(markMat.roughness).toBeCloseTo(dryMarkRoughness);
 
+    bundle.dispose();
+    materials.forEach((material) => material.dispose());
+  });
+
+  it("validates and renders explicit facadeColor and roofColor on verified buildings and parts", () => {
+    const base = structuredClone(SYNTHETIC_NEIGHBORHOOD);
+    const { parts: _parts, ...baseBuilding } = base.buildings[0]!;
+    const sample = {
+      ...baseBuilding,
+      localId: "building-colored-test",
+      facadeColor: "#d97033",
+      roofColor: "#5c7a52",
+      roofType: "flat" as const,
+      wallHeight: 7.2,
+      levels: 2,
+      provenance: { source: "survey" as const, quality: "verified" as const },
+      attributes: { wallHeight: { source: "survey" as const, quality: "verified" as const } },
+    };
+    const validWorld = {
+      ...base,
+      manifest: { ...base.manifest, isSynthetic: false },
+      buildings: [sample],
+    };
+    expect(validateWorld(validWorld).valid).toBe(true);
+
+    const invalidWorld = {
+      ...validWorld,
+      buildings: [{ ...sample, facadeColor: "not-a-hex-color" }],
+    };
+    const invalidReport = validateWorld(invalidWorld);
+    expect(invalidReport.valid).toBe(false);
+    expect(invalidReport.issues.some((issue) => issue.code === "BUILDING_INVALID_COLOR")).toBe(
+      true,
+    );
+
+    const requestedColors: string[] = [];
+    const materials = new Map<string, THREE.MeshStandardMaterial>();
+    const bundle = buildWorldMeshes(validWorld, (color, roughness = 0.82, metalness = 0) => {
+      requestedColors.push(color);
+      const key = `${color}:${roughness}:${metalness}`;
+      let material = materials.get(key);
+      if (!material) {
+        material = new THREE.MeshStandardMaterial({ color, roughness, metalness });
+        materials.set(key, material);
+      }
+      return material;
+    });
+    expect(requestedColors).toContain("#d97033");
+    expect(requestedColors).toContain("#5c7a52");
     bundle.dispose();
     materials.forEach((material) => material.dispose());
   });

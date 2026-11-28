@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { describe, expect, it } from "vitest";
 import {
   deriveShadowCameraBounds,
+  homeMarkerElevation,
   worldCameraCentre,
   worldCameraFrame,
   worldHomeCentre,
@@ -65,6 +66,82 @@ describe("private-world home centre", () => {
   it("uses the configured ENU origin when parcel geometry is not available", () => {
     const centre = worldHomeCentre(worldWithoutLot);
     expect([centre.x, centre.z]).toEqual([0, 0]);
+  });
+
+  it("raises the center marker above a verified building covering the origin while keeping empty sites at ground height", () => {
+    expect(homeMarkerElevation(worldWithoutLot, [0, 0])).toBe(0.35);
+
+    const occupiedWorld: WorldData = {
+      ...worldWithoutLot,
+      buildings: [
+        {
+          localId: "building-focal-test",
+          geometry: {
+            type: "Polygon",
+            coordinates: [
+              [
+                [-2, -2],
+                [6, -2],
+                [6, 2],
+                [-2, 2],
+                [-2, -2],
+              ],
+            ],
+          },
+          footprintKind: "footprint",
+          wallHeight: 7.4,
+          levels: 2,
+          roofType: "corrugated",
+          roofHeight: 0.9,
+          provenance: { source: "survey", quality: "verified" },
+          attributes: { wallHeight: { source: "survey", quality: "verified" } },
+          parts: [
+            {
+              localId: "building-focal-test-front",
+              geometry: {
+                type: "Polygon",
+                coordinates: [
+                  [
+                    [-2, -2],
+                    [2, -2],
+                    [2, 2],
+                    [-2, 2],
+                    [-2, -2],
+                  ],
+                ],
+              },
+              wallHeight: 7.8,
+              levels: 2,
+              roofType: "flat",
+              provenance: { source: "survey", quality: "verified" },
+              attributes: { wallHeight: { source: "survey", quality: "verified" } },
+            },
+            {
+              localId: "building-focal-test-rear",
+              geometry: {
+                type: "Polygon",
+                coordinates: [
+                  [
+                    [2, -2],
+                    [6, -2],
+                    [6, 2],
+                    [2, 2],
+                    [2, -2],
+                  ],
+                ],
+              },
+              wallHeight: 7.0,
+              levels: 2,
+              roofType: "corrugated",
+              roofHeight: 0.9,
+              provenance: { source: "survey", quality: "verified" },
+              attributes: { wallHeight: { source: "survey", quality: "verified" } },
+            },
+          ],
+        },
+      ],
+    };
+    expect(homeMarkerElevation(occupiedWorld, [0, 0])).toBeCloseTo(8.6, 5);
   });
 });
 

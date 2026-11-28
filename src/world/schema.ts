@@ -84,6 +84,8 @@ export interface BuildingPart {
   roofHeight?: number;
   levels?: number;
   roofType: RoofType;
+  facadeColor?: string;
+  roofColor?: string;
   provenance: Provenance;
   attributes?: Record<string, Provenance>;
 }
@@ -98,6 +100,8 @@ export interface Building {
   roofHeight?: number;
   levels?: number;
   roofType: RoofType;
+  facadeColor?: string;
+  roofColor?: string;
   frontageCandidates?: FrontageCandidate[];
   parts?: BuildingPart[];
   hidden?: boolean;

@@ -255,7 +255,7 @@ test("owner-provided OSM neighborhood renders and survives a route remount", asy
   const scene = page.getByTestId("demo-scene");
   await expect(page.locator("#scene-root canvas")).toHaveCount(1);
   await expect(scene).toHaveAttribute("data-world-mode", "home");
-  await expect(scene).toHaveAttribute("data-world-buildings", "317");
+  await expect(scene).toHaveAttribute("data-world-buildings", "1300");
   await expect(scene).toHaveAttribute("data-world-roads", "138");
   await expect(scene).toHaveAttribute("data-verification-status", "REAL_WORLD_NOT_VERIFIED");
   await expect(scene).toHaveAttribute("data-active-worlds", "1");

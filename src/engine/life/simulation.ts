@@ -253,18 +253,54 @@ export function createLifeSimulation(
       bounds: rings.some((ring) => ring.length > 0) ? surfaceBounds(geometry) : null,
     };
   });
+  const gridCell = 24;
+  const solidGrid = new Map<string, typeof solidBounds>();
+  const unboundedSolids: typeof solidBounds = [];
+  for (const entry of solidBounds) {
+    if (!entry.bounds) {
+      unboundedSolids.push(entry);
+      continue;
+    }
+    const minGx = Math.floor(entry.bounds.minX / gridCell);
+    const maxGx = Math.floor(entry.bounds.maxX / gridCell);
+    const minGz = Math.floor(entry.bounds.minZ / gridCell);
+    const maxGz = Math.floor(entry.bounds.maxZ / gridCell);
+    for (let gx = minGx; gx <= maxGx; gx++) {
+      for (let gz = minGz; gz <= maxGz; gz++) {
+        const key = `${gx}:${gz}`;
+        const bucket = solidGrid.get(key);
+        if (bucket) bucket.push(entry);
+        else solidGrid.set(key, [entry]);
+      }
+    }
+  }
   const point = { x: 0, z: 0, angle: 0 };
+  const hitSolid = (entry: (typeof solidBounds)[number], x: number, z: number, radius: number) => {
+    if (isBoxDisjoint(entry.bounds, x, z, radius)) return false;
+    return (
+      inGeometry(x, z, entry.geometry) ||
+      inGeometry(x + radius, z, entry.geometry) ||
+      inGeometry(x - radius, z, entry.geometry) ||
+      inGeometry(x, z + radius, entry.geometry) ||
+      inGeometry(x, z - radius, entry.geometry)
+    );
+  };
   const safeAt = (x: number, z: number, radius: number) => {
-    for (const { geometry, bounds } of solidBounds) {
-      if (isBoxDisjoint(bounds, x, z, radius)) continue;
-      if (
-        inGeometry(x, z, geometry) ||
-        inGeometry(x + radius, z, geometry) ||
-        inGeometry(x - radius, z, geometry) ||
-        inGeometry(x, z + radius, geometry) ||
-        inGeometry(x, z - radius, geometry)
-      )
-        return false;
+    for (const entry of unboundedSolids) {
+      if (hitSolid(entry, x, z, radius)) return false;
+    }
+    const minGx = Math.floor((x - radius) / gridCell);
+    const maxGx = Math.floor((x + radius) / gridCell);
+    const minGz = Math.floor((z - radius) / gridCell);
+    const maxGz = Math.floor((z + radius) / gridCell);
+    for (let gx = minGx; gx <= maxGx; gx++) {
+      for (let gz = minGz; gz <= maxGz; gz++) {
+        const bucket = solidGrid.get(`${gx}:${gz}`);
+        if (!bucket) continue;
+        for (const entry of bucket) {
+          if (hitSolid(entry, x, z, radius)) return false;
+        }
+      }
     }
     return true;
   };
