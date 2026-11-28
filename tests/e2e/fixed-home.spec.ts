@@ -30,7 +30,7 @@ test("fixed-home shell exposes only the supported controls and build identity", 
   await openHome(page);
 
   await expect(
-    page.locator(".h6-top-info").getByText("Nhà của tôi · đang xây để cho thuê", { exact: true }),
+    page.locator(".h6-top-info").getByText("Nhà của tôi", { exact: true }),
   ).toBeVisible();
   await expect(page.getByRole("radiogroup", { name: "Thời gian" }).getByRole("radio")).toHaveCount(
     3,
@@ -70,18 +70,14 @@ test("time, weather, camera and language controls update the fixed-home view", a
   }
 
   await page.getByRole("radio", { name: "en", exact: true }).click();
-  await expect(
-    page
-      .locator(".h6-top-info")
-      .getByText("My house · under construction for rent", { exact: true }),
-  ).toBeVisible();
-  await expect(page).toHaveTitle(/My house · under construction for rent/i);
+  await expect(page.locator(".h6-top-info").getByText("My house", { exact: true })).toBeVisible();
+  await expect(page).toHaveTitle(/My house/i);
   await expect(page.getByRole("radio", { name: "Evening", exact: true })).toBeVisible();
   await expect(page.getByRole("radio", { name: "Rain", exact: true })).toBeVisible();
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await page.getByRole("radio", { name: "vi", exact: true }).click();
   await expect(page.locator("html")).toHaveAttribute("lang", "vi");
-  await expect(page).toHaveTitle(/Nhà của tôi · đang xây để cho thuê/i);
+  await expect(page).toHaveTitle(/Nhà của tôi/i);
 });
 
 test("the legacy preview query cannot enable a package loader", async ({ page }) => {
@@ -91,7 +87,7 @@ test("the legacy preview query cannot enable a package loader", async ({ page })
   });
   await expect(page.getByLabel("Mở gói world")).toHaveCount(0);
   await expect(
-    page.locator(".h6-top-info").getByText("Nhà của tôi · đang xây để cho thuê", { exact: true }),
+    page.locator(".h6-top-info").getByText("Nhà của tôi", { exact: true }),
   ).toBeVisible();
 });
 

@@ -539,7 +539,7 @@ describe("static mesh merge by material", () => {
   it("plans deterministic, order-independent street styling without overlapping buildings or mutating canonical roads", () => {
     const plan = planProceduralStreetTrim(HOME_NEIGHBORHOOD);
     const goldenSha = createHash("sha256").update(JSON.stringify(plan)).digest("hex");
-    expect(goldenSha).toBe("f4f060c1f4df8c3804537ac809b059778e1d66fa26121147370ac2b64a8645e2");
+    expect(goldenSha).toBe("520954ef815605b66fd1a6aa8cb5fa4ee4e27239a32501cae7f28076a6fc22a4");
     expect(plan.styledRoadCounts).toEqual({
       primary_asphalt: 35,
       secondary_asphalt: 26,
@@ -552,9 +552,21 @@ describe("static mesh merge by material", () => {
     expect(plan.countsByKind).toEqual({
       inferred_sidewalk: 696,
       curb: 696,
-      lane_marking: 1162,
-      alley_trim: 94,
+      lane_marking: 1102,
+      alley_trim: 83,
     });
+    const alleyTrims = plan.quads.filter((quad) => quad.kind === "alley_trim");
+    expect(alleyTrims.every((quad) => quad.y < 0.02)).toBe(true);
+    const medianAlleyTrims = alleyTrims.filter(
+      (quad) => quad.roadId === "road-osm-300m-primary-way-716738900-26a3e409fd",
+    );
+    expect(medianAlleyTrims.length).toBeGreaterThan(0);
+    for (const quad of medianAlleyTrims) {
+      for (const [x] of [quad.aLeft, quad.aRight, quad.bLeft, quad.bRight]) {
+        expect(x).toBeLessThan(-10.5);
+        expect(x).toBeGreaterThan(-17.2);
+      }
+    }
 
     const shuffled = planProceduralStreetTrim({
       ...HOME_NEIGHBORHOOD,
@@ -638,7 +650,7 @@ describe("static mesh merge by material", () => {
       "street-trim:instanced",
     ) as THREE.InstancedMesh;
     expect(instancedTrim).toBeInstanceOf(THREE.InstancedMesh);
-    expect(instancedTrim.count).toBe(2648);
+    expect(instancedTrim.count).toBe(2577);
     expect(instancedTrim.geometry.getAttribute("normal").getY(0)).toBeGreaterThan(0.99);
 
     const plan = planProceduralStreetTrim(HOME_NEIGHBORHOOD);
