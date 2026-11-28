@@ -21,6 +21,8 @@ interface RoadSurfaceStyle {
   color: string;
   roughness: number;
   metalness: number;
+  polygonOffsetFactor: number;
+  polygonOffsetUnits: number;
 }
 
 export type ProceduralStreetTrimKind = "inferred_sidewalk" | "curb" | "lane_marking" | "alley_trim";
@@ -58,6 +60,15 @@ const ROAD_DOMINANCE_BY_CLASS: Record<RoadClass, number> = {
   alley: 1,
 };
 
+const ROAD_SURFACE_ELEVATION_OFFSET_BY_CLASS: Record<RoadClass, number> = {
+  alley: -0.012,
+  service: -0.008,
+  unknown: -0.004,
+  residential: 0,
+  secondary: 0.006,
+  primary: 0.012,
+};
+
 const SIDEWALK_WIDTH_TIERS: Partial<Record<RoadClass, readonly number[]>> = {
   primary: [1.8, 1.1],
   secondary: [1.5, 0.95],
@@ -92,41 +103,113 @@ export function roadDisplayElevation(road: RoadSegment): number {
   return road.baseElevation ?? 0.02 + structuralLayer * 4.5;
 }
 
-// Residential unknown/asphalt preserves #4c5551 (roughness 0.92) required by weather/junction contracts.
+export function roadSurfaceRenderElevation(road: RoadSegment): number {
+  const base = roadDisplayElevation(road);
+  if (road.baseElevation !== undefined) return base;
+  return round3(base + (ROAD_SURFACE_ELEVATION_OFFSET_BY_CLASS[road.roadClass] ?? 0));
+}
+
+// Residential unknown/asphalt preserves #4c5551 (roughness 0.92, offset -1) required by weather/junction contracts.
 export function resolveRoadSurfaceStyle(road: RoadSegment): RoadSurfaceStyle {
   if (road.surface === "concrete") {
+    const isAlley = road.roadClass === "alley";
     return {
-      styleClass: road.roadClass === "alley" ? "alley_concrete" : "surveyed_concrete",
+      styleClass: isAlley ? "alley_concrete" : "surveyed_concrete",
       color: "#8b887e",
       roughness: 0.92,
       metalness: 0,
+      polygonOffsetFactor: isAlley ? -0.25 : -1,
+      polygonOffsetUnits: isAlley ? -0.25 : -1,
     };
   }
   if (road.surface === "paving") {
-    return { styleClass: "surveyed_paving", color: "#9c846c", roughness: 0.92, metalness: 0 };
+    return {
+      styleClass: "surveyed_paving",
+      color: "#9c846c",
+      roughness: 0.92,
+      metalness: 0,
+      polygonOffsetFactor: -1,
+      polygonOffsetUnits: -1,
+    };
   }
   if (road.surface === "asphalt") {
     if (road.roadClass === "primary") {
-      return { styleClass: "primary_asphalt", color: "#3d4542", roughness: 0.92, metalness: 0 };
+      return {
+        styleClass: "primary_asphalt",
+        color: "#3d4542",
+        roughness: 0.92,
+        metalness: 0,
+        polygonOffsetFactor: -2,
+        polygonOffsetUnits: -2,
+      };
     }
     if (road.roadClass === "secondary") {
-      return { styleClass: "secondary_asphalt", color: "#444d49", roughness: 0.92, metalness: 0 };
+      return {
+        styleClass: "secondary_asphalt",
+        color: "#444d49",
+        roughness: 0.92,
+        metalness: 0,
+        polygonOffsetFactor: -1.5,
+        polygonOffsetUnits: -1.5,
+      };
     }
-    return { styleClass: "residential_asphalt", color: "#4c5551", roughness: 0.92, metalness: 0 };
+    return {
+      styleClass: "residential_asphalt",
+      color: "#4c5551",
+      roughness: 0.92,
+      metalness: 0,
+      polygonOffsetFactor: -1,
+      polygonOffsetUnits: -1,
+    };
   }
 
   switch (road.roadClass) {
     case "primary":
-      return { styleClass: "primary_asphalt", color: "#3d4542", roughness: 0.92, metalness: 0 };
+      return {
+        styleClass: "primary_asphalt",
+        color: "#3d4542",
+        roughness: 0.92,
+        metalness: 0,
+        polygonOffsetFactor: -2,
+        polygonOffsetUnits: -2,
+      };
     case "secondary":
-      return { styleClass: "secondary_asphalt", color: "#444d49", roughness: 0.92, metalness: 0 };
+      return {
+        styleClass: "secondary_asphalt",
+        color: "#444d49",
+        roughness: 0.92,
+        metalness: 0,
+        polygonOffsetFactor: -1.5,
+        polygonOffsetUnits: -1.5,
+      };
     case "residential":
     case "unknown":
-      return { styleClass: "residential_asphalt", color: "#4c5551", roughness: 0.92, metalness: 0 };
+      return {
+        styleClass: "residential_asphalt",
+        color: "#4c5551",
+        roughness: 0.92,
+        metalness: 0,
+        polygonOffsetFactor: -1,
+        polygonOffsetUnits: -1,
+      };
     case "service":
-      return { styleClass: "service_pavement", color: "#636862", roughness: 0.92, metalness: 0 };
+      return {
+        styleClass: "service_pavement",
+        color: "#636862",
+        roughness: 0.92,
+        metalness: 0,
+        polygonOffsetFactor: -0.5,
+        polygonOffsetUnits: -0.5,
+      };
     case "alley":
-      return { styleClass: "alley_concrete", color: "#8b887e", roughness: 0.92, metalness: 0 };
+      return {
+        styleClass: "alley_concrete",
+        color: "#8b887e",
+        roughness: 0.92,
+        metalness: 0,
+        polygonOffsetFactor: -0.25,
+        polygonOffsetUnits: -0.25,
+      };
   }
 }
 
@@ -476,6 +559,7 @@ export function planProceduralStreetTrim(world: WorldData): ProceduralStreetTrim
     const structure = road.structure ?? "surface";
     const half = width / 2;
     const roadY = roadDisplayElevation(road);
+    const roadRenderY = roadSurfaceRenderElevation(road);
 
     const sidewalkTiers =
       structure === "surface" && road.sidewalkWidths === undefined && width >= 5
@@ -507,13 +591,13 @@ export function planProceduralStreetTrim(world: WorldData): ProceduralStreetTrim
             pushQuad(
               road.localId,
               "curb",
-              roadY + 0.022,
+              roadRenderY + 0.022,
               quadPoints(a, ux, uz, runStart, runEnd, curbLeft, curbRight),
             );
             pushQuad(
               road.localId,
               "inferred_sidewalk",
-              roadY + 0.016,
+              roadRenderY + 0.016,
               quadPoints(a, ux, uz, runStart, runEnd, walkLeft, walkRight),
             );
           };
@@ -747,21 +831,28 @@ export function planProceduralStreetTrim(world: WorldData): ProceduralStreetTrim
               );
             if (nearJunction) continue;
 
-            const crossesOtherCarriageway = segmentGrid.queryPoint(midPoint).some((other) => {
-              if (other.roadId === road.localId) return false;
-              if (Math.abs(other.y - roadY) > SAME_ELEVATION_TOLERANCE_METRES) return false;
-              if (isSmoothContinuation(a, b, ux, uz, half, other)) return false;
-              return (
-                closestPointOnSegment(midPoint, other.a, other.b).distance < other.halfWidth + 0.25
-              );
-            });
+            const dashSamples: Position2[] = [
+              [a[0] + ux * localStart, a[1] + uz * localStart],
+              midPoint,
+              [a[0] + ux * localEnd, a[1] + uz * localEnd],
+            ];
+            const crossesOtherCarriageway = dashSamples.some((sample) =>
+              segmentGrid.queryPoint(sample).some((other) => {
+                if (other.roadId === road.localId) return false;
+                if (Math.abs(other.y - roadY) > SAME_ELEVATION_TOLERANCE_METRES) return false;
+                if (isSmoothContinuation(a, b, ux, uz, half, other)) return false;
+                return (
+                  closestPointOnSegment(sample, other.a, other.b).distance < other.halfWidth + 0.25
+                );
+              }),
+            );
             if (crossesOtherCarriageway) continue;
 
             for (const offset of offsets) {
               pushQuad(
                 road.localId,
                 "lane_marking",
-                roadY + 0.012,
+                roadRenderY + 0.012,
                 quadPoints(
                   a,
                   ux,
@@ -812,7 +903,7 @@ export function planProceduralStreetTrim(world: WorldData): ProceduralStreetTrim
             pushQuad(
               road.localId,
               "alley_trim",
-              roadY + 0.008,
+              roadRenderY + 0.003,
               quadPoints(a, ux, uz, runStart, runEnd, leftOff, rightOff),
             );
           };
@@ -821,18 +912,24 @@ export function planProceduralStreetTrim(world: WorldData): ProceduralStreetTrim
             const t0 = step * stepLen;
             const t1 = (step + 1) * stepLen;
             const tMid = (t0 + t1) / 2;
-            const probe: Position2 = [
-              a[0] + ux * tMid + nx * probeOff,
-              a[1] + uz * tMid + nz * probeOff,
-            ];
-            const blocked = segmentGrid.queryPoint(probe).some((other) => {
-              if (other.roadId === road.localId || other.structure !== "surface") return false;
-              if (Math.abs(other.y - roadY) > SAME_ELEVATION_TOLERANCE_METRES) return false;
-              if (isSmoothContinuation(a, b, ux, uz, half, other)) return false;
-              return (
-                closestPointOnSegment(probe, other.a, other.b).distance < other.halfWidth + 0.1
-              );
-            });
+            const probes: Position2[] = [
+              Math.min(t1, t0 + 0.15),
+              tMid,
+              Math.max(t0, t1 - 0.15),
+            ].map((sampleT) => [
+              a[0] + ux * sampleT + nx * probeOff,
+              a[1] + uz * sampleT + nz * probeOff,
+            ]);
+            const blocked = probes.some((probe) =>
+              segmentGrid.queryPoint(probe).some((other) => {
+                if (other.roadId === road.localId || other.structure !== "surface") return false;
+                if (Math.abs(other.y - roadY) > SAME_ELEVATION_TOLERANCE_METRES) return false;
+                if (isSmoothContinuation(a, b, ux, uz, half, other)) return false;
+                return (
+                  closestPointOnSegment(probe, other.a, other.b).distance < other.halfWidth + 0.1
+                );
+              }),
+            );
 
             if (!blocked && !active) {
               runStart = t0;

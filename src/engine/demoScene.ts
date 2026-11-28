@@ -255,7 +255,7 @@ export function createDemoScene(
   const perspectiveCamera = new THREE.PerspectiveCamera(
     42,
     1,
-    0.1,
+    0.3,
     initialPerspectiveFrame?.farPlane ?? 800,
   );
   const planCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 5000);

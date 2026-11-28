@@ -3,8 +3,8 @@ import type { Position2 } from "@/world/schema";
 export const SITE_CONFIG = {
   name: "Phố Nhà Mình",
   homeLabel: {
-    vi: "Nhà của tôi · đang xây để cho thuê",
-    en: "My house · under construction for rent",
+    vi: "Nhà của tôi",
+    en: "My house",
   },
   description: {
     vi: "Đường và footprints OpenStreetMap · hiện trạng chưa khảo sát.",

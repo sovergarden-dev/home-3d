@@ -30,6 +30,7 @@ import {
   resolveRoadSurfaceStyle,
   roadDisplayElevation,
   roadDominanceRank,
+  roadSurfaceRenderElevation,
   STREET_TRIM_MATERIALS,
   type ProceduralStreetTrimKind,
   type ProceduralStreetTrimPlan,
@@ -578,8 +579,8 @@ function createStreetTrimGroup(
     roughness: dryRoughness,
     metalness: 0,
     polygonOffset: true,
-    polygonOffsetFactor: -2,
-    polygonOffsetUnits: -3,
+    polygonOffsetFactor: -3,
+    polygonOffsetUnits: -4,
   });
   const instanced = new THREE.InstancedMesh(unitQuad, material, quads.length);
   instanced.name = "street-trim:instanced";
@@ -813,11 +814,12 @@ function addRoadJunctionCoverage(roads: RoadSegment[], roadMeshes: Map<RoadSegme
         const targetMesh = roadMeshes.get(dominantEndpoint.road);
         if (!targetMesh) return;
 
+        const renderY = roadSurfaceRenderElevation(dominantEndpoint.road);
         const positions =
           positionsByMesh.get(targetMesh) ??
           Array.from(targetMesh.geometry.getAttribute("position").array);
         for (let index = 1; index < hull.length - 1; index += 1) {
-          appendUpwardTriangle(positions, hull[0]!, hull[index]!, hull[index + 1]!, y);
+          appendUpwardTriangle(positions, hull[0]!, hull[index]!, hull[index + 1]!, renderY);
         }
         positionsByMesh.set(targetMesh, positions);
         patchesByMesh.set(targetMesh, (patchesByMesh.get(targetMesh) ?? 0) + 1);
@@ -843,7 +845,10 @@ function addRoadJunctionCoverage(roads: RoadSegment[], roadMeshes: Map<RoadSegme
 function addRoad(
   road: RoadSegment,
   group: THREE.Group,
-  materialFactory: MaterialFactory,
+  roadSurfaceMaterial: (
+    style: ReturnType<typeof resolveRoadSurfaceStyle>,
+  ) => THREE.MeshStandardMaterial,
+  sidewalkMaterialFactory: MaterialFactory,
   disposables: Disposable[],
 ): THREE.Mesh | null {
   if (road.polylineENU.length < 2 || !road.carriagewayWidth) return null;
@@ -860,16 +865,9 @@ function addRoad(
   const halfCarriageway = road.carriagewayWidth / 2;
   const left = offsetPolyline(road.polylineENU, halfCarriageway);
   const right = offsetPolyline(road.polylineENU, -halfCarriageway);
-  // Vertical placement: an explicit surveyed baseElevation wins; otherwise respect the tagged
-  // structural layer for bridges and tunnels. This is only a display prior, never source fact.
-  const y = roadDisplayElevation(road);
-  const carriageway = createStrip(
-    left,
-    right,
-    y,
-    materialFactory(surfaceStyle.color, surfaceStyle.roughness, surfaceStyle.metalness),
-    disposables,
-  );
+  // Explicit surveyed baseElevation wins; otherwise stratify structural layer and dominance rank to avoid coplanar z-fighting.
+  const y = roadSurfaceRenderElevation(road);
+  const carriageway = createStrip(left, right, y, roadSurfaceMaterial(surfaceStyle), disposables);
   roadGroup.add(carriageway);
 
   const [leftSidewalk = 0, rightSidewalk = 0] = road.sidewalkWidths ?? [];
@@ -879,7 +877,7 @@ function addRoad(
         offsetPolyline(road.polylineENU, halfCarriageway + leftSidewalk),
         left,
         y + 0.1,
-        materialFactory("#aaa393", 0.95, 0),
+        sidewalkMaterialFactory("#aaa393", 0.95, 0),
         disposables,
       ),
     );
@@ -890,7 +888,7 @@ function addRoad(
         right,
         offsetPolyline(road.polylineENU, -(halfCarriageway + rightSidewalk)),
         y + 0.1,
-        materialFactory("#aaa393", 0.95, 0),
+        sidewalkMaterialFactory("#aaa393", 0.95, 0),
         disposables,
       ),
     );
@@ -1463,6 +1461,19 @@ export function buildWorldMeshes(
     }
     return material;
   };
+  const roadSurfaceMaterial = (style: ReturnType<typeof resolveRoadSurfaceStyle>) => {
+    const key = `${style.styleClass}:${style.color}:${style.roughness}:${style.metalness}`;
+    let material = roadMaterials.get(key);
+    if (!material) {
+      material = materialFactory(style.color, style.roughness, style.metalness).clone();
+      material.polygonOffset = true;
+      material.polygonOffsetFactor = style.polygonOffsetFactor;
+      material.polygonOffsetUnits = style.polygonOffsetUnits;
+      roadMaterials.set(key, material);
+      disposables.push(material);
+    }
+    return material;
+  };
   const roadMeshes = new Map<RoadSegment, THREE.Mesh>();
   const roofMaterials = new Map<string, THREE.MeshStandardMaterial>();
   const pickProxies = new Set<THREE.Mesh>();
@@ -1562,7 +1573,7 @@ export function buildWorldMeshes(
   }
 
   world.roads.forEach((road) => {
-    const mesh = addRoad(road, layers.roads, roadMaterialFactory, disposables);
+    const mesh = addRoad(road, layers.roads, roadSurfaceMaterial, roadMaterialFactory, disposables);
     if (mesh) roadMeshes.set(road, mesh);
   });
   addRoadJunctionCoverage(world.roads, roadMeshes);

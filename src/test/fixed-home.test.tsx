@@ -94,7 +94,7 @@ describe("fixed home experience", () => {
         <Dock />
       </>,
     );
-    expect(screen.getByText("Nhà của tôi · đang xây để cho thuê")).toBeInTheDocument();
+    expect(screen.getByText("Nhà của tôi")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /OpenStreetMap contributors/ })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /OpenStreetMap contributors/ })).toHaveAttribute(
       "href",
@@ -102,7 +102,7 @@ describe("fixed home experience", () => {
     );
     expect(screen.getByRole("link", { name: "Giới thiệu" })).toHaveAttribute("href", "/gioi-thieu");
     act(() => useAppStore.getState().setLanguage("en"));
-    expect(screen.getByText("My house · under construction for rent")).toBeInTheDocument();
+    expect(screen.getByText("My house")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "About" })).toHaveAttribute("href", "/gioi-thieu");
     for (const label of ["Morning", "Afternoon", "Evening", "Sunny", "Cloudy", "Rain"]) {
       expect(screen.getByRole("radio", { name: label })).toBeInTheDocument();

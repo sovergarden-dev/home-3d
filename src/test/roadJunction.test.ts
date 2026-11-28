@@ -472,4 +472,67 @@ describe("road ribbon geometry and same-layer junction coverage", () => {
       dispose();
     }
   });
+
+  it("stratifies same-layer road elevations and polygon offsets by dominance to prevent coplanar z-fighting", () => {
+    const classes = ["alley", "service", "unknown", "residential", "secondary", "primary"] as const;
+    const sampleRoads = classes.map((roadClass, index) =>
+      road(
+        `rank-${roadClass}`,
+        [
+          [0, index * 6],
+          [10, index * 6],
+        ],
+        roadClass === "alley" ? 3 : 8,
+        { roadClass, surface: "unknown" },
+      ),
+    );
+    const { bundle, dispose } = build(sampleRoads);
+    const elevations: number[] = [];
+    const offsetFactors: number[] = [];
+    for (const roadClass of classes) {
+      const mesh = bundle.group.getObjectByName(`road:rank-${roadClass}`)
+        ?.children[0] as THREE.Mesh;
+      elevations.push(mesh.geometry.getAttribute("position").getY(0));
+      offsetFactors.push((mesh.material as THREE.MeshStandardMaterial).polygonOffsetFactor);
+    }
+    for (let index = 1; index < elevations.length; index += 1) {
+      expect(elevations[index]!).toBeGreaterThan(elevations[index - 1]! + 0.003);
+    }
+    expect(elevations[3]).toBeCloseTo(0.02, 5);
+    expect(elevations[5]! - elevations[0]!).toBeGreaterThanOrEqual(0.02);
+    expect(offsetFactors[5]!).toBeLessThan(offsetFactors[4]!);
+    expect(offsetFactors[4]!).toBeLessThan(offsetFactors[3]!);
+    expect(offsetFactors[3]!).toBe(-1);
+    expect(offsetFactors[1]!).toBeGreaterThan(offsetFactors[3]!);
+    expect(offsetFactors[0]!).toBeGreaterThan(offsetFactors[1]!);
+    dispose();
+
+    const mixed = build([
+      road(
+        "cross-alley",
+        [
+          [0, -10],
+          [0, 0],
+        ],
+        3,
+        { roadClass: "alley", surface: "unknown" },
+      ),
+      road(
+        "main-primary",
+        [
+          [-10, 0],
+          [0, 0],
+        ],
+        12,
+        { roadClass: "primary", surface: "unknown" },
+      ),
+    ]);
+    const primaryMesh = mixed.bundle.group.getObjectByName("road:main-primary")
+      ?.children[0] as THREE.Mesh;
+    const primaryPos = primaryMesh.geometry.getAttribute("position");
+    const lastTriangleY = primaryPos.getY(primaryPos.count - 1);
+    expect(lastTriangleY).toBeCloseTo(primaryPos.getY(0), 5);
+    expect(lastTriangleY).toBeGreaterThan(0.028);
+    mixed.dispose();
+  });
 });

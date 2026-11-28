@@ -56,9 +56,9 @@ Composition: 81 × 1F, 129 × 2F, 69 × 3F, 36 × 4F; roofs: 119 `corrugated`, 9
 
 | Plan | Sidewalk quads | Curb quads | Lane-marking quads | Alley-trim quads | SHA-256 |
 | --- | ---: | ---: | ---: | ---: | --- |
-| `planProceduralStreetTrim` | 696 | 696 | 1162 | 94 | `f4f060c1f4df8c3804537ac809b059778e1d66fa26121147370ac2b64a8645e2` |
+| `planProceduralStreetTrim` | 696 | 696 | 1102 | 83 | `520954ef815605b66fd1a6aa8cb5fa4ee4e27239a32501cae7f28076a6fc22a4` |
 
-Carriageway style classes across the 138 canonical roads (`surface: "unknown"`): 35 `primary_asphalt`, 26 `secondary_asphalt`, 20 `residential_asphalt` (11 `residential` + 9 `unknown`), 39 `service_pavement`, 18 `alley_concrete`. Every procedural trim quad (`2648` total) carries `origin: "estimated_procedural"`, renders in a single `InstancedMesh` draw call (`receiveShadow = false`), avoids canonical building footprints (`0` overlaps), and hides under geometry-confidence inspection (`setConfidenceVisible(true)`).
+Carriageway style classes across the 138 canonical roads (`surface: "unknown"`): 35 `primary_asphalt`, 26 `secondary_asphalt`, 20 `residential_asphalt` (11 `residential` + 9 `unknown`), 39 `service_pavement`, 18 `alley_concrete`. Every procedural trim quad (`2577` total) carries `origin: "estimated_procedural"`, renders in a single `InstancedMesh` draw call (`receiveShadow = false`), avoids canonical building footprints (`0` overlaps), stays clear of crossing carriageways via 3-point sampling, and hides under geometry-confidence inspection (`setConfidenceVisible(true)`).
 
 ## Procedural massing facades golden (PR-6)
 
