@@ -21,17 +21,26 @@ export function useSceneShortcuts() {
       const key = event.key.toLowerCase();
       if (key === "1") {
         event.preventDefault();
+        state.setRealTimeEnabled(false);
         state.setTimeOfDayMinutes(SITE_CONFIG.timePresets[0].minutes);
         return;
       }
       if (key === "2") {
         event.preventDefault();
+        state.setRealTimeEnabled(false);
         state.setTimeOfDayMinutes(SITE_CONFIG.timePresets[1].minutes);
         return;
       }
       if (key === "3") {
         event.preventDefault();
+        state.setRealTimeEnabled(false);
         state.setTimeOfDayMinutes(SITE_CONFIG.timePresets[2].minutes);
+        return;
+      }
+      if (key === "4") {
+        event.preventDefault();
+        state.setRealTimeEnabled(false);
+        state.setTimeOfDayMinutes(SITE_CONFIG.sunsetMinutes);
         return;
       }
       if (key === "q") {
@@ -50,6 +59,11 @@ export function useSceneShortcuts() {
         return;
       }
       if (state.sceneStatus !== "ready") return;
+      if (event.key === "Escape" && (state.viewMode === "walk" || state.viewMode === "ride")) {
+        event.preventDefault();
+        state.setViewMode("diorama");
+        return;
+      }
       if (key === "m") {
         event.preventDefault();
         state.setViewMode(state.viewMode === "topdown" ? "diorama" : "topdown");

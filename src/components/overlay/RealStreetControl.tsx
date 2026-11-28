@@ -3,16 +3,46 @@ import { Building2 } from "lucide-react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useT } from "@/i18n";
 import { useAppStore } from "@/state/appStore";
+import homeGeoreference from "@/world/data/homeNeighborhood.georef.json";
 import { worldDataProvider } from "@/world/privateWorldSession";
 import { buildGoogleMapsUrl, resolveRealStreetView } from "@/geo/realStreet";
 import { openRealStreetWindow, readRealStreetView } from "@/engine/view/externalMapView";
 
-function useWorldSession() {
-  return useSyncExternalStore(
-    worldDataProvider.subscribe,
-    worldDataProvider.getSnapshot,
-    worldDataProvider.getSnapshot,
-  );
+type WorldSource = "private" | "home";
+
+interface RealStreetSessionView {
+  mode: "fixture" | "private" | "home" | "private-error";
+  loading: boolean;
+  packageEpoch: number;
+  georeferenceReady?: boolean;
+}
+
+interface RealStreetProvider {
+  subscribe: (listener: () => void) => () => void;
+  getSnapshot: () => RealStreetSessionView;
+  getGeoreference: () => { origin: { latitude: number; longitude: number } } | null;
+}
+
+const HOME_REAL_STREET_SNAPSHOT: RealStreetSessionView = Object.freeze({
+  mode: "home",
+  loading: false,
+  packageEpoch: 0,
+  georeferenceReady: true,
+});
+
+const homeRealStreetProvider: RealStreetProvider = {
+  subscribe: () => () => {},
+  getSnapshot: () => HOME_REAL_STREET_SNAPSHOT,
+  getGeoreference: () => ({ origin: { ...homeGeoreference.origin } }),
+};
+
+function worldProvider(source: WorldSource): RealStreetProvider {
+  return source === "home" ? homeRealStreetProvider : worldDataProvider;
+}
+
+function useWorldSession(source: WorldSource = "private"): RealStreetSessionView {
+  const provider = worldProvider(source);
+  return useSyncExternalStore(provider.subscribe, provider.getSnapshot, provider.getSnapshot);
 }
 
 export function GeoreferenceInput() {
@@ -76,9 +106,10 @@ export function GeoreferenceInput() {
   );
 }
 
-export function RealStreetControl() {
+export function RealStreetControl({ worldSource = "private" }: { worldSource?: WorldSource } = {}) {
   const t = useT();
-  const snapshot = useWorldSession();
+  const provider = worldProvider(worldSource);
+  const snapshot = useWorldSession(worldSource);
   const ready = useAppStore((state) => state.sceneStatus === "ready");
   const [pending, setPending] = useState<null | {
     epoch: number;
@@ -87,8 +118,9 @@ export function RealStreetControl() {
   }>(null);
   const [kind, setKind] = useState<"streetview" | "satellite">("streetview");
   const [error, setError] = useState(false);
-  const available =
-    ready && snapshot.mode === "private" && !snapshot.loading && snapshot.georeferenceReady;
+  const hasReference =
+    snapshot.mode === "home" || (snapshot.mode === "private" && snapshot.georeferenceReady);
+  const available = ready && !snapshot.loading && hasReference;
   useEffect(() => {
     if (!available || pending?.epoch !== snapshot.packageEpoch) setPending(null);
   }, [available, snapshot.packageEpoch, pending?.epoch]);
@@ -97,8 +129,8 @@ export function RealStreetControl() {
     setError(false);
   };
   const begin = () => {
-    const current = worldDataProvider.getSnapshot();
-    const reference = worldDataProvider.getGeoreference();
+    const current = provider.getSnapshot();
+    const reference = provider.getGeoreference();
     const view = readRealStreetView();
     if (!available || current.loading || !reference || !view) return;
     try {
@@ -112,13 +144,13 @@ export function RealStreetControl() {
     }
   };
   const confirm = () => {
-    const current = worldDataProvider.getSnapshot();
-    const reference = worldDataProvider.getGeoreference();
+    const current = provider.getSnapshot();
+    const reference = provider.getGeoreference();
     const view = readRealStreetView();
     if (
       !pending ||
       !ready ||
-      current.mode !== "private" ||
+      (current.mode !== "private" && current.mode !== "home") ||
       current.loading ||
       current.packageEpoch !== pending.epoch ||
       !reference ||

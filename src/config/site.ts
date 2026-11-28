@@ -11,6 +11,7 @@ export const SITE_CONFIG = {
     en: "OSM roads, neighborhood buildings (Overture · Open Buildings), and focal block.",
   },
   defaultTime: 420,
+  sunsetMinutes: 1065,
   defaultWeather: "sunny" as const,
   defaultViewMode: "diorama" as const,
   heroCenter: [0, 0] as Position2,

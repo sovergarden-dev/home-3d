@@ -344,15 +344,20 @@ export const en: Dict = {
   sheetHandle: "Drag to expand the control panel",
   aboutTitle: "About Phố Nhà Mình",
   aboutBody: [
-    "A 180 m 3D neighborhood diorama centered on the Chau Van Liem & Tran Hung Dao intersection — orbit across the focal shopfront block, surrounding townhouses, street trees, and traffic while shifting the sky through Morning · Afternoon · Evening across Sunny · Cloudy · Rain.",
-    "Roads come from OpenStreetMap and surrounding volumes blend Overture Maps / Google Open Buildings (CC BY 4.0) with 15 focal-block buildings; heights and boundaries remain illustrative.",
+    "A 180 m 3D neighborhood diorama centered on the Chau Van Liem & Tran Hung Dao intersection — orbit the focal shopfront block, switch to Walk or Motorbike passenger POV along simulated streets, toggle ambient Street sounds, preview Sunset 17:45, or sync live Saigon time (UTC+7).",
+    "Roads come from OpenStreetMap and surrounding volumes blend Overture Maps / Google Open Buildings (CC BY 4.0) with 15 focal-block buildings; Real street opens external Google Street View or Satellite only after explicit confirmation.",
   ],
   aboutShortcutsTitle: "Keyboard shortcuts",
   aboutShortcuts: [
-    { keys: "1 / 2 / 3", action: "Switch Morning · Afternoon · Evening" },
+    { keys: "1 / 2 / 3 / 4", action: "Switch Morning · Afternoon · Evening · Sunset 17:45" },
     { keys: "Q / W / E", action: "Switch Sunny · Cloudy · Rain" },
     { keys: "M", action: "Toggle Diorama ↔ Plan view" },
-    { keys: "H / R", action: "Reset camera to Our house" },
+    { keys: "H / R / Esc", action: "Reset camera to Our house or exit POV" },
     { keys: "+ / -", action: "Zoom in or out" },
   ],
+  extras: {
+    label: "More options",
+    sunset1745: "Sunset 17:45",
+    liveClock: "Live Saigon time (UTC+7)",
+  },
 };

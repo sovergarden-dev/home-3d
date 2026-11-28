@@ -54,12 +54,20 @@ export function LifeControls() {
   );
 }
 
-export function PovControls() {
+export function PovControls({
+  worldSource = "private",
+}: {
+  worldSource?: "private" | "home";
+} = {}) {
   const world = useSyncExternalStore(
     worldDataProvider.subscribe,
     worldDataProvider.getSnapshot,
     worldDataProvider.getSnapshot,
   );
+  const isSynthetic =
+    worldSource === "home"
+      ? false
+      : world.mode === "fixture" || ("world" in world && world.world.manifest.isSynthetic);
   const t = useT();
   const state = useAppStore();
   const status = useSyncExternalStore(subscribeLifeStatus, getLifeStatus, getLifeServerStatus);
@@ -133,7 +141,7 @@ export function PovControls() {
           <p className="text-xs max-w-72">
             {status.rideEnded
               ? t.life.ended
-              : world.mode === "fixture" || ("world" in world && world.world.manifest.isSynthetic)
+              : isSynthetic
                 ? t.life.syntheticDestination
                 : t.life.route}
           </p>

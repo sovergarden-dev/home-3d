@@ -21,6 +21,7 @@ vi.mock("@tanstack/react-router", () => ({
 
 import * as THREE from "three";
 import { Dock } from "@/components/overlay/Dock";
+import { SceneExtras } from "@/components/overlay/SceneExtras";
 import { useSceneShortcuts } from "@/components/overlay/useSceneShortcuts";
 import { createAtmosphereLayer } from "@/engine/atmosphere";
 import { centerMarkerLabels } from "@/components/overlay/centerMarkerLabels";
@@ -198,7 +199,14 @@ describe("fixed home experience", () => {
     fireEvent.keyDown(window, { key: "3" });
     expect(useAppStore.getState().timeOfDayMinutes).toBe(420);
 
-    act(() => useAppStore.setState({ loadingProgress: 1, sceneStatus: "ready" }));
+    act(() =>
+      useAppStore.setState({ loadingProgress: 1, sceneStatus: "ready", realTimeEnabled: true }),
+    );
+    fireEvent.keyDown(window, { key: "4" });
+    expect(useAppStore.getState()).toMatchObject({
+      timeOfDayMinutes: 1065,
+      realTimeEnabled: false,
+    });
     fireEvent.keyDown(window, { key: "3" });
     expect(useAppStore.getState().timeOfDayMinutes).toBe(1170);
     fireEvent.keyDown(window, { key: "e" });
@@ -209,6 +217,9 @@ describe("fixed home experience", () => {
     expect(useAppStore.getState().zoom).toBeGreaterThan(1);
     fireEvent.keyDown(window, { key: "h" });
     expect(useAppStore.getState()).toMatchObject({ viewMode: "diorama", zoom: 1 });
+    act(() => useAppStore.getState().setViewMode("walk"));
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(useAppStore.getState().viewMode).toBe("diorama");
 
     const button = document.createElement("button");
     document.body.appendChild(button);
@@ -217,6 +228,30 @@ describe("fixed home experience", () => {
     fireEvent.keyDown(window, { key: "1", ctrlKey: true });
     expect(useAppStore.getState().timeOfDayMinutes).toBe(1170);
     button.remove();
+  });
+
+  it("supports Sunset 17:45 and Live Saigon time in SceneExtras and clears live clock on manual preset", () => {
+    render(
+      <>
+        <TopInfo />
+        <Dock />
+        <SceneExtras />
+      </>,
+    );
+    fireEvent.click(screen.getByTestId("scene-extras-toggle"));
+    fireEvent.click(screen.getByTestId("sunset-preset-toggle"));
+    expect(useAppStore.getState()).toMatchObject({
+      timeOfDayMinutes: 1065,
+      realTimeEnabled: false,
+    });
+    expect(screen.getByText(/Hoàng hôn/)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("scene-extras-toggle"));
+    fireEvent.click(screen.getByTestId("live-clock-toggle"));
+    expect(useAppStore.getState().realTimeEnabled).toBe(true);
+
+    fireEvent.click(screen.getByRole("radio", { name: "Sáng" }));
+    expect(useAppStore.getState()).toMatchObject({ timeOfDayMinutes: 420, realTimeEnabled: false });
   });
 
   it("interpolates sky and sunlight over ~350ms when switching presets unless immediate", () => {
@@ -280,12 +315,12 @@ describe("fixed home experience", () => {
     layer.dispose();
   });
 
-  it("keeps bilingual About copy and shortcut legend aligned with the fixed 6-preset scope", () => {
+  it("keeps bilingual About copy and shortcut legend aligned with the street-experience scope", () => {
     for (const paragraph of viDict.aboutBody) {
-      expect(paragraph).not.toMatch(/Trung Thu|lễ hội|tiếng rao|xe ôm/i);
+      expect(paragraph).not.toMatch(/Trung Thu|lễ hội|tiếng rao/i);
     }
     for (const paragraph of enDict.aboutBody) {
-      expect(paragraph).not.toMatch(/Mid-Autumn|festival|street calls|motorbike taxi/i);
+      expect(paragraph).not.toMatch(/Mid-Autumn|festival|street calls/i);
     }
     expect(viDict.aboutShortcuts.length).toBeGreaterThanOrEqual(4);
     expect(enDict.aboutShortcuts.length).toBe(viDict.aboutShortcuts.length);

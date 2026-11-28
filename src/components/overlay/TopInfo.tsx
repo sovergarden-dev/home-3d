@@ -10,7 +10,8 @@ export function TopInfo() {
   const minutes = useAppStore((s) => s.timeOfDayMinutes);
   const weather = useAppStore((s) => s.weather);
   const activeWeather = SITE_CONFIG.weatherDisplay[weather];
-  const periodKey = minutes < 720 ? "commute" : minutes < 1080 ? "noon" : "night";
+  const periodKey =
+    minutes < 720 ? "commute" : minutes < 1020 ? "noon" : minutes < 1110 ? "sunset" : "night";
 
   return (
     <div

@@ -44,6 +44,9 @@ describe("P9 presentation controls", () => {
     bindLifeCommands((command) => commands.push(command));
     useAppStore.setState({ viewMode: "ride", ridePaused: false });
     render(<PovControls />);
+    expect(
+      screen.getByText("Đích giả: Trạm chợ tổng hợp · không chỉ đường thật"),
+    ).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Tạm dừng chuyến" }));
     expect(useAppStore.getState().ridePaused).toBe(true);
     fireEvent.click(screen.getByRole("button", { name: "Cho phép nghiêng điện thoại" }));
@@ -51,6 +54,13 @@ describe("P9 presentation controls", () => {
     fireEvent.click(screen.getByRole("button", { name: "Thoát POV" }));
     expect(useAppStore.getState().viewMode).toBe("diorama");
     expect(screen.queryByRole("button", { name: "Thoát POV" })).not.toBeInTheDocument();
+  });
+  it("uses real-world route copy instead of synthetic destination when bound to home world source", () => {
+    useAppStore.setState({ viewMode: "ride", ridePaused: false });
+    render(<PovControls worldSource="home" />);
+    expect(
+      screen.getByText("Tuyến mô phỏng · không phải đường tới chợ/trường thật"),
+    ).toBeInTheDocument();
   });
   it("virtual movement releases on pointer cancel and unmount", () => {
     const commands: LifeCommand[] = [];
