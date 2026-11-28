@@ -336,16 +336,21 @@ export const vi = {
   sheetHandle: "Kéo để mở rộng bảng điều khiển",
   aboutTitle: "Về Phố Nhà Mình",
   aboutBody: [
-    "Sa bàn 3D khu phố bán kính 180 m quanh ngã tư Châu Văn Liêm × Trần Hưng Đạo — xoay nhìn cụm nhà tâm điểm, dãy nhà phố, tán cây ven đường, dòng xe qua lại và sắc thái bầu trời qua Sáng · Chiều · Tối cùng Nắng · Mây · Mưa.",
-    "Mặt đường dùng dữ liệu OpenStreetMap, khối nhà quanh khu kết hợp Overture Maps / Google Open Buildings (CC BY 4.0) cùng 15 công trình cụm tâm; cao độ suy luận và ranh lô mang tính minh họa trực quan.",
+    "Sa bàn 3D khu phố bán kính 180 m quanh ngã tư Châu Văn Liêm × Trần Hưng Đạo — xoay nhìn cụm nhà tâm điểm, chuyển sang góc nhìn Đi bộ hoặc Ngồi sau xe ôm dọc tuyến đường thật, bật Tiếng phố, ngắm Hoàng hôn 17:45 hoặc đồng bộ Giờ Sài Gòn thật (UTC+7).",
+    "Mặt đường dùng dữ liệu OpenStreetMap, khối nhà quanh khu kết hợp Overture Maps / Google Open Buildings (CC BY 4.0) cùng 15 công trình cụm tâm; tính năng Phố thật chỉ mở Google Street View / Vệ tinh ở tab ngoài sau khi bạn xác nhận.",
   ],
   aboutShortcutsTitle: "Phím tắt nhanh",
   aboutShortcuts: [
-    { keys: "1 / 2 / 3", action: "Đổi nhanh buổi Sáng · Chiều · Tối" },
+    { keys: "1 / 2 / 3 / 4", action: "Đổi nhanh Sáng · Chiều · Tối · Hoàng hôn 17:45" },
     { keys: "Q / W / E", action: "Đổi thời tiết Nắng · Mây · Mưa" },
     { keys: "M", action: "Chuyển góc nhìn Diorama ↔ Mặt bằng" },
-    { keys: "H / R", action: "Đưa camera về lại tâm Nhà mình" },
+    { keys: "H / R / Esc", action: "Đưa camera về tâm Nhà mình hoặc thoát POV" },
     { keys: "+ / -", action: "Phóng to hoặc thu nhỏ góc nhìn" },
   ],
+  extras: {
+    label: "Tùy chọn khác",
+    sunset1745: "Hoàng hôn 17:45",
+    liveClock: "Giờ Sài Gòn thật (UTC+7)",
+  },
 };
 export type Dict = typeof vi;

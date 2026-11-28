@@ -5,6 +5,8 @@ import { SceneViewport } from "@/components/overlay/SceneViewport";
 import { TopInfo } from "@/components/overlay/TopInfo";
 import { TopActions } from "@/components/overlay/TopActions";
 import { MapControls } from "@/components/overlay/MapControls";
+import { PovControls } from "@/components/overlay/LifeControls";
+import { SceneExtras } from "@/components/overlay/SceneExtras";
 import { ScaleBar } from "@/components/overlay/ScaleBar";
 import { Dock } from "@/components/overlay/Dock";
 import { Splash } from "@/components/overlay/Splash";
@@ -143,15 +145,17 @@ function Home() {
           </div>
 
           <ScaleBar />
+          <PovControls worldSource="home" />
 
-          {/* Right vertical camera controls (Diorama, Mặt bằng, zoom, reset, compass) */}
+          {/* Right vertical camera controls (Diorama, Mặt bằng, Đi bộ, Ngồi sau xe ôm, zoom, reset, compass) */}
           <div className="h6-map-controls-anchor absolute right-[max(1rem,env(safe-area-inset-right))] top-1/2 z-30 -translate-y-1/2">
             <MapControls />
           </div>
 
           {/* Centered floating dock at the bottom */}
-          <div className="h6-dock-anchor pointer-events-none fixed inset-x-0 bottom-4 z-20 flex justify-center px-4">
+          <div className="h6-dock-anchor pointer-events-none fixed inset-x-0 bottom-4 z-20 flex items-end justify-center gap-1.5 px-4">
             <Dock />
+            <SceneExtras />
           </div>
         </div>
       </main>

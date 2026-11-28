@@ -59,12 +59,33 @@ test("time, weather, camera and language controls update the fixed-home view", a
   await expect(page.locator(".h6-top-info")).toContainText("Tối");
   await expect(page.locator(".h6-top-info")).toContainText("Mưa");
 
+  await page.getByTestId("scene-extras-toggle").click();
+  await page.getByTestId("sunset-preset-toggle").click();
+  await expect(page.locator(".h6-top-info")).toContainText("Hoàng hôn");
+
   const state = await page.locator("#scene-root").getAttribute("data-scene-state");
   if (state === "ready") {
     await page.getByRole("radio", { name: "Mặt bằng", exact: true }).click();
     await expect(page.locator("main")).toHaveAttribute("data-view-mode", "topdown");
-    await page.getByRole("radio", { name: "Diorama", exact: true }).click();
+    await page.getByRole("radio", { name: "Đi bộ", exact: true }).click();
+    await expect(page.locator("main")).toHaveAttribute("data-view-mode", "walk");
+    await expect(page.getByRole("button", { name: "Thoát POV", exact: true })).toBeVisible();
+    await page.keyboard.press("Escape");
     await expect(page.locator("main")).toHaveAttribute("data-view-mode", "diorama");
+    await page.getByRole("radio", { name: "Ngồi sau xe ôm", exact: true }).click();
+    await expect(page.locator("main")).toHaveAttribute("data-view-mode", "ride");
+    await page.getByRole("button", { name: "Thoát POV", exact: true }).click();
+    await expect(page.locator("main")).toHaveAttribute("data-view-mode", "diorama");
+
+    const soundToggle = page.getByTestId("sound-toggle");
+    await soundToggle.click();
+    await expect(soundToggle).toHaveAttribute("aria-pressed", "true");
+    await soundToggle.click();
+    await expect(soundToggle).toHaveAttribute("aria-pressed", "false");
+
+    await page.getByRole("button", { name: "Phố thật", exact: true }).click();
+    await expect(page.getByTestId("real-street-preview")).toContainText(/10\.752\d+/);
+    await page.getByRole("button", { name: "Hủy", exact: true }).click();
   } else {
     await expect(page.getByRole("radio", { name: "Mặt bằng", exact: true })).toBeDisabled();
   }
@@ -135,6 +156,8 @@ test("portrait and short-landscape layouts keep all overlays in bounds and non-o
         actions: rect(".h6-top-actions")!,
         mapControls: rect(".h6-map-controls")!,
         viewActions: rect(".h6-view-actions")!,
+        lifeActions: rect(".h6-life-actions")!,
+        extrasToggle: rect("[data-testid='scene-extras-toggle']")!,
         dock: rect("[role='region']")!,
         scaleBar: rect("[data-testid='plan-scale-bar']"),
         attribution: rect(".h6-top-info a[href='https://www.openstreetmap.org/copyright']")!,
@@ -183,9 +206,13 @@ test("portrait and short-landscape layouts keep all overlays in bounds and non-o
     expect(result.attributionText.right).toBeLessThanOrEqual(result.info.right);
     expect(overlaps(result.info, result.dock)).toBe(false);
     expect(overlaps(result.mapControls, result.dock)).toBe(false);
+    expect(overlaps(result.mapControls, result.extrasToggle)).toBe(false);
     expect(overlaps(result.mapControls, result.actions)).toBe(false);
+    expect(result.extrasToggle.right).toBeLessThanOrEqual(result.viewport.width);
+    expect(result.extrasToggle.bottom).toBeLessThanOrEqual(result.viewport.height);
     if (viewport.height <= 480) {
       expect(result.viewActions.right - result.viewActions.left).toBeLessThanOrEqual(112);
+      expect(result.lifeActions.right - result.lifeActions.left).toBeLessThanOrEqual(112);
     }
     if (result.scaleBar) {
       expect(overlaps(result.scaleBar, result.info)).toBe(false);
@@ -270,7 +297,7 @@ test("owner-provided OSM neighborhood renders and survives a route remount", asy
   await page.getByRole("link", { name: "Giới thiệu", exact: true }).click();
   await expect(page).toHaveURL(/\/gioi-thieu$/);
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await expect(page.locator("main")).not.toContainText(/Trung Thu|xe ôm|tiếng rao/i);
+  await expect(page.locator("main")).not.toContainText(/Trung Thu|tiếng rao/i);
   await page.getByRole("link", { name: "Về phố", exact: true }).click();
   await expect(page).toHaveURL(/\/$/);
   await expect(page.locator("#scene-root")).toHaveAttribute("data-scene-state", "ready");

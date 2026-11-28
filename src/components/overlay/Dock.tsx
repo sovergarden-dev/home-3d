@@ -11,11 +11,17 @@ export function Dock() {
   const lang = useAppStore((s) => s.language);
   const minutes = useAppStore((s) => s.timeOfDayMinutes);
   const setMinutes = useAppStore((s) => s.setTimeOfDayMinutes);
+  const setRealTimeEnabled = useAppStore((s) => s.setRealTimeEnabled);
   const weather = useAppStore((s) => s.weather);
   const setWeather = useAppStore((s) => s.setWeather);
 
-  const activeTimeKey = minutes < 720 ? "commute" : minutes < 1080 ? "noon" : "night";
+  const activeTimeKey =
+    minutes < 720 ? "commute" : minutes < 1020 ? "noon" : minutes < 1110 ? null : "night";
   const activeWeather = SITE_CONFIG.weatherDisplay[weather];
+  const selectPresetMinutes = (presetMinutes: number) => {
+    setRealTimeEnabled(false);
+    setMinutes(presetMinutes);
+  };
 
   return (
     <div
@@ -34,7 +40,7 @@ export function Dock() {
               type="button"
               role="radio"
               aria-checked={active}
-              onClick={() => setMinutes(presetMinutes)}
+              onClick={() => selectPresetMinutes(presetMinutes)}
               className={`chip min-h-10 justify-center gap-1.5 px-3 py-2 text-xs font-medium sm:text-sm ${
                 active ? "chip-active shadow-sm" : ""
               }`}

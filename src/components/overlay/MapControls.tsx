@@ -1,20 +1,28 @@
 import {
   Activity,
+  Bike,
   Box,
   Compass,
+  Footprints,
   Layers,
   LocateFixed,
   Map as MapIcon,
   Minus,
   Plus,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 import { useAppStore, type ViewMode } from "@/state/appStore";
 import type { DetailTier } from "@/world/enrichment/schema";
 import { useT } from "@/i18n";
+import { sendLifeCommand } from "@/engine/life/session";
+import { RealStreetControl } from "./RealStreetControl";
 
 const modes: { id: ViewMode; Icon: typeof Box }[] = [
   { id: "diorama", Icon: Box },
   { id: "topdown", Icon: MapIcon },
+  { id: "walk", Icon: Footprints },
+  { id: "ride", Icon: Bike },
 ];
 
 export function MapControls() {
@@ -32,6 +40,8 @@ export function MapControls() {
     setLifeEnabled,
     detailTier,
     cycleDetailTier,
+    soundOn,
+    toggleSound,
   } = useAppStore();
   const btn = "ctl text-foreground hover:bg-secondary";
   const densityLabel = t.life.densityCycle.replace("{tier}", t.life.tiers[detailTier]);
@@ -140,6 +150,22 @@ export function MapControls() {
           className={detailTier === "high" ? "ctl bg-primary text-primary-foreground" : btn}
         >
           <Layers className="h-5 w-5" />
+        </button>
+        <RealStreetControl worldSource="home" />
+        <button
+          type="button"
+          data-testid="sound-toggle"
+          disabled={!ready}
+          aria-pressed={soundOn}
+          aria-label={t.sound}
+          title={`${t.sound} (${t.soundDemo})`}
+          onClick={() => {
+            sendLifeCommand({ kind: "soundGesture" });
+            toggleSound();
+          }}
+          className={`${btn} aria-pressed:bg-primary aria-pressed:text-primary-foreground`}
+        >
+          {soundOn ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}
         </button>
       </div>
     </div>

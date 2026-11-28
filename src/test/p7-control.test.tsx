@@ -165,6 +165,14 @@ describe("P7 explicit external opening", () => {
     expect(screen.getByRole("button", { name: "Cancel" })).toHaveFocus();
     expect(screen.getByText(/North/)).toBeInTheDocument();
   });
+  it("supports the immutable fixed-home world source when ready", async () => {
+    render(<RealStreetControl worldSource="home" />);
+    const trigger = screen.getByRole("button", { name: "Phố thật" });
+    expect(trigger).toBeEnabled();
+    fireEvent.click(trigger);
+    expect(await screen.findByTestId("real-street-preview")).toHaveTextContent(/10\.752\d+/);
+    fireEvent.click(screen.getByRole("button", { name: "Hủy" }));
+  });
 });
 it("closes a blank popup if navigation setup fails", () => {
   const handle = {

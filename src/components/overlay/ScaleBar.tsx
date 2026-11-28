@@ -11,7 +11,8 @@ export function ScaleBar() {
   const [targetWidth, setTargetWidth] = useState(120);
 
   useEffect(() => {
-    const update = () => setTargetWidth(window.innerWidth < 480 ? 92 : 120);
+    const update = () =>
+      setTargetWidth(window.innerWidth < 480 || window.innerHeight <= 480 ? 72 : 120);
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
@@ -55,7 +56,7 @@ export function ScaleBar() {
         </button>
       </div>
 
-      <div className="glass flex min-w-32 flex-col items-center gap-1 px-3 py-1.5 font-mono text-[11px] text-foreground">
+      <div className="glass flex min-w-24 flex-col items-center gap-1 px-2.5 py-1.5 font-mono text-[11px] text-foreground sm:min-w-32 sm:px-3">
         {scale ? (
           <>
             <div className="flex w-full items-center justify-between text-muted-foreground">
