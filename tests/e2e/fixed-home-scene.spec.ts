@@ -17,7 +17,7 @@ test("owner-provided OSM neighborhood stays immutable across views and illustrat
   const canvas = root.locator("canvas");
   await expect(canvas).toHaveCount(1);
   await expect(scene).toHaveAttribute("data-world-mode", "home");
-  await expect(scene).toHaveAttribute("data-world-buildings", "317");
+  await expect(scene).toHaveAttribute("data-world-buildings", "1300");
   await expect(scene).toHaveAttribute("data-world-roads", "138");
   await expect(scene).toHaveAttribute("data-verification-status", "REAL_WORLD_NOT_VERIFIED");
   await expect(scene).toHaveAttribute("data-active-worlds", "1");
@@ -27,10 +27,10 @@ test("owner-provided OSM neighborhood stays immutable across views and illustrat
   await expect(scene).toHaveAttribute("data-surroundings-tier", /^(low|mid)$/);
   await expect(scene).toHaveAttribute("data-surroundings-trees", /^[1-9]\d*$/);
   await expect(scene).toHaveAttribute("data-surroundings-props", /^[1-9]\d*$/);
-  await expect(scene).toHaveAttribute("data-massing-count", "315");
+  await expect(scene).toHaveAttribute("data-massing-count", "1280");
   await expect(scene).toHaveAttribute("data-massing-origin", "estimated_procedural");
-  await expect(scene).toHaveAttribute("data-massing-balconies", "70");
-  await expect(scene).toHaveAttribute("data-massing-shops", "8");
+  await expect(scene).toHaveAttribute("data-massing-balconies", "237");
+  await expect(scene).toHaveAttribute("data-massing-shops", "40");
   await expect(scene).toHaveAttribute("data-street-style-classes", "5");
   await expect(scene).toHaveAttribute("data-street-trim-meshes", "1");
   await expect(scene).toHaveAttribute("data-shadow-frustum-half-size", /^[3-9]\d\d$/);
@@ -84,8 +84,8 @@ test("owner-provided OSM neighborhood stays immutable across views and illustrat
   await densityToggle.click();
   await expect(scene).toHaveAttribute("data-detail-tier", "high");
   await expect(scene).toHaveAttribute("data-surroundings-tier", "high");
-  await expect(scene).toHaveAttribute("data-surroundings-trees", "352");
-  await expect(scene).toHaveAttribute("data-surroundings-props", "400");
+  await expect(scene).toHaveAttribute("data-surroundings-trees", "285");
+  await expect(scene).toHaveAttribute("data-surroundings-props", "344");
   // Software WebGL (SwiftShader < 24 FPS) legitimately triggers P9's automatic FPS tier step-down.
   await expect(scene).toHaveAttribute("data-life-tier", /^(low|mid|high)$/);
   const highDrawCalls = Number(await scene.getAttribute("data-draw-calls"));

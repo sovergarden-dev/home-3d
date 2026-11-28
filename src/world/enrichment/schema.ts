@@ -10,9 +10,9 @@ import type { Position2, RoadClass } from "../schema";
 
 export const ENRICHMENT_SCHEMA_VERSION = "1.0" as const;
 
-/** G1: sha256(JSON.stringify(JSON.parse(homeNeighborhood.json))). */
+/** Canonical neighborhood package SHA-256: sha256(JSON.stringify(JSON.parse(homeNeighborhood.json))). */
 export const G1_PACKAGE_SHA256 =
-  "cd4f0146fd3399d0995111bd19a46751c86e0347a56d3e2a770a4832852a7ce3" as const;
+  "6f2f2dd0a7d6cd176bfde825d164b314ddd59c75efef56733e4ea1decb9ddb48" as const;
 
 export const OSM_ATTRIBUTION = "© OpenStreetMap contributors" as const;
 export const OSM_ODBL_LINE =

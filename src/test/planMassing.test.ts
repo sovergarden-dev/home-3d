@@ -11,6 +11,7 @@ import { minDistanceToPolygon, planMassing } from "@/world/enrichment/planMassin
 import { planMassingFacades } from "@/world/enrichment/planMassingFacades";
 import { HOME_NEIGHBORHOOD } from "@/world/homeNeighborhood";
 import type { Building, Lot, RoadSegment, WorldData } from "@/world/schema";
+import { assessWallHeight } from "@/world/wallHeight";
 
 function canonicalJson(value: unknown): string {
   if (value === null || typeof value === "string" || typeof value === "boolean")
@@ -32,9 +33,9 @@ function canonicalJson(value: unknown): string {
 const sha = (value: unknown) => createHash("sha256").update(canonicalJson(value)).digest("hex");
 
 export const MASSING_GOLDEN_SHA256 =
-  "9e47e8b5561515380303677837c73e7a55fa302819a84ae570fe9635965cf6a7";
+  "cd80662015bd763c7693453e4d59685fd3c7ccecc7f9ae7a8a3e69ae065de651";
 const MASSING_FACADES_GOLDEN_SHA256 =
-  "27323e0cf2a95eb75c8ad533d55e3bb9ed79577924956fc42915819defe3b321";
+  "8bc514ef1ce27f793d59f605132465a9074fbfb096be1b0152e71525a90c6e77";
 
 function shuffled<T>(items: readonly T[], seed: number): T[] {
   const copy = [...items];
@@ -74,7 +75,12 @@ describe("planMassing", () => {
   it("plans deterministic estimated massing for unknown neighboring buildings only", () => {
     expect(HOME_ENRICHMENT).not.toBeNull();
     const layer = HOME_ENRICHMENT!;
-    const sourceIds = new Set(layer.buildingFacts.map((fact) => fact.buildingId));
+    const sourceIds = new Set([
+      ...layer.buildingFacts.map((fact) => fact.buildingId),
+      ...HOME_NEIGHBORHOOD.buildings
+        .filter((building) => assessWallHeight(building, false).status !== "unknown")
+        .map((building) => building.localId),
+    ]);
     const plan = planMassing(HOME_NEIGHBORHOOD, layer);
     const again = planMassing(HOME_NEIGHBORHOOD, layer);
     const reordered: WorldData = {
@@ -118,14 +124,27 @@ describe("planMassing", () => {
           item.position[1] <= maxZ,
       ),
     ).toBe(true);
+    const buildingBounds = HOME_NEIGHBORHOOD.buildings.map((building) => ({
+      building,
+      bounds: surfaceBounds(building.geometry),
+    }));
     const overlaps: string[] = [];
     for (const item of plan.items) {
       expect(sourceIds.has(item.sourceBuildingId)).toBe(false);
       const source = buildingById.get(item.sourceBuildingId);
       expect(source).toBeDefined();
       expect(surfaceContains(source!.geometry, item.footprint, 1e-3)).toBe(true);
-      for (const building of HOME_NEIGHBORHOOD.buildings) {
+      const ib = surfaceBounds(item.footprint);
+      for (const { building, bounds } of buildingBounds) {
         if (building.localId === item.sourceBuildingId) continue;
+        if (
+          ib.maxX + 1e-6 < bounds.minX ||
+          ib.minX - 1e-6 > bounds.maxX ||
+          ib.maxZ + 1e-6 < bounds.minZ ||
+          ib.minZ - 1e-6 > bounds.maxZ
+        ) {
+          continue;
+        }
         if (surfaceIntersects(item.footprint, building.geometry)) {
           overlaps.push(`${item.localId}:${building.localId}`);
         }
@@ -136,15 +155,21 @@ describe("planMassing", () => {
     expect(sha(plan)).toBe(MASSING_GOLDEN_SHA256);
   });
 
-  it("verifies canonical OSM footprints keep clear of the home origin and enforces exclusion + dominance caps", () => {
+  it("verifies focal verified buildings bypass procedural massing and enforces exclusion + dominance caps", () => {
     const layer = HOME_ENRICHMENT!;
-    const minCanonicalDistance = Math.min(
-      ...HOME_NEIGHBORHOOD.buildings.flatMap((building) =>
-        polygonsOf(building.geometry).map((polygon) => minDistanceToPolygon([0, 0], polygon)),
-      ),
+    const focalHome = HOME_NEIGHBORHOOD.buildings.find(
+      (building) => building.localId === "building-focal-home",
     );
-    expect(minCanonicalDistance).toBeGreaterThan(layer.generator.homeDominanceRadius);
-    expect(minCanonicalDistance).toBeGreaterThan(layer.generator.homeExclusionRadius);
+    expect(focalHome).toBeDefined();
+    expect(assessWallHeight(focalHome!, false).status).toBe("known");
+    const minUnknownDistance = Math.min(
+      ...HOME_NEIGHBORHOOD.buildings
+        .filter((building) => assessWallHeight(building, false).status === "unknown")
+        .flatMap((building) =>
+          polygonsOf(building.geometry).map((polygon) => minDistanceToPolygon([0, 0], polygon)),
+        ),
+    );
+    expect(minUnknownDistance).toBeGreaterThan(layer.generator.homeExclusionRadius);
 
     const homeLot: Lot = {
       localId: "lot-home-empty",
@@ -231,9 +256,9 @@ describe("planMassing", () => {
 
     expect(facadePlan).toEqual(reorderedFacades);
     expect(facadePlan.origin).toBe("estimated_procedural");
-    expect(facadePlan.balconyBuildingCount).toBe(70);
-    expect(facadePlan.shopBuildingCount).toBe(8);
-    expect(facadePlan.instances).toHaveLength(242);
+    expect(facadePlan.balconyBuildingCount).toBe(237);
+    expect(facadePlan.shopBuildingCount).toBe(40);
+    expect(facadePlan.instances).toHaveLength(858);
     expect(sha(facadePlan)).toBe(MASSING_FACADES_GOLDEN_SHA256);
 
     const shopInstances = facadePlan.instances.filter((inst) => inst.kind.startsWith("shop_"));

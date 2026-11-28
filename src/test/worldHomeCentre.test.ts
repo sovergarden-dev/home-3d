@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { describe, expect, it } from "vitest";
 import {
   deriveShadowCameraBounds,
+  homeMarkerElevation,
   worldCameraCentre,
   worldCameraFrame,
   worldHomeCentre,
@@ -66,6 +67,82 @@ describe("private-world home centre", () => {
     const centre = worldHomeCentre(worldWithoutLot);
     expect([centre.x, centre.z]).toEqual([0, 0]);
   });
+
+  it("raises the center marker above a verified building covering the origin while keeping empty sites at ground height", () => {
+    expect(homeMarkerElevation(worldWithoutLot, [0, 0])).toBe(0.35);
+
+    const occupiedWorld: WorldData = {
+      ...worldWithoutLot,
+      buildings: [
+        {
+          localId: "building-focal-test",
+          geometry: {
+            type: "Polygon",
+            coordinates: [
+              [
+                [-2, -2],
+                [6, -2],
+                [6, 2],
+                [-2, 2],
+                [-2, -2],
+              ],
+            ],
+          },
+          footprintKind: "footprint",
+          wallHeight: 7.4,
+          levels: 2,
+          roofType: "corrugated",
+          roofHeight: 0.9,
+          provenance: { source: "survey", quality: "verified" },
+          attributes: { wallHeight: { source: "survey", quality: "verified" } },
+          parts: [
+            {
+              localId: "building-focal-test-front",
+              geometry: {
+                type: "Polygon",
+                coordinates: [
+                  [
+                    [-2, -2],
+                    [2, -2],
+                    [2, 2],
+                    [-2, 2],
+                    [-2, -2],
+                  ],
+                ],
+              },
+              wallHeight: 7.8,
+              levels: 2,
+              roofType: "flat",
+              provenance: { source: "survey", quality: "verified" },
+              attributes: { wallHeight: { source: "survey", quality: "verified" } },
+            },
+            {
+              localId: "building-focal-test-rear",
+              geometry: {
+                type: "Polygon",
+                coordinates: [
+                  [
+                    [2, -2],
+                    [6, -2],
+                    [6, 2],
+                    [2, 2],
+                    [2, -2],
+                  ],
+                ],
+              },
+              wallHeight: 7.0,
+              levels: 2,
+              roofType: "corrugated",
+              roofHeight: 0.9,
+              provenance: { source: "survey", quality: "verified" },
+              attributes: { wallHeight: { source: "survey", quality: "verified" } },
+            },
+          ],
+        },
+      ],
+    };
+    expect(homeMarkerElevation(occupiedWorld, [0, 0])).toBeCloseTo(8.6, 5);
+  });
 });
 
 describe("shadow camera bounds", () => {
@@ -112,6 +189,9 @@ describe("shadow camera bounds", () => {
       sun.shadow.camera.lookAt(sun.target.position);
       sun.shadow.camera.updateMatrixWorld();
 
+      let maxAbsX = 0;
+      let maxAbsY = 0;
+      let maxAbsZ = 0;
       for (const item of massingPlan.items) {
         const rings =
           item.footprint.type === "Polygon"
@@ -120,12 +200,15 @@ describe("shadow camera bounds", () => {
         for (const [x, z] of rings[0] ?? []) {
           for (const y of [0, item.wallHeight]) {
             point.set(x, y, z).project(sun.shadow.camera);
-            expect(Math.abs(point.x)).toBeLessThanOrEqual(1);
-            expect(Math.abs(point.y)).toBeLessThanOrEqual(1);
-            expect(Math.abs(point.z)).toBeLessThanOrEqual(1);
+            maxAbsX = Math.max(maxAbsX, Math.abs(point.x));
+            maxAbsY = Math.max(maxAbsY, Math.abs(point.y));
+            maxAbsZ = Math.max(maxAbsZ, Math.abs(point.z));
           }
         }
       }
+      expect(maxAbsX).toBeLessThanOrEqual(1);
+      expect(maxAbsY).toBeLessThanOrEqual(1);
+      expect(maxAbsZ).toBeLessThanOrEqual(1);
     }
   });
 });

@@ -14,7 +14,12 @@ import { createSurroundingsMeshes, type SurroundingsMeshes } from "./world/surro
 import { HOME_ENRICHMENT } from "@/world/enrichment/homeEnrichment";
 import { planMassing, type MassingPlan } from "@/world/enrichment/planMassing";
 import { planMassingFacades, type MassingFacadePlan } from "@/world/enrichment/planMassingFacades";
-import { planSurroundings } from "@/world/enrichment/planSurroundings";
+import {
+  createPlacementContext,
+  planSurroundings,
+  type PlacementContext,
+  type SurroundingsPlan,
+} from "@/world/enrichment/planSurroundings";
 import type { DetailTier } from "@/world/enrichment/schema";
 import { HOME_NEIGHBORHOOD } from "@/world/homeNeighborhood";
 import { assessWallHeight } from "@/world/wallHeight";
@@ -33,15 +38,17 @@ import {
 import { projectMarkerAndCull } from "./view/cameraFrame";
 import { resolveSceneDetailTier, useAppStore } from "@/state/appStore";
 import { SITE_CONFIG } from "@/config/site";
-import { surfaceCentroid } from "@/world/geometry";
+import { pointInPolygon, polygonsOf, surfaceCentroid } from "@/world/geometry";
 import { homeWorldSession } from "@/world/homeWorldSession";
-import type { WorldData } from "@/world/schema";
+import type { Position2, WorldData } from "@/world/schema";
 import { runStartupSequence, type StartupOutcome } from "./startupSequence";
 
 const STARTUP_PROGRAM_POLL_MS = 10;
 const STARTUP_PROGRAM_TIMEOUT_MS = 10_000;
 let cachedHomeMassingPlan: MassingPlan | null = null;
 let cachedHomeFacadePlan: MassingFacadePlan | null = null;
+let cachedHomeSurroundingsContext: PlacementContext | null = null;
+const cachedHomeSurroundingsPlans: Partial<Record<DetailTier, SurroundingsPlan>> = {};
 
 function getHomeMassingPlan(): MassingPlan | null {
   if (!HOME_ENRICHMENT) return null;
@@ -53,6 +60,21 @@ function getHomeFacadePlan(massingPlan: MassingPlan | null): MassingFacadePlan |
   if (!HOME_ENRICHMENT || !massingPlan) return null;
   cachedHomeFacadePlan ??= planMassingFacades(HOME_NEIGHBORHOOD, HOME_ENRICHMENT, massingPlan);
   return cachedHomeFacadePlan;
+}
+
+function getHomeSurroundingsPlan(tier: DetailTier): SurroundingsPlan | null {
+  if (!HOME_ENRICHMENT) return null;
+  const existing = cachedHomeSurroundingsPlans[tier];
+  if (existing) return existing;
+  cachedHomeSurroundingsContext ??= createPlacementContext(HOME_NEIGHBORHOOD);
+  const computed = planSurroundings(
+    HOME_NEIGHBORHOOD,
+    HOME_ENRICHMENT,
+    tier,
+    cachedHomeSurroundingsContext,
+  );
+  cachedHomeSurroundingsPlans[tier] = computed;
+  return computed;
 }
 
 export interface SceneRuntime {
@@ -128,6 +150,27 @@ export function worldHomeCentre(world: WorldData) {
   if (!homeLot) return new THREE.Vector3(0, 0, 0);
   const [x, z] = surfaceCentroid(homeLot.geometry);
   return new THREE.Vector3(x, 0, z);
+}
+
+export function homeMarkerElevation(world: WorldData, centre: Position2): number {
+  let highestTop = 0;
+  for (const building of world.buildings) {
+    if (building.hidden) continue;
+    const baseElevation = building.baseElevation ?? 0;
+    const elements = building.parts?.length ? building.parts : [building];
+    for (const element of elements) {
+      const assessment = assessWallHeight(element, world.manifest.isSynthetic);
+      if (assessment.status !== "known" && assessment.status !== "inferred") continue;
+      if (!polygonsOf(element.geometry).some((polygon) => pointInPolygon(centre, polygon)))
+        continue;
+      const topY =
+        (element.baseElevation ?? baseElevation) +
+        assessment.renderedHeight +
+        (element.roofHeight ?? 0);
+      if (topY > highestTop) highestTop = topY;
+    }
+  }
+  return highestTop > 0 ? highestTop + 0.8 : 0.35;
 }
 
 interface ShadowCameraBounds {
@@ -236,6 +279,8 @@ export function createDemoScene(
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 768 ? 1 : 1.5));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.autoUpdate = false;
+  renderer.shadowMap.needsUpdate = true;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.08;
   // Keep offscreen postcard pixels on the same display-referred path as the canvas.
@@ -307,6 +352,10 @@ export function createDemoScene(
 
   const materials = new Map<string, THREE.MeshStandardMaterial>();
   const markerPosition = new THREE.Vector3();
+  const lastShadowSunPos = new THREE.Vector3(NaN, NaN, NaN);
+  const lastShadowTargetPos = new THREE.Vector3(NaN, NaN, NaN);
+  let lastShadowWorld: WorldMeshBundle | null = null;
+  let lastShadowFrustum = NaN;
   const materialFactory = (color: string, roughness = 0.82, metalness = 0) => {
     const key = `${color}:${roughness}:${metalness}`;
     let material = materials.get(key);
@@ -319,6 +368,9 @@ export function createDemoScene(
 
   let worldBundle: WorldMeshBundle | null = null;
   let homeCentre = fallbackWorld ? worldHomeCentre(fallbackWorld) : new THREE.Vector3();
+  let homeMarkerY = fallbackWorld
+    ? homeMarkerElevation(fallbackWorld, [homeCentre.x, homeCentre.z])
+    : 0.35;
   let centre = initialPerspectiveFrame?.centre ?? new THREE.Vector3();
   let span = initialPerspectiveFrame?.span ?? 100;
   let privatePlanFrame: PrivateWorldPlanFrame | null = null;
@@ -395,7 +447,8 @@ export function createDemoScene(
       return;
     }
     const startedAt = performance.now();
-    const plan = planSurroundings(world, HOME_ENRICHMENT, tier);
+    const plan = getHomeSurroundingsPlan(tier);
+    if (!plan) return;
     surroundings = createSurroundingsMeshes(plan);
     bundle.layers.trees.add(surroundings.trees);
     bundle.layers.props.add(surroundings.props);
@@ -484,6 +537,7 @@ export function createDemoScene(
     const frame = perspectiveFrame(snapshot.world);
     centre = frame.centre;
     homeCentre = worldHomeCentre(snapshot.world);
+    homeMarkerY = homeMarkerElevation(snapshot.world, [homeCentre.x, homeCentre.z]);
     privatePlanFrame = derivePrivateWorldPlanFrame(snapshot.world, {
       x: SITE_CONFIG.heroCenter[0],
       z: SITE_CONFIG.heroCenter[1],
@@ -744,6 +798,18 @@ export function createDemoScene(
       host.dataset["worldMode"] = currentWorld.mode;
       return;
     }
+    if (
+      lastShadowWorld !== worldBundle ||
+      lastShadowFrustum !== sun.shadow.camera.right ||
+      !lastShadowSunPos.equals(sun.position) ||
+      !lastShadowTargetPos.equals(sun.target.position)
+    ) {
+      renderer.shadowMap.needsUpdate = true;
+      lastShadowWorld = worldBundle;
+      lastShadowFrustum = sun.shadow.camera.right;
+      lastShadowSunPos.copy(sun.position);
+      lastShadowTargetPos.copy(sun.target.position);
+    }
     renderer.render(scene, activeCamera);
     host.dataset["memoryTextures"] = String(renderer.info.memory.textures);
     host.dataset["memoryGeometries"] = String(renderer.info.memory.geometries);
@@ -758,7 +824,7 @@ export function createDemoScene(
       frameSnapshot = frameMetrics.snapshot();
       lastMetricsSnapshotAt = renderedAt;
     }
-    markerPosition.set(homeCentre.x, 0.35, homeCentre.z);
+    markerPosition.set(homeCentre.x, homeMarkerY, homeCentre.z);
     const projected = projectMarkerAndCull(activeCamera, markerPosition, -0.06);
     marker.style.transform = `translate(-50%, -100%) translate(${projected.x * host.clientWidth}px, ${projected.y * host.clientHeight - 10}px)`;
     marker.style.visibility = projected.visible ? "visible" : "hidden";

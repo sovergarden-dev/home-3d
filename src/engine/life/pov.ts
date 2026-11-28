@@ -64,7 +64,18 @@ interface RouteSegment {
   length: number;
 }
 
+const frozenPovRouteCache = new WeakMap<WorldData, readonly RouteSegment[]>();
+
 export function buildPovRoute(world: WorldData): RouteSegment[] {
+  const isFrozenWorld =
+    Object.isFrozen(world) &&
+    Object.isFrozen(world.roads) &&
+    Object.isFrozen(world.buildings) &&
+    Object.isFrozen(world.lots);
+  if (isFrozenWorld) {
+    const cached = frozenPovRouteCache.get(world);
+    if (cached) return cached.map((segment) => ({ ...segment }));
+  }
   const graph = buildLifeGraph(world);
   if (!graph.enabled) return [];
   const solids = world.buildings
@@ -79,6 +90,22 @@ export function buildPovRoute(world: WorldData): RouteSegment[] {
     .map((polygon) => ({ polygon, bounds: surfaceBounds(polygon) }));
   const probe: Position2 = [0, 0];
   const pad = EPSILON;
+  const gridCell = 24;
+  const solidGrid = new Map<string, typeof solids>();
+  for (const solid of solids) {
+    const minGx = Math.floor((solid.bounds.minX - pad) / gridCell);
+    const maxGx = Math.floor((solid.bounds.maxX + pad) / gridCell);
+    const minGz = Math.floor((solid.bounds.minZ - pad) / gridCell);
+    const maxGz = Math.floor((solid.bounds.maxZ + pad) / gridCell);
+    for (let gx = minGx; gx <= maxGx; gx++) {
+      for (let gz = minGz; gz <= maxGz; gz++) {
+        const key = `${gx}:${gz}`;
+        const bucket = solidGrid.get(key);
+        if (bucket) bucket.push(solid);
+        else solidGrid.set(key, [solid]);
+      }
+    }
+  }
   const safe = new Uint8Array(graph.edges.length).fill(1);
   for (const edge of graph.edges) {
     for (let i = 2; i < edge.points.length && safe[edge.id]; i += 2) {
@@ -99,8 +126,11 @@ export function buildPovRoute(world: WorldData): RouteSegment[] {
         ]) {
           probe[0] = x + dx!;
           probe[1] = z + dz!;
+          const candidates = solidGrid.get(
+            `${Math.floor(probe[0] / gridCell)}:${Math.floor(probe[1] / gridCell)}`,
+          );
           if (
-            solids.some(
+            candidates?.some(
               ({ polygon, bounds }) =>
                 probe[0] >= bounds.minX - pad &&
                 probe[0] <= bounds.maxX + pad &&
@@ -192,6 +222,12 @@ export function buildPovRoute(world: WorldData): RouteSegment[] {
       const length = Math.hypot(bx - ax, bz - az);
       if (Number.isFinite(length) && length > 0.01) result.push({ ax, az, bx, bz, length });
     }
+  }
+  if (isFrozenWorld) {
+    frozenPovRouteCache.set(
+      world,
+      result.map((segment) => ({ ...segment })),
+    );
   }
   return result;
 }

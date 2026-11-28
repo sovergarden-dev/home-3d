@@ -47,8 +47,20 @@ function addUniqueIds(issues: WorldIssue[], ids: string[], featureType: string) 
   }
 }
 
+const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/;
+
 function validateBuilding(issues: WorldIssue[], building: Building) {
   addGeometryIssues(issues, building.localId, "BUILDING", building.geometry);
+  if (
+    (building.facadeColor !== undefined && !HEX_COLOR_PATTERN.test(building.facadeColor)) ||
+    (building.roofColor !== undefined && !HEX_COLOR_PATTERN.test(building.roofColor))
+  ) {
+    issues.push({
+      severity: "error",
+      code: "BUILDING_INVALID_COLOR",
+      featureIds: [building.localId],
+    });
+  }
   if (!Number.isFinite(building.wallHeight) || building.wallHeight < 0) {
     issues.push({
       severity: "error",
@@ -69,6 +81,16 @@ function validateBuilding(issues: WorldIssue[], building: Building) {
   if (building.parts && building.parts.length > 0) {
     building.parts.forEach((part) => {
       addGeometryIssues(issues, part.localId, "BUILDING_PART", part.geometry);
+      if (
+        (part.facadeColor !== undefined && !HEX_COLOR_PATTERN.test(part.facadeColor)) ||
+        (part.roofColor !== undefined && !HEX_COLOR_PATTERN.test(part.roofColor))
+      ) {
+        issues.push({
+          severity: "error",
+          code: "BUILDING_PART_INVALID_COLOR",
+          featureIds: [part.localId],
+        });
+      }
       if (!Number.isFinite(part.wallHeight) || part.wallHeight < 0) {
         issues.push({
           severity: "error",

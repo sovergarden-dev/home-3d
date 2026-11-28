@@ -7,8 +7,8 @@ export const SITE_CONFIG = {
     en: "My house",
   },
   description: {
-    vi: "Đường và footprints OpenStreetMap · hiện trạng chưa khảo sát.",
-    en: "OpenStreetMap roads and footprints · site not surveyed.",
+    vi: "Đường OSM, nhà quanh khu (Overture · Open Buildings) và cụm nhà tâm điểm.",
+    en: "OSM roads, neighborhood buildings (Overture · Open Buildings), and focal block.",
   },
   defaultTime: 420,
   defaultWeather: "sunny" as const,

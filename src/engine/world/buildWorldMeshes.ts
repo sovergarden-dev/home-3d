@@ -409,7 +409,7 @@ function addBuilding(
     featureId: building.localId,
     featureType: "building",
   };
-  const material = materialFactory(colorFor(building.localId), 0.82, 0.04);
+  const defaultFacadeColor = building.facadeColor ?? colorFor(building.localId);
   const baseElevation = building.baseElevation ?? 0;
   const renderables = building.parts?.length
     ? building.parts.map((part) => ({
@@ -419,6 +419,8 @@ function addBuilding(
         baseElevation: part.baseElevation ?? baseElevation,
         roofHeight: part.roofHeight,
         roofType: part.roofType,
+        facadeColor: part.facadeColor ?? defaultFacadeColor,
+        roofColor: part.roofColor ?? building.roofColor,
         heightAssessment: assessWallHeight(part, syntheticWorld),
       }))
     : [
@@ -429,17 +431,20 @@ function addBuilding(
           baseElevation,
           roofHeight: building.roofHeight,
           roofType: building.roofType,
+          facadeColor: defaultFacadeColor,
+          roofColor: building.roofColor,
           heightAssessment: assessWallHeight(building, syntheticWorld),
         },
       ];
 
   for (const part of renderables) {
     const renderedHeight = part.heightAssessment.renderedHeight;
+    const partMaterial = materialFactory(part.facadeColor, 0.82, 0.04);
     const shell = createSurfaceMeshes(
       part.geometry,
       renderedHeight,
       part.baseElevation,
-      material,
+      partMaterial,
       disposables,
     );
     shell.name = `building-part:${part.localId}`;
@@ -453,12 +458,15 @@ function addBuilding(
       part.heightAssessment.status !== "unknown" &&
       (part.roofType === "gabled" || part.roofType === "hipped" || part.roofType === "corrugated")
     ) {
+      const resolvedRoofMaterial = part.roofColor
+        ? materialFactory(part.roofColor, 0.84, 0.06)
+        : roofMaterial(part.roofType, roofMaterials, disposables);
       const roof = addRoofPrism(
         part.geometry,
         topY,
         part.roofType,
         part.roofHeight,
-        roofMaterial(part.roofType, roofMaterials, disposables),
+        resolvedRoofMaterial,
         disposables,
       );
       if (roof) {
@@ -468,6 +476,20 @@ function addBuilding(
       } else {
         shell.userData["roofFallback"] = "flat_cap_footprint_preserved";
       }
+    } else if (
+      part.heightAssessment.status !== "unknown" &&
+      part.roofColor &&
+      (part.roofType === "flat" || part.roofType === "terrace_tum")
+    ) {
+      const cap = createSurfaceMeshes(
+        part.geometry,
+        0.16,
+        topY,
+        materialFactory(part.roofColor, 0.86, 0.04),
+        disposables,
+      );
+      cap.name = `roof:${part.localId}`;
+      shell.add(cap);
     } else if (part.heightAssessment.status === "unknown") {
       shell.userData["roofFallback"] = "height_unknown_footprint_only";
     } else if (part.roofType !== "flat" && part.roofType !== "terrace_tum") {

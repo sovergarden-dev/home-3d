@@ -1,23 +1,16 @@
 # Surroundings goldens (PR-2)
 
-`src/test/surroundings-plan.test.ts` pins the SHA-256 of
-`JSON.stringify(planSurroundings(HOME_NEIGHBORHOOD, HOME_ENRICHMENT, tier))` for each tier, on the
-fixed home neighbourhood (G1 `cd4f0146…7ce3`) and the committed layer
-`src/world/data/homeNeighborhood.enrichment.json` (layer revision `osm-surroundings-2026-11-13`,
-source revision `overpass-osm-base-2026-11-13T12:02:48Z`, generator seed `20261113`).
+`src/test/surroundings-plan.test.ts` pins the SHA-256 of `JSON.stringify(planSurroundings(HOME_NEIGHBORHOOD, HOME_ENRICHMENT, tier))` for each tier, on the fixed home neighbourhood (`6f2f2dd0…db48`, `138` OSM roads and `1300` footprints combining `317` OSM, `968` Overture `2026-11-18.0` / Google Open Buildings, and `15` focal-block buildings) and the committed layer `src/world/data/homeNeighborhood.enrichment.json` (layer revision `osm-surroundings-2026-11-13`, `midFactor = 0.35`, generator seed `20261113`).
 
 | Tier | Trees | Props | SHA-256                                                            |
 | ---- | ----: | ----: | ------------------------------------------------------------------ |
-| low  |   150 |    80 | `b632057c20115be3e9017f31e147bf4c2c1d7cb0b883b4a129e735baefd9541a` |
-| mid  |   352 |   200 | `b3e7e0ad506a51e8479e6bab463a701fe6a34f628ba4b193d9419c9b2d8985b9` |
-| high |   352 |   400 | `eee40bacc5aae989ddccb942b6b633e8a161b0b506b9cb196ec8845b6b084055` |
+| low  |   150 |    80 | `29f0729e8ec3173bfe0705063ae34cfa682ec6d78ebea7f3b9110fa4d1bde264` |
+| mid  |   285 |   200 | `cb4a3bf45024e229bac83592b24afdadb2fe706aef3b2ead6609d08c93a2112e` |
+| high |   285 |   344 | `53c586aa98719748a3a4adc4f0931d43378f6014fc94c8d24d9399f78e64cca5` |
 
-Composition (mid): 351 procedural + 1 OSM tree; 123 parked motorbikes, 15 vendor carts,
-21 + 1 OSM street lights, 34 + 6 OSM electric poles. `mid` and `high` have the same trees because
-all 352 tree candidates fit under the `mid` cap (400).
+Composition (mid): 284 procedural + 1 OSM tree, 200 props (`mid` and `high` share `285` trees because all 285 road-clear candidates fit under the `mid` cap of 400).
 
-_(Updated 2026-11-14 to enforce 1.0 m clearance pass across all tiers, eliminating 17 tree↔prop
-overlap pairs and 1 tree↔tree overlap pair (0.42 m) identified in PR #28 QA review)._
+_(Updated 2026-11-28 after owner-authorized conflation of Overture `2026-11-18.0` / Google Open Buildings footprints and focal-block building models into `homeNeighborhood.json`, adjusting `midFactor` from `0.4` to `0.35` to preserve the `> 1.5x` inner-ring density falloff around the newly populated core blocks.)_
 
 ## What changes a golden
 
@@ -42,23 +35,23 @@ unaffected by construction (and is still asserted by `p9-pov-route-golden.test.t
 
 ## Estimated building massing golden (PR-3)
 
-`src/test/planMassing.test.ts` pins the canonical-JSON SHA-256 of `planMassing(HOME_NEIGHBORHOOD, HOME_ENRICHMENT)` on the same G1 package and enrichment layer (seed `20261113`, `floorHeight = 3.3`, `levelsWeights = [3, 4, 2, 1]`, `roofWeights = { corrugated: 4, flat: 3, terrace_tum: 3 }`, `homeExclusionRadius = 12`, `homeDominanceRadius = 30`, `homeMaxNeighbourLevels = 3`):
+`src/test/planMassing.test.ts` pins the canonical-JSON SHA-256 of `planMassing(HOME_NEIGHBORHOOD, HOME_ENRICHMENT)` on the canonical neighborhood package (`6f2f2dd0…db48`) and enrichment layer (seed `20261113`, `floorHeight = 3.3`, `levelsWeights = [3, 4, 2, 1]`, `roofWeights = { corrugated: 4, flat: 3, terrace_tum: 3 }`, `homeExclusionRadius = 12`, `homeDominanceRadius = 30`, `homeMaxNeighbourLevels = 3`):
 
-| Plan | Items | Skipped (OSM `buildingFacts`) | SHA-256 |
+| Plan | Items | Skipped (known / sourced heights) | SHA-256 |
 | --- | ---: | ---: | --- |
-| `planMassing` | 315 | 2 | `9e47e8b5561515380303677837c73e7a55fa302819a84ae570fe9635965cf6a7` |
+| `planMassing` | 1280 | 20 | `cd80662015bd763c7693453e4d59685fd3c7ccecc7f9ae7a8a3e69ae065de651` |
 
-Composition: 81 × 1F, 129 × 2F, 69 × 3F, 36 × 4F; roofs: 119 `corrugated`, 98 `flat`, 98 `terrace_tum`. Every item carries `origin: "estimated_procedural"` and is inset `0.08 m` inside its canonical OSM footprint so party-wall neighbours neither intersect nor z-fight.
+Skipped set (`20` buildings): `15` owner-authorized focal-block buildings (`source: "survey"`, verified heights/parts), `2` OSM buildings with `buildingFacts.levels`, and `3` Overture buildings with `num_floors`. Every estimated item (`1280`) carries `origin: "estimated_procedural"` and is inset `0.08 m` inside its footprint so party-wall neighbours neither intersect nor z-fight (`0` overlaps across all `1300` buildings).
 
 ## Procedural street styling golden (PR-5)
 
-`src/test/worldMesh.test.ts` pins the canonical-JSON SHA-256 of `planProceduralStreetTrim(HOME_NEIGHBORHOOD)` on the committed G1 world (`138` OSM roads, `317` OSM building footprints):
+`src/test/worldMesh.test.ts` pins the canonical-JSON SHA-256 of `planProceduralStreetTrim(HOME_NEIGHBORHOOD)` on the committed world (`138` OSM roads, `1300` building footprints):
 
 | Plan | Sidewalk quads | Curb quads | Lane-marking quads | Alley-trim quads | SHA-256 |
 | --- | ---: | ---: | ---: | ---: | --- |
-| `planProceduralStreetTrim` | 696 | 696 | 1102 | 83 | `520954ef815605b66fd1a6aa8cb5fa4ee4e27239a32501cae7f28076a6fc22a4` |
+| `planProceduralStreetTrim` | 776 | 776 | 1102 | 83 | `71b7443a3ce0db34b2eb2f6bc9728414940bed46180b284236d29cc26ec7991a` |
 
-Carriageway style classes across the 138 canonical roads (`surface: "unknown"`): 35 `primary_asphalt`, 26 `secondary_asphalt`, 20 `residential_asphalt` (11 `residential` + 9 `unknown`), 39 `service_pavement`, 18 `alley_concrete`. Every procedural trim quad (`2577` total) carries `origin: "estimated_procedural"`, renders in a single `InstancedMesh` draw call (`receiveShadow = false`), avoids canonical building footprints (`0` overlaps), stays clear of crossing carriageways via 3-point sampling, and hides under geometry-confidence inspection (`setConfidenceVisible(true)`).
+Carriageway style classes across the 138 canonical roads (`surface: "unknown"`): 35 `primary_asphalt`, 26 `secondary_asphalt`, 20 `residential_asphalt` (11 `residential` + 9 `unknown`), 39 `service_pavement`, 18 `alley_concrete`. Every procedural trim quad (`2737` total) carries `origin: "estimated_procedural"`, renders in a single `InstancedMesh` draw call (`receiveShadow = false`), avoids all `1300` building footprints (`0` overlaps), stays clear of crossing carriageways via 3-point sampling, and hides under geometry-confidence inspection (`setConfidenceVisible(true)`).
 
 ## Procedural massing facades golden (PR-6)
 
@@ -66,6 +59,6 @@ Carriageway style classes across the 138 canonical roads (`surface: "unknown"`):
 
 | Plan | Balcony buildings | Primary-road shop buildings | Box instances | SHA-256 |
 | --- | ---: | ---: | ---: | --- |
-| `planMassingFacades` | 70 | 8 | 242 | `27323e0cf2a95eb75c8ad533d55e3bb9ed79577924956fc42915819defe3b321` |
+| `planMassingFacades` | 237 | 40 | 858 | `8bc514ef1ce27f793d59f605132465a9074fbfb096be1b0152e71525a90c6e77` |
 
-Composition across `227` unobstructed street-fronting massing footprints (`16` `primary`, `153` `secondary`, `32` `residential`, `15` `service`, `11` `alley`): `111` `balcony_slab` + `111` `balcony_railing` on upper floors (`2F–4F`), plus `8` `shop_shutter` + `8` `shop_sign_band` + `4` `shop_awning` on `primary`-road ground floors. Rendered in a single `InstancedMesh` (`estimated-facades:instanced`, `castShadow = false`, `receiveShadow = false`, no-op `raycast`, `0` neighbor building overlaps, hidden under `setConfidenceVisible(true)`).
+Rendered in a single `InstancedMesh` (`estimated-facades:instanced`, `castShadow = false`, `receiveShadow = false`, no-op `raycast`, `0` neighbor building overlaps across all `1300` buildings, hidden under `setConfidenceVisible(true)`).

@@ -4,6 +4,7 @@ import {
   polygonsOf,
   ringWithoutClosure,
   signedRingArea,
+  surfaceBounds,
   surfaceCentroid,
   surfaceIntersects,
 } from "@/world/geometry";
@@ -53,12 +54,21 @@ const hash = (text: string, seed: number) => {
   return n;
 };
 
+const frozenDetailPlanCache = new WeakMap<WorldData, Map<string, DetailPlan>>();
+
 /** Illustrative presentation only. It neither edits nor identifies canonical features. */
 export function planIllustrativeDetails(
   world: WorldData,
   tier: DetailTier,
   seed = 81273,
 ): DetailPlan {
+  const isFrozenWorld =
+    Object.isFrozen(world) && Object.isFrozen(world.buildings) && Object.isFrozen(world.roads);
+  const cacheKey = `${tier}:${seed}`;
+  if (isFrozenWorld) {
+    const cached = frozenDetailPlanCache.get(world)?.get(cacheKey);
+    if (cached) return cached;
+  }
   const instances: Instance[] = [],
     categories = new Set<string>(),
     limit = budgets[tier];
@@ -244,6 +254,10 @@ export function planIllustrativeDetails(
     }
   }
   allocationLimit = limit.instances;
+  const buildingBounds = world.buildings.map((building) => ({
+    building,
+    bounds: surfaceBounds(building.geometry),
+  }));
   let streetCount = 0;
   for (const road of [...world.roads].sort((a, b) => a.localId.localeCompare(b.localId))) {
     for (
@@ -260,9 +274,15 @@ export function planIllustrativeDetails(
         side = (road.carriagewayWidth ?? 5) / 2 + 1;
       const x = (a[0] + b[0]) / 2 + dz * side,
         z = (a[1] + b[1]) / 2 - dx * side;
+      const probeArea = footprint(x, z, 2.5);
       if (
-        world.buildings.some((building) =>
-          surfaceIntersects(footprint(x, z, 2.5), building.geometry),
+        buildingBounds.some(
+          ({ building, bounds }) =>
+            x + 2.5 >= bounds.minX &&
+            x - 2.5 <= bounds.maxX &&
+            z + 2.5 >= bounds.minZ &&
+            z - 2.5 <= bounds.maxZ &&
+            surfaceIntersects(probeArea, building.geometry),
         )
       )
         continue;
@@ -390,7 +410,16 @@ export function planIllustrativeDetails(
       streetCount++;
     }
   }
-  return { instances, categories: [...categories].sort(), tier, seed };
+  const result: DetailPlan = { instances, categories: [...categories].sort(), tier, seed };
+  if (isFrozenWorld) {
+    let byKey = frozenDetailPlanCache.get(world);
+    if (!byKey) {
+      byKey = new Map();
+      frozenDetailPlanCache.set(world, byKey);
+    }
+    byKey.set(cacheKey, result);
+  }
+  return result;
 }
 
 export function createIllustrativeDetails(world: WorldData, tier: DetailTier) {
