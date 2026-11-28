@@ -8,6 +8,7 @@ import {
   surfaceCentroid,
   surfaceIntersects,
 } from "@/world/geometry";
+import { HANDCRAFTED_FOCAL_BUILDING_IDS } from "@/engine/world/focalStreetscape";
 import { assessWallHeight } from "@/world/wallHeight";
 import type { BuildingPart, SurfaceGeometry, WorldData } from "@/world/schema";
 
@@ -73,7 +74,7 @@ export function planIllustrativeDetails(
     categories = new Set<string>(),
     limit = budgets[tier];
   let allocationLimit = Math.floor(limit.instances * 0.7);
-  const exclusions = [footprint(0, 0, 10), ...world.lots.map((lot) => lot.geometry)];
+  const exclusions = world.lots.map((lot) => lot.geometry);
   const put = (
     category: string,
     shape: Shape,
@@ -94,8 +95,18 @@ export function planIllustrativeDetails(
     instances.push({ shape, x, y, z, sx, sy, sz, color, angle, ...(tilt ? { tilt } : {}) });
     categories.add(category);
   };
+  const distanceSqById = new Map<string, number>();
+  const getDistanceSq = (localId: string, geometry: SurfaceGeometry) => {
+    let d = distanceSqById.get(localId);
+    if (d === undefined) {
+      const [cx, cz] = surfaceCentroid(geometry);
+      d = cx * cx + cz * cz;
+      distanceSqById.set(localId, d);
+    }
+    return d;
+  };
   const buildings = [...world.buildings]
-    .filter((b) => !b.hidden)
+    .filter((b) => !b.hidden && !HANDCRAFTED_FOCAL_BUILDING_IDS.has(b.localId))
     .flatMap<BuildingPart>((building) =>
       building.parts?.length
         ? building.parts.map((part) => ({
@@ -104,7 +115,11 @@ export function planIllustrativeDetails(
           }))
         : [building],
     )
-    .sort((a, b) => a.localId.localeCompare(b.localId));
+    .sort(
+      (a, b) =>
+        getDistanceSq(a.localId, a.geometry) - getDistanceSq(b.localId, b.geometry) ||
+        a.localId.localeCompare(b.localId),
+    );
   for (const building of buildings.slice(0, limit.features)) {
     const height = assessWallHeight(building, world.manifest.isSynthetic).renderedHeight;
     if (height < 2.5 || exclusions.some((g) => surfaceIntersects(building.geometry, g))) continue;
@@ -430,9 +445,9 @@ export function createIllustrativeDetails(world: WorldData, tier: DetailTier) {
   const geometries = {
     box: new THREE.BoxGeometry(1, 1, 1),
     cylinder: new THREE.CylinderGeometry(0.5, 0.5, 1, 6),
-    sphere: new THREE.SphereGeometry(0.5, 8, 5),
+    sphere: new THREE.SphereGeometry(0.5, 5, 3),
   };
-  const material = new THREE.MeshStandardMaterial({ roughness: 0.85 });
+  const material = new THREE.MeshLambertMaterial();
   const dummy = new THREE.Object3D(),
     color = new THREE.Color(),
     meshes: THREE.InstancedMesh[] = [];

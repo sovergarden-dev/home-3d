@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { describe, expect, it } from "vitest";
 import {
   deriveShadowCameraBounds,
+  dioramaFocusSpan,
   homeMarkerElevation,
   worldCameraCentre,
   worldCameraFrame,
@@ -52,6 +53,9 @@ describe("fixed home camera frame", () => {
     expect(frame.maxDistance).toBeGreaterThan(380);
     expect(frame.farPlane).toBeGreaterThan(frame.maxDistance + frame.radius);
     expect(frame.span).toBeGreaterThan(1_000);
+    const focusSpan = dioramaFocusSpan(HOME_NEIGHBORHOOD);
+    expect(focusSpan).toBeGreaterThanOrEqual(140);
+    expect(focusSpan).toBeLessThanOrEqual(180);
   });
 });
 

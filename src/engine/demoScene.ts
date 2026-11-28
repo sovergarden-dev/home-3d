@@ -140,6 +140,24 @@ function perspectiveFrame(world: WorldData) {
   return worldCameraFrame(world);
 }
 
+/** Keeps cold-start Diorama zoomed tightly on the 180 m neighborhood core instead of far road tails. */
+export function dioramaFocusSpan(world: WorldData): number {
+  const full = worldCameraFrame(world);
+  if (world.buildings.length === 0) return full.span;
+  const home = worldHomeCentre(world);
+  let maxBuildingRadius = 0;
+  for (const building of world.buildings) {
+    if (building.hidden) continue;
+    for (const polygon of polygonsOf(building.geometry)) {
+      for (const [x, z] of polygon.coordinates[0] ?? []) {
+        maxBuildingRadius = Math.max(maxBuildingRadius, Math.hypot(x - home.x, z - home.z));
+      }
+    }
+  }
+  if (maxBuildingRadius <= 0) return full.span;
+  return Math.min(full.span, Math.max(60, Math.min(maxBuildingRadius * 0.92, 165)));
+}
+
 export function worldCameraCentre() {
   const [x, z] = SITE_CONFIG.heroCenter;
   return new THREE.Vector3(x, 0, z);
@@ -278,7 +296,7 @@ export function createDemoScene(
   const renderer = new THREE.WebGLRenderer({ canvas, context, antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 768 ? 1 : 1.5));
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.shadowMap.autoUpdate = false;
   renderer.shadowMap.needsUpdate = true;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -373,6 +391,7 @@ export function createDemoScene(
     : 0.35;
   let centre = initialPerspectiveFrame?.centre ?? new THREE.Vector3();
   let span = initialPerspectiveFrame?.span ?? 100;
+  let dioramaSpan = fallbackWorld ? dioramaFocusSpan(fallbackWorld) : span;
   let privatePlanFrame: PrivateWorldPlanFrame | null = null;
   function resetPlanCentre() {
     if (privatePlanFrame) {
@@ -544,6 +563,7 @@ export function createDemoScene(
     });
     resetPlanCentre();
     span = frame.span;
+    dioramaSpan = dioramaFocusSpan(snapshot.world);
     const lifeProfile =
       snapshot.world === HOME_NEIGHBORHOOD ? HOME_ENRICHMENT?.generator.life : undefined;
     life = createLifeRuntime({
@@ -636,7 +656,7 @@ export function createDemoScene(
       return;
     }
     const walk = false;
-    const distance = (walk ? 22 : span * 1.15) / state.zoom;
+    const distance = (walk ? 22 : dioramaSpan * 1.15) / state.zoom;
     const height = walk ? 2.5 : distance * 0.66;
     const radius = walk ? distance : distance * 0.77;
     const targetY = walk ? 1.6 : 0.8;
@@ -646,7 +666,7 @@ export function createDemoScene(
     controls.enablePan = true;
     controls.minPolarAngle = 0.3;
     controls.maxPolarAngle = Math.PI / 2 - 0.06;
-    controls.minDistance = walk ? 4 : 16;
+    controls.minDistance = walk ? 4 : 12;
     controls.maxDistance = walk ? 50 : (initialPerspectiveFrame?.maxDistance ?? 380);
     controls.target.set(centre.x, targetY, centre.z);
     perspectiveCamera.position.set(
@@ -799,10 +819,11 @@ export function createDemoScene(
       return;
     }
     if (
-      lastShadowWorld !== worldBundle ||
-      lastShadowFrustum !== sun.shadow.camera.right ||
-      !lastShadowSunPos.equals(sun.position) ||
-      !lastShadowTargetPos.equals(sun.target.position)
+      activeCamera !== planCamera &&
+      (lastShadowWorld !== worldBundle ||
+        lastShadowFrustum !== sun.shadow.camera.right ||
+        !lastShadowSunPos.equals(sun.position) ||
+        !lastShadowTargetPos.equals(sun.target.position))
     ) {
       renderer.shadowMap.needsUpdate = true;
       lastShadowWorld = worldBundle;
@@ -959,7 +980,7 @@ export function createDemoScene(
         180) /
       Math.PI;
     const zoom = THREE.MathUtils.clamp(
-      (span * 1.15) / perspectiveCamera.position.distanceTo(controls.target),
+      (dioramaSpan * 1.15) / perspectiveCamera.position.distanceTo(controls.target),
       0.25,
       4,
     );
