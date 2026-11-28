@@ -29,8 +29,18 @@ export interface AtmosphereLayerOptions {
   host?: HTMLElement;
   tier?: "low" | "mid" | "high";
   festivalsEnabled?: boolean;
+  enabledFestivals?: readonly AtmosphereFestival[];
   floodEnabled?: boolean;
 }
+
+const DEFAULT_FESTIVALS: readonly AtmosphereFestival[] = [
+  "normal",
+  "tet",
+  "midautumn",
+  "christmas",
+  "reunification",
+  "national",
+];
 const clamp = (n: number) => (Number.isFinite(n) ? Math.max(0, Math.min(1, n)) : 0);
 /** Explicit art-direction fallback, not georeferencing or a site observation. */
 export function solarPosition(state: Pick<AtmosphereState, "timeOfDayMinutes" | "selectedDate">) {
@@ -77,28 +87,27 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
     return m;
   };
   const festivalsEnabled = options.festivalsEnabled !== false;
+  const activeFestivals = options.enabledFestivals ?? DEFAULT_FESTIVALS;
   const floodEnabled = options.floodEnabled !== false;
   const decorations = new Map<AtmosphereFestival, THREE.Group>();
   if (festivalsEnabled) {
     const red = material(
-      new THREE.MeshStandardMaterial({
+      new THREE.MeshLambertMaterial({
         color: "#bf2525",
         emissive: "#ac1919",
-        emissiveIntensity: 0.3,
-        roughness: 0.7,
+        emissiveIntensity: 0.35,
         side: THREE.DoubleSide,
       }),
     );
     const gold = material(
-      new THREE.MeshStandardMaterial({
+      new THREE.MeshLambertMaterial({
         color: "#ffce4f",
         emissive: "#ffc23b",
-        emissiveIntensity: 0.4,
-        roughness: 0.65,
+        emissiveIntensity: 0.45,
         side: THREE.DoubleSide,
       }),
     );
-    const green = material(new THREE.MeshStandardMaterial({ color: "#2d7352", roughness: 0.85 }));
+    const green = material(new THREE.MeshLambertMaterial({ color: "#2d7352" }));
     const lanternGeo = geometry(new THREE.SphereGeometry(0.6, 8, 6));
     const flowerGeo = geometry(new THREE.CircleGeometry(0.2, 8));
     const starGeo = geometry(starGeometry(0.8));
@@ -116,14 +125,7 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
       parent.add(object);
       return object;
     };
-    for (const festival of [
-      "normal",
-      "tet",
-      "midautumn",
-      "christmas",
-      "reunification",
-      "national",
-    ] as const) {
+    for (const festival of activeFestivals) {
       const decoration = new THREE.Group();
       decoration.name = `festival-decoration-${festival}`;
       // Suspended illustration to one side of the ENU home marker, never a building on its lot.
@@ -616,14 +618,7 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
       for (const weather of ["sunny", "cloudy", "rain", "storm"] as const)
         compile({ ...base, weather, festival: "normal", atmosphereEnabled: true, floodLevel: 0 });
       if (festivalsEnabled) {
-        for (const festival of [
-          "normal",
-          "tet",
-          "midautumn",
-          "christmas",
-          "reunification",
-          "national",
-        ] as const)
+        for (const festival of activeFestivals)
           compile({ ...base, weather: "sunny", festival, atmosphereEnabled: true, floodLevel: 0 });
       }
       compile({
@@ -651,13 +646,8 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
       });
       // Only a second light topology is needed at night; reuse each real decorative material.
       if (festivalsEnabled) {
-        for (const festival of [
-          "tet",
-          "midautumn",
-          "christmas",
-          "reunification",
-          "national",
-        ] as const)
+        for (const festival of activeFestivals) {
+          if (festival === "normal") continue;
           compile({
             ...night,
             weather: "sunny",
@@ -665,6 +655,7 @@ export function createAtmosphereLayer(options: AtmosphereLayerOptions) {
             atmosphereEnabled: true,
             floodLevel: 0,
           });
+        }
       }
     } finally {
       scene.fog = previous.fog;

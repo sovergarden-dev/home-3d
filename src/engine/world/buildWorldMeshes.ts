@@ -24,6 +24,7 @@ import type {
 } from "@/world/schema";
 import { assessWallHeight } from "@/world/wallHeight";
 import { confidenceColor } from "@/engine/confidence/wallConfidence";
+import { BUILDING_DISPLAY_NAMES, ROAD_DISPLAY_NAMES } from "@/world/neighborhoodLabels";
 import { createBuildingLabelBatches } from "@/engine/world/buildingLabels";
 import {
   createFocalStreetscape,
@@ -1182,21 +1183,6 @@ function addProps(
     group.add(root);
   });
 }
-
-const ROAD_DISPLAY_NAMES: Record<string, { vi: string; en: string }> = {
-  "road-main": { vi: "Đường chính", en: "Main Street" },
-  "road-back": { vi: "Đường sau", en: "Back Lane" },
-  "road-alley": { vi: "Hẻm bên", en: "Side Alley" },
-  "road-deadend": { vi: "Hẻm cụt", en: "Cul-de-sac" },
-};
-
-const BUILDING_DISPLAY_NAMES: Record<string, { vi: string; en: string }> = {
-  "building-neighbour-west": { vi: "Nhà ống 3 tầng", en: "3F Townhouse" },
-  "building-neighbour-east": { vi: "Nhà phố 4 tầng", en: "4F Townhouse" },
-  "building-corner-oblique": { vi: "Nhà góc mái ngói", en: "Corner Gabled House" },
-  "building-courtyard": { vi: "Khu nhà sân trong", en: "Courtyard Block" },
-  "building-multipolygon": { vi: "Cụm nhà xưởng nhỏ", en: "Workshop Cluster" },
-};
 
 function polylineMidpoint(points: Position2[]): Position2 {
   if (points.length === 0) return [0, 0];
